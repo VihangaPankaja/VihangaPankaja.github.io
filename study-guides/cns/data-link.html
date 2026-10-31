@@ -1,0 +1,508 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="How neighboring devices find frame boundaries, detect corruption, recover missing data, and keep transmissions within receiver capacity."><title>Data link framing, errors and flow control · Networks field notes</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('cns-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{.table-hint{display:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#243740;--muted:#5e737d;--secondary:#edf2f3;--border:#d5e0e3;--primary:#1e647c;--accent:#dcecf0;--diagram-fill:#eff4f5;--diagram-border:#829da8;--diagram-edge:#65838f;--active-text:#174b61;--focus:#227b98}:root[data-theme=dark]{--background:#141d23;--foreground:#e1eaf0;--muted:#a8beca;--card:#1a2730;--secondary:#22333e;--border:#3b505c;--primary:#90d1e4;--accent:#254757;--diagram-fill:#22333e;--diagram-border:#93b2c1;--diagram-edge:#9bbac9;--topbar:#141d23f5;--active-text:#b6e5f1;--focus:#90d1e4} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> CNS <span class="subbrand">field notes</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Subnet, TCP, TLS…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a href="index.html">Computer networks and security</a></div><div class="nav-group"><p>Foundations</p><a href="osi.html">OSI model and encapsulation</a><a href="data-link.html" aria-current="page">Data link framing, errors and flow control</a><a href="wan.html">WAN and MAN technologies</a><a href="lan.html">LAN, Ethernet and switching</a></div><div class="nav-group"><p>Internetworking</p><a href="routing.html">Network layer and routing</a><a href="ipv4.html">IPv4 addressing, subnetting and VLSM</a><a href="ip-delivery.html">IP packets, ARP, ICMP, DHCP and NAT</a><a href="ipv6.html">IPv6 addressing and transition</a></div><div class="nav-group"><p>Transport and wireless</p><a href="transport.html">Transport services and connections</a><a href="short-range.html">Bluetooth, NFC and ZigBee</a></div><div class="nav-group"><p>Security and design</p><a href="security.html">Security foundations and cryptography</a><a href="pki.html">Public key infrastructure</a><a href="secure-protocols.html">IPsec and TLS</a><a href="network-design.html">Network design</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS3131<br>Computer Networks and Security</div></aside>
+<main id="main"><div class="eyebrow">Foundations <span>/</span> Lecture 2 · Quiz 1</div><h1>Data link framing, errors and flow control</h1><p class="lead">How neighboring devices find frame boundaries, detect corruption, recover missing data, and keep transmissions within receiver capacity.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Why links need frames</a><a href="#section-2">Character-oriented framing and byte stuffing</a><a href="#section-3">Bit-oriented framing and bit stuffing</a><a href="#section-4">Detecting transmission errors</a><a href="#section-5">Error recovery: FEC and ARQ</a><a href="#section-6">Continuous ARQ: sequence state and windows</a><a href="#section-7">Flow control: keep the sender within receiver capacity</a><a href="#section-8">A brief link to data compression</a><a href="#section-9">Quick revision and practice</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>The data-link layer moves a network-layer packet across one adjacent link. It turns an incoming bit stream into recognizable frames, adds checks that help detect corruption, and coordinates recovery and the sender's pace. Those jobs fit together, but they answer different questions: framing asks “where does this unit begin and end?”, error control asks “did it arrive intact, and what now?”, and flow control asks “can the receiver keep up?”</p>
+<figure><div class="diagram-frame" style="--diagram-width:782.6px"><svg role="img" aria-label="A variable-length link frame surrounds a network-layer packet with link header and trailer information." width="783pt" height="58pt"
+ viewBox="0.00 0.00 782.60 57.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="data-link-frame-boundary-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 46.8)">
+<title>G</title>
+<!-- start -->
+<g id="data-link-frame-boundary-node1" class="node">
+<title>start</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M108,-36C108,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 108,0 108,0 114,0 120,-6 120,-12 120,-12 120,-24 120,-24 120,-30 114,-36 108,-36"/>
+<text text-anchor="middle" x="60" y="-14.5" font-family="Georgia" font-size="15.00">Opening flag</text>
+</g>
+<!-- header -->
+<g id="data-link-frame-boundary-node2" class="node">
+<title>header</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M220,-36C220,-36 164,-36 164,-36 158,-36 152,-30 152,-24 152,-24 152,-12 152,-12 152,-6 158,0 164,0 164,0 220,0 220,0 226,0 232,-6 232,-12 232,-12 232,-24 232,-24 232,-30 226,-36 220,-36"/>
+<text text-anchor="middle" x="192" y="-14.5" font-family="Georgia" font-size="15.00">Header</text>
+</g>
+<!-- start&#45;&gt;header -->
+<g id="data-link-frame-boundary-edge1" class="edge">
+<title>start&#45;&gt;header</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M120.29,-18C128.83,-18 137.5,-18 145.71,-18"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="145.89,-20.1 151.89,-18 145.89,-15.9 145.89,-20.1"/>
+</g>
+<!-- packet -->
+<g id="data-link-frame-boundary-node3" class="node">
+<title>packet</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M440,-36C440,-36 276,-36 276,-36 270,-36 264,-30 264,-24 264,-24 264,-12 264,-12 264,-6 270,0 276,0 276,0 440,0 440,0 446,0 452,-6 452,-12 452,-12 452,-24 452,-24 452,-30 446,-36 440,-36"/>
+<text text-anchor="middle" x="358" y="-14.5" font-family="Georgia" font-size="15.00">Network&#45;layer packet</text>
+</g>
+<!-- header&#45;&gt;packet -->
+<g id="data-link-frame-boundary-edge2" class="edge">
+<title>header&#45;&gt;packet</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M232.28,-18C240.14,-18 248.71,-18 257.58,-18"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="257.75,-20.1 263.75,-18 257.75,-15.9 257.75,-20.1"/>
+</g>
+<!-- trailer -->
+<g id="data-link-frame-boundary-node4" class="node">
+<title>trailer</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M605,-36C605,-36 496,-36 496,-36 490,-36 484,-30 484,-24 484,-24 484,-12 484,-12 484,-6 490,0 496,0 496,0 605,0 605,0 611,0 617,-6 617,-12 617,-12 617,-24 617,-24 617,-30 611,-36 605,-36"/>
+<text text-anchor="middle" x="550.5" y="-14.5" font-family="Georgia" font-size="15.00">Trailer / check</text>
+</g>
+<!-- packet&#45;&gt;trailer -->
+<g id="data-link-frame-boundary-edge3" class="edge">
+<title>packet&#45;&gt;trailer</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M452.02,-18C460.6,-18 469.2,-18 477.55,-18"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="477.88,-20.1 483.88,-18 477.88,-15.9 477.88,-20.1"/>
+</g>
+<!-- end -->
+<g id="data-link-frame-boundary-node5" class="node">
+<title>end</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M749,-36C749,-36 661,-36 661,-36 655,-36 649,-30 649,-24 649,-24 649,-12 649,-12 649,-6 655,0 661,0 661,0 749,0 749,0 755,0 761,-6 761,-12 761,-12 761,-24 761,-24 761,-30 755,-36 749,-36"/>
+<text text-anchor="middle" x="705" y="-14.5" font-family="Georgia" font-size="15.00">Closing flag</text>
+</g>
+<!-- trailer&#45;&gt;end -->
+<g id="data-link-frame-boundary-edge4" class="edge">
+<title>trailer&#45;&gt;end</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M617.06,-18C625.42,-18 633.96,-18 642.26,-18"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="642.55,-20.1 648.55,-18 642.55,-15.9 642.55,-20.1"/>
+</g>
+</g>
+</svg>
+</div><figcaption>A variable-length link frame surrounds a network-layer packet with link header and trailer information.</figcaption></figure>
+<h2 id="section-1">Why links need frames</h2>
+<p>Synchronization means agreeing on the boundaries of data units. Some links use fixed-size units, such as cells; with variable-length data, the link groups bits into frames. A frame is the Layer 2 unit and carries a packet from the Network layer, with link header and trailer information around it. This is the Layer 2 role in the OSI model (Quiz 1 Q3 and Q9).</p>
+<p>The receiver must recognize each boundary even when the payload happens to contain the same pattern used to mark one. The three methods in the lecture solve this in different ways:</p>
+<div class="table-scroll"><table><caption>Lecture slide 8 framing methods</caption><thead><tr><th scope="col">Method</th><th scope="col">Boundary clue</th><th scope="col">Main concern</th></tr></thead><tbody><tr><td>Character count</td><td>A length/count field</td><td>If the count is corrupted, the receiver can lose alignment.</td></tr><tr><td>Character-oriented</td><td>STX and ETX control characters (or flag bytes)</td><td>Payload bytes that equal a reserved delimiter or escape byte must be escaped.</td></tr><tr><td>Bit-oriented</td><td>A special flag bit sequence</td><td>Payload bits must be transformed so the flag cannot appear inside the frame.</td></tr></tbody></table></div>
+<p>Inside the network-layer packet, the source diagram nests a transport segment and application message. On this link, those upper-layer contents travel as part of the packet carried by the frame.</p>
+<h2 id="section-2">Character-oriented framing and byte stuffing</h2>
+<p>In the lecture's byte-oriented example, <code>FLAG</code> marks the frame boundary and <code>ESC</code> announces that the next byte is payload data, even if that byte equals a reserved value. The sender inserts <code>ESC</code> before a payload <code>FLAG</code> and before a payload <code>ESC</code>. The receiver removes the inserted escape and keeps the following byte. Escaping <code>ESC</code> itself is essential: otherwise a literal escape in the payload would be mistaken for an instruction.</p>
+
+<details class="worked"><summary>Worked source example: escape reserved bytes and undo the escaping</summary><p>The four rows below reproduce slide 9. Read the encoded bytes from left to right: after an escape marker, the following reserved byte is literal payload. At reception, consume each escape together with its following byte and output that byte once. Thus <code>A ESC ESC ESC FLAG B</code> decodes as <code>A ESC FLAG B</code>; none of the original bytes is lost.</p>
+<div class="table-scroll"><table><caption>Exact character-stuffing examples from lecture slide 9</caption><thead><tr><th scope="col">Original payload</th><th scope="col">Transmitted payload</th><th scope="col">What the receiver must preserve</th></tr></thead><tbody><tr><td><code>A FLAG B</code></td><td><code>A ESC FLAG B</code></td><td>The flag byte is payload, so quote it with ESC.</td></tr><tr><td><code>A ESC B</code></td><td><code>A ESC ESC B</code></td><td>The escape byte itself is quoted.</td></tr><tr><td><code>A ESC FLAG B</code></td><td><code>A ESC ESC ESC FLAG B</code></td><td>Quote the payload ESC, then quote the payload FLAG.</td></tr><tr><td><code>A ESC ESC B</code></td><td><code>A ESC ESC ESC ESC B</code></td><td>Each of the two payload ESC bytes needs its own escape.</td></tr></tbody></table></div></details>
+
+<p>For a concrete PPP protocol context, RFC 1662 specifies an octet escape mechanism for HDLC-like framing; escaping rules are protocol-defined, so the lecture's <code>FLAG</code>/<code>ESC</code> names should not be treated as universal byte values. The same standard's bit-oriented framing rule is shown next (<a href="https://www.rfc-editor.org/rfc/rfc1662.html">RFC 1662, §§4.2 and 5.2</a>).</p>
+<h2 id="section-3">Bit-oriented framing and bit stuffing</h2>
+<p>The lecture's flag is <code>01111110</code>. To prevent that pattern from arising in frame contents, the sender inserts a <code>0</code> after any run of five consecutive <code>1</code> bits. The receiver removes a <code>0</code> that follows five consecutive payload <code>1</code> bits. The actual opening and closing flags are not destuffed. Quiz 1 Q4 checks the key idea: a bit-oriented frame is delimited by a flag sequence.</p>
+<p>The sender-side rule is from the lecture's example and matches the HDLC-like procedure in RFC 1662 §5.2. The two source inputs differ: the first has no run of six ones; the second does and therefore needs an inserted bit.</p>
+
+<details class="worked"><summary>Lecture source example 1: no extra bit needed</summary><p><b>Input payload:</b> <code>011100010101111000110</code>. It has no run of five consecutive ones, so the payload is unchanged.</p>
+<p><b>Wire frame:</b> <code>01111110 | 011100010101111000110 | 01111110</code>.</p>
+<p><b>Receive check:</b> remove the two outer flags; no post-five zero exists to remove, so the recovered payload is the original string.</p></details>
+
+<details class="worked"><summary>Lecture source example 2: six adjacent ones</summary><p><b>Input payload:</b> <code>011100010111111000110</code>. The middle contains six consecutive ones. After the first five, insert a zero; the sixth one remains data.</p>
+<p><b>Stuffed payload:</b> <code>01110001011111<mark>0</mark>1000110</code> = <code>0111000101111101000110</code>.</p>
+<p><b>Wire frame:</b> <code>01111110 | 0111000101111101000110 | 01111110</code>. At reception, after five payload ones, remove the following stuffed zero. The six original ones are restored.</p></details>
+
+<details class="worked"><summary>Step through the source bit-stuffing calculation</summary><section class="walk" aria-label="Insert one zero, then reverse the operation at reception"><h3>Insert one zero, then reverse the operation at reception</h3><div class="example-input"><p><b>Given:</b> flag <code>01111110</code>; payload <code>011100010111111000110</code>; insert a zero after five consecutive ones and remove that stuffed zero at reception.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Keep the flag separate from the payload</h4><p>Flags are <code>01111110</code>. Payload starts as <code>011100010111111000110</code>. Only payload bits are scanned for stuffing.</p></section><section class="step"><h4>2. Find the triggering run</h4><p>The payload contains <code>0111000101<span class="run">111111</span>000110</code>. Count six adjacent ones. The rule triggers after the first five; the sixth one is data.</p></section><section class="step"><h4>3. Insert the transparency bit</h4><p>Insert <code>0</code> immediately after the first five ones: <code>0111000101 11111<mark>0</mark>1 000110</code>. Removing only visual spaces gives <code>0111000101111101000110</code>.</p></section><section class="step"><h4>4. Add the frame flags</h4><p>Transmit <code>01111110 | 0111000101111101000110 | 01111110</code>. The inserted zero prevents a payload flag from being mistaken for a boundary.</p></section><section class="step"><h4>5. Receiver reverses the transform</h4><p>After finding and removing the outer flags, scan the payload. After five ones, discard the next zero: <code>0111000101111101000110 → 011100010111111000110</code>. This exactly matches the source data.</p></section></section></details>
+
+<p>Stuffing protects boundaries, but it does not detect transmission errors. A lost flag, corrupted data, or an unexpected delimiter can still disrupt synchronization. Checks address corruption; the protocol's boundary rules address framing.</p>
+<h2 id="section-4">Detecting transmission errors</h2>
+<p>A noisy link can lose a bit, insert an extra bit, or change a bit from <code>0</code> to <code>1</code> or from <code>1</code> to <code>0</code>. Errors can be isolated or occur in bursts. The lecture names parity, checksum, and cyclic redundancy check (CRC) as ways to add redundant check information. A sender protects data (sometimes including header fields) with an error-detection code; the receiver recomputes the check on the received data and compares it with the received check field. Slide 15 labels these sent fields <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>D</mi></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>E</mi><mi>D</mi><mi>C</mi></mrow></math>; the received fields are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>D</mi><mi>&#x02032;</mi></msup></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>E</mi><mi>D</mi><msup><mi>C</mi><mi>&#x02032;</mi></msup></mrow></math>. If the check recomputed from the received <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>D</mi><mi>&#x02032;</mi></msup></mrow></math> does not match <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>E</mi><mi>D</mi><msup><mi>C</mi><mi>&#x02032;</mi></msup></mrow></math>, the receiver reports an error.</p>
+<p>Detection is evidence of likely corruption, not a repair operation. No finite check catches every possible error pattern; some errors remain undetected. A detection code therefore needs a separate response such as forward error correction or retransmission. This corrects the loose slide glossary expansion “Error Detection and Correction bits”: here <code>EDC</code> is used as the check/redundancy field, while correction and recovery are separate mechanisms.</p>
+<figure><div class="diagram-frame" style="--diagram-width:801.6px"><svg role="img" aria-label="A check identifies possible corruption; FEC and ARQ are different recovery paths." width="802pt" height="140pt"
+ viewBox="0.00 0.00 801.60 139.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="data-link-error-handling-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 128.8)">
+<title>G</title>
+<!-- sender -->
+<g id="data-link-error-handling-node1" class="node">
+<title>sender</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M79,-83C79,-83 12,-83 12,-83 6,-83 0,-77 0,-71 0,-71 0,-47 0,-47 0,-41 6,-35 12,-35 12,-35 79,-35 79,-35 85,-35 91,-41 91,-47 91,-47 91,-71 91,-71 91,-77 85,-83 79,-83"/>
+<text text-anchor="middle" x="45.5" y="-64" font-family="Georgia" font-size="15.00">Sender</text>
+<text text-anchor="middle" x="45.5" y="-47" font-family="Georgia" font-size="15.00">D + EDC</text>
+</g>
+<!-- link -->
+<g id="data-link-error-handling-node2" class="node">
+<title>link</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M209,-77C209,-77 135,-77 135,-77 129,-77 123,-71 123,-65 123,-65 123,-53 123,-53 123,-47 129,-41 135,-41 135,-41 209,-41 209,-41 215,-41 221,-47 221,-53 221,-53 221,-65 221,-65 221,-71 215,-77 209,-77"/>
+<text text-anchor="middle" x="172" y="-55.5" font-family="Georgia" font-size="15.00">Noisy link</text>
+</g>
+<!-- sender&#45;&gt;link -->
+<g id="data-link-error-handling-edge1" class="edge">
+<title>sender&#45;&gt;link</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M91.1,-59C99.32,-59 108,-59 116.49,-59"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="116.92,-61.1 122.92,-59 116.92,-56.9 116.92,-61.1"/>
+</g>
+<!-- receiver -->
+<g id="data-link-error-handling-node3" class="node">
+<title>receiver</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M339,-83C339,-83 265,-83 265,-83 259,-83 253,-77 253,-71 253,-71 253,-47 253,-47 253,-41 259,-35 265,-35 265,-35 339,-35 339,-35 345,-35 351,-41 351,-47 351,-47 351,-71 351,-71 351,-77 345,-83 339,-83"/>
+<text text-anchor="middle" x="302" y="-64" font-family="Georgia" font-size="15.00">Receiver</text>
+<text text-anchor="middle" x="302" y="-47" font-family="Georgia" font-size="15.00">D′ + EDC′</text>
+</g>
+<!-- link&#45;&gt;receiver -->
+<g id="data-link-error-handling-edge2" class="edge">
+<title>link&#45;&gt;receiver</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M221.03,-59C229.28,-59 237.91,-59 246.32,-59"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="246.7,-61.1 252.7,-59 246.7,-56.9 246.7,-61.1"/>
+</g>
+<!-- detected -->
+<g id="data-link-error-handling-node4" class="node">
+<title>detected</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M508,-77C508,-77 395,-77 395,-77 389,-77 383,-71 383,-65 383,-65 383,-53 383,-53 383,-47 389,-41 395,-41 395,-41 508,-41 508,-41 514,-41 520,-47 520,-53 520,-53 520,-65 520,-65 520,-71 514,-77 508,-77"/>
+<text text-anchor="middle" x="451.5" y="-55.5" font-family="Georgia" font-size="15.00">Error detected</text>
+</g>
+<!-- receiver&#45;&gt;detected -->
+<g id="data-link-error-handling-edge3" class="edge">
+<title>receiver&#45;&gt;detected</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M351.3,-59C359.41,-59 367.99,-59 376.58,-59"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="376.82,-61.1 382.82,-59 376.82,-56.9 376.82,-61.1"/>
+</g>
+<!-- fec -->
+<g id="data-link-error-handling-node5" class="node">
+<title>fec</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M762.5,-118C762.5,-118 569.5,-118 569.5,-118 563.5,-118 557.5,-112 557.5,-106 557.5,-106 557.5,-82 557.5,-82 557.5,-76 563.5,-70 569.5,-70 569.5,-70 762.5,-70 762.5,-70 768.5,-70 774.5,-76 774.5,-82 774.5,-82 774.5,-106 774.5,-106 774.5,-112 768.5,-118 762.5,-118"/>
+<text text-anchor="middle" x="666" y="-99" font-family="Georgia" font-size="15.00">FEC</text>
+<text text-anchor="middle" x="666" y="-82" font-family="Georgia" font-size="15.00">recover from redundancy</text>
+</g>
+<!-- detected&#45;&gt;fec -->
+<g id="data-link-error-handling-edge4" class="edge">
+<title>detected&#45;&gt;fec</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M520.03,-70.12C530.08,-71.78 540.66,-73.52 551.35,-75.28"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="551.03,-77.36 557.29,-76.26 551.71,-73.21 551.03,-77.36"/>
+</g>
+<!-- arq -->
+<g id="data-link-error-handling-node6" class="node">
+<title>arq</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M768,-48C768,-48 564,-48 564,-48 558,-48 552,-42 552,-36 552,-36 552,-12 552,-12 552,-6 558,0 564,0 564,0 768,0 768,0 774,0 780,-6 780,-12 780,-12 780,-36 780,-36 780,-42 774,-48 768,-48"/>
+<text text-anchor="middle" x="666" y="-29" font-family="Georgia" font-size="15.00">ARQ</text>
+<text text-anchor="middle" x="666" y="-12" font-family="Georgia" font-size="15.00">request / timeout → resend</text>
+</g>
+<!-- detected&#45;&gt;arq -->
+<g id="data-link-error-handling-edge5" class="edge">
+<title>detected&#45;&gt;arq</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M520.03,-47.88C528.32,-46.51 536.98,-45.09 545.76,-43.64"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="546.28,-45.68 551.86,-42.64 545.59,-41.54 546.28,-45.68"/>
+</g>
+</g>
+</svg>
+</div><figcaption>A check identifies possible corruption; FEC and ARQ are different recovery paths.</figcaption></figure>
+
+<details class="worked"><summary>Supplemental teaching example: what a parity bit can and cannot detect</summary><p>The lecture names parity but does not work a numerical parity example. This small example is supplemental. Choose <strong>even parity</strong> for data <code>1011001</code>. It has four ones, already even, so append parity bit <code>0</code>: codeword <code>10110010</code>. If one data bit flips, the total number of ones becomes odd and the check fails. If two bits flip, parity can remain even; a parity check detects all odd-count flips but can miss an even count. It detects an error; it does not tell the receiver which bit to repair.</p>
+<section class="walk" aria-label="Compute and test even parity"><h3>Compute and test even parity</h3><div class="example-input"><p>Supplemental only: data <code>1011001</code>, even parity. </p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Count the data ones</h4><p>Input <code>1011001</code> has four ones. The target even count is 4, 6, …</p></section><section class="step"><h4>2. Choose the parity bit</h4><p>Four is already even, so append <code>0</code>. Codeword: <code>10110010</code>.</p></section><section class="step"><h4>3. Flip one bit</h4><p>Flip the first data bit: <code>00110010</code>. It has three ones, so the even-parity test fails and detects corruption.</p></section><section class="step"><h4>4. Flip two bits</h4><p>Starting from the original codeword, flip the first and second data bits: <code>01110010</code>. It still has four ones, so even parity misses this two-bit error. This is why a check is not a correction guarantee.</p></section></section></details>
+
+<h3>The lecture's CRC calculation</h3>
+<p>The deck calls this a “polynomial code checksum.” It is a CRC-style modulo-2 division: XOR replaces ordinary subtraction, and the generator's degree determines how many zero bits are appended before division. A degree-4 generator therefore adds four zeros. The resulting four-bit remainder replaces those appended zeros. It is a check value, not a set of bits that repairs the message.</p>
+<p>This worked calculation preserves slide 16's values. In each division step, align the four-degree generator <code>10011</code> with the leftmost <code>1</code> of the current five-bit window and XOR. If the window begins with zero, do not XOR; bring down the next dividend bit. The viewer keeps each intermediate window visible instead of skipping to the final remainder.</p>
+
+<details class="worked"><summary>Worked source example: CRC-style XOR division, every intermediate decision</summary><section class="walk" aria-label="Generate and verify the lecture codeword"><h3>Generate and verify the lecture codeword</h3><div class="example-input"><p><b>Given:</b> data <code>1101011011</code>; generator <code>10011</code>; degree 4; arithmetic is modulo 2, so subtraction is XOR.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Append four zeroes</h4><p>Data <code>1101011011</code>; generator <code>10011</code> has degree 4. Append four zero bits: dividend <code>11010110110000</code>.</p></section><section class="step"><h4>2. Divide the first five-bit window</h4><p>Window <code>11010</code> begins with 1, so XOR the generator: <code>11010 ⊕ 10011 = 01001</code>. Discard the leading zero and bring down the next dividend bit; the next window is <code>10011</code>.</p></section><section class="step"><h4>3. Divide the next window</h4><p><code>10011 ⊕ 10011 = 00000</code>. After discarding the leading zero and bringing down the next bit, the window is <code>00001</code>.</p></section><section class="step"><h4>4. Leading zero: advance without XOR</h4><p>The window is <code>00001</code>, so do not XOR the generator. Discard the leading zero and bring down the next bit: <code>00010</code>.</p></section><section class="step"><h4>5. Leading zero: advance again</h4><p><code>00010</code> also starts with 0. Keep the data unchanged, advance, and bring down the next bit: <code>00101</code>.</p></section><section class="step"><h4>6. Advance across the next leading zero</h4><p><code>00101</code> starts with 0, so no XOR is applied. Bring down the next dividend bit: <code>01011</code>.</p></section><section class="step"><h4>7. Advance across another leading zero</h4><p><code>01011</code> starts with 0. Do not XOR; advance and bring down the next bit to obtain <code>10110</code>.</p></section><section class="step"><h4>8. Divide the next leading-one window</h4><p><code>10110 ⊕ 10011 = 00101</code>. Discard the leading zero and bring down the next dividend bit: <code>01010</code>.</p></section><section class="step"><h4>9. Advance to the final XOR</h4><p><code>01010</code> starts with 0, so advance without XOR. Bringing down the next bit gives <code>10100</code>.</p></section><section class="step"><h4>10. Divide the final leading-one window</h4><p><code>10100 ⊕ 10011 = 00111</code>. After discarding the leading zero and bringing down the final dividend bit, the remainder window is <code>01110</code>.</p></section><section class="step"><h4>11. Read the remainder and verify the codeword</h4><p><code>01110</code> begins with 0, so there is no final XOR. Drop that leading 0: the degree-4 remainder is <code>1110</code>. Replace the appended zeros to form <code>1101011011 | 1110</code> = <code>11010110111110</code>. Dividing that complete codeword by <code>10011</code> gives remainder <code>0000</code>, an independent check. A nonzero remainder detects corruption (subject to the code’s residual-error limitation).</p></section></section></details>
+
+<h2 id="section-5">Error recovery: FEC and ARQ</h2>
+<p>After a check identifies or suspects corruption, the receiver and sender need a recovery strategy. <strong>Forward error correction (FEC)</strong> adds enough structured redundancy for the receiver to recover some damaged data without requesting a retransmission. The lecture associates it with simplex transmission, CD-ROMs, high-latency links, voice, and video, where waiting for a return exchange may be undesirable. FEC does not promise zero residual errors.</p>
+<p><strong>Automatic Repeat reQuest (ARQ)</strong> uses feedback and retransmission. The receiver acknowledges acceptable data; the sender retries after a negative response or when an expected acknowledgement does not arrive by its timeout. ARQ can recover delivery, but the feedback and waiting cost time. Stop-and-wait is simple and may use the link poorly; continuous ARQ keeps multiple frames outstanding with a sliding window.</p>
+<h3>Stop-and-wait: only one frame is outstanding</h3>
+<p>The sender transmits one frame, then waits for its acknowledgement before sending the next. The lecture's slide 21 shows successful delivery followed by a lost data frame: silence is resolved by timeout and retransmission. Keep failure cases distinct because they leave different knowledge at the receiver and sender.</p>
+
+<details class="worked"><summary>Source trace: data frame lost, then timeout and retransmission</summary><section class="walk" aria-label="Stop-and-wait when data is lost (lecture slide 21)"><h3>Stop-and-wait when data is lost (lecture slide 21)</h3><div class="example-input"><p><b>State:</b> one unacknowledged frame; its timer is running. This is the failure case drawn on slide 21.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Successful exchange establishes the cycle</h4><p>Sender transmits a data frame. Receiver gets it and returns an ACK. The sender can then proceed to its next frame.</p></section><section class="step"><h4>2. The next data frame is lost</h4><p>Sender transmits data, but the receiver gets nothing. Therefore it sends no ACK. The sender cannot infer from silence alone exactly what happened.</p></section><section class="step"><h4>3. Sender timeout expires</h4><p>No ACK has arrived before the timeout. The sender treats the delivery as unresolved and retries the outstanding frame.</p></section><section class="step"><h4>4. Retransmission completes the exchange</h4><p>Receiver gets the retry and returns an ACK. The sender can now advance. Timeout is necessary: waiting forever would deadlock this stop-and-wait exchange.</p></section></section></details>
+
+<details class="worked"><summary>Supplemental teaching trace: data arrives corrupted</summary><section class="walk" aria-label="Stop-and-wait when a check fails"><h3>Stop-and-wait when a check fails</h3><div class="example-input"><p>Supplemental case: the data frame arrives but fails its error check. The original slide only draws a lost-data timeout.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Sender transmits one frame</h4><p>The frame carries its check information. The sender retains a copy until the exchange is acknowledged.</p></section><section class="step"><h4>2. Receiver detects corruption</h4><p>The received check does not match the data. The receiver does not deliver the damaged payload as good data. It may send a negative acknowledgement where supported; otherwise silence lets the sender timeout.</p></section><section class="step"><h4>3. Sender retries the outstanding frame</h4><p>A NAK or timeout causes retransmission under the protocol’s recovery rule. The exact NAK and timer policy is protocol-specific; the lecture’s stop-and-wait figure does not draw this damaged-frame case.</p></section><section class="step"><h4>4. Receiver checks the retry</h4><p>If the retry passes the check, deliver it and ACK it. The independent check is the receiver's validity test; the retry is the recovery action.</p></section></section></details>
+
+<details class="worked"><summary>Supplemental teaching trace: ACK lost after successful delivery</summary><section class="walk" aria-label="Stop-and-wait when the receiver delivered data but the ACK vanished"><h3>Stop-and-wait when the receiver delivered data but the ACK vanished</h3><div class="example-input"><p>Teaching example: the protocol uses sequence identifiers to recognize duplicates after an ACK is lost.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Receiver gets a valid frame</h4><p>It checks and delivers the frame, then sends an ACK. The sender still has no proof of delivery until that ACK arrives.</p></section><section class="step"><h4>2. ACK is lost</h4><p>The sender hears nothing and cannot distinguish a lost ACK from lost data using silence alone. It retains the outstanding frame.</p></section><section class="step"><h4>3. Sender timeout causes a duplicate transmission</h4><p>The sender retransmits. This is the same data frame again, not new application data.</p></section><section class="step"><h4>4. Receiver uses sequence identity</h4><p>A stop-and-wait protocol needs a sequence identifier (often alternating between two values) to recognize the retry as a duplicate. It does not deliver the payload twice; it sends the ACK again.</p></section><section class="step"><h4>5. Sender receives the repeated ACK</h4><p>The sender releases the outstanding frame and advances. The receiver's duplicate check prevents duplicate delivery while allowing recovery from the lost ACK.</p></section></section></details>
+
+<details class="worked"><summary>Supplemental teaching trace: ACK arrives damaged</summary><section class="walk" aria-label="Stop-and-wait when the ACK cannot be trusted"><h3>Stop-and-wait when the ACK cannot be trusted</h3><div class="example-input"><p>Supplemental case: a damaged ACK has the same uncertainty at the sender as an absent ACK; it is not the source figure’s lost-data case.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Data is accepted</h4><p>Receiver validates and delivers the frame, then sends an ACK.</p></section><section class="step"><h4>2. ACK is corrupted in transit</h4><p>Sender cannot safely treat an invalid ACK as proof that the frame was accepted. It keeps the outstanding copy.</p></section><section class="step"><h4>3. Timeout resolves uncertainty</h4><p>If no valid ACK arrives before timeout, sender retransmits. The receiver recognizes a duplicate by sequence identity and ACKs again without redelivering it.</p></section></section></details>
+
+<h2 id="section-6">Continuous ARQ: sequence state and windows</h2>
+<p>With continuous ARQ, the sender can send several frames before pausing for acknowledgements. Both ends track sequence state. The lecture writes <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00056;</mi><mo stretchy="false">&#x00028;</mo><mi>S</mi><mo stretchy="false">&#x00029;</mo></mrow></math> for the next frame sequence number to send and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00056;</mi><mo stretchy="false">&#x00028;</mo><mi>R</mi><mo stretchy="false">&#x00029;</mo></mrow></math> for the next number expected at the receiver. A frame carries its sequence number; a valid in-order frame advances <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00056;</mi><mo stretchy="false">&#x00028;</mo><mi>R</mi><mo stretchy="false">&#x00029;</mo></mrow></math>, and the ACK reports that receive state so the sender can release acknowledged frames from its window. A damaged frame can trigger a NAK. Actual timer and recovery policies vary by protocol; the source's “wait till an ACK comes” wording is incomplete, so use its stop-and-wait timeout/retry idea rather than teaching indefinite waiting.</p>
+<h3>Why the maximum window depends on the ARQ variant</h3>
+<p>Three sequence bits encode eight values, <code>000</code> through <code>111</code>, cycling modulo 8. For the course quiz's Go-Back-N assumption, a sender window can contain at most seven frames: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mn>2</mn><mn>3</mn></msup><mo>&#x02212;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>7</mn></mrow></math>. This leaves one sequence value to distinguish a new frame from an old outstanding one after wraparound. Quiz 1 Q1 expects 7, but its generic “continuous ARQ” wording leaves the variant unstated.</p>
+<p>Selective Repeat can buffer good later frames while a missing frame is recovered. Its sender and receiver windows must avoid confusing old and new sequence numbers after wraparound, so the quiz's Go-Back-N limit must not be applied to every sliding-window protocol. The two recovery procedures below show the distinction taught in the lecture.</p>
+
+<details class="worked"><summary>Worked example: sequence-space bounds for three-bit numbers</summary><section class="walk" aria-label="Compare Go-Back-N and Selective Repeat"><h3>Compare Go-Back-N and Selective Repeat</h3><div class="example-input"><p><b>Given:</b> sequence field width <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi><mo>&#x0003D;</mo><mn>3</mn></mrow></math>; sequence-space size <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>N</mi><mo>&#x0003D;</mo><msup><mn>2</mn><mi>k</mi></msup></mrow></math>; wraparound is modulo <code>N</code>.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Count sequence values</h4><p>Three bits give <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mn>2</mn><mn>3</mn></msup><mo>&#x0003D;</mo><mn>8</mn></mrow></math> sequence values: <code>0…7</code> (or <code>000…111</code>). After 7, numbering wraps to 0.</p></section><section class="step"><h4>2. Apply the Go-Back-N bound</h4><p>With receiver window 1, the sender window is at most one less than the sequence space: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>8</mn><mo>&#x02212;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>7</mn></mrow></math>. This is the course quiz answer.</p></section><section class="step"><h4>3. Identify the variant</h4><p>The seven-frame bound assumes Go-Back-N with receiver window 1. A buffering Selective Repeat receiver follows a different window rule; do not generalize the quiz answer to that case.</p></section><section class="step"><h4>4. Check the quiz answer</h4><p>There are eight sequence values. A Go-Back-N sender may have at most seven outstanding frames, leaving one value outside that window. The expected answer is 7.</p></section></section></details>
+
+<h3>Two receiver strategies after an error</h3>
+<p>The source slide 24 contrasts receiver window size 1 with a larger receive window. In the first case, the receiver accepts only the next expected frame. When frame 2 is damaged, later frames are discarded; the sender goes back and retransmits from 2, then continues. This is Go-Back-N / Reject (REJ).</p>
+<p>With buffering, the receiver can retain good later frames while frame 2 is missing, then use them after frame 2 is recovered. This is the lecture's Selective Reject picture, corresponding to Selective Repeat / SREJ terminology. The approaches differ in what happens to later good frames, not merely in their names. The mapping of Go-Back-N to REJ and Selective Repeat to SREJ is also used in <a href="https://www.rfc-editor.org/rfc/rfc3366.html">RFC 3366</a> and <a href="https://www.itu.int/rec/T-REC-V.76/en">ITU-T V.76 §§6.4.7–6.4.8</a>.</p>
+<p>The recovery figures use the slide’s illustrative frame labels, including labels beyond 7. They are logical positions in those examples, not the literal values of a three-bit sequence field. A real three-bit field wraps from 7 to 0.</p>
+
+<details class="worked"><summary>Source case A: receiver window 1 discards frames after the error</summary><section class="walk" aria-label="Go-Back-N sequence from slide 24(a)"><h3>Go-Back-N sequence from slide 24(a)</h3><div class="example-input"><p><b>Source state:</b> receiver window size 1; sequence labels in the slide begin 0, 1, 2, 3…; frame 2 is the error; later good frames are not buffered.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Frames 0 and 1 arrive in order</h4><p>Receiver accepts 0 and 1; the ACK state advances. Sender may keep sending while its window allows.</p></section><section class="step"><h4>2. Frame 2 is in error</h4><p>Receiver cannot advance its expected state beyond 2. Its receive window is size 1, so frame 3 and subsequent out-of-order frames are discarded rather than stored.</p></section><section class="step"><h4>3. Later frames are discarded while the gap remains</h4><p>Slide 24(a) marks the later received attempts as discarded by the data-link layer. The receiver still expects frame 2.</p></section><section class="step"><h4>4. Sender retries from frame 2</h4><p>After the applicable NAK/timeout recovery, sender retransmits frame 2 and the later outstanding frames (the slide shows 2, 3, 4, …). This is why it is called Go-Back-N / Reject.</p></section><section class="step"><h4>5. Receiver resumes in order</h4><p>Once 2 is accepted, the retransmitted later frames can be accepted in sequence. Check: no later payload was delivered before the missing frame.</p></section></section></details>
+
+<details class="worked"><summary>Source case B: larger receiver window buffers later good frames</summary><section class="walk" aria-label="Selective recovery sequence from slide 24(b)"><h3>Selective recovery sequence from slide 24(b)</h3><div class="example-input"><p><b>Source state:</b> larger receive window; frame 2 is in error; source labels 3, 4, 5 as buffered; NAK/negative feedback identifies frame 2.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Frames 0 and 1 are accepted</h4><p>The receiver advances its expected sequence state through 0 and 1.</p></section><section class="step"><h4>2. Frame 2 is damaged; receiver reports the gap</h4><p>The receiver detects the error at 2 and reports that frame as missing/errored (the source shows a NAK for 2).</p></section><section class="step"><h4>3. Good later frames arrive and are retained</h4><p>Frames 3, 4, and 5 arrive while 2 is missing. Unlike the window-1 case, the larger receiver window buffers these frames rather than discarding them.</p></section><section class="step"><h4>4. Sender selectively retries 2</h4><p>The sender retransmits the missing frame 2. The source figure shows 2 after the later frames have already reached the receiver.</p></section><section class="step"><h4>5. Fill the gap, then release buffered frames in order</h4><p>After 2 passes its check, the receiver can place it before the buffered 3, 4, and 5 and deliver the ordered run. Independent check: the receiver's sequence order is 0, 1, 2, 3, 4, 5 even though arrival order was 0, 1, 3, 4, 5, 2.</p></section></section></details>
+
+<div class="table-scroll"><table><caption>Names used in the course figure and standard terminology</caption><thead><tr><th scope="col">Question</th><th scope="col">Reasoning to recall</th></tr></thead><tbody><tr><td>Go-Back-N / receiver window 1</td><td>Discard later out-of-order frames; retry the errored frame and the subsequent outstanding frames.</td></tr><tr><td>Selective Repeat / larger receive window</td><td>Keep correct later frames; retry the missing or damaged frame; restore in-order delivery after the gap is filled.</td></tr></tbody></table></div>
+<h2 id="section-7">Flow control: keep the sender within receiver capacity</h2>
+<p>Flow control regulates how quickly data is offered so a receiver can keep up. It is not the same as error control: a receiver can be overloaded by correct frames, and a damaged frame can require recovery even when capacity is available.</p>
+<div class="table-scroll"><table><caption>The three flow-control categories on lecture slide 25</caption><thead><tr><th scope="col">Lecture category</th><th scope="col">Signal/setting</th><th scope="col">How it paces data</th></tr></thead><tbody><tr><td>In-band</td><td><code>X-ON / X-OFF</code></td><td>Control characters travel in the same stream/channel as data.</td></tr><tr><td>Out-of-band (lecture wording)</td><td><code>CTS / RTS</code></td><td>Separate control signaling tells the sender whether to proceed. The lecture does not identify a particular interface/protocol.</td></tr><tr><td>Combined with error control</td><td>Sliding-window size</td><td>A smaller receiver window limits outstanding frames; a larger one permits more in flight.</td></tr></tbody></table></div>
+<p>Treat slide 25's CTS/RTS as its flow-control shorthand. RTS/CTS also appears later in the lecture as a shared-medium access method; that MAC reservation topic, including collision and hidden-terminal behavior, belongs on the LAN page. It is not the same explanation as this slide's receiver-pacing category.</p>
+<h2 id="section-8">A brief link to data compression</h2>
+<p>The lecture also lists data compression among Data Link functions (slide 3) and gives a one-slide illustration (slide 26). Its point is that symbol probabilities can be unequal (<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0226B;</mo><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math>) and that likely next symbols can depend on earlier ones, as in the unfinished “Electroni?” prompt. A compressor can use that statistical redundancy to represent common patterns more compactly. This is a short context link; compression algorithms are not developed in this lecture. Shannon's foundational treatment formalizes source statistics and conditional entropy (<a href="https://doi.org/10.1002/j.1538-7305.1948.tb01338.x">Shannon, “A Mathematical Theory of Communication,” 1948</a>).</p>
+<p>Slide 27 then connects encryption to security: it lists privacy/confidentiality and authenticity, an algorithm and key, and single-key versus public-key encryption. Detailed cryptography belongs on the <a href="security.html">Security page</a>. Slides 28–46 develop medium-access methods for shared media; those methods belong on the <a href="lan.html">LAN page</a>, not in this framing and recovery note.</p>
+<h2 id="section-9">Quick revision and practice</h2>
+<p>Keep the distinctions straight: framing marks boundaries; a check detects some corruption; FEC adds local recovery redundancy; ARQ retries based on feedback/timeout; flow control protects receiver capacity. In the lecture and Quiz 1, routing between networks belongs to the Network layer (Q5), while synchronization, error control, and flow control are listed as Data Link functions.</p>
+<p class="question"><b>Quiz 1 Q3.</b> Which OSI layer number is Data Link?</p>
+<details class="worked"><summary>Check your answer</summary><p><b>Layer 2.</b> It moves packets across an adjacent link inside frames.</p></details>
+
+<p class="question"><b>Quiz 1 Q4.</b> How does bit-oriented framing identify a frame boundary?</p>
+<details class="worked"><summary>Check your answer</summary><p>With a <b>flag sequence</b>. The lecture example uses <code>01111110</code> and stuffs payload bits so the flag pattern is not imitated inside the frame.</p></details>
+
+<p class="question"><b>Quiz 1 Q5.</b> Which is not listed as a Data Link function: routing between networks, flow control, synchronization, or error control?</p>
+<details class="worked"><summary>Check your answer</summary><p><b>Routing between networks.</b> The lecture places that responsibility at the Network layer.</p></details>
+
+<p class="question"><b>Quiz 1 Q6.</b> What distinguishes FEC from retransmission-based recovery?</p>
+<details class="worked"><summary>Check your answer</summary><p>FEC adds redundancy that lets the receiver recover some errors without requesting a retransmission. It does not guarantee zero residual errors.</p></details>
+
+<p class="question"><b>Quiz 1 Q7.</b> Name an error-detection method from the lecture.</p>
+<details class="worked"><summary>Check your answer</summary><p><b>CRC</b> (also parity or checksum). Detection alone does not repair the frame.</p></details>
+
+<p class="question"><b>Quiz 1 Q9.</b> What does a link-layer frame encapsulate?</p>
+<details class="worked"><summary>Check your answer</summary><p>A <b>Network-layer packet</b>.</p></details>
+
+<p class="question"><b>Quiz 1 Q1.</b> Three-bit sequence numbers have eight values. What window size does the course expect for continuous ARQ?</p>
+<details class="worked"><summary>Check your answer</summary><p>The quiz expects <b>7</b>, which is the Go-Back-N sender-window limit: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mn>2</mn><mn>3</mn></msup><mo>&#x02212;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>7</mn></mrow></math>. Its question does not name the variant. Selective Repeat has a smaller bound that depends on the exact protocol rule; do not generalize 7 to all sliding-window ARQ.</p></details>
+
+<p class="question">A payload contains six consecutive <code>1</code> bits. What happens during bit stuffing?</p>
+<details class="worked"><summary>Check your answer</summary><p>After the fifth consecutive one, the sender inserts a zero. The receiver removes that zero after it sees the five ones, restoring all six payload ones.</p></details>
+
+<p class="question">A frame is valid, delivered, but its ACK is lost. Why does a sequence identifier matter?</p>
+<details class="worked"><summary>Check your answer</summary><p>The sender times out and retransmits. The receiver uses the identifier to recognize a duplicate, avoids delivering the data twice, and sends the ACK again.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="osi.html"><small>Previous</small>OSI model and encapsulation <span aria-hidden="true">↗</span></a><a href="wan.html"><small>Next</small>WAN and MAN technologies <span aria-hidden="true">↗</span></a></nav><footer>Networks field notes <span>Follow the packet. Explain the decision.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  root.querySelectorAll('table').forEach(table => {
+    const region = document.createElement('div');
+    region.className = 'table-scroll' + (table.rows[0]?.cells.length > 5 ? ' wide' : '');
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    table.before(region); region.append(table);
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Network diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {osi:'layers encapsulation protocol service interface pdu',link:'framing crc parity arq flow control sliding window',ethernet:'mac switch arp csma token lab',wan:'man atm isdn frame relay x25',routing:'network forwarding distance vector link state dijkstra',ipv4:'ip subnet mask vlsm binary cidr lab',ipv6:'ip address compression transition lab',transport:'tcp udp handshake congestion window port',bluetooth:'wireless nfc zigbee wpan beacon quiz',security:'cia attacks cryptography encryption hash authentication',infrastructure:'pki certificate ca trust revocation signature',tls:'ssl ipsec ah esp tunnel sa',design:'requirements topology availability delay bandwidth'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('a').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('cns-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.CNS_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) expand.textContent = 'Expand examples';
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

@@ -1,0 +1,812 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Choose a short-range network by matching its topology, protocol support, energy use and application role to what devices actually need to exchange."><title>Bluetooth, NFC and ZigBee · Networks field notes</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('cns-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{.table-hint{display:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#243740;--muted:#5e737d;--secondary:#edf2f3;--border:#d5e0e3;--primary:#1e647c;--accent:#dcecf0;--diagram-fill:#eff4f5;--diagram-border:#829da8;--diagram-edge:#65838f;--active-text:#174b61;--focus:#227b98}:root[data-theme=dark]{--background:#141d23;--foreground:#e1eaf0;--muted:#a8beca;--card:#1a2730;--secondary:#22333e;--border:#3b505c;--primary:#90d1e4;--accent:#254757;--diagram-fill:#22333e;--diagram-border:#93b2c1;--diagram-edge:#9bbac9;--topbar:#141d23f5;--active-text:#b6e5f1;--focus:#90d1e4} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> CNS <span class="subbrand">field notes</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Subnet, TCP, TLS…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a href="index.html">Computer networks and security</a></div><div class="nav-group"><p>Foundations</p><a href="osi.html">OSI model and encapsulation</a><a href="data-link.html">Data link framing, errors and flow control</a><a href="wan.html">WAN and MAN technologies</a><a href="lan.html">LAN, Ethernet and switching</a></div><div class="nav-group"><p>Internetworking</p><a href="routing.html">Network layer and routing</a><a href="ipv4.html">IPv4 addressing, subnetting and VLSM</a><a href="ip-delivery.html">IP packets, ARP, ICMP, DHCP and NAT</a><a href="ipv6.html">IPv6 addressing and transition</a></div><div class="nav-group"><p>Transport and wireless</p><a href="transport.html">Transport services and connections</a><a href="short-range.html" aria-current="page">Bluetooth, NFC and ZigBee</a></div><div class="nav-group"><p>Security and design</p><a href="security.html">Security foundations and cryptography</a><a href="pki.html">Public key infrastructure</a><a href="secure-protocols.html">IPsec and TLS</a><a href="network-design.html">Network design</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS3131<br>Computer Networks and Security</div></aside>
+<main id="main"><div class="eyebrow">Transport and wireless <span>/</span> Lecture 8 · Other networks</div><h1>Bluetooth, NFC and ZigBee</h1><p class="lead">Choose a short-range network by matching its topology, protocol support, energy use and application role to what devices actually need to exchange.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Choosing communication for a room-light control task</a><a href="#section-2">Bluetooth: personal-device links</a><a href="#section-3">NFC: intentional close-proximity exchange</a><a href="#section-4">ZigBee: low-rate sensing and control</a><a href="#section-5">Comparing the lecture’s examples</a><a href="#section-6">Common confusions</a><a href="#section-7">Quick revision</a><a href="#section-8">Practice</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>TCP/IP is useful for general-purpose communication, but small nearby devices may need less data, less energy, smaller hardware, or a different topology. Bluetooth, NFC and ZigBee show how the network should fit the application. Start by deciding what the devices must exchange and how they are organised, then compare range, rate, power, cost, and interoperability. A gateway can connect a specialised local network to an IP service when needed.</p>
+<h2 id="section-1">Choosing communication for a room-light control task</h2>
+<p>The lecture asks groups of three to design communication for several lights in one room: choose connectivity topology, define a simple command protocol, estimate its payload and compare TCP and UDP overhead across transport, IP and Ethernet. An explicit <code>SET light-id ON</code> or <code>SET light-id OFF</code> command is easier to retry safely than <code>TOGGLE</code>: if a command is duplicated, “set ON” leaves the same state while a second toggle undoes the first. The byte calculation below uses the sizes in the lecturer’s speaker note and declares the otherwise-unspecified payload.</p>
+<details class="worked"><summary>Worked example: one-byte room-light command overhead</summary><section class="walk" aria-label="Count the lecturer’s stated overhead sizes"><h3>Count the lecturer’s stated overhead sizes</h3><div class="example-input"><p>Lecturer’s simplified sizes: TCP 20 bytes; UDP 8 bytes; IP 20 bytes; MAC 18 bytes; preamble 8 bytes. Teaching assumption: command payload = 1 byte.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · State the payload assumption</h4><p>For this teaching calculation, use exactly <strong>1 byte of command payload</strong>: bits 7–5 identify one of eight lights (IDs 0–7), bit 4 is the desired state (0 = OFF, 1 = ON), and bits 3–0 are reserved as zero. Example: light 3 ON is <code>0111 0000</code> (0x70). This encoding and payload size are teaching assumptions, not lecturer-provided values.</p></section><section class="step"><h4>2 · Add UDP, IP, MAC and preamble</h4><p>Payload <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002B;</mo><mn>8</mn><mo>&#x0002B;</mo><mn>20</mn><mo>&#x0002B;</mo><mn>18</mn><mo>&#x0002B;</mo><mn>8</mn><mo>&#x0003D;</mo><mn>55</mn></mrow></math> bytes transmitted. Header and link overhead is 54 bytes.</p></section><section class="step"><h4>3 · Add TCP, IP, MAC and preamble</h4><p>Payload <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002B;</mo><mn>20</mn><mo>&#x0002B;</mo><mn>20</mn><mo>&#x0002B;</mo><mn>18</mn><mo>&#x0002B;</mo><mn>8</mn><mo>&#x0003D;</mo><mn>67</mn></mrow></math> bytes transmitted. Header and link overhead is 66 bytes.</p></section><section class="step"><h4>4 · Compare payload share and check</h4><p>UDP case: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mn>55</mn></mrow></mfrac><mo>&#x02248;</mo><mn>1.82</mn><mi>&#x00025;</mi></mrow></math>. TCP case: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mn>67</mn></mrow></mfrac><mo>&#x02248;</mo><mn>1.49</mn><mi>&#x00025;</mi></mrow></math>. Check: both totals include every size listed in the note exactly once. They are the lecture activity’s simplified accounting; no Ethernet padding, inter-frame gap, ACK, retransmission, or connection setup is added. See <a href="transport.html">Transport services</a> for transport behavior.</p></section></section></details>
+<p>A small direct-control network does not automatically need a full IP stack. If the application later needs remote monitoring or integration, keep that as an explicit gateway or interoperability decision. Detailed TCP/UDP behavior belongs in <a href="transport.html">Transport services</a>.</p>
+<h2 id="section-2">Bluetooth: personal-device links</h2>
+<p>The lecture presents Bluetooth as cable replacement, multiparty exchange and communication among personal trusted devices. It notes Ericsson’s role in development and the Bluetooth SIG’s management. Its version-specific illustration gives Classic Bluetooth 2.0 a shared 2.1 Mbps rate and about 10 m range in the 2.4–2.48 GHz ISM band. These are historical lecture figures, not universal current limits. Example devices include phones, laptops, peripherals, printers, headsets, speakers, fitness/healthcare devices, car kits and navigation equipment.</p>
+<h3>Stack responsibilities and profiles</h3>
+<p>The stack divides radio-link control, adaptation and application services. Baseband manages physical channels and links, including frequency hopping/time division, error correction, whitening, hop selection and security. LMP sets up and controls a radio link, including link authentication and power management in the lecture’s table. HCI is the host/controller software interface. L2CAP multiplexes logical connections and segments/reassembles packets. SDP discovers another device’s services and their parameters. RFCOMM emulates a serial line; TCS-BIN supports telephone control; OBEX exchanges structured objects. The slide’s audio path is drawn directly over lower layers, so do not assume it always follows the same stack path as data protocols.</p>
+<p>Usage examples in the slide place Sync/IrMC, file transfer/OBEX, dial-up/AT commands, fax/TCS-BIN, headset/audio, LAN access/TCP-IP/PPP and cordless phone over shared lower layers. Profiles define possible applications and their expected behavior on top of the core specification and, where needed, extra protocols. The named profiles are HFP (Hands-Free), BPP (Basic Printing), AVRCP (Audio/Video Remote Control), FTP (File Transfer), HID (Human Interface Device), PAN (Personal Area Networking) and GOEP (Generic Object Exchange, using OBEX).</p>
+<div class="table-scroll"><table><thead><tr><th scope="col">Layer or protocol</th><th scope="col">What it contributes</th></tr></thead><tbody><tr><td>Baseband</td><td>Physical channels/links; hopping, time division, error correction, whitening and hop selection</td></tr><tr><td>LMP</td><td>Radio-link setup and control</td></tr><tr><td>HCI</td><td>Host-to-controller interface and status</td></tr><tr><td>L2CAP</td><td>Logical-channel multiplexing; segmentation and reassembly</td></tr><tr><td>SDP</td><td>Service and parameter discovery</td></tr><tr><td>RFCOMM / OBEX / TCS-BIN</td><td>Serial-line emulation / object exchange / telephone control</td></tr></tbody></table></div>
+<figure><div class="diagram-frame" style="--diagram-width:408.1px"><svg role="img" aria-label="Classic Bluetooth piconet: slaves communicate through the coordinating master; the model allows up to seven active slaves." width="408pt" height="139pt"
+ viewBox="0.00 0.00 408.10 138.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="short-range-bluetooth-piconet-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- master -->
+<g id="short-range-bluetooth-piconet-node1" class="node">
+<title>master</title>
+<path fill="var(--accent,#d5e9d5)" stroke="var(--primary,#25633a)" stroke-width="2" d="M220,-117C220,-117 167,-117 167,-117 161,-117 155,-111 155,-105 155,-105 155,-93 155,-93 155,-87 161,-81 167,-81 167,-81 220,-81 220,-81 226,-81 232,-87 232,-93 232,-93 232,-105 232,-105 232,-111 226,-117 220,-117"/>
+<text text-anchor="middle" x="193.5" y="-95.5" font-family="Georgia" font-size="15.00">Master</text>
+</g>
+<!-- phone -->
+<g id="short-range-bluetooth-piconet-node2" class="node">
+<title>phone</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M67,-36C67,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 67,0 67,0 73,0 79,-6 79,-12 79,-12 79,-24 79,-24 79,-30 73,-36 67,-36"/>
+<text text-anchor="middle" x="39.5" y="-14.5" font-family="Georgia" font-size="15.00">Slave A</text>
+</g>
+<!-- master&#45;&gt;phone -->
+<g id="short-range-bluetooth-piconet-edge1" class="edge">
+<title>master&#45;&gt;phone</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M154.81,-93.96C129.85,-89.84 97.64,-81.56 73.5,-65 62.85,-57.7 54.25,-45.95 48.37,-36.15"/>
+<text text-anchor="middle" x="117" y="-55.4" font-family="Georgia" font-size="12.00">scheduled link</text>
+</g>
+<!-- laptop -->
+<g id="short-range-bluetooth-piconet-node3" class="node">
+<title>laptop</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M170.5,-36C170.5,-36 114.5,-36 114.5,-36 108.5,-36 102.5,-30 102.5,-24 102.5,-24 102.5,-12 102.5,-12 102.5,-6 108.5,0 114.5,0 114.5,0 170.5,0 170.5,0 176.5,0 182.5,-6 182.5,-12 182.5,-12 182.5,-24 182.5,-24 182.5,-30 176.5,-36 170.5,-36"/>
+<text text-anchor="middle" x="142.5" y="-14.5" font-family="Georgia" font-size="15.00">Slave B</text>
+</g>
+<!-- master&#45;&gt;laptop -->
+<g id="short-range-bluetooth-piconet-edge2" class="edge">
+<title>master&#45;&gt;laptop</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M182.43,-80.86C173.88,-67.61 162.09,-49.35 153.54,-36.11"/>
+</g>
+<!-- printer -->
+<g id="short-range-bluetooth-piconet-node4" class="node">
+<title>printer</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M272.5,-36C272.5,-36 216.5,-36 216.5,-36 210.5,-36 204.5,-30 204.5,-24 204.5,-24 204.5,-12 204.5,-12 204.5,-6 210.5,0 216.5,0 216.5,0 272.5,0 272.5,0 278.5,0 284.5,-6 284.5,-12 284.5,-12 284.5,-24 284.5,-24 284.5,-30 278.5,-36 272.5,-36"/>
+<text text-anchor="middle" x="244.5" y="-14.5" font-family="Georgia" font-size="15.00">Slave C</text>
+</g>
+<!-- master&#45;&gt;printer -->
+<g id="short-range-bluetooth-piconet-edge3" class="edge">
+<title>master&#45;&gt;printer</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M204.57,-80.86C213.12,-67.61 224.91,-49.35 233.46,-36.11"/>
+</g>
+<!-- sensor -->
+<g id="short-range-bluetooth-piconet-node5" class="node">
+<title>sensor</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M374.5,-36C374.5,-36 318.5,-36 318.5,-36 312.5,-36 306.5,-30 306.5,-24 306.5,-24 306.5,-12 306.5,-12 306.5,-6 312.5,0 318.5,0 318.5,0 374.5,0 374.5,0 380.5,0 386.5,-6 386.5,-12 386.5,-12 386.5,-24 386.5,-24 386.5,-30 380.5,-36 374.5,-36"/>
+<text text-anchor="middle" x="346.5" y="-14.5" font-family="Georgia" font-size="15.00">Slave D</text>
+</g>
+<!-- master&#45;&gt;sensor -->
+<g id="short-range-bluetooth-piconet-edge4" class="edge">
+<title>master&#45;&gt;sensor</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M226.7,-80.86C252.36,-67.61 287.72,-49.35 313.37,-36.11"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Classic Bluetooth piconet: slaves communicate through the coordinating master; the model allows up to seven active slaves.</figcaption></figure>
+<h3>Classic piconets and scatternets</h3>
+<p>In the lecture’s <strong>Classic</strong> piconet, one master coordinates active slaves. Slaves do not exchange data directly; a slave-to-slave message goes through the master. The source gives up to seven active slaves and 255 parked slaves. Preserve “Classic”: these are not general Bluetooth Low Energy limits. Connecting two or more piconets through a device that participates across them forms a scatternet.</p>
+<details class="worked"><summary>Worked trace: Slave A sends to Slave B</summary><section class="walk" aria-label="Follow the Classic piconet path"><h3>Follow the Classic piconet path</h3><div class="example-input"><p>Starting state: one Classic piconet with master M and active slaves A and B. A has one message addressed to B.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Slave A has data for Slave B</h4><p>In the Classic piconet model, the slaves do not send directly to each other. A sends its data through the master.</p></section><section class="step"><h4>2 · Master coordinates delivery</h4><p>The master receives the data and coordinates a transmission to B on the piconet link.</p></section><section class="step"><h4>3 · Check the model limits</h4><p>The piconet has one master, up to seven active slaves and up to 255 parked slaves in the lecture’s Classic model. The path A → master → B respects the no-slave-to-slave rule.</p></section></section></details>
+<figure><div class="diagram-frame" style="--diagram-width:483.6px"><svg role="img" aria-label="A device participating across two piconets links them into a scatternet." width="484pt" height="138pt"
+ viewBox="0.00 0.00 483.60 137.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="short-range-bluetooth-scatternet-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 126.8)">
+<title>G</title>
+<!-- ma -->
+<g id="short-range-bluetooth-scatternet-node1" class="node">
+<title>ma</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M145.5,-116C145.5,-116 75.5,-116 75.5,-116 69.5,-116 63.5,-110 63.5,-104 63.5,-104 63.5,-80 63.5,-80 63.5,-74 69.5,-68 75.5,-68 75.5,-68 145.5,-68 145.5,-68 151.5,-68 157.5,-74 157.5,-80 157.5,-80 157.5,-104 157.5,-104 157.5,-110 151.5,-116 145.5,-116"/>
+<text text-anchor="middle" x="110.5" y="-97" font-family="Georgia" font-size="15.00">Piconet A</text>
+<text text-anchor="middle" x="110.5" y="-80" font-family="Georgia" font-size="15.00">Master</text>
+</g>
+<!-- a1 -->
+<g id="short-range-bluetooth-scatternet-node2" class="node">
+<title>a1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M77,-36C77,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 77,0 77,0 83,0 89,-6 89,-12 89,-12 89,-24 89,-24 89,-30 83,-36 77,-36"/>
+<text text-anchor="middle" x="44.5" y="-14.5" font-family="Georgia" font-size="15.00">Slave A1</text>
+</g>
+<!-- ma&#45;&gt;a1 -->
+<g id="short-range-bluetooth-scatternet-edge1" class="edge">
+<title>ma&#45;&gt;a1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M89.25,-67.82C79.91,-57.63 69.12,-45.85 60.47,-36.42"/>
+</g>
+<!-- bridge -->
+<g id="short-range-bluetooth-scatternet-node3" class="node">
+<title>bridge</title>
+<path fill="var(--accent,#d5e9d5)" stroke="var(--primary,#25633a)" stroke-width="2" d="M227.5,-36C227.5,-36 123.5,-36 123.5,-36 117.5,-36 111.5,-30 111.5,-24 111.5,-24 111.5,-12 111.5,-12 111.5,-6 117.5,0 123.5,0 123.5,0 227.5,0 227.5,0 233.5,0 239.5,-6 239.5,-12 239.5,-12 239.5,-24 239.5,-24 239.5,-30 233.5,-36 227.5,-36"/>
+<text text-anchor="middle" x="175.5" y="-14.5" font-family="Georgia" font-size="15.00">Bridge device</text>
+</g>
+<!-- ma&#45;&gt;bridge -->
+<g id="short-range-bluetooth-scatternet-edge2" class="edge">
+<title>ma&#45;&gt;bridge</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M131.42,-67.82C140.63,-57.63 151.26,-45.85 159.77,-36.42"/>
+</g>
+<!-- mb -->
+<g id="short-range-bluetooth-scatternet-node4" class="node">
+<title>mb</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M342,-116C342,-116 271,-116 271,-116 265,-116 259,-110 259,-104 259,-104 259,-80 259,-80 259,-74 265,-68 271,-68 271,-68 342,-68 342,-68 348,-68 354,-74 354,-80 354,-80 354,-104 354,-104 354,-110 348,-116 342,-116"/>
+<text text-anchor="middle" x="306.5" y="-97" font-family="Georgia" font-size="15.00">Piconet B</text>
+<text text-anchor="middle" x="306.5" y="-80" font-family="Georgia" font-size="15.00">Master</text>
+</g>
+<!-- mb&#45;&gt;bridge -->
+<g id="short-range-bluetooth-scatternet-edge3" class="edge">
+<title>mb&#45;&gt;bridge</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M264.33,-67.82C245.63,-57.55 224.01,-45.66 206.79,-36.2"/>
+</g>
+<!-- b1 -->
+<g id="short-range-bluetooth-scatternet-node5" class="node">
+<title>b1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M339,-36C339,-36 274,-36 274,-36 268,-36 262,-30 262,-24 262,-24 262,-12 262,-12 262,-6 268,0 274,0 274,0 339,0 339,0 345,0 351,-6 351,-12 351,-12 351,-24 351,-24 351,-30 345,-36 339,-36"/>
+<text text-anchor="middle" x="306.5" y="-14.5" font-family="Georgia" font-size="15.00">Slave B1</text>
+</g>
+<!-- mb&#45;&gt;b1 -->
+<g id="short-range-bluetooth-scatternet-edge4" class="edge">
+<title>mb&#45;&gt;b1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M306.5,-67.82C306.5,-57.63 306.5,-45.85 306.5,-36.42"/>
+</g>
+<!-- b2 -->
+<g id="short-range-bluetooth-scatternet-node6" class="node">
+<title>b2</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M450,-36C450,-36 385,-36 385,-36 379,-36 373,-30 373,-24 373,-24 373,-12 373,-12 373,-6 379,0 385,0 385,0 450,0 450,0 456,0 462,-6 462,-12 462,-12 462,-24 462,-24 462,-30 456,-36 450,-36"/>
+<text text-anchor="middle" x="417.5" y="-14.5" font-family="Georgia" font-size="15.00">Slave B2</text>
+</g>
+<!-- mb&#45;&gt;b2 -->
+<g id="short-range-bluetooth-scatternet-edge5" class="edge">
+<title>mb&#45;&gt;b2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M342.23,-67.82C358.08,-57.55 376.39,-45.66 390.99,-36.2"/>
+</g>
+</g>
+</svg>
+</div><figcaption>A device participating across two piconets links them into a scatternet.</figcaption></figure>
+<p><strong>Version note.</strong> The lecture and Quiz 2 associate Classic, High Speed and Low Energy with Bluetooth 4.0, and describes High Speed as Wi-Fi based. Preserve that as the course’s version-era summary, but distinguish lineage: Bluetooth SIG describes LE as introduced in Core 4.0, while High Speed appeared with Core 3.0+HS. The 4.0 wording should not imply High Speed originated there. <a href="https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Core-54/out/en/architecture%2C-mixing%2C-and-conventions/core-specification-change-history.html">Bluetooth Core change history</a>. The slide 37 “3 channels” figure is a simplified comparison: LE has 40 channels, of which 3 are primary advertising channels and 37 are general-purpose channels (<a href="https://www.bluetooth.com/learn-about-bluetooth/tech-overview/">Bluetooth SIG overview</a>).</p>
+<h2 id="section-3">NFC: intentional close-proximity exchange</h2>
+<p>The lecture’s historical timeline says NFC began in 2004 through Nokia, Philips and Sony, followed by a Nokia phone in 2006 and an Android phone in 2010. Its application collage includes transport/check-in, mobile identification, marketing, payments and social interaction.</p>
+<p>Near Field Communication couples devices through nearby antenna coils and a magnetic field, as the lecture’s reader/tag figure shows. The lecture gives 13.56 MHz, at most 10 cm, and 106–424 kbps; retain these as course figures rather than current universal guarantees. NFC is convenient, low-cost, low-energy and avoids a separate search-and-pair procedure, but has low range and data rate. The lecture calls proximity “better security”; treat that as a limited advantage, not a security guarantee. Short distance can reduce exposure, but does not itself authenticate a peer or secure an application. NFC Forum describes authentication, access control and encryption as additional measures (<a href="https://nfc-forum.org/news/2019-12-nfc-and-security-faq-available-online/">NFC security FAQ</a>). Its current overview gives different typical range and rate figures, illustrating why values are version/context dependent (<a href="https://nfc-forum.org/learn/nfc-technology/">NFC technical overview</a>).</p>
+<h3>Two independent ways to describe NFC operation</h3>
+<p><strong>Active/passive</strong> answers which device produces the field. In active mode, both devices generate a field (the lecture’s example: two phones). In passive mode, one active reader supplies the field and the other device responds using it (phone reading an RFID-tagged poster). Separately, the application can use card emulation, peer-to-peer or reader/writer mode. Card emulation lets a phone act like a contactless smart card for payment or ticketing through existing readers. Peer-to-peer exchanges data such as business cards, photos, or Bluetooth/Wi-Fi setup information; the slide shows LLCP and protocol bindings such as IP/OBEX. Reader/writer reads or writes NFC Forum tag types using RTD/NDEF. The stack figures label Type 1–4 tags and a separate Type 3/FeliCa path alongside NFC-A, NFC-B and NFC-F; named examples include Topaz, MIFARE and FeliCa, not universal product requirements. A mode switch connects these application paths to radio support such as ISO 18092, ISO 14443 A/B and FeliCa. Touch &amp; Go, Touch &amp; Confirm and Touch &amp; Connect are application interaction patterns, not synonyms for active/passive.</p>
+<figure><div class="diagram-frame" style="--diagram-width:534.1px"><svg role="img" aria-label="NFC application roles are separate from the active/passive choice about which device generates the RF field." width="534pt" height="138pt"
+ viewBox="0.00 0.00 534.10 137.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="short-range-nfc-roles-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 126.8)">
+<title>G</title>
+<!-- app -->
+<g id="short-range-nfc-roles-node1" class="node">
+<title>app</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M351,-116C351,-116 174,-116 174,-116 168,-116 162,-110 162,-104 162,-104 162,-92 162,-92 162,-86 168,-80 174,-80 174,-80 351,-80 351,-80 357,-80 363,-86 363,-92 363,-92 363,-104 363,-104 363,-110 357,-116 351,-116"/>
+<text text-anchor="middle" x="262.5" y="-94.5" font-family="Georgia" font-size="15.00">Choose application role</text>
+</g>
+<!-- card -->
+<g id="short-range-nfc-roles-node2" class="node">
+<title>card</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M153,-48C153,-48 12,-48 12,-48 6,-48 0,-42 0,-36 0,-36 0,-12 0,-12 0,-6 6,0 12,0 12,0 153,0 153,0 159,0 165,-6 165,-12 165,-12 165,-36 165,-36 165,-42 159,-48 153,-48"/>
+<text text-anchor="middle" x="82.5" y="-29" font-family="Georgia" font-size="15.00">Card emulation</text>
+<text text-anchor="middle" x="82.5" y="-12" font-family="Georgia" font-size="15.00">phone acts as card</text>
+</g>
+<!-- app&#45;&gt;card -->
+<g id="short-range-nfc-roles-edge1" class="edge">
+<title>app&#45;&gt;card</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M219.84,-79.94C197.8,-71.12 170.47,-60.19 146,-50.4"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="146.53,-48.35 140.17,-48.07 144.97,-52.25 146.53,-48.35"/>
+</g>
+<!-- peer -->
+<g id="short-range-nfc-roles-node3" class="node">
+<title>peer</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M326,-48C326,-48 199,-48 199,-48 193,-48 187,-42 187,-36 187,-36 187,-12 187,-12 187,-6 193,0 199,0 199,0 326,0 326,0 332,0 338,-6 338,-12 338,-12 338,-36 338,-36 338,-42 332,-48 326,-48"/>
+<text text-anchor="middle" x="262.5" y="-29" font-family="Georgia" font-size="15.00">Peer&#45;to&#45;peer</text>
+<text text-anchor="middle" x="262.5" y="-12" font-family="Georgia" font-size="15.00">two NFC devices</text>
+</g>
+<!-- app&#45;&gt;peer -->
+<g id="short-range-nfc-roles-edge2" class="edge">
+<title>app&#45;&gt;peer</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M262.5,-79.94C262.5,-72.31 262.5,-63.09 262.5,-54.41"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="264.6,-54.21 262.5,-48.21 260.4,-54.21 264.6,-54.21"/>
+</g>
+<!-- reader -->
+<g id="short-range-nfc-roles-node4" class="node">
+<title>reader</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M500.5,-48C500.5,-48 372.5,-48 372.5,-48 366.5,-48 360.5,-42 360.5,-36 360.5,-36 360.5,-12 360.5,-12 360.5,-6 366.5,0 372.5,0 372.5,0 500.5,0 500.5,0 506.5,0 512.5,-6 512.5,-12 512.5,-12 512.5,-36 512.5,-36 512.5,-42 506.5,-48 500.5,-48"/>
+<text text-anchor="middle" x="436.5" y="-29" font-family="Georgia" font-size="15.00">Reader/writer</text>
+<text text-anchor="middle" x="436.5" y="-12" font-family="Georgia" font-size="15.00">read or write tag</text>
+</g>
+<!-- app&#45;&gt;reader -->
+<g id="short-range-nfc-roles-edge3" class="edge">
+<title>app&#45;&gt;reader</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M303.74,-79.94C325.04,-71.12 351.47,-60.19 375.12,-50.4"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="376.01,-52.3 380.75,-48.07 374.4,-48.42 376.01,-52.3"/>
+</g>
+</g>
+</svg>
+</div><figcaption>NFC application roles are separate from the active/passive choice about which device generates the RF field.</figcaption></figure>
+<details class="worked"><summary>Worked classification: phone reads an RFID poster</summary><section class="walk" aria-label="Separate NFC application role from field mode"><h3>Separate NFC application role from field mode</h3><div class="example-input"><p>Scenario from the lecture and Quiz 2: a phone reads an RFID-tagged poster.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Phone approaches a tagged poster</h4><p>The phone is the reader/initiator and generates the electromagnetic field.</p></section><section class="step"><h4>2 · Tag responds using that field</h4><p>The poster’s passive tag uses the reader’s field to exchange information; it does not generate its own field. This is <strong>passive mode</strong>.</p></section><section class="step"><h4>3 · Name both dimensions</h4><p>Application role: reader/writer. Field generation: active phone with passive tag. These labels answer different questions, so “reader/writer” does not mean “active mode.”</p></section></section></details>
+<h2 id="section-4">ZigBee: low-rate sensing and control</h2>
+<p>The lecture associates ZigBee with low power, long battery life, low data rate, small/simple circuits and lower cost. The application collage covers patient and fitness monitoring; building security, HVAC (heating, ventilation and air conditioning), lighting, access control and irrigation; asset, environmental and energy management; industrial/process control; telecom/m-commerce; and consumer peripherals such as remotes. These are use examples, not a promise that every ZigBee deployment shares one range or lifetime.</p>
+<p>IEEE 802.15.4 supplies the PHY and MAC layers for a low-rate WPAN. ZigBee adds network construction, application support, application/device objects and higher-layer services. ZigBee profiles specify offered services and a common data language; profile/device descriptions have unique identifiers licensed by the ZigBee Alliance to support interoperability across manufacturers. This layer distinction is supported by the <a href="https://csa-iot.org/wp-content/uploads/2023/04/05-3474-23-csg-zigbee-specification-compressed.pdf">Zigbee specification</a>.</p>
+<h3>Device capabilities and network shapes</h3>
+<p>An IEEE 802.15.4 <strong>FFD</strong> can act as PAN coordinator, coordinator or simple device and communicate with FFDs or RFDs. An <strong>RFD</strong> is intended for simple, low-volume applications that communicate with a particular FFD. Capability is not the same thing as a network topology role: “FFD/RFD” describes device function, while “coordinator/router/end device” describes participation in a network.</p>
+<figure><div class="diagram-frame" style="--diagram-width:311.6px"><svg role="img" aria-label="Star: every device communicates through the PAN coordinator." width="312pt" height="126pt"
+ viewBox="0.00 0.00 311.60 125.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="short-range-zigbee-star-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 114.8)">
+<title>G</title>
+<!-- coord -->
+<g id="short-range-zigbee-star-node1" class="node">
+<title>coord</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M207.5,-104C207.5,-104 82.5,-104 82.5,-104 76.5,-104 70.5,-98 70.5,-92 70.5,-92 70.5,-80 70.5,-80 70.5,-74 76.5,-68 82.5,-68 82.5,-68 207.5,-68 207.5,-68 213.5,-68 219.5,-74 219.5,-80 219.5,-80 219.5,-92 219.5,-92 219.5,-98 213.5,-104 207.5,-104"/>
+<text text-anchor="middle" x="145" y="-82.5" font-family="Georgia" font-size="15.00">PAN coordinator</text>
+</g>
+<!-- f1 -->
+<g id="short-range-zigbee-star-node2" class="node">
+<title>f1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M44,-36C44,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 44,0 44,0 50,0 56,-6 56,-12 56,-12 56,-24 56,-24 56,-30 50,-36 44,-36"/>
+<text text-anchor="middle" x="28" y="-14.5" font-family="Georgia" font-size="15.00">FFD</text>
+</g>
+<!-- coord&#45;&gt;f1 -->
+<g id="short-range-zigbee-star-edge1" class="edge">
+<title>coord&#45;&gt;f1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M114.57,-67.83C96.55,-57.67 73.89,-44.89 56.27,-34.95"/>
+</g>
+<!-- f2 -->
+<g id="short-range-zigbee-star-node3" class="node">
+<title>f2</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M122,-36C122,-36 90,-36 90,-36 84,-36 78,-30 78,-24 78,-24 78,-12 78,-12 78,-6 84,0 90,0 90,0 122,0 122,0 128,0 134,-6 134,-12 134,-12 134,-24 134,-24 134,-30 128,-36 122,-36"/>
+<text text-anchor="middle" x="106" y="-14.5" font-family="Georgia" font-size="15.00">FFD</text>
+</g>
+<!-- coord&#45;&gt;f2 -->
+<g id="short-range-zigbee-star-edge2" class="edge">
+<title>coord&#45;&gt;f2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M134.75,-67.66C129.07,-58.03 122.01,-46.1 116.31,-36.45"/>
+</g>
+<!-- r1 -->
+<g id="short-range-zigbee-star-node4" class="node">
+<title>r1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M200,-36C200,-36 168,-36 168,-36 162,-36 156,-30 156,-24 156,-24 156,-12 156,-12 156,-6 162,0 168,0 168,0 200,0 200,0 206,0 212,-6 212,-12 212,-12 212,-24 212,-24 212,-30 206,-36 200,-36"/>
+<text text-anchor="middle" x="184" y="-14.5" font-family="Georgia" font-size="15.00">RFD</text>
+</g>
+<!-- coord&#45;&gt;r1 -->
+<g id="short-range-zigbee-star-edge3" class="edge">
+<title>coord&#45;&gt;r1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M155.25,-67.66C160.93,-58.03 167.99,-46.1 173.69,-36.45"/>
+</g>
+<!-- r2 -->
+<g id="short-range-zigbee-star-node5" class="node">
+<title>r2</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M278,-36C278,-36 246,-36 246,-36 240,-36 234,-30 234,-24 234,-24 234,-12 234,-12 234,-6 240,0 246,0 246,0 278,0 278,0 284,0 290,-6 290,-12 290,-12 290,-24 290,-24 290,-30 284,-36 278,-36"/>
+<text text-anchor="middle" x="262" y="-14.5" font-family="Georgia" font-size="15.00">RFD</text>
+</g>
+<!-- coord&#45;&gt;r2 -->
+<g id="short-range-zigbee-star-edge4" class="edge">
+<title>coord&#45;&gt;r2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M175.43,-67.83C193.45,-57.67 216.11,-44.89 233.73,-34.95"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Star: every device communicates through the PAN coordinator.</figcaption></figure>
+<figure><div class="diagram-frame" style="--diagram-width:171.1px"><svg role="img" aria-label="Mesh: FFD routers provide alternate paths; the RFD attaches to a particular FFD." width="171pt" height="194pt"
+ viewBox="0.00 0.00 171.10 193.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="short-range-zigbee-mesh-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 182.8)">
+<title>G</title>
+<!-- f1 -->
+<g id="short-range-zigbee-mesh-node1" class="node">
+<title>f1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M94,-172C94,-172 47,-172 47,-172 41,-172 35,-166 35,-160 35,-160 35,-148 35,-148 35,-142 41,-136 47,-136 47,-136 94,-136 94,-136 100,-136 106,-142 106,-148 106,-148 106,-160 106,-160 106,-166 100,-172 94,-172"/>
+<text text-anchor="middle" x="70.5" y="-150.5" font-family="Georgia" font-size="15.00">FFD A</text>
+</g>
+<!-- f2 -->
+<g id="short-range-zigbee-mesh-node2" class="node">
+<title>f2</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M59,-104C59,-104 12,-104 12,-104 6,-104 0,-98 0,-92 0,-92 0,-80 0,-80 0,-74 6,-68 12,-68 12,-68 59,-68 59,-68 65,-68 71,-74 71,-80 71,-80 71,-92 71,-92 71,-98 65,-104 59,-104"/>
+<text text-anchor="middle" x="35.5" y="-82.5" font-family="Georgia" font-size="15.00">FFD B</text>
+</g>
+<!-- f1&#45;&gt;f2 -->
+<g id="short-range-zigbee-mesh-edge1" class="edge">
+<title>f1&#45;&gt;f2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M61.3,-135.66C56.2,-126.03 49.87,-114.1 44.76,-104.45"/>
+</g>
+<!-- f3 -->
+<g id="short-range-zigbee-mesh-node3" class="node">
+<title>f3</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M59,-36C59,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 59,0 59,0 65,0 71,-6 71,-12 71,-12 71,-24 71,-24 71,-30 65,-36 59,-36"/>
+<text text-anchor="middle" x="35.5" y="-14.5" font-family="Georgia" font-size="15.00">FFD C</text>
+</g>
+<!-- f1&#45;&gt;f3 -->
+<g id="short-range-zigbee-mesh-edge3" class="edge">
+<title>f1&#45;&gt;f3</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M77.93,-135.77C84.4,-118.14 91.45,-90.26 82.5,-68 77.58,-55.75 67.96,-44.84 58.71,-36.44"/>
+</g>
+<!-- f2&#45;&gt;f3 -->
+<g id="short-range-zigbee-mesh-edge2" class="edge">
+<title>f2&#45;&gt;f3</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M35.5,-67.66C35.5,-58.03 35.5,-46.1 35.5,-36.45"/>
+</g>
+<!-- r1 -->
+<g id="short-range-zigbee-mesh-node4" class="node">
+<title>r1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M137.5,-36C137.5,-36 105.5,-36 105.5,-36 99.5,-36 93.5,-30 93.5,-24 93.5,-24 93.5,-12 93.5,-12 93.5,-6 99.5,0 105.5,0 105.5,0 137.5,0 137.5,0 143.5,0 149.5,-6 149.5,-12 149.5,-12 149.5,-24 149.5,-24 149.5,-30 143.5,-36 137.5,-36"/>
+<text text-anchor="middle" x="121.5" y="-14.5" font-family="Georgia" font-size="15.00">RFD</text>
+</g>
+<!-- f2&#45;&gt;r1 -->
+<g id="short-range-zigbee-mesh-edge4" class="edge">
+<title>f2&#45;&gt;r1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M58.1,-67.66C70.74,-57.96 86.44,-45.91 99.06,-36.22"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Mesh: FFD routers provide alternate paths; the RFD attaches to a particular FFD.</figcaption></figure>
+<figure><div class="diagram-frame" style="--diagram-width:265.6px"><svg role="img" aria-label="Cluster tree: each child has one parent path; a failed parent can disconnect its branch." width="266pt" height="262pt"
+ viewBox="0.00 0.00 265.60 261.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="short-range-zigbee-tree-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 250.8)">
+<title>G</title>
+<!-- coord -->
+<g id="short-range-zigbee-tree-node1" class="node">
+<title>coord</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M185.5,-240C185.5,-240 57.5,-240 57.5,-240 51.5,-240 45.5,-234 45.5,-228 45.5,-228 45.5,-216 45.5,-216 45.5,-210 51.5,-204 57.5,-204 57.5,-204 185.5,-204 185.5,-204 191.5,-204 197.5,-210 197.5,-216 197.5,-216 197.5,-228 197.5,-228 197.5,-234 191.5,-240 185.5,-240"/>
+<text text-anchor="middle" x="121.5" y="-218.5" font-family="Georgia" font-size="15.00">Root coordinator</text>
+</g>
+<!-- f1 -->
+<g id="short-range-zigbee-tree-node2" class="node">
+<title>f1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M99,-172C99,-172 12,-172 12,-172 6,-172 0,-166 0,-160 0,-160 0,-148 0,-148 0,-142 6,-136 12,-136 12,-136 99,-136 99,-136 105,-136 111,-142 111,-148 111,-148 111,-160 111,-160 111,-166 105,-172 99,-172"/>
+<text text-anchor="middle" x="55.5" y="-150.5" font-family="Georgia" font-size="15.00">FFD parent</text>
+</g>
+<!-- coord&#45;&gt;f1 -->
+<g id="short-range-zigbee-tree-edge1" class="edge">
+<title>coord&#45;&gt;f1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M104.16,-203.66C94.53,-194.03 82.6,-182.1 72.95,-172.45"/>
+</g>
+<!-- f2 -->
+<g id="short-range-zigbee-tree-node3" class="node">
+<title>f2</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M232,-172C232,-172 145,-172 145,-172 139,-172 133,-166 133,-160 133,-160 133,-148 133,-148 133,-142 139,-136 145,-136 145,-136 232,-136 232,-136 238,-136 244,-142 244,-148 244,-148 244,-160 244,-160 244,-166 238,-172 232,-172"/>
+<text text-anchor="middle" x="188.5" y="-150.5" font-family="Georgia" font-size="15.00">FFD parent</text>
+</g>
+<!-- coord&#45;&gt;f2 -->
+<g id="short-range-zigbee-tree-edge2" class="edge">
+<title>coord&#45;&gt;f2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M139.1,-203.66C148.87,-194.03 160.99,-182.1 170.78,-172.45"/>
+</g>
+<!-- f3 -->
+<g id="short-range-zigbee-tree-node4" class="node">
+<title>f3</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M92,-104C92,-104 19,-104 19,-104 13,-104 7,-98 7,-92 7,-92 7,-80 7,-80 7,-74 13,-68 19,-68 19,-68 92,-68 92,-68 98,-68 104,-74 104,-80 104,-80 104,-92 104,-92 104,-98 98,-104 92,-104"/>
+<text text-anchor="middle" x="55.5" y="-82.5" font-family="Georgia" font-size="15.00">FFD child</text>
+</g>
+<!-- f1&#45;&gt;f3 -->
+<g id="short-range-zigbee-tree-edge3" class="edge">
+<title>f1&#45;&gt;f3</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M55.5,-135.66C55.5,-126.03 55.5,-114.1 55.5,-104.45"/>
+</g>
+<!-- f4 -->
+<g id="short-range-zigbee-tree-node5" class="node">
+<title>f4</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M225,-104C225,-104 152,-104 152,-104 146,-104 140,-98 140,-92 140,-92 140,-80 140,-80 140,-74 146,-68 152,-68 152,-68 225,-68 225,-68 231,-68 237,-74 237,-80 237,-80 237,-92 237,-92 237,-98 231,-104 225,-104"/>
+<text text-anchor="middle" x="188.5" y="-82.5" font-family="Georgia" font-size="15.00">FFD child</text>
+</g>
+<!-- f2&#45;&gt;f4 -->
+<g id="short-range-zigbee-tree-edge5" class="edge">
+<title>f2&#45;&gt;f4</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M188.5,-135.66C188.5,-126.03 188.5,-114.1 188.5,-104.45"/>
+</g>
+<!-- r1 -->
+<g id="short-range-zigbee-tree-node6" class="node">
+<title>r1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M71.5,-36C71.5,-36 39.5,-36 39.5,-36 33.5,-36 27.5,-30 27.5,-24 27.5,-24 27.5,-12 27.5,-12 27.5,-6 33.5,0 39.5,0 39.5,0 71.5,0 71.5,0 77.5,0 83.5,-6 83.5,-12 83.5,-12 83.5,-24 83.5,-24 83.5,-30 77.5,-36 71.5,-36"/>
+<text text-anchor="middle" x="55.5" y="-14.5" font-family="Georgia" font-size="15.00">RFD</text>
+</g>
+<!-- f3&#45;&gt;r1 -->
+<g id="short-range-zigbee-tree-edge4" class="edge">
+<title>f3&#45;&gt;r1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M55.5,-67.66C55.5,-58.03 55.5,-46.1 55.5,-36.45"/>
+</g>
+<!-- r2 -->
+<g id="short-range-zigbee-tree-node7" class="node">
+<title>r2</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M204.5,-36C204.5,-36 172.5,-36 172.5,-36 166.5,-36 160.5,-30 160.5,-24 160.5,-24 160.5,-12 160.5,-12 160.5,-6 166.5,0 172.5,0 172.5,0 204.5,0 204.5,0 210.5,0 216.5,-6 216.5,-12 216.5,-12 216.5,-24 216.5,-24 216.5,-30 210.5,-36 204.5,-36"/>
+<text text-anchor="middle" x="188.5" y="-14.5" font-family="Georgia" font-size="15.00">RFD</text>
+</g>
+<!-- f4&#45;&gt;r2 -->
+<g id="short-range-zigbee-tree-edge6" class="edge">
+<title>f4&#45;&gt;r2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M188.5,-67.66C188.5,-58.03 188.5,-46.1 188.5,-36.45"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Cluster tree: each child has one parent path; a failed parent can disconnect its branch.</figcaption></figure>
+<div class="table-scroll"><table><thead><tr><th scope="col">Topology</th><th scope="col">How traffic is organised</th><th scope="col">Trade-off in the lecture</th></tr></thead><tbody><tr><td>Star</td><td>Each device communicates through the coordinator.</td><td>Easy to synchronise and low latency; limited scale.</td></tr><tr><td>Mesh / peer-to-peer</td><td>Routing-capable devices can forward along alternate paths.</td><td>Robust multihop, multipath, flexible and lower latency; route discovery and routing-table storage cost resources.</td></tr><tr><td>Cluster tree</td><td>Devices form parent-child branches from a root.</td><td>Low routing cost, multihop and scalable; route reconstruction can be costly and latency long. A failed parent can isolate its branch.</td></tr></tbody></table></div>
+<p>The cluster-tree slide’s last disadvantage is malformed (“Root not becomes a single point of failure”), while Quiz 2 explicitly says the root is a single point of failure. A tree has no alternate parent path around a failed link, so root/parent dependence is the safe interpretation; do not describe the tree as multipath. Mesh’s extra discovery and stored routing state buy alternate paths.</p>
+<h3>Beacon timing, sleeping and polling</h3>
+<p>Beacon-enabled operation periodically announces a superframe. A device listens, synchronises, learns when the contention access period is available, then competes with peers to transmit. Coordinator and end devices can sleep between active periods, reducing energy, but precise timing is required; the slide gives beacon periods from milliseconds to minutes. Without beacons, the coordinator/router stays awake while end devices can follow different power schedules. The lecture calls this a heterogeneous network with asymmetric power use rather than synchronised sleep.</p>
+<h3>Device to coordinator</h3>
+<details class="worked"><summary>Transfer with a beacon</summary><section class="walk" aria-label="Device → coordinator · beacon-enabled"><h3>Device → coordinator · beacon-enabled</h3><div class="example-input"><p>Beacon-enabled network; device has data for its PAN coordinator.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Beacon and synchronise</h4><p>The coordinator periodically sends a beacon. The device listens, synchronises to the superframe, and learns the contention access period timing.</p></section><section class="step"><h4>2 · Contend and send</h4><p>The device competes with peers for channel access and sends its data on its turn.</p></section><section class="step"><h4>3 · Optional acknowledgement</h4><p>The coordinator may acknowledge when acknowledgements are enabled. Check: device sleep is possible between active periods, but accurate beacon timing is required.</p></section></section></details>
+
+<details class="worked"><summary>Transfer without a beacon</summary><section class="walk" aria-label="Device → coordinator · non-beacon"><h3>Device → coordinator · non-beacon</h3><div class="example-input"><p>Non-beacon network; device has data for its coordinator.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Device starts transfer</h4><p>The device initiates the data transmission; it does not wait for a periodic beacon.</p></section><section class="step"><h4>2 · Coordinator receives</h4><p>The coordinator or router must remain awake to receive traffic in this mode.</p></section><section class="step"><h4>3 · Optional acknowledgement</h4><p>An acknowledgement may follow if enabled. Check: this avoids beacon synchronisation, but always-awake infrastructure and asymmetric power schedules cost energy.</p></section></section></details>
+<h3>Coordinator to device</h3>
+<details class="worked"><summary>Indirect transfer with a beacon</summary><section class="walk" aria-label="Coordinator → device · beacon-enabled polling"><h3>Coordinator → device · beacon-enabled polling</h3><div class="example-input"><p>Coordinator has buffered data for a beacon-tracking device.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Coordinator advertises pending data</h4><p>The coordinator lists the device in the beacon’s pending-address fields.</p></section><section class="step"><h4>2 · Device requests its data</h4><p>After reading the beacon, the device sends a Data Request command. This poll lets a sleeping device decide when to receive.</p></section><section class="step"><h4>3 · Coordinator acknowledges request</h4><p>The coordinator acknowledges the Data Request.</p></section><section class="step"><h4>4 · Data and optional acknowledgement</h4><p>The coordinator sends buffered data. The device acknowledges when acknowledgements are required. Check: beacon → request → acknowledgement → data → optional acknowledgement.</p></section></section></details>
+
+<details class="worked"><summary>Polling without a beacon</summary><section class="walk" aria-label="Coordinator → device · non-beacon polling"><h3>Coordinator → device · non-beacon polling</h3><div class="example-input"><p>Non-beacon network; coordinator has data, and the device polls its coordinator.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Device polls</h4><p>With no beacon to announce pending data, the device initiates a Data Request to ask whether the coordinator has data.</p></section><section class="step"><h4>2 · Coordinator acknowledges</h4><p>The coordinator acknowledges the request.</p></section><section class="step"><h4>3 · Coordinator sends data</h4><p>If data is pending, the coordinator transmits it; the device may acknowledge the data.</p></section><section class="step"><h4>4 · Compare the start signal</h4><p>The shared point is polling. Beacon mode tells the device that data is pending; non-beacon mode begins with the device’s request. Do not omit the request step.</p></section></section></details>
+<h3>Route discovery and maintenance</h3>
+<p>The lecture describes a 16-bit network address space. A sender first checks its routing table. If no active route exists, it broadcasts RREQ; routers establish entries toward the source as the request propagates. An endpoint router replies with RREP, allowing entries toward the destination and a source-side next hop to be recorded. The lecture’s diagram illustrates this exchange but does not define the link labels as a metric or specify a general shortest-path algorithm.</p>
+<details class="worked"><summary>Worked trace: RREQ and RREP from A to B</summary><section class="walk" aria-label="Follow the source graph without inventing a route metric"><h3>Follow the source graph without inventing a route metric</h3><div class="example-input"><p>Starting state: A has no active route to B. Edge values are copied as displayed but have no defined metric.</p><figure><div class="diagram-frame" style="--diagram-width:497.6px"><svg role="img" aria-label="Source graph for route discovery. Directed RREQ exploration is A→U→C→B and A→L→D→C/E; edge labels are copied from the slide, with no metric defined." width="498pt" height="127pt"
+ viewBox="0.00 0.00 497.60 126.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="short-range-zigbee-route-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 115.8)">
+<title>G</title>
+<!-- a -->
+<g id="short-range-zigbee-route-node1" class="node">
+<title>a</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M42,-78C42,-78 12,-78 12,-78 6,-78 0,-72 0,-66 0,-66 0,-54 0,-54 0,-48 6,-42 12,-42 12,-42 42,-42 42,-42 48,-42 54,-48 54,-54 54,-54 54,-66 54,-66 54,-72 48,-78 42,-78"/>
+<text text-anchor="middle" x="27" y="-56.5" font-family="Georgia" font-size="15.00">A</text>
+</g>
+<!-- u -->
+<g id="short-range-zigbee-route-node2" class="node">
+<title>u</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M206,-105C206,-105 176,-105 176,-105 170,-105 164,-99 164,-93 164,-93 164,-81 164,-81 164,-75 170,-69 176,-69 176,-69 206,-69 206,-69 212,-69 218,-75 218,-81 218,-81 218,-93 218,-93 218,-99 212,-105 206,-105"/>
+<text text-anchor="middle" x="191" y="-83.5" font-family="Georgia" font-size="15.00">U</text>
+</g>
+<!-- a&#45;&gt;u -->
+<g id="short-range-zigbee-route-edge1" class="edge">
+<title>a&#45;&gt;u</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M54.03,-64.34C82.17,-69.03 127.07,-76.51 157.5,-81.58"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="157.5,-83.71 163.77,-82.63 158.19,-79.57 157.5,-83.71"/>
+<text text-anchor="middle" x="74" y="-71.4" font-family="Georgia" font-size="12.00">1</text>
+</g>
+<!-- l -->
+<g id="short-range-zigbee-route-node5" class="node">
+<title>l</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M136,-51C136,-51 106,-51 106,-51 100,-51 94,-45 94,-39 94,-39 94,-27 94,-27 94,-21 100,-15 106,-15 106,-15 136,-15 136,-15 142,-15 148,-21 148,-27 148,-27 148,-39 148,-39 148,-45 142,-51 136,-51"/>
+<text text-anchor="middle" x="121" y="-29.5" font-family="Georgia" font-size="15.00">L</text>
+</g>
+<!-- a&#45;&gt;l -->
+<g id="short-range-zigbee-route-edge4" class="edge">
+<title>a&#45;&gt;l</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M54.13,-50.99C59.36,-49.27 64.84,-47.53 70,-46 75.8,-44.28 82.02,-42.56 88.04,-40.97"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="88.69,-42.97 93.96,-39.42 87.62,-38.91 88.69,-42.97"/>
+<text text-anchor="middle" x="74" y="-49.4" font-family="Georgia" font-size="12.00">5</text>
+</g>
+<!-- c -->
+<g id="short-range-zigbee-route-node3" class="node">
+<title>c</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M370,-100C370,-100 340,-100 340,-100 334,-100 328,-94 328,-88 328,-88 328,-76 328,-76 328,-70 334,-64 340,-64 340,-64 370,-64 370,-64 376,-64 382,-70 382,-76 382,-76 382,-88 382,-88 382,-94 376,-100 370,-100"/>
+<text text-anchor="middle" x="355" y="-78.5" font-family="Georgia" font-size="15.00">C</text>
+</g>
+<!-- u&#45;&gt;c -->
+<g id="short-range-zigbee-route-edge2" class="edge">
+<title>u&#45;&gt;c</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M218.03,-86.2C246.17,-85.33 291.07,-83.94 321.5,-83"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="321.84,-85.09 327.77,-82.81 321.71,-80.9 321.84,-85.09"/>
+<text text-anchor="middle" x="261" y="-89.4" font-family="Georgia" font-size="12.00">2</text>
+</g>
+<!-- b -->
+<g id="short-range-zigbee-route-node4" class="node">
+<title>b</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M464,-100C464,-100 434,-100 434,-100 428,-100 422,-94 422,-88 422,-88 422,-76 422,-76 422,-70 428,-64 434,-64 434,-64 464,-64 464,-64 470,-64 476,-70 476,-76 476,-76 476,-88 476,-88 476,-94 470,-100 464,-100"/>
+<text text-anchor="middle" x="449" y="-78.5" font-family="Georgia" font-size="15.00">B</text>
+</g>
+<!-- c&#45;&gt;b -->
+<g id="short-range-zigbee-route-edge3" class="edge">
+<title>c&#45;&gt;b</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M382.12,-82C392.51,-82 404.58,-82 415.52,-82"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="415.82,-84.1 421.82,-82 415.82,-79.9 415.82,-84.1"/>
+<text text-anchor="middle" x="402" y="-85.4" font-family="Georgia" font-size="12.00">3</text>
+</g>
+<!-- d -->
+<g id="short-range-zigbee-route-node6" class="node">
+<title>d</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M276,-44C276,-44 246,-44 246,-44 240,-44 234,-38 234,-32 234,-32 234,-20 234,-20 234,-14 240,-8 246,-8 246,-8 276,-8 276,-8 282,-8 288,-14 288,-20 288,-20 288,-32 288,-32 288,-38 282,-44 276,-44"/>
+<text text-anchor="middle" x="261" y="-22.5" font-family="Georgia" font-size="15.00">D</text>
+</g>
+<!-- l&#45;&gt;d -->
+<g id="short-range-zigbee-route-edge5" class="edge">
+<title>l&#45;&gt;d</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M148.28,-31.67C170.82,-30.52 203.39,-28.87 227.55,-27.65"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="227.93,-29.73 233.82,-27.33 227.72,-25.53 227.93,-29.73"/>
+<text text-anchor="middle" x="191" y="-34.4" font-family="Georgia" font-size="12.00">1</text>
+</g>
+<!-- d&#45;&gt;c -->
+<g id="short-range-zigbee-route-edge6" class="edge">
+<title>d&#45;&gt;c</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M288.12,-41.9C298.8,-48.4 311.25,-55.98 322.44,-62.79"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="321.6,-64.74 327.82,-66.06 323.78,-61.15 321.6,-64.74"/>
+<text text-anchor="middle" x="308" y="-59.4" font-family="Georgia" font-size="12.00">2</text>
+</g>
+<!-- e -->
+<g id="short-range-zigbee-route-node7" class="node">
+<title>e</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M370,-36C370,-36 340,-36 340,-36 334,-36 328,-30 328,-24 328,-24 328,-12 328,-12 328,-6 334,0 340,0 340,0 370,0 370,0 376,0 382,-6 382,-12 382,-12 382,-24 382,-24 382,-30 376,-36 370,-36"/>
+<text text-anchor="middle" x="355" y="-14.5" font-family="Georgia" font-size="15.00">E</text>
+</g>
+<!-- d&#45;&gt;e -->
+<g id="short-range-zigbee-route-edge7" class="edge">
+<title>d&#45;&gt;e</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M288.1,-20.24C293.34,-19.31 298.83,-18.49 304,-18 309.65,-17.47 315.67,-17.21 321.51,-17.11"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="321.76,-19.21 327.75,-17.07 321.73,-15.01 321.76,-19.21"/>
+<text text-anchor="middle" x="308" y="-21.4" font-family="Georgia" font-size="12.00">4</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Source graph for route discovery. Directed RREQ exploration is A→U→C→B and A→L→D→C/E; edge labels are copied from the slide, with no metric defined.</figcaption></figure></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Start at A and inspect the graph</h4><p>No active route to B is available. The labelled links are A–U 1, U–C 2, C–B 3, A–L 5, L–D 1, D–C 2 and D–E 4. The lecture does not define what the numbers measure.</p></section><section class="step"><h4>2 · Broadcast route request</h4><p>A broadcasts RREQ. It propagates through reachable routers, including the branches shown in the source: A→U→C→B and A→L→D→C/E. Routers retain information for hops back toward A.</p></section><section class="step"><h4>3 · Endpoint replies</h4><p>B responds with RREP along the depicted reverse path B→C→U→A. This is the route reply path shown by the lecture figure.</p></section><section class="step"><h4>4 · Record a usable next hop</h4><p>A records U as its next hop toward B. Independent check: distinguish the broader request exploration from the return reply path. Do not infer a shortest-path algorithm from the edge labels.</p></section></section></details>
+
+<details class="worked"><summary>Worked traces: two different route failures</summary><h4>One failed neighbor with a repair threshold</h4>
+<section class="walk" aria-label="Neighbor delivery failures reach the repair threshold"><h3>Neighbor delivery failures reach the repair threshold</h3><div class="example-input"><p>Starting state: an existing route has a neighbor whose deliveries are failing; no threshold value is supplied by the lecture.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Track failed deliveries</h4><p>The router records failed deliveries to a neighbor while the route is in use.</p></section><section class="step"><h4>2 · Compare with the configured threshold</h4><p>When failures reach the threshold, the lecture says to initiate route repair. It does not supply a numeric threshold or a specific repair algorithm.</p></section><section class="step"><h4>3 · Control repair traffic</h4><p>Repair traffic adds network load. The independent check is to repair after the threshold described by the implementation, while avoiding repeated uncontrolled discovery.</p></section></section>
+<h4>Total network loss</h4>
+<section class="walk" aria-label="Total connectivity loss: orphan and reassociate"><h3>Total connectivity loss: orphan and reassociate</h3><div class="example-input"><p>Starting state: the device has lost connectivity to the network, not merely one next-hop delivery.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Detect loss of network connectivity</h4><p>This is different from one neighbor failing while another route may remain usable.</p></section><section class="step"><h4>2 · Use the orphaning procedure</h4><p>The lecture names orphaning for total connectivity loss; it does not provide the procedure’s internal message sequence.</p></section><section class="step"><h4>3 · Reassociate with the network</h4><p>After orphan handling, the device reassociates. Check: local route repair and total-loss rejoin are distinct responses.</p></section></section></details>
+<p>Routing checks for an existing entry, tries discovery when possible and can fall back to hierarchical routing. Maintenance tracks failed neighbor deliveries and repairs after a threshold; too much repair traffic can itself load the network. If connectivity is entirely lost, the device uses orphaning and reassociates with the network.</p>
+<h2 id="section-5">Comparing the lecture’s examples</h2>
+<details class="worked"><summary>Teaching example: choose a network for a sensor building</summary><p><strong>Given:</strong> thousands of battery-powered sensors and light controllers; messages are small and infrequent; batteries should last months to years.</p>
+<p><strong>Reasoning:</strong> prioritize low data rate, low power, and a topology that can cover a larger installation. The lecture presents ZigBee as low-rate/low-power, with star, mesh and cluster-tree choices and a months/years illustrative power profile. NFC is too close-range for building coverage; the lecture’s Wi-Fi profile uses more power; Bluetooth LE’s comparison profile is shorter. The quiz therefore selects ZigBee for this scenario.</p>
+<p><strong>Check:</strong> this is a lecture-based fit for the stated requirements, not a guarantee of a node count, range or battery life in an actual deployment.</p></details>
+<p>The slide’s comparison is useful for exam recall, but its range, rate, channels, node count and power profile are illustrative historical figures, not modern guarantees or a product-selection specification. In particular, its “7” belongs to the Classic Bluetooth piconet model; “100+ m” for ZigBee depends on conditions and topology; “months/years” is a workload-dependent power profile. The slide’s 65,000 ZigBee node figure is a comparison-table claim, not a general capacity guarantee.</p>
+<div class="table-scroll"><table><caption>Values from the lecture’s illustrative comparison table.</caption><thead><tr><th scope="col">Lecture comparison</th><th scope="col">Bluetooth LE</th><th scope="col">ZigBee</th><th scope="col">NFC</th><th scope="col">Low-power Wi-Fi</th></tr></thead><tbody><tr><td>Frequency (MHz)</td><td>2402–2482</td><td>868–868.8; 902–928; 2402–2482</td><td>13.56</td><td>2400–2500</td></tr><tr><td>Channels shown</td><td>3*</td><td>16</td><td>1</td><td>3</td></tr><tr><td>Modulation shown</td><td>GFSK</td><td>BPSK / QPSK</td><td>ASK</td><td>64-QAM</td></tr><tr><td>Maximum potential rate</td><td>1 Mbps</td><td>250 kbps</td><td>424 kbps</td><td>54 Mbps</td></tr><tr><td>Range shown</td><td>10 m</td><td>100+ m</td><td>10 cm</td><td>30 m</td></tr><tr><td>Power profile shown</td><td>Days</td><td>Months/years</td><td>Months/years</td><td>Hours</td></tr><tr><td>Complexity</td><td>Complex</td><td>Simple</td><td>Simple</td><td>Complex</td></tr><tr><td>Nodes/master shown</td><td>7†</td><td>65,000</td><td>1+1</td><td>Not shown</td></tr><tr><td>Extendibility shown</td><td>No</td><td>Yes</td><td>No</td><td>Yes</td></tr></tbody></table></div>
+<p><small>*The lecture lists three BLE channels; these are its simplified comparison figure, not the total LE channel count. Bluetooth SIG specifies 40 LE channels, including three primary advertising and 37 general-purpose channels. †The slide places “7” under Bluetooth LE, but its separate piconet description makes the seven-active-slave limit specific to Classic Bluetooth; do not treat it as a BLE limit. The slide 38 ZigBee/Z-Wave/6LoWPAN comparison is omitted because its source gives no measurement assumptions for ratings such as “low reliability” or “not suitable for industrial/military use.”</small></p>
+
+<h2 id="section-6">Common confusions</h2>
+<ul>
+<li>Do not mix Bluetooth Classic piconet limits with general Bluetooth Low Energy connection behavior.</li>
+<li>Do not let an NFC application role (reader/writer, peer-to-peer, card emulation) stand in for active/passive field generation.</li>
+<li>IEEE 802.15.4 is not the complete ZigBee stack; it contributes PHY and MAC.</li>
+<li>A mesh has routing discovery/state and can offer alternate paths; a pure tree does not.</li>
+<li>Beacon mode trades synchronization requirements for coordinated sleep; non-beacon mode keeps coordinator/router infrastructure awake.</li>
+<li>“Close range” or “better security” does not replace authentication and application protection.</li>
+</ul>
+<h2 id="section-7">Quick revision</h2>
+<ul>
+<li><strong>Bluetooth Classic:</strong> personal links; master-coordinated piconet; up to seven active slaves in the lecture model; no direct slave-to-slave traffic. LMP controls links, L2CAP multiplexes/adapts, SDP discovers services, and profiles define application behavior.</li>
+<li><strong>NFC:</strong> 13.56 MHz in the lecture; active/passive describes field generation. Card emulation, peer-to-peer and reader/writer describe application role.</li>
+<li><strong>ZigBee:</strong> IEEE 802.15.4 PHY/MAC plus ZigBee networking/application services; FFD/RFD capabilities; star, mesh and tree have different routing costs; beacon and polling sequences support low-power devices.</li>
+<li><strong>Route discovery:</strong> check route → broadcast RREQ → endpoint returns RREP → record route/next hop; repair and reassociate when needed.</li>
+</ul>
+<h2 id="section-8">Practice</h2>
+<p class="question"><strong>Q:</strong> Why might a one-byte control payload be a small fraction of a packet?</p>
+<details class="worked"><summary>Check your answer</summary><p>The lecturer’s simplified headers add 54 bytes around UDP or 66 around TCP when IP, MAC and preamble are counted, so the command is only <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mn>55</mn></mrow></mfrac><mo>&#x02248;</mo><mn>1.82</mn><mi>&#x00025;</mi></mrow></math> or <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mn>67</mn></mrow></mfrac><mo>&#x02248;</mo><mn>1.49</mn><mi>&#x00025;</mi></mrow></math> of the resulting total.</p></details>
+<p class="question"><strong>Q:</strong> Can two Classic piconet slaves communicate directly?</p>
+<details class="worked"><summary>Check your answer</summary><p>No. The master coordinates the exchange; a message goes from the first slave through the master to the second.</p></details>
+<p class="question"><strong>Q:</strong> A phone reads an RFID poster. What are its NFC labels?</p>
+<details class="worked"><summary>Check your answer</summary><p>It is reader/writer at the application level, and the exchange is passive because the phone supplies the field and the tag responds using it.</p></details>
+<p class="question"><strong>Q:</strong> What does IEEE 802.15.4 provide to ZigBee?</p>
+<details class="worked"><summary>Check your answer</summary><p>The PHY and MAC for a low-rate WPAN. ZigBee adds network construction and application support above them.</p></details>
+<p class="question"><strong>Q:</strong> Which ZigBee topology offers multipath, and what does it cost?</p>
+<details class="worked"><summary>Check your answer</summary><p>Mesh/peer-to-peer can provide alternate paths, but route discovery and routing-table storage use resources.</p></details>
+<p class="question"><strong>Q:</strong> In beacon-enabled indirect delivery, what does the device do after seeing its address in pending data?</p>
+<details class="worked"><summary>Check your answer</summary><p>It sends a Data Request; the coordinator acknowledges, sends the buffered data, and the device acknowledges if required.</p></details>
+<p class="question"><strong>Q:</strong> What does A learn after the shown RREQ/RREP exchange to B?</p>
+<details class="worked"><summary>Check your answer</summary><p>The depicted RREP returns B→C→U→A, so A can record U as its next hop toward B. The link labels do not establish a shortest-path metric.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="transport.html"><small>Previous</small>Transport services and connections <span aria-hidden="true">↗</span></a><a href="security.html"><small>Next</small>Security foundations and cryptography <span aria-hidden="true">↗</span></a></nav><footer>Networks field notes <span>Follow the packet. Explain the decision.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  root.querySelectorAll('table').forEach(table => {
+    const region = document.createElement('div');
+    region.className = 'table-scroll' + (table.rows[0]?.cells.length > 5 ? ' wide' : '');
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    table.before(region); region.append(table);
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Network diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {osi:'layers encapsulation protocol service interface pdu',link:'framing crc parity arq flow control sliding window',ethernet:'mac switch arp csma token lab',wan:'man atm isdn frame relay x25',routing:'network forwarding distance vector link state dijkstra',ipv4:'ip subnet mask vlsm binary cidr lab',ipv6:'ip address compression transition lab',transport:'tcp udp handshake congestion window port',bluetooth:'wireless nfc zigbee wpan beacon quiz',security:'cia attacks cryptography encryption hash authentication',infrastructure:'pki certificate ca trust revocation signature',tls:'ssl ipsec ah esp tunnel sa',design:'requirements topology availability delay bandwidth'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('a').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('cns-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.CNS_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) expand.textContent = 'Expand examples';
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

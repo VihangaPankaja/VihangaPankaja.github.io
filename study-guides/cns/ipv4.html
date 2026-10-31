@@ -1,0 +1,785 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="A prefix divides each 32-bit IPv4 address into a network and host part. Once that boundary is clear, you can calculate subnet ranges, check local membership, aggregate routes and allocate mixed-size networks without overlap."><title>IPv4 addressing, subnetting and VLSM · Networks field notes</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('cns-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{.table-hint{display:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#243740;--muted:#5e737d;--secondary:#edf2f3;--border:#d5e0e3;--primary:#1e647c;--accent:#dcecf0;--diagram-fill:#eff4f5;--diagram-border:#829da8;--diagram-edge:#65838f;--active-text:#174b61;--focus:#227b98}:root[data-theme=dark]{--background:#141d23;--foreground:#e1eaf0;--muted:#a8beca;--card:#1a2730;--secondary:#22333e;--border:#3b505c;--primary:#90d1e4;--accent:#254757;--diagram-fill:#22333e;--diagram-border:#93b2c1;--diagram-edge:#9bbac9;--topbar:#141d23f5;--active-text:#b6e5f1;--focus:#90d1e4} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> CNS <span class="subbrand">field notes</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Subnet, TCP, TLS…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a href="index.html">Computer networks and security</a></div><div class="nav-group"><p>Foundations</p><a href="osi.html">OSI model and encapsulation</a><a href="data-link.html">Data link framing, errors and flow control</a><a href="wan.html">WAN and MAN technologies</a><a href="lan.html">LAN, Ethernet and switching</a></div><div class="nav-group"><p>Internetworking</p><a href="routing.html">Network layer and routing</a><a href="ipv4.html" aria-current="page">IPv4 addressing, subnetting and VLSM</a><a href="ip-delivery.html">IP packets, ARP, ICMP, DHCP and NAT</a><a href="ipv6.html">IPv6 addressing and transition</a></div><div class="nav-group"><p>Transport and wireless</p><a href="transport.html">Transport services and connections</a><a href="short-range.html">Bluetooth, NFC and ZigBee</a></div><div class="nav-group"><p>Security and design</p><a href="security.html">Security foundations and cryptography</a><a href="pki.html">Public key infrastructure</a><a href="secure-protocols.html">IPsec and TLS</a><a href="network-design.html">Network design</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS3131<br>Computer Networks and Security</div></aside>
+<main id="main"><div class="eyebrow">Internetworking <span>/</span> Lecture 6 · Labs 2.1–2.2</div><h1>IPv4 addressing, subnetting and VLSM</h1><p class="lead">A prefix divides each 32-bit IPv4 address into a network and host part. Once that boundary is clear, you can calculate subnet ranges, check local membership, aggregate routes and allocate mixed-size networks without overlap.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Read an IPv4 address and its prefix</a><a href="#section-2">Calculate a network address and range</a><a href="#section-3">Check subnet membership and choose a gateway</a><a href="#section-4">Subdivide and aggregate prefixes</a><a href="#section-5">Plan a variable-length address scheme</a><a href="#section-6">Common mistakes</a><a href="#section-7">Exam focus</a><a href="#section-8">Practice</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>IPv4 gives each interface a 32-bit address. A subnet prefix says how many leading bits identify the network; the remaining bits identify an address within it. The same boundary lets a host decide whether a destination is local, lets routers describe address blocks compactly, and lets a network planner fit LANs and links into a finite parent block.</p>
+<figure><div class="diagram-frame" style="--diagram-width:796.6px"><svg role="img" aria-label="A prefix length marks the boundary inside the 32-bit address; the mask makes that boundary operational." width="797pt" height="198pt"
+ viewBox="0.00 0.00 796.60 197.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="ipv4-prefix-boundary-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 186.8)">
+<title>G</title>
+<!-- address -->
+<g id="ipv4-prefix-boundary-node1" class="node">
+<title>address</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M158,-141C158,-141 12,-141 12,-141 6,-141 0,-135 0,-129 0,-129 0,-117 0,-117 0,-111 6,-105 12,-105 12,-105 158,-105 158,-105 164,-105 170,-111 170,-117 170,-117 170,-129 170,-129 170,-135 164,-141 158,-141"/>
+<text text-anchor="middle" x="85" y="-119.5" font-family="Georgia" font-size="15.00">32&#45;bit IPv4 address</text>
+</g>
+<!-- prefix -->
+<g id="ipv4-prefix-boundary-node2" class="node">
+<title>prefix</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M328,-173C328,-173 214,-173 214,-173 208,-173 202,-167 202,-161 202,-161 202,-149 202,-149 202,-143 208,-137 214,-137 214,-137 328,-137 328,-137 334,-137 340,-143 340,-149 340,-149 340,-161 340,-161 340,-167 334,-173 328,-173"/>
+<text text-anchor="middle" x="271" y="-151.5" font-family="Georgia" font-size="15.00">Network prefix</text>
+</g>
+<!-- address&#45;&gt;prefix -->
+<g id="ipv4-prefix-boundary-edge1" class="edge">
+<title>address&#45;&gt;prefix</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M170.19,-137.64C178.64,-139.11 187.17,-140.6 195.51,-142.04"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="195.57,-144.19 201.84,-143.15 196.29,-140.05 195.57,-144.19"/>
+</g>
+<!-- host -->
+<g id="ipv4-prefix-boundary-node3" class="node">
+<title>host</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M318,-112C318,-112 224,-112 224,-112 218,-112 212,-106 212,-100 212,-100 212,-88 212,-88 212,-82 218,-76 224,-76 224,-76 318,-76 318,-76 324,-76 330,-82 330,-88 330,-88 330,-100 330,-100 330,-106 324,-112 318,-112"/>
+<text text-anchor="middle" x="271" y="-90.5" font-family="Georgia" font-size="15.00">Host portion</text>
+</g>
+<!-- address&#45;&gt;host -->
+<g id="ipv4-prefix-boundary-edge2" class="edge">
+<title>address&#45;&gt;host</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M170.19,-109.73C182.2,-107.84 194.38,-105.92 205.92,-104.1"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="206.29,-106.17 211.89,-103.16 205.64,-102.02 206.29,-106.17"/>
+</g>
+<!-- mask -->
+<g id="ipv4-prefix-boundary-node4" class="node">
+<title>mask</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M517.5,-176C517.5,-176 390.5,-176 390.5,-176 384.5,-176 378.5,-170 378.5,-164 378.5,-164 378.5,-152 378.5,-152 378.5,-146 384.5,-140 390.5,-140 390.5,-140 517.5,-140 517.5,-140 523.5,-140 529.5,-146 529.5,-152 529.5,-152 529.5,-164 529.5,-164 529.5,-170 523.5,-176 517.5,-176"/>
+<text text-anchor="middle" x="454" y="-154.5" font-family="Georgia" font-size="15.00">Mask: 1s then 0s</text>
+</g>
+<!-- prefix&#45;&gt;mask -->
+<g id="ipv4-prefix-boundary-edge3" class="edge">
+<title>prefix&#45;&gt;mask</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M340.17,-156.13C350.56,-156.3 361.36,-156.48 371.99,-156.66"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="372.19,-158.76 378.23,-156.76 372.26,-154.56 372.19,-158.76"/>
+</g>
+<!-- zero -->
+<g id="ipv4-prefix-boundary-node6" class="node">
+<title>zero</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M524,-118C524,-118 384,-118 384,-118 378,-118 372,-112 372,-106 372,-106 372,-82 372,-82 372,-76 378,-70 384,-70 384,-70 524,-70 524,-70 530,-70 536,-76 536,-82 536,-82 536,-106 536,-106 536,-112 530,-118 524,-118"/>
+<text text-anchor="middle" x="454" y="-99" font-family="Georgia" font-size="15.00">Network identifier</text>
+<text text-anchor="middle" x="454" y="-82" font-family="Georgia" font-size="15.00">(host bits all 0)</text>
+</g>
+<!-- host&#45;&gt;zero -->
+<g id="ipv4-prefix-boundary-edge5" class="edge">
+<title>host&#45;&gt;zero</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M330.27,-94C341.53,-94 353.56,-94 365.52,-94"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="365.77,-96.1 371.77,-94 365.77,-91.9 365.77,-96.1"/>
+</g>
+<!-- ones -->
+<g id="ipv4-prefix-boundary-node7" class="node">
+<title>ones</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M521,-48C521,-48 387,-48 387,-48 381,-48 375,-42 375,-36 375,-36 375,-12 375,-12 375,-6 381,0 387,0 387,0 521,0 521,0 527,0 533,-6 533,-12 533,-12 533,-36 533,-36 533,-42 527,-48 521,-48"/>
+<text text-anchor="middle" x="454" y="-29" font-family="Georgia" font-size="15.00">Subnet broadcast</text>
+<text text-anchor="middle" x="454" y="-12" font-family="Georgia" font-size="15.00">(host bits all 1)</text>
+</g>
+<!-- host&#45;&gt;ones -->
+<g id="ipv4-prefix-boundary-edge6" class="edge">
+<title>host&#45;&gt;ones</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M318.61,-75.97C338.89,-68.13 363.05,-58.79 385.25,-50.2"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="386.01,-52.16 390.85,-48.04 384.49,-48.24 386.01,-52.16"/>
+</g>
+<!-- network -->
+<g id="ipv4-prefix-boundary-node5" class="node">
+<title>network</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M763,-176C763,-176 580,-176 580,-176 574,-176 568,-170 568,-164 568,-164 568,-152 568,-152 568,-146 574,-140 580,-140 580,-140 763,-140 763,-140 769,-140 775,-146 775,-152 775,-152 775,-164 775,-164 775,-170 769,-176 763,-176"/>
+<text text-anchor="middle" x="671.5" y="-154.5" font-family="Georgia" font-size="15.00">AND keeps network bits</text>
+</g>
+<!-- mask&#45;&gt;network -->
+<g id="ipv4-prefix-boundary-edge4" class="edge">
+<title>mask&#45;&gt;network</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M529.77,-158C540.13,-158 550.94,-158 561.76,-158"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="561.77,-160.1 567.77,-158 561.77,-155.9 561.77,-160.1"/>
+</g>
+</g>
+</svg>
+</div><figcaption>A prefix length marks the boundary inside the 32-bit address; the mask makes that boundary operational.</figcaption></figure>
+
+<h2 id="section-1">Read an IPv4 address and its prefix</h2>
+<p>Each IPv4 address has four 8-bit octets, usually written in decimal. An interface connects a host or router to a link and has its own IP address; a router normally has several interfaces, often in different networks. The lecture’s full representation is:</p>
+<table>
+<thead>
+<tr>
+<th>Form</th>
+<th><code>223.1.7.4</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Binary</td>
+<td><code>11011111 00000001 00000111 00000100</code></td>
+</tr>
+<tr>
+<td>Hexadecimal</td>
+<td><code>DF010704</code></td>
+</tr>
+<tr>
+<td>Unsigned decimal</td>
+<td><code>3741386500</code></td>
+</tr>
+</tbody>
+</table>
+
+<p>The lecture’s topology uses three <code>/24</code>-style networks—<code>223.1.1.xx</code>, <code>223.1.2.xx</code> and <code>223.1.3.xx</code>—joined through a router with an interface in each network. Hosts on a shared network can exchange frames locally; the router connects the distinct prefixes.</p>
+<p>For <code>/n</code>, the first <code>n</code> bits form the network prefix and the remaining <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>32</mn><mo>&#x02212;</mo><mi>n</mi></mrow></math> bits are the host part. A subnet mask writes a <code>1</code> for each network bit followed by <code>0</code>s for host bits. CIDR expresses the same boundary as <code>address/prefix</code>, for example <code>200.23.16.0/28</code>. The <code>n</code> may end inside an octet, so do not assume that the first three decimal numbers always describe the network.</p>
+<table>
+<thead>
+<tr>
+<th>Prefix</th>
+<th>Mask</th>
+<th style="text-align: right;">Host bits</th>
+<th style="text-align: right;">Total address combinations</th>
+<th style="text-align: right;">Conventional usable hosts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/10</code></td>
+<td><code>255.192.0.0</code></td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">4,194,304</td>
+<td style="text-align: right;">4,194,302</td>
+</tr>
+<tr>
+<td><code>/20</code></td>
+<td><code>255.255.240.0</code></td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">4,096</td>
+<td style="text-align: right;">4,094</td>
+</tr>
+<tr>
+<td><code>/30</code></td>
+<td><code>255.255.255.252</code></td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td><code>/29</code></td>
+<td><code>255.255.255.248</code></td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr>
+<td><code>/28</code></td>
+<td><code>255.255.255.240</code></td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">14</td>
+</tr>
+<tr>
+<td><code>/27</code></td>
+<td><code>255.255.255.224</code></td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">30</td>
+</tr>
+<tr>
+<td><code>/24</code></td>
+<td><code>255.255.255.0</code></td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">256</td>
+<td style="text-align: right;">254</td>
+</tr>
+<tr>
+<td><code>/16</code></td>
+<td><code>255.255.0.0</code></td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">65,536</td>
+<td style="text-align: right;">65,534</td>
+</tr>
+</tbody>
+</table>
+
+<p>The lecture’s slide 16 labels the totals minus one as “No. of Hosts” (<code>3, 7, 15, 31, 255, 65535</code>). For the ordinary subnet convention used in both labs, reserve the all-zero network identifier and all-one broadcast, leaving <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mn>2</mn><mi>h</mi></msup><mo>&#x02212;</mo><mn>2</mn></mrow></math> usable addresses. The slide also incorrectly says that <code>200.23.17.16</code> can be assigned in <code>200.23.17.16/28</code>: here <code>.16</code> is the network identifier, usable hosts are <code>.17</code>–<code>.30</code>, and <code>.31</code> is broadcast. RFC 1122 defines special network and broadcast address forms; RFC 3021 specifies the <code>/31</code> point-to-point exception. These labs use <code>/30</code>, so the ordinary two-address reservation applies (<a href="https://www.rfc-editor.org/rfc/rfc1122.html">RFC 1122</a>, <a href="https://www.rfc-editor.org/rfc/rfc3021.html">RFC 3021</a>).</p>
+<p>Class A/B/C fixed boundaries are historical, not modern allocation rules; the lecture itself calls classful addressing obsolete. CIDR’s explicit prefix supports blocks sized to actual need, rather than forcing a class B sized allocation for a much smaller network (<a href="https://www.rfc-editor.org/rfc/rfc4632.html">RFC 4632</a>). The slide’s old class ranges are context only: A <code>1.0.0.0–127.255.255.255</code>, B <code>128.0.0.0–191.255.255.255</code>, C <code>192.0.0.0–223.255.255.255</code>, D <code>224.0.0.0–239.255.255.255</code>; they do not denote current assignable host ranges. For example, <code>127.0.0.0/8</code> is loopback space, not an ordinary host subnet (<a href="https://www.rfc-editor.org/rfc/rfc1122.html">RFC 1122</a>).</p>
+<h3>CIDR can divide one address in different ways</h3>
+<p>For lecture address <code>200.23.16.5</code>, a <code>/28</code> gives network <code>200.23.16.0/28</code> and host offset <code>0.0.0.5</code>; its mask is <code>255.255.255.240</code>. A <code>/14</code> gives <code>200.20.0.0/14</code>, host offset <code>0.3.16.5</code>, and mask <code>255.252.0.0</code>. The prefix—not the address’s old class—sets the division.</p>
+<h2 id="section-2">Calculate a network address and range</h2>
+<p>Bitwise AND the address with its mask. A <code>1 AND 1</code> stays <code>1</code>; every other pair becomes <code>0</code>. This preserves the network bits and clears host bits: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mtext>network</mtext><mo>&#x0003D;</mo><mo>AND</mo><mo stretchy="false">&#x00028;</mo><mtext>address</mtext><mo>&#x0002C;</mo><mtext>mask</mtext><mo stretchy="false">&#x00029;</mo></mrow></math>. The first address in the resulting block has all host bits zero; the broadcast has all host bits one. Ordinary usable host addresses lie between them, from <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mtext>network</mtext><mo>&#x0002B;</mo><mn>1</mn><mspace width="0.278em" /><mtext>through</mtext><mspace width="0.278em" /><mtext>broadcast</mtext><mo>&#x02212;</mo><mn>1</mn></mrow></math>.</p>
+<section class="walk" aria-label="Lab 2.1 · AND a host address with its mask"><h3>Lab 2.1 · AND a host address with its mask</h3><div class="example-input"><p><strong>Input:</strong> host <code>192.168.10.131</code>; mask <code>255.255.255.192</code> (<code>/26</code>).</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Count the network bits</h4><p>The mask <code>255.255.255.192</code> is <code>/26</code>: three full octets give 24 one-bits, and <code>192 = 11000000</code> contributes two more. The last six address bits are host bits.</p></section><section class="step"><h4>2. Apply AND in the partial octet</h4><pre><code class="language-text">Address .131       10000011
+Mask .192           11000000
+                    --------
+Network octet       10000000 = 128
+</code></pre>
+<p>A bit remains 1 only when both corresponding bits are 1. The first 24 bits are preserved by <code>255</code>; the last six bits are cleared by <code>0</code>s.</p></section><section class="step"><h4>3. Read the network and check the range</h4><p>The result is <code>192.168.10.128/26</code>. There are six host bits, so this block has 64 total addresses, <code>.128</code> through <code>.191</code>. Under the ordinary subnet convention, <code>.128</code> is the network identifier, <code>.191</code> the broadcast, and <code>.129</code>–<code>.190</code> the usable host range. The given <code>.131</code> is inside it.</p></section></section>
+
+<p>The shortcut is to calculate the block size in the partial octet as <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>256</mn><mo>&#x02212;</mo><mtext>mask&#x000A0;octet</mtext></mrow></math>. Round that octet down to the nearest multiple of the block size, then zero all later octets. The complete Lab 2.1 calculations are below; the <code>AND</code> examples in the partial octets show why the boundary lands there.</p>
+<table>
+<thead>
+<tr>
+<th>Lab input (address / prefix)</th>
+<th>Mask</th>
+<th>Network address</th>
+<th>Boundary reasoning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>172.16.145.29/16</code></td>
+<td><code>255.255.0.0</code></td>
+<td><code>172.16.0.0</code></td>
+<td>First 16 bits preserved; final two octets cleared.</td>
+</tr>
+<tr>
+<td><code>192.168.10.10/24</code></td>
+<td><code>255.255.255.0</code></td>
+<td><code>192.168.10.0</code></td>
+<td>First 24 bits preserved; last octet cleared.</td>
+</tr>
+<tr>
+<td><code>192.168.68.210/25</code></td>
+<td><code>255.255.255.128</code></td>
+<td><code>192.168.68.128</code></td>
+<td>Last-octet blocks of 128; <code>210</code> lies in <code>128–255</code>.</td>
+</tr>
+<tr>
+<td><code>172.16.188.15/20</code></td>
+<td><code>255.255.240.0</code></td>
+<td><code>172.16.176.0</code></td>
+<td>Third octet: <code>10111100 AND 11110000 = 10110000</code> (<code>176</code>); block size 16.</td>
+</tr>
+<tr>
+<td><code>10.172.2.8/11</code></td>
+<td><code>255.224.0.0</code></td>
+<td><code>10.160.0.0</code></td>
+<td>Second octet: <code>10101100 AND 11100000 = 10100000</code> (<code>160</code>); block size 32.</td>
+</tr>
+</tbody>
+</table>
+
+<details class="worked"><summary>Lab 2.1 · Convert octets and dotted addresses</summary><p>Each octet uses weights <code>128, 64, 32, 16, 8, 4, 2, 1</code>; retain leading zeroes so every octet stays eight bits. For example, <code>168 = 128 + 32 + 8</code>, so <code>168 = 10101000</code>.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Decimal</th>
+<th>8-bit binary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">192</td>
+<td><code>11000000</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">168</td>
+<td><code>10101000</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td><code>00001010</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">255</td>
+<td><code>11111111</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>00000010</code></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Address / mask</th>
+<th>Dotted binary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>192.168.10.10</code></td>
+<td><code>11000000.10101000.00001010.00001010</code></td>
+</tr>
+<tr>
+<td><code>209.165.200.229</code></td>
+<td><code>11010001.10100101.11001000.11100101</code></td>
+</tr>
+<tr>
+<td><code>172.16.18.183</code></td>
+<td><code>10101100.00010000.00010010.10110111</code></td>
+</tr>
+<tr>
+<td><code>10.86.252.17</code></td>
+<td><code>00001010.01010110.11111100.00010001</code></td>
+</tr>
+<tr>
+<td><code>255.255.255.128</code></td>
+<td><code>11111111.11111111.11111111.10000000</code></td>
+</tr>
+<tr>
+<td><code>255.255.192.0</code></td>
+<td><code>11111111.11111111.11000000.00000000</code></td>
+</tr>
+</tbody>
+</table>
+<p>For the worked AND case, the mask has 26 one-bits, so all 26 network bits are included—not merely the first three octets.</p></details>
+
+<h2 id="section-3">Check subnet membership and choose a gateway</h2>
+<p>Two addresses share a subnet only when their network addresses match under the same prefix. On a shared local link, matching prefixes allow direct local delivery; separate networks need a router and correctly configured gateway. The calculation by itself does not prove physical connectivity or that an interface is up.</p>
+<section class="walk" aria-label="Lab 2.1 · Do two /28 addresses share a subnet?"><h3>Lab 2.1 · Do two /28 addresses share a subnet?</h3><div class="example-input"><p><strong>Input:</strong> PC-A <code>192.168.1.18</code>; PC-B <code>192.168.1.33</code>; both use <code>255.255.255.240</code> (<code>/28</code>).</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Find PC-A’s block</h4><p>A <code>/28</code> leaves four host bits: each block has 16 addresses. In the last octet, block boundaries are multiples of 16. <code>18</code> falls in <code>16–31</code>, so PC-A is in <code>192.168.1.16/28</code>.</p></section><section class="step"><h4>2. Find PC-B’s block</h4><p><code>33</code> falls in <code>32–47</code>, so PC-B is in <code>192.168.1.32/28</code>. The network identifiers differ; the addresses are not in the same subnet.</p></section><section class="step"><h4>3. Answer the lab’s two follow-ups</h4><p>If both PCs share the same local link and are configured correctly, they cannot deliver directly to each other as same-subnet hosts; a routed path is needed. The highest usable address in PC-A’s block is <code>192.168.1.30</code> because <code>.31</code> is the broadcast address. PC-B needs an unused address in <code>192.168.1.17</code>–<code>192.168.1.30</code> to join PC-A’s subnet; an address already in use cannot be assigned again.</p></section></section>
+
+<p>The broader Lab 2.1 case uses <code>/15</code>, mask <code>255.254.0.0</code>. The second octet advances in blocks of two: both <code>10.0.0.16</code> and <code>10.1.14.68</code> lie in <code>10.0.0.0/15</code>, whose full range is <code>10.0.0.0–10.1.255.255</code>. Under the lab’s shared-local-link assumption they are in the same network and can communicate directly. The lowest usable PC-B address is <code>10.0.0.1</code>.</p>
+<p>The lab’s company policy assigns the first usable address as gateway. For <code>172.16.140.24/18</code> (<code>255.255.192.0</code>), third-octet blocks advance by 64; 140 is in 128–191, so network is <code>172.16.128.0</code> and gateway is <code>172.16.128.1</code>. For <code>192.168.184.227/29</code> (<code>255.255.255.248</code>), last-octet blocks advance by 8; 227 is in 224–231, giving network <code>.224</code>, usable range <code>.225–.230</code>, broadcast <code>.231</code>, and gateway <code>192.168.184.225</code>.</p>
+<h2 id="section-4">Subdivide and aggregate prefixes</h2>
+<p>The lecture divides <code>200.23.16.0/20</code> into eight aligned <code>/23</code> customer blocks. The <code>/20</code> contains the whole range <code>200.23.16.0–200.23.31.255</code>; each <code>/23</code> uses 512 addresses and advances the third octet by two.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Customer</th>
+<th>Assigned prefix</th>
+<th style="text-align: right;">Customer</th>
+<th>Assigned prefix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">0</td>
+<td><code>200.23.16.0/23</code></td>
+<td style="text-align: right;">4</td>
+<td><code>200.23.24.0/23</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>200.23.18.0/23</code></td>
+<td style="text-align: right;">5</td>
+<td><code>200.23.26.0/23</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>200.23.20.0/23</code></td>
+<td style="text-align: right;">6</td>
+<td><code>200.23.28.0/23</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td><code>200.23.22.0/23</code></td>
+<td style="text-align: right;">7</td>
+<td><code>200.23.30.0/23</code></td>
+</tr>
+</tbody>
+</table>
+
+<p>An upstream router can advertise the covering <code>200.23.16.0/20</code> route for those allocations because every <code>/23</code> is aligned within that parent. This is equal-size subdivision followed by route aggregation. VLSM below instead chooses different prefix sizes for different host requirements. The lecture’s second provider aggregate is <code>199.31.0.0/16</code>.</p>
+<h2 id="section-5">Plan a variable-length address scheme</h2>
+<p>VLSM repeatedly subdivides a parent block so that large LANs receive larger blocks and point-to-point links receive small ones. Sort needs from largest to smallest, choose the smallest aligned power-of-two block that has enough usable addresses, allocate it, and carry forward the unused aligned remainder. This order prevents a small allocation from fragmenting space needed by a later large subnet.</p>
+<section class="walk" aria-label="Lab 2.2 · Allocate the nine subnets from largest to smallest"><h3>Lab 2.2 · Allocate the nine subnets from largest to smallest</h3><div class="example-input"><table>
+<thead>
+<tr>
+<th>Subnet in the worksheet topology</th>
+<th style="text-align: right;">Usable hosts required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HQ G0/0 LAN</td>
+<td style="text-align: right;">16,000</td>
+</tr>
+<tr>
+<td>HQ G0/1 LAN</td>
+<td style="text-align: right;">8,000</td>
+</tr>
+<tr>
+<td>BR1 G0/1 LAN</td>
+<td style="text-align: right;">4,000</td>
+</tr>
+<tr>
+<td>BR1 G0/0 LAN</td>
+<td style="text-align: right;">2,000</td>
+</tr>
+<tr>
+<td>BR2 G0/1 LAN</td>
+<td style="text-align: right;">1,000</td>
+</tr>
+<tr>
+<td>BR2 G0/0 LAN</td>
+<td style="text-align: right;">500</td>
+</tr>
+<tr>
+<td>HQ–BR1, HQ–BR2, BR1–BR2 serial links</td>
+<td style="text-align: right;">2 each</td>
+</tr>
+</tbody>
+</table>
+<p>Parent block: <code>172.16.128.0/17</code>. It contains 32,768 total addresses (32,766 usable if treated as one ordinary subnet). The topology requires 31,506 usable hosts over nine subnets. For this ordinary-subnet worksheet require <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mn>2</mn><mi>h</mi></msup><mo>&#x02212;</mo><mn>2</mn></mrow></math> ≥ demand, then calculate prefix <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>32</mn><mo>&#x02212;</mo><mi>h</mi></mrow></math>. At each split, allocate the first aligned half and carry the second half forward.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. HQ G0/0 · 16,000 hosts</h4><p><code>172.16.128.0/17</code> splits into two <code>/18</code>s: <code>172.16.128.0/18</code> and <code>172.16.192.0/18</code>. Allocate the first. It has 14 host bits, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mn>2</mn><mrow><mn>14</mn></mrow></msup><mo>&#x02212;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>16</mn><mrow><mo>&#x0002C;</mo></mrow><mn>382</mn></mrow></math> usable addresses (a <code>/19</code> has only 8,190). Range: <code>172.16.128.0</code>–<code>172.16.191.255</code>; usable <code>172.16.128.1</code>–<code>172.16.191.254</code>; broadcast <code>172.16.191.255</code>. <strong>Remainder:</strong> <code>172.16.192.0/18</code>.</p></section><section class="step"><h4>2. HQ G0/1 · 8,000 hosts</h4><p>Split the remainder <code>172.16.192.0/18</code> into two <code>/19</code>s at <code>172.16.224.0</code>. Allocate <code>172.16.192.0/19</code>: 13 host bits, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mn>2</mn><mrow><mn>13</mn></mrow></msup><mo>&#x02212;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>8</mn><mrow><mo>&#x0002C;</mo></mrow><mn>190</mn></mrow></math> usable (a <code>/20</code> has 4,094). Range <code>172.16.192.0</code>–<code>172.16.223.255</code>; usable <code>172.16.192.1</code>–<code>172.16.223.254</code>; broadcast <code>172.16.223.255</code>. <strong>Remainder:</strong> <code>172.16.224.0/19</code>.</p></section><section class="step"><h4>3. BR1 G0/1 · 4,000 hosts</h4><p>Split <code>172.16.224.0/19</code> into two <code>/20</code>s at <code>172.16.240.0</code>. Allocate <code>172.16.224.0/20</code>: 12 host bits, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mn>2</mn><mrow><mn>12</mn></mrow></msup><mo>&#x02212;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>4</mn><mrow><mo>&#x0002C;</mo></mrow><mn>094</mn></mrow></math> usable (a <code>/21</code> has 2,046). Range <code>172.16.224.0</code>–<code>172.16.239.255</code>; usable <code>172.16.224.1</code>–<code>172.16.239.254</code>; broadcast <code>172.16.239.255</code>. <strong>Remainder:</strong> <code>172.16.240.0/20</code>.</p></section><section class="step"><h4>4. BR1 G0/0 · 2,000 hosts</h4><p>Split <code>172.16.240.0/20</code> into <code>/21</code>s at <code>172.16.248.0</code>. Allocate <code>172.16.240.0/21</code>: 11 host bits, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mn>2</mn><mrow><mn>11</mn></mrow></msup><mo>&#x02212;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>2</mn><mrow><mo>&#x0002C;</mo></mrow><mn>046</mn></mrow></math> usable (a <code>/22</code> has 1,022). Range <code>172.16.240.0</code>–<code>172.16.247.255</code>; usable <code>172.16.240.1</code>–<code>172.16.247.254</code>; broadcast <code>172.16.247.255</code>. <strong>Remainder:</strong> <code>172.16.248.0/21</code>.</p></section><section class="step"><h4>5. BR2 G0/1 · 1,000 hosts</h4><p>Split <code>172.16.248.0/21</code> into <code>/22</code>s at <code>172.16.252.0</code>. Allocate <code>172.16.248.0/22</code>: 10 host bits, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mn>2</mn><mrow><mn>10</mn></mrow></msup><mo>&#x02212;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>1</mn><mrow><mo>&#x0002C;</mo></mrow><mn>022</mn></mrow></math> usable (a <code>/23</code> has 510). Range <code>172.16.248.0</code>–<code>172.16.251.255</code>; usable <code>172.16.248.1</code>–<code>172.16.251.254</code>; broadcast <code>172.16.251.255</code>. <strong>Remainder:</strong> <code>172.16.252.0/22</code>.</p></section><section class="step"><h4>6. BR2 G0/0 · 500 hosts</h4><p>Split <code>172.16.252.0/22</code> into <code>/23</code>s at <code>172.16.253.0</code>. Allocate <code>172.16.252.0/23</code>: 9 host bits, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mn>2</mn><mn>9</mn></msup><mo>&#x02212;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>510</mn></mrow></math> usable (a <code>/24</code> has 254). Range <code>172.16.252.0</code>–<code>172.16.253.255</code>; usable <code>172.16.252.1</code>–<code>172.16.253.254</code>; broadcast <code>172.16.253.255</code>. <strong>Remainder:</strong> <code>172.16.254.0/23</code>.</p></section><section class="step"><h4>7. Split the remainder for serial links</h4><p>Each point-to-point serial subnet needs two usable endpoint addresses. Under this worksheet’s conventional network/broadcast rule, <code>/30</code> is the smallest fit: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mn>2</mn><mrow><mn>32</mn><mo>&#x02212;</mo><mn>30</mn></mrow></msup><mo>&#x0003D;</mo><mn>4</mn></mrow></math> total addresses, two usable. Starting with <code>172.16.254.0/23</code>, repeatedly keep the first half: <code>/24</code> → <code>172.16.254.0/24</code>; <code>/25</code> → <code>172.16.254.0/25</code>; <code>/26</code> → <code>172.16.254.0/26</code>; <code>/27</code> → <code>172.16.254.0/27</code>; <code>/28</code> → <code>172.16.254.0/28</code>. Then divide that <code>/28</code> into four aligned <code>/30</code>s, each advancing by four: <code>172.16.254.0/30</code>, <code>172.16.254.4/30</code>, <code>172.16.254.8/30</code>, <code>172.16.254.12/30</code>. Use the first three; leave the fourth unassigned.</p></section><section class="step"><h4>8. Assign endpoints and validate the plan</h4><p>For each <code>/30</code>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mtext>network</mtext><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mtext>network</mtext><mo>&#x0002B;</mo><mn>2</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mtext>network</mtext><mo>&#x0002B;</mo><mn>3</mn></mrow></math> are the endpoint and broadcast offsets: HQ S0/0/0 <code>172.16.254.1/30</code> ↔ BR1 S0/0/0 <code>172.16.254.2</code>; HQ S0/0/1 <code>172.16.254.5</code> ↔ BR2 S0/0/1 <code>172.16.254.6</code>; BR1 S0/0/1 <code>172.16.254.9</code> ↔ BR2 S0/0/0 <code>172.16.254.10</code>. The unused fourth block <code>172.16.254.12/30</code> has usable <code>172.16.254.13</code>–<code>172.16.254.14</code> and broadcast <code>172.16.254.15</code>.</p>
+<p>The six LANs contain 32,256 total addresses; three <code>/30</code>s add 12: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>32</mn><mrow><mo>&#x0002C;</mo></mrow><mn>268</mn><mo>&#x0003C;</mo><mn>32</mn><mrow><mo>&#x0002C;</mo></mrow><mn>768</mn></mrow></math>. Every block is aligned, ordered and non-overlapping inside <code>172.16.128.0/17</code>. The six LANs sum to 31,500 required hosts; links add 6: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>16</mn><mrow><mo>&#x0002C;</mo></mrow><mn>000</mn><mo>&#x0002B;</mo><mn>8</mn><mrow><mo>&#x0002C;</mo></mrow><mn>000</mn><mo>&#x0002B;</mo><mn>4</mn><mrow><mo>&#x0002C;</mo></mrow><mn>000</mn><mo>&#x0002B;</mo><mn>2</mn><mrow><mo>&#x0002C;</mo></mrow><mn>000</mn><mo>&#x0002B;</mo><mn>1</mn><mrow><mo>&#x0002C;</mo></mrow><mn>000</mn><mo>&#x0002B;</mo><mn>500</mn><mo>&#x0002B;</mo><mn>3</mn><mo>&#x000D7;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>31</mn><mrow><mo>&#x0002C;</mo></mrow><mn>506</mn></mrow></math>.</p></section></section>
+
+<h3>Final allocation and interface addresses</h3>
+<table>
+<thead>
+<tr>
+<th>Subnet / interface pair</th>
+<th style="text-align: right;">Need</th>
+<th>Network / mask</th>
+<th>Usable range</th>
+<th>Broadcast</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HQ G0/0 LAN</td>
+<td style="text-align: right;">16,000</td>
+<td><code>172.16.128.0/18</code> · <code>255.255.192.0</code></td>
+<td><code>172.16.128.1</code>–<code>172.16.191.254</code></td>
+<td><code>172.16.191.255</code></td>
+</tr>
+<tr>
+<td>HQ G0/1 LAN</td>
+<td style="text-align: right;">8,000</td>
+<td><code>172.16.192.0/19</code> · <code>255.255.224.0</code></td>
+<td><code>172.16.192.1</code>–<code>172.16.223.254</code></td>
+<td><code>172.16.223.255</code></td>
+</tr>
+<tr>
+<td>BR1 G0/1 LAN</td>
+<td style="text-align: right;">4,000</td>
+<td><code>172.16.224.0/20</code> · <code>255.255.240.0</code></td>
+<td><code>172.16.224.1</code>–<code>172.16.239.254</code></td>
+<td><code>172.16.239.255</code></td>
+</tr>
+<tr>
+<td>BR1 G0/0 LAN</td>
+<td style="text-align: right;">2,000</td>
+<td><code>172.16.240.0/21</code> · <code>255.255.248.0</code></td>
+<td><code>172.16.240.1</code>–<code>172.16.247.254</code></td>
+<td><code>172.16.247.255</code></td>
+</tr>
+<tr>
+<td>BR2 G0/1 LAN</td>
+<td style="text-align: right;">1,000</td>
+<td><code>172.16.248.0/22</code> · <code>255.255.252.0</code></td>
+<td><code>172.16.248.1</code>–<code>172.16.251.254</code></td>
+<td><code>172.16.251.255</code></td>
+</tr>
+<tr>
+<td>BR2 G0/0 LAN</td>
+<td style="text-align: right;">500</td>
+<td><code>172.16.252.0/23</code> · <code>255.255.254.0</code></td>
+<td><code>172.16.252.1</code>–<code>172.16.253.254</code></td>
+<td><code>172.16.253.255</code></td>
+</tr>
+<tr>
+<td>HQ S0/0/0 ↔ BR1 S0/0/0</td>
+<td style="text-align: right;">2</td>
+<td><code>172.16.254.0/30</code> · <code>255.255.255.252</code></td>
+<td><code>172.16.254.1</code>–<code>172.16.254.2</code></td>
+<td><code>172.16.254.3</code></td>
+</tr>
+<tr>
+<td>HQ S0/0/1 ↔ BR2 S0/0/1</td>
+<td style="text-align: right;">2</td>
+<td><code>172.16.254.4/30</code> · <code>255.255.255.252</code></td>
+<td><code>172.16.254.5</code>–<code>172.16.254.6</code></td>
+<td><code>172.16.254.7</code></td>
+</tr>
+<tr>
+<td>BR1 S0/0/1 ↔ BR2 S0/0/0</td>
+<td style="text-align: right;">2</td>
+<td><code>172.16.254.8/30</code> · <code>255.255.255.252</code></td>
+<td><code>172.16.254.9</code>–<code>172.16.254.10</code></td>
+<td><code>172.16.254.11</code></td>
+</tr>
+<tr>
+<td>Unused fourth /30</td>
+<td style="text-align: right;">—</td>
+<td><code>172.16.254.12/30</code> · <code>255.255.255.252</code></td>
+<td><code>172.16.254.13</code>–<code>172.16.254.14</code></td>
+<td><code>172.16.254.15</code></td>
+</tr>
+</tbody>
+</table>
+
+<p>The worksheet assigns the first usable LAN address to each Ethernet interface. Serial assignment follows the specified side: HQ takes the first address on both HQ links; BR1 takes the first address on its link to BR2. Therefore the router interface values are already shown in the table’s usable ranges: HQ G0/0 <code>172.16.128.1/18</code>, HQ G0/1 <code>172.16.192.1/19</code>, BR1 G0/1 <code>172.16.224.1/20</code>, BR1 G0/0 <code>172.16.240.1/21</code>, BR2 G0/1 <code>172.16.248.1/22</code>, BR2 G0/0 <code>172.16.252.1/23</code>; serial peers use <code>.1/.2</code>, <code>.5/.6</code>, and <code>.9/.10</code> on their corresponding <code>/30</code>s.</p>
+<h3>Verify reachability separately from address validity</h3>
+<p>In Lab 2.2, configure the planned addresses and masks, activate the router interfaces, and test the directly connected serial peers: from HQ ping BR1 <code>172.16.254.2</code>, from HQ ping BR2 <code>172.16.254.6</code>, and from BR1 ping BR2 <code>172.16.254.10</code>. The worksheet sets the DCE side’s serial clock with <code>clock rate 128000</code>; the worksheet labels HQ <code>S0/0/1</code>, BR1 <code>S0/0/0</code>, and BR2 <code>S0/0/0</code> as the DCE ends. Confirm the actual cable/device role before applying the command. The worksheet says the GigabitEthernet LANs are simulated with no attached devices; they stay down/down, and no routing protocol is configured. Thus a remote simulated-LAN ping failure is expected and does not show that the address plan is wrong. These are the worksheet’s expected checks, not a report of live router execution.</p>
+<p>Lab 3.1 provides a second compact illustration: R1 G0/0 is <code>192.168.0.1/24</code>, R1 G0/1 is <code>192.168.1.1/24</code>; PC-B <code>192.168.0.3/24</code> uses <code>.0.1</code> as gateway and PC-A <code>192.168.1.3/24</code> uses <code>.1.1</code>. The two hosts occupy different <code>/24</code>s, so R1 must be configured with active interfaces to route between them. The initial failed ping before R1 configuration is not an address arithmetic failure. See <a href="routing.html">Network layer and routing</a> for the routing role, and <a href="ip-delivery.html">IP packets, ARP, ICMP, DHCP and NAT</a> for packet delivery and ARP details.</p>
+<h2 id="section-6">Common mistakes</h2>
+<ul>
+<li>Counting the prefix as complete octets only. <code>/20</code>, <code>/11</code>, and <code>/26</code> cut through an octet; apply the partial mask bits.</li>
+<li>Calling the total address combinations the usable-host count. For the ordinary <code>/30</code> and LAN convention here, subtract the network identifier and broadcast, leaving <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mn>2</mn><mi>h</mi></msup><mo>&#x02212;</mo><mn>2</mn></mrow></math> usable hosts.</li>
+<li>Assigning the network identifier or broadcast to an endpoint. For <code>200.23.17.16/28</code>, <code>.16</code> and <code>.31</code> are not ordinary host addresses.</li>
+<li>Comparing full addresses instead of masked network addresses. A shared subnet depends on both address and prefix.</li>
+<li>Treating equal subnet membership as proof of reachability. Devices must share a local link for direct delivery; routed paths also require working interfaces and routes.</li>
+<li>Allocating VLSM blocks in arbitrary order or at unaligned boundaries. Start largest-first and place each power-of-two block on its natural boundary.</li>
+<li>Treating Lab 2.2’s remote simulated LAN ping failures as VLSM errors. The worksheet explicitly says those LAN interfaces are down/down and routing is absent.</li>
+</ul>
+<h2 id="section-7">Exam focus</h2>
+<ul>
+<li>Convert dotted decimal octets using weights <code>128, 64, 32, 16, 8, 4, 2, 1</code>, preserving leading zeroes.</li>
+<li>For <code>/n</code>, the mask has <code>n</code> one-bits; host-bit count is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>32</mn><mo>&#x02212;</mo><mi>n</mi></mrow></math>; ordinary subnet capacity is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mn>2</mn><mi>h</mi></msup><mo>&#x02212;</mo><mn>2</mn></mrow></math> usable hosts.</li>
+<li>Network address: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mtext>network</mtext><mo>&#x0003D;</mo><mo>AND</mo><mo stretchy="false">&#x00028;</mo><mtext>address</mtext><mo>&#x0002C;</mo><mtext>mask</mtext><mo stretchy="false">&#x00029;</mo></mrow></math>; block size at a partial octet: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>256</mn><mo>&#x02212;</mo><mtext>mask&#x000A0;octet</mtext></mrow></math>.</li>
+<li>Broadcast sets all host bits to 1; usable range is network +1 through broadcast −1 under the convention used in these labs.</li>
+<li>For VLSM, sort largest-first, select smallest fit, allocate aligned blocks, carry the remainder, assign endpoint addresses and validate capacity, parent containment and non-overlap.</li>
+<li>Aggregation is valid when the component prefixes are contiguous, aligned and contained by the announced parent.</li>
+</ul>
+<h2 id="section-8">Practice</h2>
+<p class="question">Why does AND with <code>255</code> leave an IPv4 octet unchanged?</p>
+<details class="worked"><summary>Check your answer</summary><p>Each bit in <code>255</code> is 1; <code>x AND 1 = x</code> for each bit. A mask octet of <code>0</code> clears the corresponding address octet.</p></details>
+
+<p class="question">Is <code>192.168.1.31</code> a usable host in <code>192.168.1.16/28</code>?</p>
+<details class="worked"><summary>Check your answer</summary><p>No. <code>/28</code> has 16 addresses per block; <code>.16</code> is the network identifier and <code>.31</code> is the broadcast. The usable range is <code>.17</code>–<code>.30</code>.</p></details>
+
+<p class="question">Why can the six LANs and three <code>/30</code> links fit in the Lab 2.2 <code>/17</code>?</p>
+<details class="worked"><summary>Check your answer</summary><p>The first three LAN blocks use 28,672 addresses; the remaining three use 3,584:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mn>28</mn><mrow><mo>&#x0002C;</mo></mrow><mn>672</mn><mo>&#x0002B;</mo><mn>3</mn><mrow><mo>&#x0002C;</mo></mrow><mn>584</mn><mo>&#x0003D;</mo><mn>32</mn><mrow><mo>&#x0002C;</mo></mrow><mn>256</mn></mrow></math></div>
+<p>The three <code>/30</code> links add 12 addresses:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mn>32</mn><mrow><mo>&#x0002C;</mo></mrow><mn>256</mn><mo>&#x0002B;</mo><mn>12</mn><mo>&#x0003D;</mo><mn>32</mn><mrow><mo>&#x0002C;</mo></mrow><mn>268</mn></mrow></math></div>
+<p>The parent <code>/17</code> has 32,768 addresses, so <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>32</mn><mrow><mo>&#x0002C;</mo></mrow><mn>268</mn><mo>&#x0003C;</mo><mn>32</mn><mrow><mo>&#x0002C;</mo></mrow><mn>768</mn></mrow></math>. All blocks are aligned and disjoint; 500 addresses remain unallocated, including the unused fourth <code>/30</code>.</p></details>
+
+<p class="question">Does a successful HQ-to-BR1 serial ping prove the remote LANs can be reached?</p>
+<details class="worked"><summary>Check your answer</summary><p>No. It proves that the directly connected serial peer responded. The worksheet’s simulated Ethernet LANs have no attached devices, remain down/down, and require routing before remote LAN reachability can be tested.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="routing.html"><small>Previous</small>Network layer and routing <span aria-hidden="true">↗</span></a><a href="ip-delivery.html"><small>Next</small>IP packets, ARP, ICMP, DHCP and NAT <span aria-hidden="true">↗</span></a></nav><footer>Networks field notes <span>Follow the packet. Explain the decision.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  root.querySelectorAll('table').forEach(table => {
+    const region = document.createElement('div');
+    region.className = 'table-scroll' + (table.rows[0]?.cells.length > 5 ? ' wide' : '');
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    table.before(region); region.append(table);
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Network diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {osi:'layers encapsulation protocol service interface pdu',link:'framing crc parity arq flow control sliding window',ethernet:'mac switch arp csma token lab',wan:'man atm isdn frame relay x25',routing:'network forwarding distance vector link state dijkstra',ipv4:'ip subnet mask vlsm binary cidr lab',ipv6:'ip address compression transition lab',transport:'tcp udp handshake congestion window port',bluetooth:'wireless nfc zigbee wpan beacon quiz',security:'cia attacks cryptography encryption hash authentication',infrastructure:'pki certificate ca trust revocation signature',tls:'ssl ipsec ah esp tunnel sa',design:'requirements topology availability delay bandwidth'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('a').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('cns-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.CNS_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) expand.textContent = 'Expand examples';
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

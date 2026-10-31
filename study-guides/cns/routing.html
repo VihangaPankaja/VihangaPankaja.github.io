@@ -1,0 +1,829 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Routers move packets between networks. The central distinction is between choosing routes for traffic and forwarding each packet using the table that results."><title>Network layer and routing · Networks field notes</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('cns-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{.table-hint{display:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#243740;--muted:#5e737d;--secondary:#edf2f3;--border:#d5e0e3;--primary:#1e647c;--accent:#dcecf0;--diagram-fill:#eff4f5;--diagram-border:#829da8;--diagram-edge:#65838f;--active-text:#174b61;--focus:#227b98}:root[data-theme=dark]{--background:#141d23;--foreground:#e1eaf0;--muted:#a8beca;--card:#1a2730;--secondary:#22333e;--border:#3b505c;--primary:#90d1e4;--accent:#254757;--diagram-fill:#22333e;--diagram-border:#93b2c1;--diagram-edge:#9bbac9;--topbar:#141d23f5;--active-text:#b6e5f1;--focus:#90d1e4} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> CNS <span class="subbrand">field notes</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Subnet, TCP, TLS…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a href="index.html">Computer networks and security</a></div><div class="nav-group"><p>Foundations</p><a href="osi.html">OSI model and encapsulation</a><a href="data-link.html">Data link framing, errors and flow control</a><a href="wan.html">WAN and MAN technologies</a><a href="lan.html">LAN, Ethernet and switching</a></div><div class="nav-group"><p>Internetworking</p><a href="routing.html" aria-current="page">Network layer and routing</a><a href="ipv4.html">IPv4 addressing, subnetting and VLSM</a><a href="ip-delivery.html">IP packets, ARP, ICMP, DHCP and NAT</a><a href="ipv6.html">IPv6 addressing and transition</a></div><div class="nav-group"><p>Transport and wireless</p><a href="transport.html">Transport services and connections</a><a href="short-range.html">Bluetooth, NFC and ZigBee</a></div><div class="nav-group"><p>Security and design</p><a href="security.html">Security foundations and cryptography</a><a href="pki.html">Public key infrastructure</a><a href="secure-protocols.html">IPsec and TLS</a><a href="network-design.html">Network design</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS3131<br>Computer Networks and Security</div></aside>
+<main id="main"><div class="eyebrow">Internetworking <span>/</span> Lecture 5 · Lab 3.1</div><h1>Network layer and routing</h1><p class="lead">Routers move packets between networks. The central distinction is between choosing routes for traffic and forwarding each packet using the table that results.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">The network layer moves packets between networks</a><a href="#section-1">Datagram and virtual-circuit service</a><a href="#section-2">Addressing, routing, and forwarding</a><a href="#section-3">Congestion and quality of service</a><a href="#section-4">Connecting unlike networks</a><a href="#section-5">Lab 3.1: configure and verify a router between two LANs</a><a href="#section-6">Review</a></nav><article><h2 id="section-0">The network layer moves packets between networks</h2>
+<p>The network layer is OSI Layer 3. The lecture lists establishing, maintaining, and terminating connections; insulating upper layers from transmission technologies; addressing; and routing. Its packet-switching model has hosts at the edge and switches or routers as intermediate nodes connected by point-to-point or multipoint links. A sender divides a data stream into packets, each with a header and data. Intermediate nodes pass each packet along until it reaches its destination.</p>
+<p>The drawing shows the idea: a packet travels link by link through routers. The router makes a local forwarding choice at each hop; it does not need to know every detail of the application data.</p>
+<figure><div class="diagram-frame" style="--diagram-width:575.6px"><svg role="img" aria-label="A packet crosses links through intermediate routers; each router chooses the next link." width="576pt" height="140pt"
+ viewBox="0.00 0.00 575.60 139.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="routing-packet-path-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 128.8)">
+<title>G</title>
+<!-- h1 -->
+<g id="routing-packet-path-node1" class="node">
+<title>h1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M43,-83C43,-83 12,-83 12,-83 6,-83 0,-77 0,-71 0,-71 0,-47 0,-47 0,-41 6,-35 12,-35 12,-35 43,-35 43,-35 49,-35 55,-41 55,-47 55,-47 55,-71 55,-71 55,-77 49,-83 43,-83"/>
+<text text-anchor="middle" x="27.5" y="-64" font-family="Georgia" font-size="15.00">H1</text>
+<text text-anchor="middle" x="27.5" y="-47" font-family="Georgia" font-size="15.00">host</text>
+</g>
+<!-- a -->
+<g id="routing-packet-path-node2" class="node">
+<title>a</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M146,-83C146,-83 99,-83 99,-83 93,-83 87,-77 87,-71 87,-71 87,-47 87,-47 87,-41 93,-35 99,-35 99,-35 146,-35 146,-35 152,-35 158,-41 158,-47 158,-47 158,-71 158,-71 158,-77 152,-83 146,-83"/>
+<text text-anchor="middle" x="122.5" y="-64" font-family="Georgia" font-size="15.00">A</text>
+<text text-anchor="middle" x="122.5" y="-47" font-family="Georgia" font-size="15.00">router</text>
+</g>
+<!-- h1&#45;&gt;a -->
+<g id="routing-packet-path-edge1" class="edge">
+<title>h1&#45;&gt;a</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M55.4,-59C63.18,-59 71.86,-59 80.3,-59"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="80.69,-61.1 86.69,-59 80.69,-56.9 80.69,-61.1"/>
+</g>
+<!-- b -->
+<g id="routing-packet-path-node3" class="node">
+<title>b</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M249,-115C249,-115 202,-115 202,-115 196,-115 190,-109 190,-103 190,-103 190,-79 190,-79 190,-73 196,-67 202,-67 202,-67 249,-67 249,-67 255,-67 261,-73 261,-79 261,-79 261,-103 261,-103 261,-109 255,-115 249,-115"/>
+<text text-anchor="middle" x="225.5" y="-96" font-family="Georgia" font-size="15.00">B</text>
+<text text-anchor="middle" x="225.5" y="-79" font-family="Georgia" font-size="15.00">router</text>
+</g>
+<!-- a&#45;&gt;b -->
+<g id="routing-packet-path-edge2" class="edge">
+<title>a&#45;&gt;b</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M158.26,-70.01C166.51,-72.63 175.39,-75.44 183.88,-78.13"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="183.32,-80.16 189.68,-79.97 184.59,-76.15 183.32,-80.16"/>
+</g>
+<!-- c -->
+<g id="routing-packet-path-node4" class="node">
+<title>c</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M352,-48C352,-48 305,-48 305,-48 299,-48 293,-42 293,-36 293,-36 293,-12 293,-12 293,-6 299,0 305,0 305,0 352,0 352,0 358,0 364,-6 364,-12 364,-12 364,-36 364,-36 364,-42 358,-48 352,-48"/>
+<text text-anchor="middle" x="328.5" y="-29" font-family="Georgia" font-size="15.00">C</text>
+<text text-anchor="middle" x="328.5" y="-12" font-family="Georgia" font-size="15.00">router</text>
+</g>
+<!-- a&#45;&gt;c -->
+<g id="routing-packet-path-edge3" class="edge">
+<title>a&#45;&gt;c</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M158.11,-53.06C193.57,-46.98 248.7,-37.52 286.37,-31.06"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="287.17,-33.05 292.72,-29.97 286.46,-28.91 287.17,-33.05"/>
+</g>
+<!-- d -->
+<g id="routing-packet-path-node5" class="node">
+<title>d</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M352,-118C352,-118 305,-118 305,-118 299,-118 293,-112 293,-106 293,-106 293,-82 293,-82 293,-76 299,-70 305,-70 305,-70 352,-70 352,-70 358,-70 364,-76 364,-82 364,-82 364,-106 364,-106 364,-112 358,-118 352,-118"/>
+<text text-anchor="middle" x="328.5" y="-99" font-family="Georgia" font-size="15.00">D</text>
+<text text-anchor="middle" x="328.5" y="-82" font-family="Georgia" font-size="15.00">router</text>
+</g>
+<!-- b&#45;&gt;d -->
+<g id="routing-packet-path-edge4" class="edge">
+<title>b&#45;&gt;d</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M261.26,-92.03C269.35,-92.27 278.05,-92.53 286.39,-92.78"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="286.62,-94.89 292.68,-92.97 286.74,-90.69 286.62,-94.89"/>
+</g>
+<!-- e -->
+<g id="routing-packet-path-node6" class="node">
+<title>e</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M455,-83C455,-83 408,-83 408,-83 402,-83 396,-77 396,-71 396,-71 396,-47 396,-47 396,-41 402,-35 408,-35 408,-35 455,-35 455,-35 461,-35 467,-41 467,-47 467,-47 467,-71 467,-71 467,-77 461,-83 455,-83"/>
+<text text-anchor="middle" x="431.5" y="-64" font-family="Georgia" font-size="15.00">E</text>
+<text text-anchor="middle" x="431.5" y="-47" font-family="Georgia" font-size="15.00">router</text>
+</g>
+<!-- c&#45;&gt;e -->
+<g id="routing-packet-path-edge6" class="edge">
+<title>c&#45;&gt;e</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M364.26,-36.05C372.51,-38.9 381.39,-41.98 389.88,-44.92"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="389.32,-46.95 395.68,-46.93 390.7,-42.98 389.32,-46.95"/>
+</g>
+<!-- d&#45;&gt;e -->
+<g id="routing-packet-path-edge5" class="edge">
+<title>d&#45;&gt;e</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M364.26,-81.95C372.51,-79.1 381.39,-76.02 389.88,-73.08"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="390.7,-75.02 395.68,-71.07 389.32,-71.05 390.7,-75.02"/>
+</g>
+<!-- h2 -->
+<g id="routing-packet-path-node7" class="node">
+<title>h2</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M542,-83C542,-83 511,-83 511,-83 505,-83 499,-77 499,-71 499,-71 499,-47 499,-47 499,-41 505,-35 511,-35 511,-35 542,-35 542,-35 548,-35 554,-41 554,-47 554,-47 554,-71 554,-71 554,-77 548,-83 542,-83"/>
+<text text-anchor="middle" x="526.5" y="-64" font-family="Georgia" font-size="15.00">H2</text>
+<text text-anchor="middle" x="526.5" y="-47" font-family="Georgia" font-size="15.00">host</text>
+</g>
+<!-- e&#45;&gt;h2 -->
+<g id="routing-packet-path-edge7" class="edge">
+<title>e&#45;&gt;h2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M467.13,-59C475.52,-59 484.47,-59 492.78,-59"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="492.98,-61.1 498.98,-59 492.98,-56.9 492.98,-61.1"/>
+</g>
+</g>
+</svg>
+</div><figcaption>A packet crosses links through intermediate routers; each router chooses the next link.</figcaption></figure>
+
+<h2 id="section-1">Datagram and virtual-circuit service</h2>
+<p>The lecture contrasts two network service models. In a datagram (connectionless) network, there is no connection setup. Each packet carries its destination address, and each router looks up that destination when the packet arrives. In a virtual-circuit (connection-oriented) network, a connection is set up first and the end stations exchange sequenced packet streams. Routers keep per-connection state and forward using a connection identifier (CID) that can change at each link.</p>
+<table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>Datagram service</th>
+<th>Virtual-circuit service</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Setup</td>
+<td>Not needed</td>
+<td>Needed before data transfer</td>
+</tr>
+<tr>
+<td>Packet identifier</td>
+<td>Destination address</td>
+<td>Link-local connection ID</td>
+</tr>
+<tr>
+<td>Router state</td>
+<td>No per-connection state required</td>
+<td>State for each virtual circuit</td>
+</tr>
+<tr>
+<td>Error control</td>
+<td>Generally absent in the lecture's model</td>
+<td>Generally provided in the lecture's model</td>
+</tr>
+<tr>
+<td>Forwarding choice</td>
+<td>Per packet</td>
+<td>Per connection</td>
+</tr>
+<tr>
+<td>Failure and service</td>
+<td>Lecture: failures have “minimal” effect; QoS and congestion control are difficult</td>
+<td>Lecture: virtual circuits terminate on failure; QoS and congestion control are possible</td>
+</tr>
+</tbody>
+</table>
+<p>The last row records the lecture's broad service-model contrast, not a guarantee for every network protocol. Error handling, reliability, and congestion behavior depend on the specific protocols and network.</p>
+<h3>Datagram forwarding: keep the destination, change the next hop</h3>
+<p>The source first shows Router A's table as <code>H1 → direct</code>, <code>H2 → B</code>, <code>H3 → B</code>, <code>H4 → B</code>, and <code>H5 → C</code>. Its next slide then uses a different A-table choice for H2: <code>H2 → C</code>; C's table says <code>H2 → E</code>, and E is directly connected to H2. The lecture does not explain why the H2 route differs between those two slides. The trace below follows the second slide exactly; treat the first table's <code>H2 → B</code> as an alternate example table, not a correction or a step in that trace.</p>
+<table>
+<thead>
+<tr>
+<th>Destination</th>
+<th>Router A: next hop in the trace</th>
+<th>Router C: next hop in the trace</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>H1</td>
+<td>Direct</td>
+<td>A</td>
+</tr>
+<tr>
+<td>H2</td>
+<td>C</td>
+<td>E</td>
+</tr>
+<tr>
+<td>H3</td>
+<td>B</td>
+<td>A</td>
+</tr>
+<tr>
+<td>H4</td>
+<td>B</td>
+<td>E</td>
+</tr>
+<tr>
+<td>H5</td>
+<td>C</td>
+<td>Direct</td>
+</tr>
+</tbody>
+</table>
+<details class="worked"><summary>Lecture example: forward a datagram from H1 to H2</summary><section class="walk" aria-label="Forward one datagram from H1 to H2"><h3>Forward one datagram from H1 to H2</h3><div class="example-input"><p><strong>Given:</strong> destination H2; the trace slide gives A: H2 → C, C: H2 → E, E: H2 → direct. The preceding slide gives A: H2 → B; the lecture does not explain the discrepancy, so this trace follows the later slide only.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · A selects C</h4><p>Lookup destination H2 in A's table. The next hop is C, so A sends over link A–C. The destination field stays H2.</p></section><section class="step"><h4>2 · C selects E</h4><p>C receives the packet and makes its own lookup for H2. C selects E and sends over C–E. The destination remains H2.</p></section><section class="step"><h4>3 · E delivers directly</h4><p>E's table says H2 is direct. E sends onto the host link; the final destination is H2. Check: the path is A → C → E → H2, while only the next-hop decision changes.</p></section></section></details>
+
+<h3>Virtual-circuit forwarding: match the incoming interface and CID</h3>
+<p>A VC switch uses a pair of input values—arrival interface and CID—to find the outgoing interface and CID. The source's Router A table is reproduced below without combining the two columns into a destination-address route.</p>
+<table>
+<thead>
+<tr>
+<th>Incoming interface</th>
+<th style="text-align: right;">Incoming CID</th>
+<th>Outgoing interface</th>
+<th style="text-align: right;">Outgoing CID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>H1</td>
+<td style="text-align: right;">1</td>
+<td>C</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr>
+<td>H6</td>
+<td style="text-align: right;">1</td>
+<td>C</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td>H1</td>
+<td style="text-align: right;">20</td>
+<td>B</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr>
+<td>H1</td>
+<td style="text-align: right;">41</td>
+<td>B</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr>
+<td>C</td>
+<td style="text-align: right;">1</td>
+<td>H1</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr>
+<td>C</td>
+<td style="text-align: right;">2</td>
+<td>H6</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+<details class="worked"><summary>Lecture example: look up a virtual circuit at A</summary><section class="walk" aria-label="Look up a virtual circuit at Router A"><h3>Look up a virtual circuit at Router A</h3><div class="example-input"><p><strong>Router A table excerpt:</strong> (H1, 20) → (B, 15); (H1, 41) → (B, 9); (C, 2) → (H6, 1).</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Match both input fields</h4><p>A packet arrives on interface H1 with CID 20. Find the row whose incoming interface is H1 and incoming CID is 20; neither field alone identifies the VC.</p></section><section class="step"><h4>2 · Read the outgoing pair</h4><p>The matching row maps (H1, 20) to (B, 15). Forward out interface B and use CID 15 on that link; the identifier changes from 20 to 15.</p></section><section class="step"><h4>3 · Check a different row</h4><p>Input (H1, 41) maps to (B, 9), not (B, 15). This confirms the lookup uses the complete input pair. </p></section></section>
+<p>Two more exact lookups from the table are <code>(H1, 1) → (C, 1)</code> and <code>(C, 2) → (H6, 1)</code>. These are table lookups at A, not a claimed end-to-end connection path or setup exchange.</p></details>
+
+<h2 id="section-2">Addressing, routing, and forwarding</h2>
+<p>Addressing identifies end stations. The lecture compares flat identifiers (personal names or its example Ethernet strings <code>54b37630e050</code> and <code>549395b2a750</code>) with hierarchical addresses: a postal address has nested place names, and <code>94 11 2 640382</code> is labelled as country, area, operator, and subscriber portions. These are illustrations of addressing structure, not IP subnet calculations. Addressing exists at several layers—physical, data link, network, and application—so the address used depends on which layer is making a decision. See <a href="osi.html">OSI and encapsulation</a> for layer roles and <a href="ipv4.html">IPv4 addressing</a> for network prefixes and subnet calculations.</p>
+<p>End systems send and receive traffic; intermediate systems relay it between subnets. Keep routing and forwarding separate: <strong>routing</strong> computes or configures paths and builds forwarding tables; <strong>forwarding</strong> is the router's per-packet action of selecting an output using that table. A useful route method should be correct, simple, robust, stable, fair, and optimal for its chosen metric. These are design goals, not one formula that every network can maximize at once.</p>
+<h3>Route choices and metrics</h3>
+<p>Static (non-adaptive) routes are predefined. A small network may have a route for each destination and often a default route for destinations without a more specific entry. The lecture calls static routing labour-consuming and not resilient: an operator must update routes, and a fixed path will not automatically react to a changed network. Dynamic (adaptive) routing runs a routing protocol; the lecture describes centralized or distributed arrangements in which intermediate stations exchange routing information and calculate paths. A path may depend on link speed, delay, congestion, error rate, cost, and policy. Source routing is different: the source specifies the route.</p>
+<p>“Distance” in a routing decision is a metric chosen by the routing design. It may mean hop count, physical distance, delay, inverse bandwidth, communication cost, or another measure. A path with fewer hops is not automatically the fastest or cheapest. </p>
+<p>Hierarchical routing groups destinations using address prefixes and groups routers into regions. Routers handle paths within a region; gateways handle inter-region traffic. A hierarchy can simplify tables, especially when a larger network is summarized at a higher level.</p>
+<figure><div class="diagram-frame" style="--diagram-width:779.6px"><svg role="img" aria-label="Regions handle internal routes; gateways carry traffic between regions." width="780pt" height="134pt"
+ viewBox="0.00 0.00 779.60 133.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="routing-regions-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 122.8)">
+<title>G</title>
+<!-- c1 -->
+<g id="routing-regions-node1" class="node">
+<title>c1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M107,-74C107,-74 12,-74 12,-74 6,-74 0,-68 0,-62 0,-62 0,-38 0,-38 0,-32 6,-26 12,-26 12,-26 107,-26 107,-26 113,-26 119,-32 119,-38 119,-38 119,-62 119,-62 119,-68 113,-74 107,-74"/>
+<text text-anchor="middle" x="59.5" y="-55" font-family="Georgia" font-size="15.00">Region C</text>
+<text text-anchor="middle" x="59.5" y="-38" font-family="Georgia" font-size="15.00">local routers</text>
+</g>
+<!-- g1 -->
+<g id="routing-regions-node4" class="node">
+<title>g1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M300,-68C300,-68 235,-68 235,-68 229,-68 223,-62 223,-56 223,-56 223,-44 223,-44 223,-38 229,-32 235,-32 235,-32 300,-32 300,-32 306,-32 312,-38 312,-44 312,-44 312,-56 312,-56 312,-62 306,-68 300,-68"/>
+<text text-anchor="middle" x="267.5" y="-46.5" font-family="Georgia" font-size="15.00">Gateway</text>
+</g>
+<!-- c1&#45;&gt;g1 -->
+<g id="routing-regions-edge1" class="edge">
+<title>c1&#45;&gt;g1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M119.26,-50C152.2,-50 192.59,-50 222.74,-50"/>
+<text text-anchor="middle" x="171" y="-53.4" font-family="Georgia" font-size="12.00">inter&#45;region</text>
+</g>
+<!-- a1 -->
+<g id="routing-regions-node2" class="node">
+<title>a1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M523,-48C523,-48 428,-48 428,-48 422,-48 416,-42 416,-36 416,-36 416,-12 416,-12 416,-6 422,0 428,0 428,0 523,0 523,0 529,0 535,-6 535,-12 535,-12 535,-36 535,-36 535,-42 529,-48 523,-48"/>
+<text text-anchor="middle" x="475.5" y="-29" font-family="Georgia" font-size="15.00">Region A</text>
+<text text-anchor="middle" x="475.5" y="-12" font-family="Georgia" font-size="15.00">local routers</text>
+</g>
+<!-- b1 -->
+<g id="routing-regions-node3" class="node">
+<title>b1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M746,-112C746,-112 651,-112 651,-112 645,-112 639,-106 639,-100 639,-100 639,-76 639,-76 639,-70 645,-64 651,-64 651,-64 746,-64 746,-64 752,-64 758,-70 758,-76 758,-76 758,-100 758,-100 758,-106 752,-112 746,-112"/>
+<text text-anchor="middle" x="698.5" y="-93" font-family="Georgia" font-size="15.00">Region B</text>
+<text text-anchor="middle" x="698.5" y="-76" font-family="Georgia" font-size="15.00">local routers</text>
+</g>
+<!-- g1&#45;&gt;a1 -->
+<g id="routing-regions-edge4" class="edge">
+<title>g1&#45;&gt;a1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M312.22,-38.93C317.51,-37.82 322.86,-36.81 328,-36 356.74,-31.47 388.93,-28.59 415.81,-26.8"/>
+<text text-anchor="middle" x="364" y="-39.4" font-family="Georgia" font-size="12.00">inter&#45;region</text>
+</g>
+<!-- g2 -->
+<g id="routing-regions-node5" class="node">
+<title>g2</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M508,-106C508,-106 443,-106 443,-106 437,-106 431,-100 431,-94 431,-94 431,-82 431,-82 431,-76 437,-70 443,-70 443,-70 508,-70 508,-70 514,-70 520,-76 520,-82 520,-82 520,-94 520,-94 520,-100 514,-106 508,-106"/>
+<text text-anchor="middle" x="475.5" y="-84.5" font-family="Georgia" font-size="15.00">Gateway</text>
+</g>
+<!-- g1&#45;&gt;g2 -->
+<g id="routing-regions-edge2" class="edge">
+<title>g1&#45;&gt;g2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M312.19,-58.06C347.15,-64.51 395.93,-73.51 430.88,-79.95"/>
+<text text-anchor="middle" x="364" y="-76.4" font-family="Georgia" font-size="12.00">inter&#45;region</text>
+</g>
+<!-- g2&#45;&gt;b1 -->
+<g id="routing-regions-edge3" class="edge">
+<title>g2&#45;&gt;b1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M520.16,-88C554.13,-88 601.59,-88 638.86,-88"/>
+<text text-anchor="middle" x="587" y="-91.4" font-family="Georgia" font-size="12.00">inter&#45;region</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Regions handle internal routes; gateways carry traffic between regions.</figcaption></figure>
+
+<p>The lecture's prefix sketch says to use a matching prefix in the table and otherwise use a default route. <strong>Modern routing clarification:</strong> when multiple prefixes match an IPv4 destination, forwarding normally chooses the most specific (longest matching) prefix. This resolves which matching entry wins; route aggregation is a separate way to advertise or store a broader prefix. See <a href="https://www.rfc-editor.org/rfc/rfc4632.html#section-5.1">RFC 4632, section 5.1</a> and <a href="https://www.rfc-editor.org/rfc/rfc1812.html#section-5.2.4.3">RFC 1812, section 5.2.4.3</a>. This clarification adds no new route-computation lesson.</p>
+<h3>Routing mechanisms named in the lecture</h3>
+<p>The lecture surveys mechanism names rather than teaching their algorithms. Shortest-path routing seeks a minimum-length route under a selected metric. Flooding sends a packet on all unused outgoing links. Distance-vector routers keep destination-distance tables. Link-state routing tracks link state. Broadcast sends to every node. </p>
+<p>Broadcast and flooding are not synonyms: broadcast describes the delivery goal (all nodes), while flooding is one forwarding method that may be used to spread a packet. Multicast targets a subset of hosts in a group. At a router, a multicast packet may go out on zero or more links according to which groups are reachable through those links.</p>
+<h2 id="section-3">Congestion and quality of service</h2>
+<p>Congestion occurs when offered traffic approaches network capacity. The lecture's graph distinguishes an ideal curve that rises and caps at capacity, a desirable curve that approaches the cap, and a congested curve that falls after a peak: adding offered load can eventually reduce delivered traffic. Open-loop control tries to prevent congestion before it occurs. Closed-loop control monitors the network, communicates developing congestion to an appropriate place, and takes action.</p>
+<figure><div class="diagram-frame" style="--diagram-width:640px"><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustrative congestion graph: delivered traffic versus offered traffic, showing ideal, desirable and congested curves" viewBox="0 0 640 350" width="640" height="350">
+<style>svg{color:var(--foreground,#243740);font:16px Georgia,serif}text{fill:currentColor}.axis{stroke:currentColor;stroke-width:2}.capacity{stroke:var(--muted,#5e737d);stroke-dasharray:5 5}.ideal{stroke:currentColor}.desirable{stroke:var(--primary,#1e647c)}.congested{stroke:var(--node-red,#b42332)}.curve{fill:none;stroke-width:4;stroke-linecap:round}</style>
+<path class="axis" d="M82 290V42 M82 290H580"/><path class="capacity" d="M82 82H580"/>
+<text x="24" y="45">Delivered</text><text x="24" y="66">traffic</text><text x="493" y="326">Offered traffic</text><text x="92" y="73">Network capacity</text>
+<path class="curve ideal" d="M82 290L390 82H580"/><path class="curve desirable" d="M82 290C190 220 295 130 390 99S510 83 580 82"/><path class="curve congested" d="M82 290C180 220 275 135 360 112S455 140 500 190S550 242 580 260"/>
+<text x="415" y="67">Ideal</text><text x="466" y="103">Desirable</text><text x="432" y="167">Congested</text>
+</svg></div><figcaption>As offered traffic grows, delivered traffic can reach a capacity limit; congestion can make delivered traffic fall after the network's peak.</figcaption></figure>
+
+<p>Quality of service (QoS) describes requirements such as reliability, delay, jitter (variation in delay), and bandwidth. The table preserves the lecture's relative examples. Its <code>&lt;2 s</code> and <code>&lt;0.2 s</code> values are illustrative slide thresholds, not service guarantees.</p>
+<table>
+<thead>
+<tr>
+<th>Application</th>
+<th>Reliability</th>
+<th>Delay</th>
+<th>Jitter</th>
+<th>Bandwidth</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Email</td>
+<td>High</td>
+<td>Not critical</td>
+<td>Don't care</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>File transfer</td>
+<td>High</td>
+<td>Not critical</td>
+<td>Don't care</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Web</td>
+<td>High</td>
+<td><code>&lt;2 s</code></td>
+<td>Don't care</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Remote login</td>
+<td>High</td>
+<td><code>&lt;2 s</code></td>
+<td>Not critical</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>Audio streaming</td>
+<td>Low</td>
+<td>Not critical</td>
+<td>Significant</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Video streaming</td>
+<td>Low</td>
+<td>Not critical</td>
+<td>Significant</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Telephony</td>
+<td>Low</td>
+<td><code>&lt;0.2 s</code></td>
+<td>Critical</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>Video conference</td>
+<td>Low</td>
+<td><code>&lt;0.2 s</code></td>
+<td>Critical</td>
+<td>High</td>
+</tr>
+</tbody>
+</table>
+<p>The lecture names three practical techniques: <strong>overprovisioning</strong> adds capacity, <strong>buffering</strong> absorbs short bursts at the cost of waiting, and <strong>traffic shaping</strong> controls when or how quickly traffic enters the network. It names Integrated Services (with RSVP as an example) for per-flow QoS, and Differentiated Services for classifying traffic and assigning different bandwidth, priority, or delay treatment by class.</p>
+<h2 id="section-4">Connecting unlike networks</h2>
+<p>Internetworking is needed because networks may differ in service, protocols, addressing, packet size, QoS, and security. The lecture's device-by-layer examples are repeaters and hubs at the physical layer, bridges and switches at the data-link layer, routers at the network layer, transport gateways at the transport layer, and application gateways at the application layer. This is a compact layer taxonomy; device behavior is covered in the corresponding <a href="osi.html">OSI</a>, <a href="lan.html">LAN</a>, and <a href="wan.html">WAN</a> notes.</p>
+<h2 id="section-5">Lab 3.1: configure and verify a router between two LANs</h2>
+<p>The lab builds PC-A — S1 — R1 — PC-B. PC-A connects to switch port F0/6; R1 connects to S1 at F0/5 from R1 G0/1; R1 G0/0 connects to PC-B. The two router interfaces are directly attached to the two IPv4 networks, so after configuration R1 needs no static route between these networks.</p>
+<figure><div class="diagram-frame" style="--diagram-width:721.6px"><svg role="img" aria-label="Lab 3.1 topology and port mapping; R1 joins the two directly connected LANs." width="722pt" height="70pt"
+ viewBox="0.00 0.00 721.60 69.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="routing-lab-topology-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 58.8)">
+<title>G</title>
+<!-- pca -->
+<g id="routing-lab-topology-node1" class="node">
+<title>pca</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M102,-48C102,-48 12,-48 12,-48 6,-48 0,-42 0,-36 0,-36 0,-12 0,-12 0,-6 6,0 12,0 12,0 102,0 102,0 108,0 114,-6 114,-12 114,-12 114,-36 114,-36 114,-42 108,-48 102,-48"/>
+<text text-anchor="middle" x="57" y="-29" font-family="Georgia" font-size="15.00">PC&#45;A</text>
+<text text-anchor="middle" x="57" y="-12" font-family="Georgia" font-size="15.00">192.168.1.3</text>
+</g>
+<!-- s1 -->
+<g id="routing-lab-topology-node2" class="node">
+<title>s1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M337,-48C337,-48 227,-48 227,-48 221,-48 215,-42 215,-36 215,-36 215,-12 215,-12 215,-6 221,0 227,0 227,0 337,0 337,0 343,0 349,-6 349,-12 349,-12 349,-36 349,-36 349,-42 343,-48 337,-48"/>
+<text text-anchor="middle" x="282" y="-29" font-family="Georgia" font-size="15.00">S1</text>
+<text text-anchor="middle" x="282" y="-12" font-family="Georgia" font-size="15.00">Layer 2 switch</text>
+</g>
+<!-- pca&#45;&gt;s1 -->
+<g id="routing-lab-topology-edge1" class="edge">
+<title>pca&#45;&gt;s1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M114.27,-24C144.85,-24 182.85,-24 214.84,-24"/>
+<text text-anchor="middle" x="164.5" y="-27.4" font-family="Georgia" font-size="12.00">NIC ↔ F0/6</text>
+</g>
+<!-- r1 -->
+<g id="routing-lab-topology-node3" class="node">
+<title>r1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M513,-48C513,-48 466,-48 466,-48 460,-48 454,-42 454,-36 454,-36 454,-12 454,-12 454,-6 460,0 466,0 466,0 513,0 513,0 519,0 525,-6 525,-12 525,-12 525,-36 525,-36 525,-42 519,-48 513,-48"/>
+<text text-anchor="middle" x="489.5" y="-29" font-family="Georgia" font-size="15.00">R1</text>
+<text text-anchor="middle" x="489.5" y="-12" font-family="Georgia" font-size="15.00">router</text>
+</g>
+<!-- s1&#45;&gt;r1 -->
+<g id="routing-lab-topology-edge2" class="edge">
+<title>s1&#45;&gt;r1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M349.15,-24C384,-24 425.31,-24 453.86,-24"/>
+<text text-anchor="middle" x="401.5" y="-27.4" font-family="Georgia" font-size="12.00">F0/5 ↔ G0/1</text>
+</g>
+<!-- pcb -->
+<g id="routing-lab-topology-node4" class="node">
+<title>pcb</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M688,-48C688,-48 598,-48 598,-48 592,-48 586,-42 586,-36 586,-36 586,-12 586,-12 586,-6 592,0 598,0 598,0 688,0 688,0 694,0 700,-6 700,-12 700,-12 700,-36 700,-36 700,-42 694,-48 688,-48"/>
+<text text-anchor="middle" x="643" y="-29" font-family="Georgia" font-size="15.00">PC&#45;B</text>
+<text text-anchor="middle" x="643" y="-12" font-family="Georgia" font-size="15.00">192.168.0.3</text>
+</g>
+<!-- r1&#45;&gt;pcb -->
+<g id="routing-lab-topology-edge3" class="edge">
+<title>r1&#45;&gt;pcb</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M525.26,-24C543.17,-24 565.45,-24 585.73,-24"/>
+<text text-anchor="middle" x="555.5" y="-27.4" font-family="Georgia" font-size="12.00">G0/0</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Lab 3.1 topology and port mapping; R1 joins the two directly connected LANs.</figcaption></figure>
+
+<table>
+<thead>
+<tr>
+<th>Device/interface</th>
+<th>IPv4 address</th>
+<th>Mask</th>
+<th>Default gateway</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1 G0/0</td>
+<td><code>192.168.0.1</code></td>
+<td><code>255.255.255.0</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>R1 G0/1</td>
+<td><code>192.168.1.1</code></td>
+<td><code>255.255.255.0</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>PC-A NIC</td>
+<td><code>192.168.1.3</code></td>
+<td><code>255.255.255.0</code></td>
+<td><code>192.168.1.1</code></td>
+</tr>
+<tr>
+<td>PC-B NIC</td>
+<td><code>192.168.0.3</code></td>
+<td><code>255.255.255.0</code></td>
+<td><code>192.168.0.1</code></td>
+</tr>
+</tbody>
+</table>
+<p>Before R1 is configured and its interfaces are enabled, PC-A cannot reach PC-B through a functioning gateway. Once both interfaces and both host gateways match the table, PC-A recognizes that PC-B is remote and sends the first-hop frame to gateway <code>192.168.1.1</code>. R1 forwards the IP packet using its directly connected <code>192.168.0.0/24</code> route, then emits a new link-layer frame on G0/0 toward PC-B. On the reply, PC-B sends to gateway <code>192.168.0.1</code>, and R1 forwards toward PC-A. The IP endpoints remain the two PCs while each link uses the next-hop interface's local delivery. For how the <code>/24</code> networks follow from the mask, use <a href="ipv4.html">IPv4 addressing</a>.</p>
+<details class="worked"><summary>Lab path: explain the successful ping after configuration</summary><section class="walk" aria-label="Trace the Lab 3.1 ping from PC-A to PC-B"><h3>Trace the Lab 3.1 ping from PC-A to PC-B</h3><div class="example-input"><p><strong>Lab values:</strong> PC-A 192.168.1.3/24, gateway 192.168.1.1; PC-B 192.168.0.3/24, gateway 192.168.0.1; R1 G0/1 192.168.1.1/24 and G0/0 192.168.0.1/24.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · PC-A chooses its gateway</h4><p>PC-A is 192.168.1.3/24 and PC-B is 192.168.0.3/24. PC-A sees PC-B is outside its local network, so it sends the first-hop frame to its configured gateway 192.168.1.1.</p></section><section class="step"><h4>2 · R1 uses the connected route</h4><p>R1 receives the IP packet on G0/1. Its route for 192.168.0.0/24 is directly connected through G0/0, so no static route is needed between these two LANs.</p></section><section class="step"><h4>3 · R1 forwards over the other LAN</h4><p>R1 sends a new link-layer frame from G0/0 toward PC-B at 192.168.0.3. The IP destination remains PC-B; the outgoing local-link delivery is new.</p></section><section class="step"><h4>4 · Check the return path</h4><p>PC-B sends its reply to gateway 192.168.0.1. R1 has 192.168.1.0/24 directly connected through G0/1, returning the packet to PC-A. Independent check: show ip route should contain both expected C routes.</p></section></section></details>
+
+<h3>Configuration and diagnostics</h3>
+<p>The lab asks you to configure device access, both router interfaces, descriptions, save the configuration, set the clock, then retry the ping. These are the lab's example credentials, not recommended production passwords. Use the router's actual interface names: a different model may use Fast Ethernet names instead of G0/0 and G0/1.</p>
+<pre><code class="language-text">enable
+configure terminal
+hostname R1
+no ip domain-lookup
+enable secret class
+service password-encryption
+banner motd #Unauthorized access is prohibited.#
+line console 0
+ password cisco
+ login
+exit
+line vty 0 4
+ password cisco
+ login
+exit
+interface g0/0
+ description Link to PC-B
+ ip address 192.168.0.1 255.255.255.0
+ no shutdown
+exit
+interface g0/1
+ description Link to S1 and PC-A LAN
+ ip address 192.168.1.1 255.255.255.0
+ no shutdown
+end
+copy running-config startup-config
+clock set ?
+</code></pre>
+<p>Use <code>clock set ?</code> to inspect the IOS parameter order, enter the actual local time and date, and then ping PC-B from PC-A. The lab's sample is for a Cisco 1941/2960 and IOS versions listed in that document; command output and interface names can vary by model/version.</p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Command</th>
+<th>What to look for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Route table</td>
+<td><code>show ip route</code></td>
+<td>Two <code>C</code> routes: <code>192.168.0.0/24</code> via G0/0 and <code>192.168.1.0/24</code> via G0/1. Newer IOS may also show an <code>L</code> local host route for each router interface address; those are not extra connected subnets. <a href="https://www.cisco.com/c/en/us/td/docs/ios/iproute_pi/command/reference/iri_book/iri_pi2.html">Cisco's command reference</a> identifies <code>L</code> as local and <code>C</code> as connected.</td>
+</tr>
+<tr>
+<td>Interface detail</td>
+<td><code>show interface g0/1</code></td>
+<td>Administrative/operational state, MAC address, and Internet address shown as <code>192.168.1.1/24</code>. MAC is device-specific; do not infer a fixed value.</td>
+</tr>
+<tr>
+<td>Interface summary</td>
+<td><code>show ip interface brief</code></td>
+<td>R1 G0/0 and G0/1 should be <code>up/up</code> after cabling, addressing, and <code>no shutdown</code>. The lab's switch F0/5 and F0/6 are up/up; unused ports can be down/down.</td>
+</tr>
+<tr>
+<td>Hardware/software</td>
+<td><code>show version</code></td>
+<td>Read IOS image, memory, and model from the actual lab equipment; these values vary.</td>
+</tr>
+</tbody>
+</table>
+<p>An unassigned VLAN 1 management address does not stop an ordinary Layer 2 switch from forwarding frames. It matters for managing the switch over the network. <code>show ip route</code> answers route questions; <code>show ip interface brief</code> summarizes interface addressing and status.</p>
+<details class="worked"><summary>Lab reflection: diagnose a failed link or gateway</summary><section class="walk" aria-label="Diagnose the two Lab 3.1 reflection cases"><h3>Diagnose the two Lab 3.1 reflection cases</h3><div class="example-input"><p><strong>Starting state:</strong> one router joins two /24 LANs; the reflection asks about a disabled G0/1 or a mismatched G0/1 address.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Interface is administratively down</h4><p>Enter interface g0/1 and issue no shutdown. Then recheck show ip interface brief. An administratively down state indicates configuration has disabled the interface; separately confirm the cable and operational state.</p></section><section class="step"><h4>2 · Gateway address does not match</h4><p>If R1 G0/1 is 192.168.1.2 while PC-A's gateway remains 192.168.1.1, the router is not answering at the configured gateway address. Correct R1 to .1 or update the gateway consistently. Sharing the /24 does not make .2 answer for .1.</p></section><section class="step"><h4>3 · Verify the whole path</h4><p>Check both router interface addresses and masks, no shutdown, cables and up/up states, PC addresses and gateways, then inspect show ip route. The expected connected routes are 192.168.0.0/24 on G0/0 and 192.168.1.0/24 on G0/1.</p></section></section></details>
+
+<h2 id="section-6">Review</h2>
+<p>Remember the packet destination stays constant in datagram forwarding while next hops change; a virtual-circuit lookup uses the incoming interface and CID together; routing builds or configures tables while forwarding applies them; and the lab's two C routes come from R1's two active, directly connected interfaces.</p>
+<p class="question">In the lecture's datagram trace, why does H2 remain the destination while A and C choose different next hops?</p>
+<details class="worked"><summary>Check your answer</summary><p>H2 is the packet's destination address. A uses its table to select C; C independently uses its table to select E. A next hop is the next router, not a replacement destination.</p></details>
+
+<p class="question">Which VC row is used at A for a packet arriving on C with CID 2, and what leaves A?</p>
+<details class="worked"><summary>Check your answer</summary><p>Match both input fields <code>(C, 2)</code>. The table maps it to <code>(H6, 1)</code>, so it leaves interface H6 with outgoing CID 1.</p></details>
+
+<p class="question">Why does Lab 3.1 need no static route between the two PC networks once R1 is configured?</p>
+<details class="worked"><summary>Check your answer</summary><p>R1 has one active interface in each network. Both networks are directly connected, so the router installs the two connected routes automatically.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="lan.html"><small>Previous</small>LAN, Ethernet and switching <span aria-hidden="true">↗</span></a><a href="ipv4.html"><small>Next</small>IPv4 addressing, subnetting and VLSM <span aria-hidden="true">↗</span></a></nav><footer>Networks field notes <span>Follow the packet. Explain the decision.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  root.querySelectorAll('table').forEach(table => {
+    const region = document.createElement('div');
+    region.className = 'table-scroll' + (table.rows[0]?.cells.length > 5 ? ' wide' : '');
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    table.before(region); region.append(table);
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Network diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {osi:'layers encapsulation protocol service interface pdu',link:'framing crc parity arq flow control sliding window',ethernet:'mac switch arp csma token lab',wan:'man atm isdn frame relay x25',routing:'network forwarding distance vector link state dijkstra',ipv4:'ip subnet mask vlsm binary cidr lab',ipv6:'ip address compression transition lab',transport:'tcp udp handshake congestion window port',bluetooth:'wireless nfc zigbee wpan beacon quiz',security:'cia attacks cryptography encryption hash authentication',infrastructure:'pki certificate ca trust revocation signature',tls:'ssl ipsec ah esp tunnel sa',design:'requirements topology availability delay bandwidth'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('a').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('cns-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.CNS_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) expand.textContent = 'Expand examples';
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

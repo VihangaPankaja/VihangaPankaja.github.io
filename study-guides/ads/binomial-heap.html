@@ -1,0 +1,998 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Add roots cheaply. During removeMin, combine equal-degree trees like carrying digits in binary addition."><title>Lazy binomial heap · ADS field notes</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('ads-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{.table-hint{display:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> ADS <span class="subbrand">field notes</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Heap, delete, trie…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a href="index.html">Data structures, side by side.</a><a href="comparison.html">Operation costs at a glance</a></div><div class="nav-group"><p>Priority queues</p><a href="binary-heap.html">Binary heap</a><a href="d-ary-heap.html">d-ary heap</a><a href="dual-heap.html">Dual min/max heaps</a><a href="correspondence-heaps.html">Correspondence heaps</a><a href="interval-heap.html">Interval heap</a></div><div class="nav-group"><p>Tournament and coding trees</p><a href="winner-tree.html">Winner tree</a><a href="loser-tree.html">Loser tree</a><a href="huffman-tree.html">Huffman tree</a></div><div class="nav-group"><p>Meldable priority queues</p><a href="leftist-tree.html">Leftist tree</a><a href="binomial-heap.html" aria-current="page">Lazy binomial heap</a><a href="fibonacci-heap.html">Fibonacci heap</a><a href="pairing-heap.html">Pairing heap</a></div><div class="nav-group"><p>Dictionaries and search trees</p><a href="hash-table.html">Hash table</a><a href="binary-search-tree.html">Binary search tree</a><a href="indexed-bst.html">Indexed BST</a><a href="optimal-bst.html">Optimal BST</a><a href="avl-tree.html">AVL tree</a><a href="red-black-tree.html">Red-black tree</a><a href="b-tree.html">B-tree</a><a href="two-three-tree.html">2-3 tree</a><a href="two-three-four-tree.html">2-3-4 tree</a><a href="b-plus-tree.html">B+ tree</a><a href="splay-tree.html">Splay tree</a></div><div class="nav-group"><p>Digital search and strings</p><a href="digital-search-tree.html">Digital search tree</a><a href="binary-trie.html">Binary trie</a><a href="compressed-trie.html">Compressed binary trie</a><a href="higher-order-trie.html">Higher-order trie</a><a href="multibit-trie.html">Multibit trie and routing</a><a href="suffix-tree.html">Suffix tree</a></div><div class="nav-group"><p>Reference</p><a href="operation-glossary.html">Operation names and exam traps</a></div><div class="nav-group"><p>Sorting on disk</p><a href="external-sorting.html">External sorting</a></div><div class="nav-group"><p>Analysis</p><a href="amortized-analysis.html">Amortized analysis</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4580<br>Advanced Data Structures</div></aside>
+<main id="main"><div class="eyebrow">Meldable priority queues <span>/</span> Lecture 6 · Lab 4</div><h1>Lazy binomial heap</h1><p class="lead">Add roots cheaply. During removeMin, combine equal-degree trees like carrying digits in binary addition.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Rule and representation</a><a href="#section-1">Operations</a><a href="#section-2">Caveats and exam focus</a><a href="#section-3">Big picture</a><a href="#section-4">Fresh construction and destructive meld</a><a href="#section-5">Removing a root with children</a><a href="#section-6">Method decisions and stop conditions</a><a href="#section-7">Contrasting cases to remember</a><a href="#section-8">Common mistakes</a><a href="#section-9">Exam focus</a><a href="#section-10">Practice questions</a></nav><article><h2 id="section-0">Rule and representation</h2>
+<p>The course uses a <strong>lazy</strong> binomial heap: a circular singly linked root list, a min pointer, and node fields key, degree, child and sibling. A binomial tree <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>B</mi><mi>k</mi></msub></mrow></math> has <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mn>2</mn><mi>k</mi></msup></mrow></math> nodes and root degree k. Multiple roots of the same degree are allowed between consolidations.</p>
+<section aria-label="Fresh build from [7, 3, 9, 1]" class="walk"><h3>Fresh build from [7, 3, 9, 1]</h3><div class="example-input"><strong>Input list</strong><span>[7, 3, 9, 1]</span></div><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Empty root list</h4><figure><div class="array"></div><figcaption>minPtr is null.</figcaption></figure><div class="step-reason"><p>This is the base case: an empty circular root list has no minimum, so <code>minPtr</code> must be null. Stop the empty-build trace here; the first singleton will become both the only root and the minimum.</p></div></section><section class="step"><h4>2 · Insert 7, then 3</h4><figure><div class="array"><span class="cell"><small>1</small>7 / d=0</span><span class="cell"><small>2</small>3 / d=0</span></div><figcaption>Splice singleton roots. minPtr moves from 7 to 3.</figcaption></figure><div class="step-reason"><p>Each insertion splices one isolated degree-0 root into the circle. Equal root degrees are allowed in this lazy variant, and <code>minPtr</code> changes from 7 to 3 because 3 is smaller; stop after both constant-time splices.</p></div></section><section class="step"><h4>3 · Insert 9, then 1</h4><figure><div class="array"><span class="cell"><small>1</small>7 / d=0</span><span class="cell"><small>2</small>3 / d=0</span><span class="cell"><small>3</small>9 / d=0</span><span class="cell"><small>4</small>1 / d=0</span></div><figcaption>All four remain roots. minPtr points to 1. Construction took <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math>.</figcaption></figure><div class="step-reason"><p>The next two singleton roots remain degree 0 even though the list now has four equal degrees. Compare each new key with the current minimum, so 1 becomes <code>minPtr</code>; stop without consolidation because only removeMin performs it in this course variant.</p></div></section></section>
+<h2 id="section-1">Operations</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Actual worst case</th>
+<th>Amortized</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>getMin</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math></td>
+<td>Follow minPtr</td>
+</tr>
+<tr>
+<td>insert</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math></td>
+<td>Splice singleton and update minPtr</td>
+</tr>
+<tr>
+<td>meld</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math></td>
+<td>Splice root circles and choose smaller minimum</td>
+</tr>
+<tr>
+<td>removeMin</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math></td>
+<td>Remove root, promote children, pairwise combine</td>
+</tr>
+<tr>
+<td>initialize</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math></td>
+<td>Make and splice singletons</td>
+</tr>
+<tr>
+<td>search</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math></td>
+<td>No BST ordering</td>
+</tr>
+</tbody>
+</table>
+<p>Arbitrary remove and decreaseKey are not part of this lecture/lab interface. The singly linked representation has no parent field. Do not transfer Fibonacci-heap cut bounds to it. An eager binomial heap consolidates on insert/meld and has different actual bounds.</p>
+<section aria-label="removeMin and pairwiseCombine" class="walk"><h3>removeMin and pairwiseCombine</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Remove root 1</h4><figure><div class="array"><span class="cell"><small>1</small>7 / d=0</span><span class="cell"><small>2</small>3 / d=0</span><span class="cell"><small>3</small>9 / d=0</span></div><figcaption>1 had no children. Three singleton roots remain.</figcaption></figure><div class="step-reason"><p>The removed root 1 is an isolated singleton, so there is no child forest to promote. Unlink it from the root circle; the three degree-0 roots 7, 3, and 9 remain, and the next phase must account for every one of them.</p></div></section><section class="step"><h4>2 · Put 7 in table[0]</h4><figure><div class="array"><span class="cell"><small>1</small>table[0]: 7</span><span class="cell"><small>2</small>table[1]: empty</span></div><figcaption>The table holds at most one tree per degree.</figcaption></figure><div class="step-reason"><p>The first captured root 7 occupies table[0], whose invariant is at most one root of each degree. Continue to the next captured root: an empty slot ends processing for this root, not for the whole consolidation.</p></div></section><section class="step"><h4>3 · Collision with 3 at degree 0</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="3 wins. Clear table[0], carry degree-1 tree into table[1]." height="126pt" role="img" viewbox="0.00 0.00 100.60 125.60" width="101pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="binomial-combine-1-graph0" transform="scale(1 1) rotate(0) translate(10.8 114.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="binomial-combine-1-node1">
+<title>r</title>
+<path d="M67,-104C67,-104 12,-104 12,-104 6,-104 0,-98 0,-92 0,-92 0,-80 0,-80 0,-74 6,-68 12,-68 12,-68 67,-68 67,-68 73,-68 79,-74 79,-80 79,-80 79,-92 79,-92 79,-98 73,-104 67,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="39.5" y="-82.5">3 / d=1</text>
+</g>
+<!-- r0 -->
+<g class="node" id="binomial-combine-1-node2">
+<title>r0</title>
+<path d="M67,-36C67,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 67,0 67,0 73,0 79,-6 79,-12 79,-12 79,-24 79,-24 79,-30 73,-36 67,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="39.5" y="-14.5">7 / d=0</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="binomial-combine-1-edge1">
+<title>r-&gt;r0</title>
+<path d="M39.5,-67.66C39.5,-59.99 39.5,-50.85 39.5,-42.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.6,-42.45 39.5,-36.45 37.4,-42.45 41.6,-42.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>3 wins. Clear table[0], carry degree-1 tree into table[1].</figcaption></figure><div class="step-reason"><p>The next root 3 collides with degree 0. Since 3 is smaller, link 7 beneath 3, raise the winner to degree 1, clear table[0], and carry the new tree to table[1]; continue only if that slot is occupied.</p></div></section><section class="step"><h4>4 · Process 9 and rebuild</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="The sibling cycle contains roots 9 and 3; only 7 is a child, under 3. table[0]=9 and table[1]=3. Clear table entries after rebuilding and set minPtr=3." height="220pt" role="img" viewbox="0.00 0.00 141.60 219.60" width="142pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-binomial-heap-original-rebuilt-circle-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r9 -->
+<g class="node" id="rev-binomial-heap-original-rebuilt-circle-node1">
+<title>r9</title>
+<path d="M105.5,-198C105.5,-198 14.5,-198 14.5,-198 8.5,-198 2.5,-192 2.5,-186 2.5,-186 2.5,-174 2.5,-174 2.5,-168 8.5,-162 14.5,-162 14.5,-162 105.5,-162 105.5,-162 111.5,-162 117.5,-168 117.5,-174 117.5,-174 117.5,-186 117.5,-186 117.5,-192 111.5,-198 105.5,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="60" y="-176.5">root 9 / d=0</text>
+</g>
+<!-- r3 -->
+<g class="node" id="rev-binomial-heap-original-rebuilt-circle-node2">
+<title>r3</title>
+<path d="M105.5,-117C105.5,-117 14.5,-117 14.5,-117 8.5,-117 2.5,-111 2.5,-105 2.5,-105 2.5,-93 2.5,-93 2.5,-87 8.5,-81 14.5,-81 14.5,-81 105.5,-81 105.5,-81 111.5,-81 117.5,-87 117.5,-93 117.5,-93 117.5,-105 117.5,-105 117.5,-111 111.5,-117 105.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="60" y="-95.5">root 3 / d=1</text>
+</g>
+<!-- r9&#45;&gt;r3 -->
+<g class="edge" id="rev-binomial-heap-original-rebuilt-circle-edge1">
+<title>r9-&gt;r3</title>
+<path d="M37.83,-161.79C33.43,-157.18 29.42,-151.84 27,-146 23.52,-137.59 26.87,-129.24 32.58,-122.02" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="34.44,-123.09 36.85,-117.2 31.29,-120.3 34.44,-123.09" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="47" y="-136.4">sibling</text>
+</g>
+<!-- r3&#45;&gt;r9 -->
+<g class="edge" id="rev-binomial-heap-original-rebuilt-circle-edge2">
+<title>r3-&gt;r9</title>
+<path d="M65.02,-117.33C66.25,-122.34 67.38,-127.85 68,-133 68.89,-140.42 68.1,-148.46 66.72,-155.71" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="64.67,-155.28 65.46,-161.59 68.77,-156.17 64.67,-155.28" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="88" y="-136.4">sibling</text>
+</g>
+<!-- c7 -->
+<g class="node" id="rev-binomial-heap-original-rebuilt-circle-node3">
+<title>c7</title>
+<path d="M108,-36C108,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 108,0 108,0 114,0 120,-6 120,-12 120,-12 120,-24 120,-24 120,-30 114,-36 108,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="60" y="-14.5">child 7 / d=0</text>
+</g>
+<!-- r3&#45;&gt;c7 -->
+<g class="edge" id="rev-binomial-heap-original-rebuilt-circle-edge3">
+<title>r3-&gt;c7</title>
+<path d="M60,-80.86C60,-69.57 60,-54.66 60,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="62.1,-42.11 60,-36.11 57.9,-42.11 62.1,-42.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="75" y="-55.4">child</text>
+</g>
+</g>
+</svg>
+</div><figcaption>The sibling cycle contains roots 9 and 3; only 7 is a child, under 3. table[0]=9 and table[1]=3. Clear table entries after rebuilding and set minPtr=3.</figcaption></figure><div class="step-reason"><p>Root 9 fills table[0] while the carried B1 rooted at 3 stays in table[1]. Once all snapshot roots are processed, rebuild the root circle from the nonempty slots, clear the temporary table, and scan its roots to set <code>minPtr</code> to 3; the two root-list edges are siblings, not parent-child links.</p></div></section></section>
+<h2 id="section-2">Caveats and exam focus</h2>
+<p>If a degree-table collision creates another collision, keep linking. After consolidation, root degrees are distinct and at most <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>⌊</mi><msub><mi>log</mi><mn>2</mn></msub><mi>n</mi><mi>⌋</mi></mrow></math>. Before consolidation, the root count can be n. Removing the only root may still leave its children, so capture the list-splicing return value. Snapshot roots before mutation to avoid cycling forever. Update degrees after every link and empty the donor after destructive meld.</p>
+<p class="question">Why can a single removeMin take <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math>?</p>
+<details class="worked"><summary>Check your answer</summary><p>After n lazy inserts there can be n roots. The first removal must inspect and consolidate them. Earlier cheap inserts pay for that deferred work in the amortized analysis.</p></details>
+<h2 id="section-3">Big picture</h2>
+<p>A lazy binomial heap buys constant-time insertion and meld by leaving roots uncombined. Every root is a min-tree root, and the root pointer names a minimum, but root degrees need not be unique until <code>removeMin</code> consolidates them. A degree-table collision behaves like a binary carry: two degree-d trees become one degree-(d+1) tree, with the larger root below the smaller.</p>
+<p>For a binomial tree, <div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo stretchy="false">|</mo><msub><mi>B</mi><mi>k</mi></msub><mo stretchy="false">|</mo><mo>=</mo><msup><mn>2</mn><mi>k</mi></msup><mo>,</mo><mspace width="2em"></mspace><mi>deg</mi><mo stretchy="false">(</mo><mo>root</mo><mo stretchy="false">(</mo><msub><mi>B</mi><mi>k</mi></msub><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>=</mo><mi>k</mi></mrow></math></div> . This size invariant explains the maximum degree after consolidation: a degree-k tree needs at least <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mn>2</mn><mi>k</mi></msup></mrow></math> records.</p>
+<h2 id="section-4">Fresh construction and destructive meld</h2>
+<p>The eight inserts above are a larger lazy build. All eight keys occur as degree-0 roots; the arrays show insertion history, while the actual root-circle traversal from minPtr is [1, 5, 3, 6, 7, 8, 4, 2]. After building A, meld it with singleton B=[0]. The two circles splice in constant time; because 0&lt;1, A.minPtr becomes B's root. The operation consumes B: its root/min pointers are cleared, so it cannot still claim ownership of those nodes. The combined forest is still nine singletons. Removing 0 leaves the eight roots used in the carry walk.</p>
+<p>The carry walk uses the actual root-circle order [5, 3, 6, 7, 8, 4, 2, 1] after removing 0. This order follows Lab 4's splice-after-min-pointer operation; the original input order is not the sibling traversal order. Table entries record one tree per degree; an empty slot stops the carry for that root, while an occupied slot requires a comparison, link, slot clear, and another iteration. At equality, either root can remain parent because heap order permits equal keys; the lab code keeps the first argument. The three child trees of B3 have degrees 0, 1, and 2. Lab 4 inserts each newly linked child after the node's child pointer; for this trace the pointer order is B0, B2, B1. Sibling order is circular-list bookkeeping, not a priority ordering. After the final root, rebuild the circular list from nonempty table slots, clear the temporary table, and scan all resulting roots for minPtr. Here only B3 remains, rooted at 1.</p>
+<section aria-label="Fresh lazy build from [8, 4, 7, 2, 6, 3, 5, 1]" class="walk"><h3>Fresh lazy build from [8, 4, 7, 2, 6, 3, 5, 1]</h3><div class="example-input"><strong>Input list</strong><span>[8, 4, 7, 2, 6, 3, 5, 1]</span></div><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>Start empty</h4><figure><div class="array"></div><figcaption>No roots; minPtr is null.</figcaption></figure></section><section class="step"><h4>Insert 8 as a singleton</h4><figure><div class="array"><span class="cell changed"><small>1</small>8 / d=0</span></div><figcaption>Insertion-history view (not root-circle traversal). Splice one self-linked singleton; minPtr=8. Equal degrees remain separate.</figcaption></figure></section><section class="step"><h4>Insert 4 as a singleton</h4><figure><div class="array"><span class="cell"><small>1</small>8 / d=0</span><span class="cell changed"><small>2</small>4 / d=0</span></div><figcaption>Insertion-history view (not root-circle traversal). Splice one self-linked singleton; minPtr=4. Equal degrees remain separate.</figcaption></figure></section><section class="step"><h4>Insert 7 as a singleton</h4><figure><div class="array"><span class="cell"><small>1</small>8 / d=0</span><span class="cell"><small>2</small>4 / d=0</span><span class="cell changed"><small>3</small>7 / d=0</span></div><figcaption>Insertion-history view (not root-circle traversal). Splice one self-linked singleton; minPtr=4. Equal degrees remain separate.</figcaption></figure></section><section class="step"><h4>Insert 2 as a singleton</h4><figure><div class="array"><span class="cell"><small>1</small>8 / d=0</span><span class="cell"><small>2</small>4 / d=0</span><span class="cell"><small>3</small>7 / d=0</span><span class="cell changed"><small>4</small>2 / d=0</span></div><figcaption>Insertion-history view (not root-circle traversal). Splice one self-linked singleton; minPtr=2. Equal degrees remain separate.</figcaption></figure></section><section class="step"><h4>Insert 6 as a singleton</h4><figure><div class="array"><span class="cell"><small>1</small>8 / d=0</span><span class="cell"><small>2</small>4 / d=0</span><span class="cell"><small>3</small>7 / d=0</span><span class="cell"><small>4</small>2 / d=0</span><span class="cell changed"><small>5</small>6 / d=0</span></div><figcaption>Insertion-history view (not root-circle traversal). Splice one self-linked singleton; minPtr=2. Equal degrees remain separate.</figcaption></figure></section><section class="step"><h4>Insert 3 as a singleton</h4><figure><div class="array"><span class="cell"><small>1</small>8 / d=0</span><span class="cell"><small>2</small>4 / d=0</span><span class="cell"><small>3</small>7 / d=0</span><span class="cell"><small>4</small>2 / d=0</span><span class="cell"><small>5</small>6 / d=0</span><span class="cell changed"><small>6</small>3 / d=0</span></div><figcaption>Insertion-history view (not root-circle traversal). Splice one self-linked singleton; minPtr=2. Equal degrees remain separate.</figcaption></figure></section><section class="step"><h4>Insert 5 as a singleton</h4><figure><div class="array"><span class="cell"><small>1</small>8 / d=0</span><span class="cell"><small>2</small>4 / d=0</span><span class="cell"><small>3</small>7 / d=0</span><span class="cell"><small>4</small>2 / d=0</span><span class="cell"><small>5</small>6 / d=0</span><span class="cell"><small>6</small>3 / d=0</span><span class="cell changed"><small>7</small>5 / d=0</span></div><figcaption>Insertion-history view (not root-circle traversal). Splice one self-linked singleton; minPtr=2. Equal degrees remain separate.</figcaption></figure></section><section class="step"><h4>Insert 1 as a singleton</h4><figure><div class="array"><span class="cell"><small>1</small>8 / d=0</span><span class="cell"><small>2</small>4 / d=0</span><span class="cell"><small>3</small>7 / d=0</span><span class="cell"><small>4</small>2 / d=0</span><span class="cell"><small>5</small>6 / d=0</span><span class="cell"><small>6</small>3 / d=0</span><span class="cell"><small>7</small>5 / d=0</span><span class="cell changed"><small>8</small>1 / d=0</span></div><figcaption>Insertion-history view (not root-circle traversal). Splice one self-linked singleton; minPtr=1. Equal degrees remain separate.</figcaption></figure></section></section>
+<section aria-label="Meld a fresh eight-root heap with singleton [0]" class="walk"><h3>Meld a fresh eight-root heap with singleton [0]</h3><div class="example-input"><strong>Input list</strong><span>[0]</span></div><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Before meld</h4><figure><div class="array"><span class="cell"><small>1</small>8 / d=0</span><span class="cell"><small>2</small>4 / d=0</span><span class="cell"><small>3</small>7 / d=0</span><span class="cell"><small>4</small>2 / d=0</span><span class="cell"><small>5</small>6 / d=0</span><span class="cell"><small>6</small>3 / d=0</span><span class="cell"><small>7</small>5 / d=0</span><span class="cell"><small>8</small>1 / d=0</span></div><figcaption>Heap A has eight singleton roots; minPtr=1. From minPtr its circle is 1→5→3→6→7→8→4→2→1. Heap B has one singleton root 0.</figcaption></figure></section><section class="step"><h4>2 · Splice the root circles</h4><figure><div class="array"><span class="cell"><small>1</small>0 / d=0</span><span class="cell"><small>2</small>5 / d=0</span><span class="cell"><small>3</small>3 / d=0</span><span class="cell"><small>4</small>6 / d=0</span><span class="cell"><small>5</small>7 / d=0</span><span class="cell"><small>6</small>8 / d=0</span><span class="cell"><small>7</small>4 / d=0</span><span class="cell"><small>8</small>2 / d=0</span><span class="cell"><small>9</small>1 / d=0</span></div><figcaption>Circle traversal from minPtr=0 is 0→5→3→6→7→8→4→2→1→0. B is consumed and its minPtr becomes null. No equal-degree links occur during meld.</figcaption></figure></section><section class="step"><h4>3 · Remove singleton minimum 0</h4><figure><div class="array"><span class="cell"><small>1</small>5 / d=0</span><span class="cell"><small>2</small>3 / d=0</span><span class="cell"><small>3</small>6 / d=0</span><span class="cell"><small>4</small>7 / d=0</span><span class="cell"><small>5</small>8 / d=0</span><span class="cell"><small>6</small>4 / d=0</span><span class="cell"><small>7</small>2 / d=0</span><span class="cell"><small>8</small>1 / d=0</span></div><figcaption>The removed root had no children. Eight roots remain from temporary root 5 in this circle order; snapshot them before changing sibling links.</figcaption></figure></section></section>
+<section aria-label="Pairwise combine: eight roots and a 0 → 1 → 2 → 3 carry" class="walk"><h3>Pairwise combine: eight roots and a 0 → 1 → 2 → 3 carry</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Link 5 and 3 at degree 0</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="3 wins the degree-0 collision, so 5 becomes its child. Table: d0 empty; d1=3. Continue to the next captured root." height="126pt" role="img" viewbox="0.00 0.00 100.60 125.60" width="101pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-binomial-heap-link-01-graph0" transform="scale(1 1) rotate(0) translate(10.8 114.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-binomial-heap-link-01-node1">
+<title>r</title>
+<path d="M67,-104C67,-104 12,-104 12,-104 6,-104 0,-98 0,-92 0,-92 0,-80 0,-80 0,-74 6,-68 12,-68 12,-68 67,-68 67,-68 73,-68 79,-74 79,-80 79,-80 79,-92 79,-92 79,-98 73,-104 67,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="39.5" y="-82.5">3 / d=1</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-binomial-heap-link-01-node2">
+<title>r0</title>
+<path d="M67,-36C67,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 67,0 67,0 73,0 79,-6 79,-12 79,-12 79,-24 79,-24 79,-30 73,-36 67,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="39.5" y="-14.5">5 / d=0</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-binomial-heap-link-01-edge1">
+<title>r-&gt;r0</title>
+<path d="M39.5,-67.66C39.5,-59.99 39.5,-50.85 39.5,-42.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.6,-42.45 39.5,-36.45 37.4,-42.45 41.6,-42.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>3 wins the degree-0 collision, so 5 becomes its child. Table: d0 empty; d1=3. Continue to the next captured root.</figcaption></figure></section><section class="step"><h4>2 · Link 6 and 7 at degree 0</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="6 wins against 7. Table has d0 empty and B1 roots 3 and 6 at d1; their equal degrees require another link." height="126pt" role="img" viewbox="0.00 0.00 100.60 125.60" width="101pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-binomial-heap-link-02-graph0" transform="scale(1 1) rotate(0) translate(10.8 114.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-binomial-heap-link-02-node1">
+<title>r</title>
+<path d="M67,-104C67,-104 12,-104 12,-104 6,-104 0,-98 0,-92 0,-92 0,-80 0,-80 0,-74 6,-68 12,-68 12,-68 67,-68 67,-68 73,-68 79,-74 79,-80 79,-80 79,-92 79,-92 79,-98 73,-104 67,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="39.5" y="-82.5">6 / d=1</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-binomial-heap-link-02-node2">
+<title>r0</title>
+<path d="M67,-36C67,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 67,0 67,0 73,0 79,-6 79,-12 79,-12 79,-24 79,-24 79,-30 73,-36 67,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="39.5" y="-14.5">7 / d=0</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-binomial-heap-link-02-edge1">
+<title>r-&gt;r0</title>
+<path d="M39.5,-67.66C39.5,-59.99 39.5,-50.85 39.5,-42.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.6,-42.45 39.5,-36.45 37.4,-42.45 41.6,-42.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>6 wins against 7. Table has d0 empty and B1 roots 3 and 6 at d1; their equal degrees require another link.</figcaption></figure></section><section class="step"><h4>3 · Carry both B1 trees into degree 2</h4><figure><div class="diagram-frame" style="--diagram-width:201.6px"><svg aria-label="3 wins the degree-1 collision with 6. Its existing B0 child 5 remains; the B1 rooted at 6 becomes its other child. Clear d1 and store this B2 at d2." height="194pt" role="img" viewbox="0.00 0.00 201.60 193.60" width="202pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-binomial-heap-link-03-graph0" transform="scale(1 1) rotate(0) translate(10.8 182.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-binomial-heap-link-03-node1">
+<title>r</title>
+<path d="M117,-172C117,-172 62,-172 62,-172 56,-172 50,-166 50,-160 50,-160 50,-148 50,-148 50,-142 56,-136 62,-136 62,-136 117,-136 117,-136 123,-136 129,-142 129,-148 129,-148 129,-160 129,-160 129,-166 123,-172 117,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="89.5" y="-150.5">3 / d=2</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-binomial-heap-link-03-node2">
+<title>r0</title>
+<path d="M67,-104C67,-104 12,-104 12,-104 6,-104 0,-98 0,-92 0,-92 0,-80 0,-80 0,-74 6,-68 12,-68 12,-68 67,-68 67,-68 73,-68 79,-74 79,-80 79,-80 79,-92 79,-92 79,-98 73,-104 67,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="39.5" y="-82.5">5 / d=0</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-binomial-heap-link-03-edge1">
+<title>r-&gt;r0</title>
+<path d="M76.36,-135.66C70.32,-127.69 63.08,-118.13 56.63,-109.61" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="58.02,-107.97 52.72,-104.45 54.67,-110.5 58.02,-107.97" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-binomial-heap-link-03-node3">
+<title>r1</title>
+<path d="M168,-104C168,-104 113,-104 113,-104 107,-104 101,-98 101,-92 101,-92 101,-80 101,-80 101,-74 107,-68 113,-68 113,-68 168,-68 168,-68 174,-68 180,-74 180,-80 180,-80 180,-92 180,-92 180,-98 174,-104 168,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="140.5" y="-82.5">6 / d=1</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-binomial-heap-link-03-edge2">
+<title>r-&gt;r1</title>
+<path d="M102.9,-135.66C109.06,-127.69 116.44,-118.13 123.03,-109.61" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="125.01,-110.49 127.01,-104.45 121.68,-107.92 125.01,-110.49" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-binomial-heap-link-03-node4">
+<title>r10</title>
+<path d="M168,-36C168,-36 113,-36 113,-36 107,-36 101,-30 101,-24 101,-24 101,-12 101,-12 101,-6 107,0 113,0 113,0 168,0 168,0 174,0 180,-6 180,-12 180,-12 180,-24 180,-24 180,-30 174,-36 168,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="140.5" y="-14.5">7 / d=0</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-binomial-heap-link-03-edge3">
+<title>r1-&gt;r10</title>
+<path d="M140.5,-67.66C140.5,-59.99 140.5,-50.85 140.5,-42.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="142.6,-42.45 140.5,-36.45 138.4,-42.45 142.6,-42.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>3 wins the degree-1 collision with 6. Its existing B0 child 5 remains; the B1 rooted at 6 becomes its other child. Clear d1 and store this B2 at d2.</figcaption></figure></section><section class="step"><h4>4 · Link 8 and 4 at degree 0</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="4 wins, making a B1 with child 8. Table contains B1 rooted at 4, B2 rooted at 3, and the uncombined singleton roots 2 and 1 remain to be processed." height="126pt" role="img" viewbox="0.00 0.00 100.60 125.60" width="101pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-binomial-heap-link-04-graph0" transform="scale(1 1) rotate(0) translate(10.8 114.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-binomial-heap-link-04-node1">
+<title>r</title>
+<path d="M67,-104C67,-104 12,-104 12,-104 6,-104 0,-98 0,-92 0,-92 0,-80 0,-80 0,-74 6,-68 12,-68 12,-68 67,-68 67,-68 73,-68 79,-74 79,-80 79,-80 79,-92 79,-92 79,-98 73,-104 67,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="39.5" y="-82.5">4 / d=1</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-binomial-heap-link-04-node2">
+<title>r0</title>
+<path d="M67,-36C67,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 67,0 67,0 73,0 79,-6 79,-12 79,-12 79,-24 79,-24 79,-30 73,-36 67,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="39.5" y="-14.5">8 / d=0</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-binomial-heap-link-04-edge1">
+<title>r-&gt;r0</title>
+<path d="M39.5,-67.66C39.5,-59.99 39.5,-50.85 39.5,-42.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.6,-42.45 39.5,-36.45 37.4,-42.45 41.6,-42.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>4 wins, making a B1 with child 8. Table contains B1 rooted at 4, B2 rooted at 3, and the uncombined singleton roots 2 and 1 remain to be processed.</figcaption></figure></section><section class="step"><h4>5 · Link final root 1 and table[d0]=2</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="The final captured singleton 1 meets table[d0]=2. 1 wins and carries a B1 to d1, where the occupied table[d1]=4 forces another link." height="126pt" role="img" viewbox="0.00 0.00 100.60 125.60" width="101pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-binomial-heap-link-05-graph0" transform="scale(1 1) rotate(0) translate(10.8 114.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-binomial-heap-link-05-node1">
+<title>r</title>
+<path d="M67,-104C67,-104 12,-104 12,-104 6,-104 0,-98 0,-92 0,-92 0,-80 0,-80 0,-74 6,-68 12,-68 12,-68 67,-68 67,-68 73,-68 79,-74 79,-80 79,-80 79,-92 79,-92 79,-98 73,-104 67,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="39.5" y="-82.5">1 / d=1</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-binomial-heap-link-05-node2">
+<title>r0</title>
+<path d="M67,-36C67,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 67,0 67,0 73,0 79,-6 79,-12 79,-12 79,-24 79,-24 79,-30 73,-36 67,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="39.5" y="-14.5">2 / d=0</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-binomial-heap-link-05-edge1">
+<title>r-&gt;r0</title>
+<path d="M39.5,-67.66C39.5,-59.99 39.5,-50.85 39.5,-42.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.6,-42.45 39.5,-36.45 37.4,-42.45 41.6,-42.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>The final captured singleton 1 meets table[d0]=2. 1 wins and carries a B1 to d1, where the occupied table[d1]=4 forces another link.</figcaption></figure></section><section class="step"><h4>6 · Carry the B1 collision into degree 2</h4><figure><div class="diagram-frame" style="--diagram-width:201.6px"><svg aria-label="1 wins against 4. Its existing B0 child 2 stays first, and B1 rooted at 4 is linked into the child circle. Clear d1; this B2 now meets the B2 rooted at 3." height="194pt" role="img" viewbox="0.00 0.00 201.60 193.60" width="202pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-binomial-heap-link-06-graph0" transform="scale(1 1) rotate(0) translate(10.8 182.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-binomial-heap-link-06-node1">
+<title>r</title>
+<path d="M117,-172C117,-172 62,-172 62,-172 56,-172 50,-166 50,-160 50,-160 50,-148 50,-148 50,-142 56,-136 62,-136 62,-136 117,-136 117,-136 123,-136 129,-142 129,-148 129,-148 129,-160 129,-160 129,-166 123,-172 117,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="89.5" y="-150.5">1 / d=2</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-binomial-heap-link-06-node2">
+<title>r0</title>
+<path d="M67,-104C67,-104 12,-104 12,-104 6,-104 0,-98 0,-92 0,-92 0,-80 0,-80 0,-74 6,-68 12,-68 12,-68 67,-68 67,-68 73,-68 79,-74 79,-80 79,-80 79,-92 79,-92 79,-98 73,-104 67,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="39.5" y="-82.5">2 / d=0</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-binomial-heap-link-06-edge1">
+<title>r-&gt;r0</title>
+<path d="M76.36,-135.66C70.32,-127.69 63.08,-118.13 56.63,-109.61" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="58.02,-107.97 52.72,-104.45 54.67,-110.5 58.02,-107.97" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-binomial-heap-link-06-node3">
+<title>r1</title>
+<path d="M168,-104C168,-104 113,-104 113,-104 107,-104 101,-98 101,-92 101,-92 101,-80 101,-80 101,-74 107,-68 113,-68 113,-68 168,-68 168,-68 174,-68 180,-74 180,-80 180,-80 180,-92 180,-92 180,-98 174,-104 168,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="140.5" y="-82.5">4 / d=1</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-binomial-heap-link-06-edge2">
+<title>r-&gt;r1</title>
+<path d="M102.9,-135.66C109.06,-127.69 116.44,-118.13 123.03,-109.61" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="125.01,-110.49 127.01,-104.45 121.68,-107.92 125.01,-110.49" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-binomial-heap-link-06-node4">
+<title>r10</title>
+<path d="M168,-36C168,-36 113,-36 113,-36 107,-36 101,-30 101,-24 101,-24 101,-12 101,-12 101,-6 107,0 113,0 113,0 168,0 168,0 174,0 180,-6 180,-12 180,-12 180,-24 180,-24 180,-30 174,-36 168,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="140.5" y="-14.5">8 / d=0</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-binomial-heap-link-06-edge3">
+<title>r1-&gt;r10</title>
+<path d="M140.5,-67.66C140.5,-59.99 140.5,-50.85 140.5,-42.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="142.6,-42.45 140.5,-36.45 138.4,-42.45 142.6,-42.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>1 wins against 4. Its existing B0 child 2 stays first, and B1 rooted at 4 is linked into the child circle. Clear d1; this B2 now meets the B2 rooted at 3.</figcaption></figure></section><section class="step"><h4>7 · Carry the B2 collision into degree 3</h4><figure><div class="diagram-frame" style="--diagram-width:302.6px"><svg aria-label="1 wins against 3, producing B3. The carry sequence was d0→d1→d2→d3; each link increased the winner degree once and preserved heap order." height="262pt" role="img" viewbox="0.00 0.00 302.60 261.60" width="303pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-binomial-heap-link-07-graph0" transform="scale(1 1) rotate(0) translate(10.8 250.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-binomial-heap-link-07-node1">
+<title>r</title>
+<path d="M168,-240C168,-240 113,-240 113,-240 107,-240 101,-234 101,-228 101,-228 101,-216 101,-216 101,-210 107,-204 113,-204 113,-204 168,-204 168,-204 174,-204 180,-210 180,-216 180,-216 180,-228 180,-228 180,-234 174,-240 168,-240" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="140.5" y="-218.5">1 / d=3</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-binomial-heap-link-07-node2">
+<title>r0</title>
+<path d="M67,-172C67,-172 12,-172 12,-172 6,-172 0,-166 0,-160 0,-160 0,-148 0,-148 0,-142 6,-136 12,-136 12,-136 67,-136 67,-136 73,-136 79,-142 79,-148 79,-148 79,-160 79,-160 79,-166 73,-172 67,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="39.5" y="-150.5">2 / d=0</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-binomial-heap-link-07-edge1">
+<title>r-&gt;r0</title>
+<path d="M114.23,-203.83C100.9,-195.12 84.62,-184.49 70.67,-175.37" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="71.81,-173.61 65.64,-172.08 69.52,-177.12 71.81,-173.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-binomial-heap-link-07-node3">
+<title>r1</title>
+<path d="M168,-172C168,-172 113,-172 113,-172 107,-172 101,-166 101,-160 101,-160 101,-148 101,-148 101,-142 107,-136 113,-136 113,-136 168,-136 168,-136 174,-136 180,-142 180,-148 180,-148 180,-160 180,-160 180,-166 174,-172 168,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="140.5" y="-150.5">3 / d=2</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-binomial-heap-link-07-edge2">
+<title>r-&gt;r1</title>
+<path d="M140.5,-203.66C140.5,-195.99 140.5,-186.85 140.5,-178.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="142.6,-178.45 140.5,-172.45 138.4,-178.45 142.6,-178.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r2 -->
+<g class="node" id="rev-binomial-heap-link-07-node7">
+<title>r2</title>
+<path d="M269,-172C269,-172 214,-172 214,-172 208,-172 202,-166 202,-160 202,-160 202,-148 202,-148 202,-142 208,-136 214,-136 214,-136 269,-136 269,-136 275,-136 281,-142 281,-148 281,-148 281,-160 281,-160 281,-166 275,-172 269,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="241.5" y="-150.5">4 / d=1</text>
+</g>
+<!-- r&#45;&gt;r2 -->
+<g class="edge" id="rev-binomial-heap-link-07-edge6">
+<title>r-&gt;r2</title>
+<path d="M166.77,-203.83C180.1,-195.12 196.38,-184.49 210.33,-175.37" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="211.48,-177.12 215.36,-172.08 209.19,-173.61 211.48,-177.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-binomial-heap-link-07-node4">
+<title>r10</title>
+<path d="M67,-104C67,-104 12,-104 12,-104 6,-104 0,-98 0,-92 0,-92 0,-80 0,-80 0,-74 6,-68 12,-68 12,-68 67,-68 67,-68 73,-68 79,-74 79,-80 79,-80 79,-92 79,-92 79,-98 73,-104 67,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="39.5" y="-82.5">5 / d=0</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-binomial-heap-link-07-edge3">
+<title>r1-&gt;r10</title>
+<path d="M114.23,-135.83C100.9,-127.12 84.62,-116.49 70.67,-107.37" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="71.81,-105.61 65.64,-104.08 69.52,-109.12 71.81,-105.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r11 -->
+<g class="node" id="rev-binomial-heap-link-07-node5">
+<title>r11</title>
+<path d="M168,-104C168,-104 113,-104 113,-104 107,-104 101,-98 101,-92 101,-92 101,-80 101,-80 101,-74 107,-68 113,-68 113,-68 168,-68 168,-68 174,-68 180,-74 180,-80 180,-80 180,-92 180,-92 180,-98 174,-104 168,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="140.5" y="-82.5">6 / d=1</text>
+</g>
+<!-- r1&#45;&gt;r11 -->
+<g class="edge" id="rev-binomial-heap-link-07-edge4">
+<title>r1-&gt;r11</title>
+<path d="M140.5,-135.66C140.5,-127.99 140.5,-118.85 140.5,-110.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="142.6,-110.45 140.5,-104.45 138.4,-110.45 142.6,-110.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r110 -->
+<g class="node" id="rev-binomial-heap-link-07-node6">
+<title>r110</title>
+<path d="M168,-36C168,-36 113,-36 113,-36 107,-36 101,-30 101,-24 101,-24 101,-12 101,-12 101,-6 107,0 113,0 113,0 168,0 168,0 174,0 180,-6 180,-12 180,-12 180,-24 180,-24 180,-30 174,-36 168,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="140.5" y="-14.5">7 / d=0</text>
+</g>
+<!-- r11&#45;&gt;r110 -->
+<g class="edge" id="rev-binomial-heap-link-07-edge5">
+<title>r11-&gt;r110</title>
+<path d="M140.5,-67.66C140.5,-59.99 140.5,-50.85 140.5,-42.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="142.6,-42.45 140.5,-36.45 138.4,-42.45 142.6,-42.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r20 -->
+<g class="node" id="rev-binomial-heap-link-07-node8">
+<title>r20</title>
+<path d="M269,-104C269,-104 214,-104 214,-104 208,-104 202,-98 202,-92 202,-92 202,-80 202,-80 202,-74 208,-68 214,-68 214,-68 269,-68 269,-68 275,-68 281,-74 281,-80 281,-80 281,-92 281,-92 281,-98 275,-104 269,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="241.5" y="-82.5">8 / d=0</text>
+</g>
+<!-- r2&#45;&gt;r20 -->
+<g class="edge" id="rev-binomial-heap-link-07-edge7">
+<title>r2-&gt;r20</title>
+<path d="M241.5,-135.66C241.5,-127.99 241.5,-118.85 241.5,-110.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="243.6,-110.45 241.5,-104.45 239.4,-110.45 243.6,-110.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>1 wins against 3, producing B3. The carry sequence was d0→d1→d2→d3; each link increased the winner degree once and preserved heap order.</figcaption></figure></section><section class="step"><h4>8 · Rebuild the root circle and minimum pointer</h4><figure><div class="array"><span class="cell"><small>1</small>root 1 / d=3</span></div><figcaption>The table has one nonempty entry, B3 at d3. Rebuild a one-root circle, clear every table slot, and set minPtr=1. Its eight nodes are exactly 1, 2, 3, 4, 5, 6, 7, and 8.</figcaption></figure></section></section>
+<h2 id="section-5">Removing a root with children</h2>
+<p>The next example removes 1 from the B3 just built. Its child circle in pointer order is 2 (degree 0), 3 (degree 2), 4 (degree 1); retain that pointer before unlinking the selected root. The promoted roots are already degree-distinct, so table consolidation leaves their trees unchanged. The final view lists nonempty table entries by degree; the root scan sets minPtr=2. This contrasts with removing singleton 0: it had no children, leaving only the other roots to consolidate.</p>
+<section aria-label="Remove a minimum that has children" class="walk"><h3>Remove a minimum that has children</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Before removing root 1</h4><figure><div class="diagram-frame" style="--diagram-width:302.6px"><svg aria-label="This is the sole B3 root, and minPtr points to 1. Save its child-circle pointer and key before unlinking or applying the lecture successor-copy list deletion." height="262pt" role="img" viewbox="0.00 0.00 302.60 261.60" width="303pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-binomial-heap-remove-children-before-graph0" transform="scale(1 1) rotate(0) translate(10.8 250.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-binomial-heap-remove-children-before-node1">
+<title>r</title>
+<path d="M168,-240C168,-240 113,-240 113,-240 107,-240 101,-234 101,-228 101,-228 101,-216 101,-216 101,-210 107,-204 113,-204 113,-204 168,-204 168,-204 174,-204 180,-210 180,-216 180,-216 180,-228 180,-228 180,-234 174,-240 168,-240" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="140.5" y="-218.5">1 / d=3</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-binomial-heap-remove-children-before-node2">
+<title>r0</title>
+<path d="M67,-172C67,-172 12,-172 12,-172 6,-172 0,-166 0,-160 0,-160 0,-148 0,-148 0,-142 6,-136 12,-136 12,-136 67,-136 67,-136 73,-136 79,-142 79,-148 79,-148 79,-160 79,-160 79,-166 73,-172 67,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="39.5" y="-150.5">2 / d=0</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-binomial-heap-remove-children-before-edge1">
+<title>r-&gt;r0</title>
+<path d="M114.23,-203.83C100.9,-195.12 84.62,-184.49 70.67,-175.37" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="71.81,-173.61 65.64,-172.08 69.52,-177.12 71.81,-173.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-binomial-heap-remove-children-before-node3">
+<title>r1</title>
+<path d="M168,-172C168,-172 113,-172 113,-172 107,-172 101,-166 101,-160 101,-160 101,-148 101,-148 101,-142 107,-136 113,-136 113,-136 168,-136 168,-136 174,-136 180,-142 180,-148 180,-148 180,-160 180,-160 180,-166 174,-172 168,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="140.5" y="-150.5">3 / d=2</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-binomial-heap-remove-children-before-edge2">
+<title>r-&gt;r1</title>
+<path d="M140.5,-203.66C140.5,-195.99 140.5,-186.85 140.5,-178.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="142.6,-178.45 140.5,-172.45 138.4,-178.45 142.6,-178.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r2 -->
+<g class="node" id="rev-binomial-heap-remove-children-before-node7">
+<title>r2</title>
+<path d="M269,-172C269,-172 214,-172 214,-172 208,-172 202,-166 202,-160 202,-160 202,-148 202,-148 202,-142 208,-136 214,-136 214,-136 269,-136 269,-136 275,-136 281,-142 281,-148 281,-148 281,-160 281,-160 281,-166 275,-172 269,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="241.5" y="-150.5">4 / d=1</text>
+</g>
+<!-- r&#45;&gt;r2 -->
+<g class="edge" id="rev-binomial-heap-remove-children-before-edge6">
+<title>r-&gt;r2</title>
+<path d="M166.77,-203.83C180.1,-195.12 196.38,-184.49 210.33,-175.37" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="211.48,-177.12 215.36,-172.08 209.19,-173.61 211.48,-177.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-binomial-heap-remove-children-before-node4">
+<title>r10</title>
+<path d="M67,-104C67,-104 12,-104 12,-104 6,-104 0,-98 0,-92 0,-92 0,-80 0,-80 0,-74 6,-68 12,-68 12,-68 67,-68 67,-68 73,-68 79,-74 79,-80 79,-80 79,-92 79,-92 79,-98 73,-104 67,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="39.5" y="-82.5">5 / d=0</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-binomial-heap-remove-children-before-edge3">
+<title>r1-&gt;r10</title>
+<path d="M114.23,-135.83C100.9,-127.12 84.62,-116.49 70.67,-107.37" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="71.81,-105.61 65.64,-104.08 69.52,-109.12 71.81,-105.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r11 -->
+<g class="node" id="rev-binomial-heap-remove-children-before-node5">
+<title>r11</title>
+<path d="M168,-104C168,-104 113,-104 113,-104 107,-104 101,-98 101,-92 101,-92 101,-80 101,-80 101,-74 107,-68 113,-68 113,-68 168,-68 168,-68 174,-68 180,-74 180,-80 180,-80 180,-92 180,-92 180,-98 174,-104 168,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="140.5" y="-82.5">6 / d=1</text>
+</g>
+<!-- r1&#45;&gt;r11 -->
+<g class="edge" id="rev-binomial-heap-remove-children-before-edge4">
+<title>r1-&gt;r11</title>
+<path d="M140.5,-135.66C140.5,-127.99 140.5,-118.85 140.5,-110.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="142.6,-110.45 140.5,-104.45 138.4,-110.45 142.6,-110.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r110 -->
+<g class="node" id="rev-binomial-heap-remove-children-before-node6">
+<title>r110</title>
+<path d="M168,-36C168,-36 113,-36 113,-36 107,-36 101,-30 101,-24 101,-24 101,-12 101,-12 101,-6 107,0 113,0 113,0 168,0 168,0 174,0 180,-6 180,-12 180,-12 180,-24 180,-24 180,-30 174,-36 168,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="140.5" y="-14.5">7 / d=0</text>
+</g>
+<!-- r11&#45;&gt;r110 -->
+<g class="edge" id="rev-binomial-heap-remove-children-before-edge5">
+<title>r11-&gt;r110</title>
+<path d="M140.5,-67.66C140.5,-59.99 140.5,-50.85 140.5,-42.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="142.6,-42.45 140.5,-36.45 138.4,-42.45 142.6,-42.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r20 -->
+<g class="node" id="rev-binomial-heap-remove-children-before-node8">
+<title>r20</title>
+<path d="M269,-104C269,-104 214,-104 214,-104 208,-104 202,-98 202,-92 202,-92 202,-80 202,-80 202,-74 208,-68 214,-68 214,-68 269,-68 269,-68 275,-68 281,-74 281,-80 281,-80 281,-92 281,-92 281,-98 275,-104 269,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="241.5" y="-82.5">8 / d=0</text>
+</g>
+<!-- r2&#45;&gt;r20 -->
+<g class="edge" id="rev-binomial-heap-remove-children-before-edge7">
+<title>r2-&gt;r20</title>
+<path d="M241.5,-135.66C241.5,-127.99 241.5,-118.85 241.5,-110.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="243.6,-110.45 241.5,-104.45 239.4,-110.45 243.6,-110.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>This is the sole B3 root, and minPtr points to 1. Save its child-circle pointer and key before unlinking or applying the lecture successor-copy list deletion.</figcaption></figure></section><section class="step"><h4>2 · Promote the three child trees</h4><figure><div class="diagram-frame" style="--diagram-width:417.6px"><svg aria-label="Detach the removed root’s child sibling circle in pointer order 2→3→4→2 and promote it. Degrees 0, 2, 1 are distinct, so pairwiseCombine makes no links." height="382pt" role="img" viewbox="0.00 0.00 417.60 381.60" width="418pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-binomial-heap-remove-children-promoted-graph0" transform="scale(1 1) rotate(0) translate(10.8 370.8)">
+<title>G</title>
+<!-- r2 -->
+<g class="node" id="rev-binomial-heap-remove-children-promoted-node1">
+<title>r2</title>
+<path d="M252.5,-360C252.5,-360 161.5,-360 161.5,-360 155.5,-360 149.5,-354 149.5,-348 149.5,-348 149.5,-336 149.5,-336 149.5,-330 155.5,-324 161.5,-324 161.5,-324 252.5,-324 252.5,-324 258.5,-324 264.5,-330 264.5,-336 264.5,-336 264.5,-348 264.5,-348 264.5,-354 258.5,-360 252.5,-360" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="207" y="-338.5">root 2 / d=0</text>
+</g>
+<!-- r3 -->
+<g class="node" id="rev-binomial-heap-remove-children-promoted-node2">
+<title>r3</title>
+<path d="M185.5,-279C185.5,-279 94.5,-279 94.5,-279 88.5,-279 82.5,-273 82.5,-267 82.5,-267 82.5,-255 82.5,-255 82.5,-249 88.5,-243 94.5,-243 94.5,-243 185.5,-243 185.5,-243 191.5,-243 197.5,-249 197.5,-255 197.5,-255 197.5,-267 197.5,-267 197.5,-273 191.5,-279 185.5,-279" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="140" y="-257.5">root 3 / d=2</text>
+</g>
+<!-- r2&#45;&gt;r3 -->
+<g class="edge" id="rev-binomial-heap-remove-children-promoted-edge1">
+<title>r2-&gt;r3</title>
+<path d="M192.46,-323.86C182.54,-312.16 169.31,-296.56 158.62,-283.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="159.99,-282.33 154.51,-279.11 156.79,-285.04 159.99,-282.33" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="197" y="-298.4">sibling</text>
+</g>
+<!-- r4 -->
+<g class="node" id="rev-binomial-heap-remove-children-promoted-node3">
+<title>r4</title>
+<path d="M319.5,-198C319.5,-198 228.5,-198 228.5,-198 222.5,-198 216.5,-192 216.5,-186 216.5,-186 216.5,-174 216.5,-174 216.5,-168 222.5,-162 228.5,-162 228.5,-162 319.5,-162 319.5,-162 325.5,-162 331.5,-168 331.5,-174 331.5,-174 331.5,-186 331.5,-186 331.5,-192 325.5,-198 319.5,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="274" y="-176.5">root 4 / d=1</text>
+</g>
+<!-- r3&#45;&gt;r4 -->
+<g class="edge" id="rev-binomial-heap-remove-children-promoted-edge2">
+<title>r3-&gt;r4</title>
+<path d="M82.22,-248.81C57.19,-241.43 36.53,-230.11 51,-214 73.1,-189.38 166.37,-203.44 199,-198 202.72,-197.38 206.52,-196.69 210.36,-195.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="210.92,-197.98 216.4,-194.76 210.1,-193.86 210.92,-197.98" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="71" y="-217.4">sibling</text>
+</g>
+<!-- c5 -->
+<g class="node" id="rev-binomial-heap-remove-children-promoted-node4">
+<title>c5</title>
+<path d="M108,-198C108,-198 12,-198 12,-198 6,-198 0,-192 0,-186 0,-186 0,-174 0,-174 0,-168 6,-162 12,-162 12,-162 108,-162 108,-162 114,-162 120,-168 120,-174 120,-174 120,-186 120,-186 120,-192 114,-198 108,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="60" y="-176.5">child 5 / d=0</text>
+</g>
+<!-- r3&#45;&gt;c5 -->
+<g class="edge" id="rev-binomial-heap-remove-children-promoted-edge4">
+<title>r3-&gt;c5</title>
+<path d="M122.64,-242.86C110.69,-231.06 94.72,-215.28 81.89,-202.62" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="83.07,-200.83 77.32,-198.11 80.12,-203.82 83.07,-200.83" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="120" y="-217.4">child</text>
+</g>
+<!-- c6 -->
+<g class="node" id="rev-binomial-heap-remove-children-promoted-node5">
+<title>c6</title>
+<path d="M155,-117C155,-117 59,-117 59,-117 53,-117 47,-111 47,-105 47,-105 47,-93 47,-93 47,-87 53,-81 59,-81 59,-81 155,-81 155,-81 161,-81 167,-87 167,-93 167,-93 167,-105 167,-105 167,-111 161,-117 155,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="107" y="-95.5">child 6 / d=1</text>
+</g>
+<!-- r3&#45;&gt;c6 -->
+<g class="edge" id="rev-binomial-heap-remove-children-promoted-edge5">
+<title>r3-&gt;c6</title>
+<path d="M142.62,-242.82C145.71,-217.7 148.73,-169.9 134,-133 132.52,-129.3 130.47,-125.7 128.16,-122.32" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="129.61,-120.75 124.34,-117.2 126.25,-123.26 129.61,-120.75" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="161" y="-176.9">child</text>
+</g>
+<!-- r4&#45;&gt;r2 -->
+<g class="edge" id="rev-binomial-heap-remove-children-promoted-edge3">
+<title>r4-&gt;r2</title>
+<path d="M267.14,-198.34C257.38,-222.88 238.81,-269.07 222,-308 220.56,-311.33 219.01,-314.84 217.47,-318.27" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="215.47,-317.6 214.91,-323.93 219.3,-319.33 215.47,-317.6" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="268" y="-257.9">sibling</text>
+</g>
+<!-- c8 -->
+<g class="node" id="rev-binomial-heap-remove-children-promoted-node7">
+<title>c8</title>
+<path d="M322,-117C322,-117 226,-117 226,-117 220,-117 214,-111 214,-105 214,-105 214,-93 214,-93 214,-87 220,-81 226,-81 226,-81 322,-81 322,-81 328,-81 334,-87 334,-93 334,-93 334,-105 334,-105 334,-111 328,-117 322,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="274" y="-95.5">child 8 / d=0</text>
+</g>
+<!-- r4&#45;&gt;c8 -->
+<g class="edge" id="rev-binomial-heap-remove-children-promoted-edge10">
+<title>r4-&gt;c8</title>
+<path d="M274,-161.86C274,-150.57 274,-135.66 274,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="276.1,-123.11 274,-117.11 271.9,-123.11 276.1,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="289" y="-136.4">child</text>
+</g>
+<!-- c5&#45;&gt;c6 -->
+<g class="edge" id="rev-binomial-heap-remove-children-promoted-edge6">
+<title>c5-&gt;c6</title>
+<path d="M44.68,-161.8C38.67,-152.89 34.39,-142.02 40,-133 42.97,-128.23 46.85,-124.13 51.25,-120.61" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="52.59,-122.23 56.22,-117.01 50.13,-118.83 52.59,-122.23" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="60" y="-136.4">sibling</text>
+</g>
+<!-- c6&#45;&gt;c5 -->
+<g class="edge" id="rev-binomial-heap-remove-children-promoted-edge7">
+<title>c6-&gt;c5</title>
+<path d="M97.58,-117.16C92.73,-125.86 86.67,-136.56 81,-146 78.89,-149.52 76.6,-153.22 74.34,-156.82" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="72.51,-155.79 71.07,-161.98 76.05,-158.03 72.51,-155.79" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="109" y="-136.4">sibling</text>
+</g>
+<!-- c7 -->
+<g class="node" id="rev-binomial-heap-remove-children-promoted-node6">
+<title>c7</title>
+<path d="M155,-36C155,-36 59,-36 59,-36 53,-36 47,-30 47,-24 47,-24 47,-12 47,-12 47,-6 53,0 59,0 59,0 155,0 155,0 161,0 167,-6 167,-12 167,-12 167,-24 167,-24 167,-30 161,-36 155,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="107" y="-14.5">child 7 / d=0</text>
+</g>
+<!-- c6&#45;&gt;c7 -->
+<g class="edge" id="rev-binomial-heap-remove-children-promoted-edge8">
+<title>c6-&gt;c7</title>
+<path d="M107,-80.86C107,-69.57 107,-54.66 107,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="109.1,-42.11 107,-36.11 104.9,-42.11 109.1,-42.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="122" y="-55.4">child</text>
+</g>
+<!-- c7&#45;&gt;c7 -->
+<g class="edge" id="rev-binomial-heap-remove-children-promoted-edge9">
+<title>c7-&gt;c7</title>
+<path d="M167.07,-25.26C179.8,-24.52 189,-22.1 189,-18 189,-14.6 182.69,-12.36 173.29,-11.27" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="173.22,-9.16 167.07,-10.74 172.87,-13.34 173.22,-9.16" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="209" y="-14.9">sibling</text>
+</g>
+<!-- c8&#45;&gt;c8 -->
+<g class="edge" id="rev-binomial-heap-remove-children-promoted-edge11">
+<title>c8-&gt;c8</title>
+<path d="M334.07,-106.26C346.8,-105.52 356,-103.1 356,-99 356,-95.6 349.69,-93.36 340.29,-92.27" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="340.22,-90.16 334.07,-91.74 339.87,-94.34 340.22,-90.16" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="376" y="-95.9">sibling</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Detach the removed root’s child sibling circle in pointer order 2→3→4→2 and promote it. Degrees 0, 2, 1 are distinct, so pairwiseCombine makes no links.</figcaption></figure></section><section class="step"><h4>3 · Recompute minPtr and finish</h4><figure><div class="array"><span class="cell"><small>1</small>root 2 / d=0</span><span class="cell"><small>2</small>root 4 / d=1</span><span class="cell"><small>3</small>root 3 / d=2</span></div><figcaption>These are the nonempty table entries in degree order, not a claimed sibling traversal order. The root scan selects 2. Stop: seven nodes remain and every root is a min tree.</figcaption></figure></section></section>
+<h2 id="section-6">Method decisions and stop conditions</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Decision and invariant</th>
+<th>Stop condition and edge cases</th>
+<th style="text-align: right;">Actual worst case</th>
+<th style="text-align: right;">Amortized</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>initialize(values)</code> / fresh build</td>
+<td>Start empty; splice every value as a degree-0 singleton and maintain the minimum pointer. Do not consolidate.</td>
+<td>Empty input leaves null minPtr; after the last value, stop with one root per input record.</td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math></td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math></td>
+</tr>
+<tr>
+<td><code>getMin()</code></td>
+<td>Read the key at minPtr; no root scan is needed because every mutator maintains it.</td>
+<td>Empty heap has no result (the lab sentinel is -1); otherwise return the pointed-to key. Equal minima are allowed.</td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math></td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math></td>
+</tr>
+<tr>
+<td><code>insert(x)</code></td>
+<td>Create an isolated degree-0 root, splice its sibling circle into the root circle, and replace minPtr only if x is strictly smaller.</td>
+<td>Empty heap initializes minPtr; equality may keep the prior pointer. Stop after one splice and comparison; no linking.</td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math></td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math></td>
+</tr>
+<tr>
+<td><code>meld(other)</code></td>
+<td>Splice the two root circles and keep the smaller minimum pointer. This is a destructive ownership transfer in Lab 4.</td>
+<td>Empty donor is a no-op; empty receiver takes donor roots; equal minima may retain the receiver pointer. Self-meld is outside the lecture contract: one Lab 4 implementation guards it, the later implementation does not. Require distinct heaps or an explicit alias guard. Clear donor pointer/count after transfer.</td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math></td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math></td>
+</tr>
+<tr>
+<td><code>removeMin()</code></td>
+<td>Save the minimum key and child-circle pointer, remove the selected root, promote its children, pairwiseCombine the forest, and recompute minPtr.</td>
+<td>Empty heap fails. If it was the only root, clear the root pointer; if that root had children, those children still form a nonempty heap. Stop only after every captured root is processed and the table is drained.</td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math></td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math>*</td>
+</tr>
+<tr>
+<td><code>pairwiseCombine()</code></td>
+<td>Snapshot roots; table by degree; on collision keep the smaller (either on equality), make the other a child, increment degree, clear the old slot, and carry again.</td>
+<td>Stop a root at its first empty degree slot. When the snapshot is exhausted, rebuild roots from nonempty slots, clear slots, and scan for minPtr.</td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>s</mi><mo>+</mo><mi>D</mi><mo stretchy="false">)</mo></mrow></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math></td>
+<td style="text-align: right;">Part of removeMin*</td>
+</tr>
+<tr>
+<td>Equal-degree link (internal)</td>
+<td>Requires isolated min-tree roots of the same degree. The winner remains a root; the loser joins its child sibling circle; winner.degree increases by one.</td>
+<td>Continue carrying while the new degree is occupied. Stop when stored or when the table grows to that degree.</td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math> each</td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math> each</td>
+</tr>
+<tr>
+<td><code>search(x)</code></td>
+<td>Walk the root circle and each tree; heap order is not BST order and minPtr only answers the minimum query.</td>
+<td>Return a matching record when found; otherwise stop after a full forest traversal. With duplicates, any match suffices.</td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math></td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math></td>
+</tr>
+<tr>
+<td>Arbitrary <code>remove(x)</code> / <code>decreaseKey(handle)</code></td>
+<td>Not supported by this lecture/lab interface. There is no parent field or node handle contract for locating and repairing an arbitrary node.</td>
+<td>Do not invent a cut rule or import Fibonacci-heap bounds. Use only the supported root deletion or create a separately specified variant.</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">—</td>
+</tr>
+</tbody>
+</table>
+<p>Here <code>s</code> is the number of roots processed and <code>D</code> is the largest degree/table extent. Lecture 6 slide 29 gives the actual remove-min work as <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>M</mi><mi>a</mi><mi>x</mi><mi>D</mi><mi>e</mi><mi>g</mi><mi>r</mi><mi>e</mi><mi>e</mi><mo>+</mo><mi>s</mi><mo stretchy="false">)</mo></mrow></math>; slide 33 bounds MaxDegree by <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math>, while s may be n before consolidation. The page's <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> amortized removeMin bound is the standard root-count accounting for this lazy variant, not a proof supplied in those slides.*</p>
+<h2 id="section-7">Contrasting cases to remember</h2>
+<ul>
+<li><strong>Singleton and empty:</strong> removing the only degree-0 root leaves no roots, so minPtr becomes null. Inserting into empty restores it. An empty <code>removeMin</code> fails.</li>
+<li><strong>Only root with children:</strong> deleting that root does not imply an empty heap. Promote the child sibling circle first, then choose the minimum among those promoted roots.</li>
+<li><strong>No table collision:</strong> a root reaches an empty degree slot and stops; do not link trees of different degrees.</li>
+<li><strong>Repeated collisions:</strong> a carry can cause further collisions at successive degrees. Never stop after the first link; the 8th singleton above carries from degree 0 through degree 3.</li>
+<li><strong>Equal root keys:</strong> either equal root can stay above the other. The lab comparison swaps only when the second key is strictly smaller; minPtr remains valid on equality.</li>
+<li><strong>Meld ownership:</strong> splicing two circles is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math>, but a destructive meld must clear the donor's root pointer (and its size field in Lab 4). Self-meld is not consistently guarded in the two Lab 4 implementations, so require distinct heaps unless the caller checks aliasing.</li>
+<li><strong>Lecture list deletion versus Lab 4 unlink:</strong> slide 11 teaches singly circular-list deletion by copying the successor's record into the selected node and unlinking that successor (or clearing the pointer when there is no next node). The Lab 4 code instead walks to the predecessor and unlinks the selected root directly. Both represent removal from the same circle; whichever form is used, save the selected minimum's child circle before overwriting or detaching its root record.</li>
+<li><strong>Search versus minimum:</strong> a minimum pointer does not make membership search constant-time. The heap order only constrains parent-child keys; root order is not sorted.</li>
+<li><strong>Lazy versus eager:</strong> this page follows the lazy course variant. Eager consolidation on every insert or meld changes when links occur and changes actual operation costs.</li>
+</ul>
+<h2 id="section-8">Common mistakes</h2>
+<p>Do not assume distinct root degrees before removeMin, or eager consolidation after insert/meld. Do not treat the root circle as a parent-child tree. Do not lose the removed minimum's child pointer while changing the root list, and do not stop after its first table collision. After linking, increment exactly one degree and clear exactly the consumed table slot. After rebuilding, clear temporary entries and recompute minPtr. A donor heap must be empty after destructive meld.</p>
+<h2 id="section-9">Exam focus</h2>
+<p>The key comparison is between lazy and eager variants: lazy insert and meld are <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math> actual, while one removeMin can be <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math> actual because it processes all roots. Pairwise linking is binary carrying over degrees; a consolidated forest has distinct degrees and at most <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>⌊</mi><msub><mi>log</mi><mn>2</mn></msub><mi>n</mi><mi>⌋</mi></mrow></math> degree. Do not confuse worst-case work of one operation with its amortized removeMin bound. General search remains <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math>, and arbitrary decreaseKey/remove are outside this singly linked interface.</p>
+<h2 id="section-10">Practice questions</h2>
+<ol>
+<li><strong>After inserting n values into an empty lazy heap, what can the root list look like?</strong></li>
+</ol>
+<details><summary>Check your answer</summary><p>It can contain n singleton roots, all of degree 0. Lazy insertion does not consolidate them.</p></details>
+<ol>
+<li><strong>A degree-2 collision creates degree 3, where a table entry is already occupied. What happens?</strong></li>
+</ol>
+<details><summary>Check your answer</summary><p>Compare the two degree-3 roots, link the larger below the smaller, clear degree 3, increment the winner to degree 4, and continue until an empty slot is found.</p></details>
+<ol>
+<li><strong>The removed minimum is the only root and has three child trees. Is the heap now empty?</strong></li>
+</ol>
+<details><summary>Check your answer</summary><p>No. Promote its child roots into the root circle and recompute the minimum over them; the heap is empty only when both the old root list and promoted child list are empty.</p></details>
+<ol>
+<li><strong>Why does meld clear the donor after the root circles are spliced?</strong></li>
+</ol>
+<details><summary>Check your answer</summary><p>The destination now owns the donor's nodes. Clearing the donor prevents two heap objects from claiming the same circular list and later unlinking or freeing it twice.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="leftist-tree.html"><small>Previous</small>Leftist tree <span aria-hidden="true">↗</span></a><a href="fibonacci-heap.html"><small>Next</small>Fibonacci heap <span aria-hidden="true">↗</span></a></nav><footer>ADS field notes <span>Understand the rule. Trace the repair.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  root.querySelectorAll('table').forEach(table => {
+    const region = document.createElement('div');
+    region.className = 'table-scroll' + (table.rows[0]?.cells.length > 5 ? ' wide' : '');
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    table.before(region); region.append(table);
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Data structure diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect every node.'; frame.after(hint);
+    const update = () => { hint.hidden = frame.scrollWidth <= frame.clientWidth + 1 && frame.scrollHeight <= frame.clientHeight + 1; };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {heap:'priority queue insert delete meld minimum maximum trickle down bubble up build',tree:'insert delete search build rotate rotation',trie:'insert delete search build prefix',sorting:'run merge buffer freeze build',analysis:'potential aggregate accounting'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('a').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('ads-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.ADS_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) expand.textContent = 'Expand examples';
+    const section = new URLSearchParams(url.hash.slice(1)).get('section') || (url.hash.startsWith('#topic=') ? '' : url.hash.slice(1));
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = new URLSearchParams(location.hash.slice(1)).get('section') || location.hash.slice(1);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+})();
+</script></body></html>

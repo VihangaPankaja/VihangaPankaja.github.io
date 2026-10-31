@@ -1,0 +1,627 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Security starts by deciding what must be protected, identifying who or what could threaten it, and matching each requirement to a control that actually provides it."><title>Security foundations and cryptography · Networks field notes</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('cns-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{.table-hint{display:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#243740;--muted:#5e737d;--secondary:#edf2f3;--border:#d5e0e3;--primary:#1e647c;--accent:#dcecf0;--diagram-fill:#eff4f5;--diagram-border:#829da8;--diagram-edge:#65838f;--active-text:#174b61;--focus:#227b98}:root[data-theme=dark]{--background:#141d23;--foreground:#e1eaf0;--muted:#a8beca;--card:#1a2730;--secondary:#22333e;--border:#3b505c;--primary:#90d1e4;--accent:#254757;--diagram-fill:#22333e;--diagram-border:#93b2c1;--diagram-edge:#9bbac9;--topbar:#141d23f5;--active-text:#b6e5f1;--focus:#90d1e4} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> CNS <span class="subbrand">field notes</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Subnet, TCP, TLS…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a href="index.html">Computer networks and security</a></div><div class="nav-group"><p>Foundations</p><a href="osi.html">OSI model and encapsulation</a><a href="data-link.html">Data link framing, errors and flow control</a><a href="wan.html">WAN and MAN technologies</a><a href="lan.html">LAN, Ethernet and switching</a></div><div class="nav-group"><p>Internetworking</p><a href="routing.html">Network layer and routing</a><a href="ipv4.html">IPv4 addressing, subnetting and VLSM</a><a href="ip-delivery.html">IP packets, ARP, ICMP, DHCP and NAT</a><a href="ipv6.html">IPv6 addressing and transition</a></div><div class="nav-group"><p>Transport and wireless</p><a href="transport.html">Transport services and connections</a><a href="short-range.html">Bluetooth, NFC and ZigBee</a></div><div class="nav-group"><p>Security and design</p><a href="security.html" aria-current="page">Security foundations and cryptography</a><a href="pki.html">Public key infrastructure</a><a href="secure-protocols.html">IPsec and TLS</a><a href="network-design.html">Network design</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS3131<br>Computer Networks and Security</div></aside>
+<main id="main"><div class="eyebrow">Security and design <span>/</span> Lecture 9 · Foundations from Lecture 11</div><h1>Security foundations and cryptography</h1><p class="lead">Security starts by deciding what must be protected, identifying who or what could threaten it, and matching each requirement to a control that actually provides it.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Assets, exposure, and risk</a><a href="#section-2">Security goals and access decisions</a><a href="#section-3">Threats and controls</a><a href="#section-4">Cryptographic language and two historical ciphers</a><a href="#section-5">Shared-key encryption and fresh challenges</a><a href="#section-6">Keyed integrity checks</a><a href="#section-7">Public-key confidentiality and identity binding</a><a href="#section-8">Common mistakes</a><a href="#section-9">Exam focus</a><a href="#section-10">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>A computer system is dependable when it behaves as expected. Security protects the resources that make that possible: physical equipment, data and software, people, and trust. Connecting systems creates useful services, but it also exposes hosts and communications to parties outside the owner’s control. A useful way to reason about security is to move from <strong>asset</strong>, to <strong>threat</strong>, to <strong>required property</strong>, to <strong>control</strong>—then ask what the control still leaves exposed.</p>
+<p>The lecture’s scope runs from individual computers to networks and web use. The companion protocol lecture begins with the same foundations, then turns to protocol details. This page keeps those foundations together; use <a href="pki.html">Public key infrastructure</a> for certificate trust and pairwise key-count questions, and <a href="secure-protocols.html">IPsec and TLS</a> for packet protection, protocol modes, and historical handshake details.</p>
+<h2 id="section-1">Assets, exposure, and risk</h2>
+<p>Security is not simply “block everything.” Denying all access would protect a system by making it useless. The task is to allow the work that is needed while reducing avoidable exposure. A threat may come from an insider (such as a user or administrator) or an outsider (such as a contractor, former employee, or unknown attacker). The lecture’s broad statement that most incidents are caused by insiders is not a universal statistic; the practical lesson is to include both trusted and untrusted actors in the threat model.</p>
+<p>Network risk grows harder to control as systems become dispersed, heterogeneous, and independently managed. Hardware and software differ; some nodes may be invisible to a single administrator; and Internet reachable services can be probed by people the owner does not know. Vulnerabilities may be discovered before the owner can react. The system boundary includes ordinary hosts and network equipment such as servers, workstations, routers, and switches.</p>
+<table>
+<thead>
+<tr>
+<th>Asset to protect</th>
+<th>Example exposure</th>
+<th>Security question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Physical assets</td>
+<td>Unauthorised access to a device, cable, or outlet</td>
+<td>Who can reach or alter it?</td>
+</tr>
+<tr>
+<td>Data and software</td>
+<td>Disclosure, modification, deletion, or malicious code</td>
+<td>Who may read or change it?</td>
+</tr>
+<tr>
+<td>Personnel</td>
+<td>Deception or unsafe access decisions</td>
+<td>What evidence supports the request?</td>
+</tr>
+<tr>
+<td>Trust and service</td>
+<td>Impersonation or an unavailable service</td>
+<td>Is this the expected party, and can the service still work?</td>
+</tr>
+</tbody>
+</table>
+<p>System attacks often follow two broad paths: an attacker impersonates a valid user (for example through social engineering, wiretapping, or searching for exposed information), or exploits a defect in hardware, an operating system, or an application. Both matter: good access rules do not fix a vulnerable service, and software updates do not establish who is requesting access.</p>
+<h3>Reduce avoidable host and network exposure</h3>
+<p>Provide only the services a host needs and keep those services maintained. Minimise unnecessary components because each component and interaction can contain defects. Use maintained components, enable their security features, apply operating-system and application updates, and monitor relevant security notices. No system is completely safe, so prevention needs a recovery plan as well.</p>
+<p>Protect servers, clients, and network infrastructure. Client machines are shaped by user choices and installed software; explain safe use and control unnecessary software where appropriate. Switches, routers, cabling, and physical outlets need protection too. A wide-area network may be outside the local organisation’s control, which makes endpoint protections and secure communication important.</p>
+<p>The lecture contrasts Internet connections to one dial-up computer, dial-up access shared by a network, and a dedicated network connection. The practical distinction is how much of the local environment is exposed: connecting one host still exposes that host, while connecting a network brings more hosts and services within reach. Internet access works in both directions—local users can reach outward, and remote parties can attempt to reach services inward.</p>
+<p>Web security has at least three separate locations: the server and its application/database boundary, the browser and its features, and the information travelling between them. Downloaded files (including signed files, which can help identify a publisher), helper applications, plug-ins, JavaScript or Java execution, ActiveX, cookies, and browser defects create different risks at the client. These are the lecture’s examples, some from its period; the durable lesson is that a large, feature-rich client has an attack surface of its own. An encrypted channel protects data in transit; it does not repair an unsafe browser, secure a compromised server, or protect data after it reaches an endpoint. The lecture names SSL as an encrypted-web example and contrasts 40-bit and 128-bit export-era encryption. Both are historical framing, not current configuration guidance. SSL is historical, and SSLv3 is prohibited by <a href="https://www.rfc-editor.org/rfc/rfc7568.html">RFC 7568</a>. Current TLS mechanics are covered in <a href="secure-protocols.html">IPsec and TLS</a>.</p>
+<h2 id="section-2">Security goals and access decisions</h2>
+<p>In the lecture’s historical SSL description, the encrypted browser-server channel identifies the server; identifying the user is optional and described as uncommon. The stated 40-bit and 128-bit export-era key lengths and the warning to consider software-vendor trust are period context, not modern settings.</p>
+<p>The lecture presents “security holes” as possible usability trade-offs as well as defects: a control that denies every action makes a system unusable. For network access, it also names manual, computer-based, time-based, and smart-card challenge-response variants without specifying their algorithms here.</p>
+<p>Security requirements describe what a system should preserve. Confidentiality (called privacy in the companion lecture) limits who can read information. Integrity lets a recipient detect unauthorised change. Authentication checks a claimed identity. Availability keeps information and services usable. Accountability records actions so they can be attributed; non-repudiation is stronger evidence intended to prevent a sender from plausibly denying a message. These goals connect, but they are not interchangeable.</p>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>What it answers</th>
+<th>Typical concern</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Confidentiality / privacy</td>
+<td>Who can read the information?</td>
+<td>An observer reads a transaction</td>
+</tr>
+<tr>
+<td>Integrity</td>
+<td>Was the information changed without detection?</td>
+<td>An intermediary modifies a request</td>
+</tr>
+<tr>
+<td>Authentication</td>
+<td>Is the party who it claims to be?</td>
+<td>A client or server is impersonated</td>
+</tr>
+<tr>
+<td>Availability</td>
+<td>Can an authorised user obtain the service?</td>
+<td>A server is overwhelmed</td>
+</tr>
+<tr>
+<td>Accountability / non-repudiation</td>
+<td>Can an action or message be attributed and later supported as evidence?</td>
+<td>A party denies having sent a message</td>
+</tr>
+</tbody>
+</table>
+<p>Access control is the system’s front door. <strong>Identification</strong> names an account; <strong>authentication</strong> checks evidence for the claimed identity; <strong>authorisation</strong> decides what that authenticated account may do. Authentication evidence can be something possessed (such as a token), known (such as a password), or inherent (such as a fingerprint). A password sent as readable plaintext can be observed on a network, so the lecture points to cryptographic access mechanisms such as SSH and challenge-response.</p>
+<p>After authentication, apply minimum privilege: give each role only the permissions it needs. File and directory permissions can separately allow or deny reading, writing, modifying, and deleting for a user or group. This is more useful than a single “trusted/untrusted” label because a person may need to read one file but not delete it.</p>
+<figure><div class="diagram-frame" style="--diagram-width:273.6px"><svg role="img" aria-label="Security reasoning moves from the asset and threat to the required property and a control, then checks remaining exposure." width="274pt" height="390pt"
+ viewBox="0.00 0.00 273.60 389.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="security-reasoning-path-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 378.8)">
+<title>G</title>
+<!-- assets -->
+<g id="security-reasoning-path-node1" class="node">
+<title>assets</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M211,-368C211,-368 41,-368 41,-368 35,-368 29,-362 29,-356 29,-356 29,-332 29,-332 29,-326 35,-320 41,-320 41,-320 211,-320 211,-320 217,-320 223,-326 223,-332 223,-332 223,-356 223,-356 223,-362 217,-368 211,-368"/>
+<text text-anchor="middle" x="126" y="-349" font-family="Georgia" font-size="15.00">Assets</text>
+<text text-anchor="middle" x="126" y="-332" font-family="Georgia" font-size="15.00">people · data · systems</text>
+</g>
+<!-- threat -->
+<g id="security-reasoning-path-node2" class="node">
+<title>threat</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M181.5,-288C181.5,-288 70.5,-288 70.5,-288 64.5,-288 58.5,-282 58.5,-276 58.5,-276 58.5,-252 58.5,-252 58.5,-246 64.5,-240 70.5,-240 70.5,-240 181.5,-240 181.5,-240 187.5,-240 193.5,-246 193.5,-252 193.5,-252 193.5,-276 193.5,-276 193.5,-282 187.5,-288 181.5,-288"/>
+<text text-anchor="middle" x="126" y="-269" font-family="Georgia" font-size="15.00">Threat</text>
+<text text-anchor="middle" x="126" y="-252" font-family="Georgia" font-size="15.00">actor or defect</text>
+</g>
+<!-- assets&#45;&gt;threat -->
+<g id="security-reasoning-path-edge1" class="edge">
+<title>assets&#45;&gt;threat</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M126,-319.6C126,-311.66 126,-302.69 126,-294.35"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="128.1,-294.12 126,-288.12 123.9,-294.12 128.1,-294.12"/>
+</g>
+<!-- goal -->
+<g id="security-reasoning-path-node3" class="node">
+<title>goal</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M240,-208C240,-208 12,-208 12,-208 6,-208 0,-202 0,-196 0,-196 0,-172 0,-172 0,-166 6,-160 12,-160 12,-160 240,-160 240,-160 246,-160 252,-166 252,-172 252,-172 252,-196 252,-196 252,-202 246,-208 240,-208"/>
+<text text-anchor="middle" x="126" y="-189" font-family="Georgia" font-size="15.00">Required property</text>
+<text text-anchor="middle" x="126" y="-172" font-family="Georgia" font-size="15.00">privacy · integrity · availability</text>
+</g>
+<!-- threat&#45;&gt;goal -->
+<g id="security-reasoning-path-edge2" class="edge">
+<title>threat&#45;&gt;goal</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M126,-239.6C126,-231.66 126,-222.69 126,-214.35"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="128.1,-214.12 126,-208.12 123.9,-214.12 128.1,-214.12"/>
+</g>
+<!-- control -->
+<g id="security-reasoning-path-node4" class="node">
+<title>control</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M211,-128C211,-128 41,-128 41,-128 35,-128 29,-122 29,-116 29,-116 29,-92 29,-92 29,-86 35,-80 41,-80 41,-80 211,-80 211,-80 217,-80 223,-86 223,-92 223,-92 223,-116 223,-116 223,-122 217,-128 211,-128"/>
+<text text-anchor="middle" x="126" y="-109" font-family="Georgia" font-size="15.00">Control</text>
+<text text-anchor="middle" x="126" y="-92" font-family="Georgia" font-size="15.00">channel · host · border</text>
+</g>
+<!-- goal&#45;&gt;control -->
+<g id="security-reasoning-path-edge3" class="edge">
+<title>goal&#45;&gt;control</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M126,-159.6C126,-151.66 126,-142.69 126,-134.35"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="128.1,-134.12 126,-128.12 123.9,-134.12 128.1,-134.12"/>
+</g>
+<!-- limit -->
+<g id="security-reasoning-path-node5" class="node">
+<title>limit</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M190,-48C190,-48 62,-48 62,-48 56,-48 50,-42 50,-36 50,-36 50,-12 50,-12 50,-6 56,0 62,0 62,0 190,0 190,0 196,0 202,-6 202,-12 202,-12 202,-36 202,-36 202,-42 196,-48 190,-48"/>
+<text text-anchor="middle" x="126" y="-29" font-family="Georgia" font-size="15.00">Check remaining</text>
+<text text-anchor="middle" x="126" y="-12" font-family="Georgia" font-size="15.00">exposure</text>
+</g>
+<!-- control&#45;&gt;limit -->
+<g id="security-reasoning-path-edge4" class="edge">
+<title>control&#45;&gt;limit</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M126,-79.6C126,-71.66 126,-62.69 126,-54.35"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="128.1,-54.12 126,-48.12 123.9,-54.12 128.1,-54.12"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Security reasoning moves from the asset and threat to the required property and a control, then checks remaining exposure.</figcaption></figure>
+
+<h2 id="section-3">Threats and controls</h2>
+<p>An attack is easier to understand when its path is explicit. A passive observer records traffic; a replay attacker later resends a captured request. An imposter pretends to be a client or server. A man in the middle relays and may alter messages while misleading both endpoints. A denial-of-service attacker consumes resources so legitimate users cannot get service. A virus inserts copies of itself into other programs when executed; a worm installs copies on other networked machines. Malware can harm privacy, integrity, and availability.</p>
+<div class="table-wrap"><table><thead><tr><th>Threat</th><th>What happens</th><th>Main property at risk</th><th>Control direction</th></tr></thead><tbody>
+<tr><td>Eavesdropping and replay</td><td>Traffic is recorded; a captured request may be sent again</td><td>Privacy, authentication, and freshness</td><td>Protect the channel; authenticate and reject stale/reused requests</td></tr>
+<tr><td>Client imposter / source spoofing</td><td>A requester claims to be an authorised client</td><td>Authentication and confidentiality</td><td>Authenticate the client; a source IP address alone is not identity proof</td></tr>
+<tr><td>Server imposter</td><td>A false service solicits a user’s secrets</td><td>Authentication and confidentiality</td><td>Authenticate the server before trusting it</td></tr>
+<tr><td>Man in the middle</td><td>An intermediary relays messages and may change them</td><td>Authentication and integrity</td><td>Authenticate endpoints and protect message integrity</td></tr>
+<tr><td>DoS / DDoS</td><td>One or many machines flood a service until resources are exhausted</td><td>Availability</td><td>Border controls and service-side capacity/response measures</td></tr>
+<tr><td>Virus or worm</td><td>Malicious code runs, copies itself, or spreads to other systems</td><td>Privacy, integrity, and availability</td><td>Endpoint controls, careful execution, updates, and detection</td></tr>
+</tbody></table></div>
+
+<figure><div class="diagram-frame" style="--diagram-width:194.6px"><svg role="img" aria-label="A firewall controls traffic at the boundary; permitted traffic still passes through host and application checks." width="195pt" height="406pt"
+ viewBox="0.00 0.00 194.60 405.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="security-firewall-boundary-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 394.8)">
+<title>G</title>
+<!-- internet -->
+<g id="security-firewall-boundary-node1" class="node">
+<title>internet</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M155.5,-384C155.5,-384 14.5,-384 14.5,-384 8.5,-384 2.5,-378 2.5,-372 2.5,-372 2.5,-348 2.5,-348 2.5,-342 8.5,-336 14.5,-336 14.5,-336 155.5,-336 155.5,-336 161.5,-336 167.5,-342 167.5,-348 167.5,-348 167.5,-372 167.5,-372 167.5,-378 161.5,-384 155.5,-384"/>
+<text text-anchor="middle" x="85" y="-365" font-family="Georgia" font-size="15.00">Internet</text>
+<text text-anchor="middle" x="85" y="-348" font-family="Georgia" font-size="15.00">untrusted network</text>
+</g>
+<!-- filter -->
+<g id="security-firewall-boundary-node2" class="node">
+<title>filter</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M147.5,-303C147.5,-303 22.5,-303 22.5,-303 16.5,-303 10.5,-297 10.5,-291 10.5,-291 10.5,-267 10.5,-267 10.5,-261 16.5,-255 22.5,-255 22.5,-255 147.5,-255 147.5,-255 153.5,-255 159.5,-261 159.5,-267 159.5,-267 159.5,-291 159.5,-291 159.5,-297 153.5,-303 147.5,-303"/>
+<text text-anchor="middle" x="85" y="-284" font-family="Georgia" font-size="15.00">Firewall</text>
+<text text-anchor="middle" x="85" y="-267" font-family="Georgia" font-size="15.00">filter · allow · log</text>
+</g>
+<!-- internet&#45;&gt;filter -->
+<g id="security-firewall-boundary-edge1" class="edge">
+<title>internet&#45;&gt;filter</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M85,-335.72C85,-327.45 85,-318.02 85,-309.3"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="87.1,-309.11 85,-303.11 82.9,-309.11 87.1,-309.11"/>
+</g>
+<!-- host -->
+<g id="security-firewall-boundary-node3" class="node">
+<title>host</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M143.5,-210C143.5,-210 26.5,-210 26.5,-210 20.5,-210 14.5,-204 14.5,-198 14.5,-198 14.5,-174 14.5,-174 14.5,-168 20.5,-162 26.5,-162 26.5,-162 143.5,-162 143.5,-162 149.5,-162 155.5,-168 155.5,-174 155.5,-174 155.5,-198 155.5,-198 155.5,-204 149.5,-210 143.5,-210"/>
+<text text-anchor="middle" x="85" y="-191" font-family="Georgia" font-size="15.00">Allowed service</text>
+<text text-anchor="middle" x="85" y="-174" font-family="Georgia" font-size="15.00">server host</text>
+</g>
+<!-- filter&#45;&gt;host -->
+<g id="security-firewall-boundary-edge2" class="edge">
+<title>filter&#45;&gt;host</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M85,-254.57C85,-242.91 85,-228.7 85,-216.32"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="87.1,-216.04 85,-210.04 82.9,-216.04 87.1,-216.04"/>
+<text text-anchor="middle" x="129" y="-229.4" font-family="Georgia" font-size="12.00">allowed traffic</text>
+</g>
+<!-- app -->
+<g id="security-firewall-boundary-node4" class="node">
+<title>app</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M152,-129C152,-129 18,-129 18,-129 12,-129 6,-123 6,-117 6,-117 6,-93 6,-93 6,-87 12,-81 18,-81 18,-81 152,-81 152,-81 158,-81 164,-87 164,-93 164,-93 164,-117 164,-117 164,-123 158,-129 152,-129"/>
+<text text-anchor="middle" x="85" y="-110" font-family="Georgia" font-size="15.00">Application</text>
+<text text-anchor="middle" x="85" y="-93" font-family="Georgia" font-size="15.00">authorise request</text>
+</g>
+<!-- host&#45;&gt;app -->
+<g id="security-firewall-boundary-edge3" class="edge">
+<title>host&#45;&gt;app</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M85,-161.72C85,-153.45 85,-144.02 85,-135.3"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="87.1,-135.11 85,-129.11 82.9,-135.11 87.1,-135.11"/>
+</g>
+<!-- data -->
+<g id="security-firewall-boundary-node5" class="node">
+<title>data</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M158,-48C158,-48 12,-48 12,-48 6,-48 0,-42 0,-36 0,-36 0,-12 0,-12 0,-6 6,0 12,0 12,0 158,0 158,0 164,0 170,-6 170,-12 170,-12 170,-36 170,-36 170,-42 164,-48 158,-48"/>
+<text text-anchor="middle" x="85" y="-29" font-family="Georgia" font-size="15.00">Data</text>
+<text text-anchor="middle" x="85" y="-12" font-family="Georgia" font-size="15.00">protect at endpoint</text>
+</g>
+<!-- app&#45;&gt;data -->
+<g id="security-firewall-boundary-edge4" class="edge">
+<title>app&#45;&gt;data</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M85,-80.72C85,-72.45 85,-63.02 85,-54.3"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="87.1,-54.11 85,-48.11 82.9,-54.11 87.1,-54.11"/>
+</g>
+</g>
+</svg>
+</div><figcaption>A firewall controls traffic at the boundary; permitted traffic still passes through host and application checks.</figcaption></figure>
+
+<p>The companion lecture lists channel protections—encryption, cryptographic checks, authentication, and signatures—and border protections such as firewalls, malware checking, intrusion detection, authentication, and access control. A firewall separates networks with different trust levels. It can deny inbound or outbound access, allow selected services, log attempts, and raise alerts. Packet filters inspect network-layer traffic; application gateways mediate application traffic. Rules need ongoing maintenance as services and risks change.</p>
+<div class="figure-note"><strong>Firewall boundary:</strong> a perimeter rule can restrict which network traffic reaches a service, but an allowed request still needs server-side authentication and authorisation. A firewall is one layer in a system, not a cure-all.</div>
+
+<h2 id="section-4">Cryptographic language and two historical ciphers</h2>
+<p>Encryption transforms readable plaintext into ciphertext; decryption recovers plaintext. A cipher is the algorithm, and a key selects or parameterises the operation. The companion lecture uses two tiny examples to make the distinction between substitution and rearrangement concrete. They are teaching examples, not secure ciphers.</p>
+<details class="worked"><summary>Worked source examples: reverse substitution and adjacent transposition</summary><p>The original examples are <code>hvxfirgb → security</code> and <code>security → esuciryt</code>. The first uses the reverse-alphabet mapping; the second swaps each adjacent pair. Step through the mapping instead of treating the output as a memorised answer.</p>
+<section class="walk" aria-label="Trace the two source cipher transformations"><h3>Trace the two source cipher transformations</h3><div class="example-input"><p><strong>Given:</strong> reverse-alphabet substitution <code>abcdefghijklmnopqrstuvwxyz → zyxwvutsrqponmlkjihgfedcba</code>; adjacent transposition swaps each pair. Source values: <code>hvxfirgb</code> and <code>security</code>.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Reverse alphabet: map the first ciphertext letter</h4><p>The reverse alphabet pairs <code>a↔z</code>, <code>b↔y</code>, <code>c↔x</code>, and so on. For <code>h</code>, the paired plaintext letter is <code>s</code>. The remaining ciphertext is <code>vxfirgb</code>.</p></section><section class="step"><h4>2 · Continue the reverse-alphabet substitution</h4><p>Map each letter through the same table: <code>v→e</code>, <code>x→c</code>, <code>f→u</code>, <code>i→r</code>, <code>r→i</code>, <code>g→t</code>, and <code>b→y</code>. Reading the result gives <code>security</code>. Check: applying the reverse-alphabet map again returns <code>hvxfirgb</code>.</p></section><section class="step"><h4>3 · Adjacent transposition: split into pairs</h4><p>The plaintext <code>security</code> is grouped as <code>se | cu | ri | ty</code>. The stated rule swaps positions <em>k</em> and <em>k+1</em>, so each pair reverses without changing its letters.</p></section><section class="step"><h4>4 · Swap each pair and check</h4><p><code>se→es</code>, <code>cu→uc</code>, <code>ri→ir</code>, <code>ty→yt</code>. Join the pairs: <code>esuciryt</code>. The letter multiset is unchanged; only the order changed. This matches the slide’s ciphertext exactly.</p></section></section></details>
+
+<p>Substitution preserves positions but changes symbols; transposition preserves symbols but changes their positions. The lecture notes that substitution can be attacked by comparing ciphertext letter frequencies with language frequencies, while known plaintext and ciphertext can expose a simple transposition mapping. These examples show why an algorithm that looks obscure is not necessarily secure.</p>
+<h2 id="section-5">Shared-key encryption and fresh challenges</h2>
+<p>The source’s criteria for a good cipher are practical implementation and deployment, a key space large enough to make trying every key infeasible, and resistance to key recovery even when an attacker knows many plaintext/ciphertext pairs.</p>
+<p>In shared-key cryptography, both parties know the same secret key <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>K</mi></mrow></math>. The sender computes ciphertext <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>C</mi><mo>&#x0003D;</mo><msub><mi>E</mi><mi>K</mi></msub><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo></mrow></math> from plaintext <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math>; the receiver applies the inverse operation <code>D_K</code> with the same key. Correct decryption checks the relation <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>D</mi><mi>K</mi></msub><mo stretchy="false">&#x00028;</mo><msub><mi>E</mi><mi>K</mi></msub><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>P</mi></mrow></math>. The source names DES, Triple DES, and AES as examples of key-based ciphers; this list is historical, not a recommendation to use them interchangeably today. NIST withdrew DES and no longer permits TDEA/3DES encryption after 2023; AES remains a standard block-cipher family. See <a href="https://csrc.nist.gov/News/2005/Withdrawal-of-FIPS-46-3-FIPS-74-and-FIPS-81">NIST’s DES withdrawal</a> and <a href="https://csrc.nist.gov/projects/cryptographic-module-validation-program/sp-800-140-series-supplemental-information/sp800-140c">TDEA status</a>.</p>
+<p>Encryption can hide message contents, but <strong>encryption alone does not prove that ciphertext is authentic or unaltered</strong>. A modified ciphertext does not reliably become recognizable “gibberish.” Use a correctly constructed message authentication code (MAC) for keyed integrity, or an authenticated-encryption construction when both confidentiality and integrity are required. NIST explicitly distinguishes encryption from authenticity and describes authenticated-encryption modes in its <a href="https://csrc.nist.gov/bcm/authentication-for-confidentiality-modes">confidentiality-mode guidance</a>.</p>
+<details class="worked"><summary>Worked source procedure: decrypt with the shared key</summary><section class="walk" aria-label="Follow plaintext through shared-key encryption and decryption"><h3>Follow plaintext through shared-key encryption and decryption</h3><div class="example-input"><p><strong>Given:</strong> a shared secret <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>K</mi></mrow></math>, plaintext <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math>, encryption <code>E_K</code>, inverse decryption <code>D_K</code>. No source numeric values are provided.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Sender and receiver share K</h4><p>The source assumes both parties already possess the same secret <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>K</mi></mrow></math>. The sender starts with plaintext <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math>. No numeric key or cipher arithmetic is supplied, so keep the example symbolic.</p></section><section class="step"><h4>2 · Encrypt the message</h4><p>Apply the keyed encryption mapping: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>C</mi><mo>&#x0003D;</mo><msub><mi>E</mi><mi>K</mi></msub><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo></mrow></math>. The transmitted value is ciphertext <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>C</mi></mrow></math>; a passive observer should not learn <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math> from it when the cipher and key are secure.</p></section><section class="step"><h4>3 · Receiver decrypts</h4><p>The receiver applies the inverse mapping using the same key: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>D</mi><mi>K</mi></msub><mo stretchy="false">&#x00028;</mo><mi>C</mi><mo stretchy="false">&#x00029;</mo></mrow></math>. Since <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>C</mi><mo>&#x0003D;</mo><msub><mi>E</mi><mi>K</mi></msub><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo></mrow></math>, the result should be <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>D</mi><mi>K</mi></msub><mo stretchy="false">&#x00028;</mo><msub><mi>E</mi><mi>K</mi></msub><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>P</mi></mrow></math>.</p></section><section class="step"><h4>4 · Check what this establishes</h4><p>Recovering <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math> demonstrates the encryption/decryption relationship. It does not by itself show that the ciphertext was not modified or prove which person sent it. A separate authenticated check is needed for integrity/authentication.</p></section></section></details>
+
+<p>The source’s mutual challenge-response figure has both endpoints demonstrate possession of the shared key. A nonce is a fresh value intended for one use. The recipient sends a challenge; the other endpoint returns a keyed transformation; the recipient checks it. Then the direction reverses. Fresh challenges make an old response unsuitable for a new challenge, assuming challenges are fresh and the cryptographic operation is sound. This proves possession of the shared key in that exchange; it does not independently establish a person’s real-world identity unless the key is securely bound to that identity.</p>
+<section class="walk" aria-label="Trace mutual shared-key challenge-response"><h3>Trace mutual shared-key challenge-response</h3><div class="example-input"><p><strong>Given:</strong> Jane and John share <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>K</mi></mrow></math>; Jane chooses challenge <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi></mrow></math>, John chooses a distinct challenge <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>r</mi><mi>&#x02032;</mi></msup></mrow></math>. The source’s figure shows <code>r → E_K(r)</code> and then <code>r′ → E_K(r′)</code> in opposite directions.</p><p><strong>Opening claim:</strong> John first tells Jane ‘let’s talk,’ identifying himself. This claim alone does not authenticate John; the challenge and keyed response test possession of the shared key.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Jane challenges John</h4><p>Jane sends a fresh random value <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi></mrow></math> to John. This is the challenge currently awaiting a response.</p></section><section class="step"><h4>2 · John answers Jane’s challenge</h4><p>John computes <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>E</mi><mi>K</mi></msub><mo stretchy="false">&#x00028;</mo><mi>r</mi><mo stretchy="false">&#x00029;</mo></mrow></math> with the shared secret and sends it back. Jane decrypts or otherwise verifies the response; it must correspond to her outstanding <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi></mrow></math>. A previously recorded answer to a different challenge should fail this check.</p></section><section class="step"><h4>3 · John challenges Jane</h4><p>To authenticate the opposite direction, John sends a new challenge <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>r</mi><mi>&#x02032;</mi></msup></mrow></math>. It is a separate fresh value, not a reuse of <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi></mrow></math>.</p></section><section class="step"><h4>4 · Jane answers and John checks</h4><p>Jane returns <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>E</mi><mi>K</mi></msub><mo stretchy="false">&#x00028;</mo><msup><mi>r</mi><mi>&#x02032;</mi></msup><mo stretchy="false">&#x00029;</mo></mrow></math>. John verifies it against the challenge he just issued. Now each direction has been checked. </p></section></section>
+
+<h2 id="section-6">Keyed integrity checks</h2>
+<p>A keyed check attaches evidence that depends on both the message <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math> and shared secret <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>K</mi></mrow></math>. The source labels the output <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>H</mi><mi>K</mi></msub><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo></mrow></math>: the sender computes a fixed-length check, sends it with the message, and the receiver recomputes the check from the received message and compares the results. If they differ, the receiver rejects the message as changed or invalid. Because the check is keyed, a party without <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>K</mi></mrow></math> should not be able to create a valid one. This is the conceptual role of a MAC; the lecture does not specify a deployable hash construction.</p>
+<p>An unkeyed digest can detect accidental change when the digest itself is trusted, but an attacker who can replace both a message and its unkeyed digest can make the pair match. A keyed check addresses that threat when keys are protected and the MAC is properly designed. Neither an unkeyed hash nor a shared-key MAC alone provides public proof that one particular individual sent a message; non-repudiation requires a different trust and signature model.</p>
+<p>The companion slides mention MD5’s 128-bit digest, 512-bit processing blocks, SHA-1’s 160-bit digest, and an ad-hoc keyed-MD5 idea. These are historical descriptions, not implementation advice; do not copy the key-append construction as a MAC. NIST advises transition away from SHA-1 toward SHA-2 or SHA-3, and <a href="https://www.rfc-editor.org/rfc/rfc6151.html">RFC 6151</a> says MD5 is no longer acceptable where collision resistance is required. Modern keyed constructions include standard HMAC or a vetted MAC, not a home-made key concatenation.</p>
+<section class="walk" aria-label="Check a message with a keyed integrity value"><h3>Check a message with a keyed integrity value</h3><div class="example-input"><p><strong>Given:</strong> sender and receiver share secret <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>K</mi></mrow></math>; message is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math>; the source’s keyed-check diagram sends <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math> alongside <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>H</mi><mi>K</mi></msub><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo></mrow></math>. No algorithm-specific output is supplied.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Sender computes a keyed value</h4><p>For message <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math> and shared secret <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>K</mi></mrow></math>, compute <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>t</mi><mo>&#x0003D;</mo><msub><mi>H</mi><mi>K</mi></msub><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo></mrow></math>. The check depends on the contents and the secret.</p></section><section class="step"><h4>2 · Send message and check together</h4><p>Transmit the pair <code>(P, t)</code>. A change to the message should change the recomputed keyed value, while a party without <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>K</mi></mrow></math> should not be able to make a valid replacement check.</p></section><section class="step"><h4>3 · Receiver recomputes</h4><p>On receipt, calculate <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>t</mi><mi>&#x02032;</mi></msup><mo>&#x0003D;</mo><msub><mi>H</mi><mi>K</mi></msub><mo stretchy="false">&#x00028;</mo><msub><mi>P</mi><mrow><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">d</mi></mrow></mrow></msub><mo stretchy="false">&#x00029;</mo></mrow></math> using the same protected key and the received message.</p></section><section class="step"><h4>4 · Compare and decide</h4><p>If <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>t</mi><mi>&#x02032;</mi></msup><mo>&#x0003D;</mo><msub><mi>t</mi><mrow><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">d</mi></mrow></mrow></msub></mrow></math>, accept the message as passing this keyed integrity check. If they differ, reject it. The check does not hide <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math>; add encryption separately if confidentiality is also required.</p></section></section>
+
+<h2 id="section-7">Public-key confidentiality and identity binding</h2>
+<p>Public-key cryptography uses a related public/private key pair. For confidentiality, anyone can encrypt a message to the recipient with the recipient’s public key <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>K</mi><mn>1</mn></msub></mrow></math>; only the matching private key <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>K</mi><mn>2</mn></msub></mrow></math> should decrypt it: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>C</mi><mo>&#x0003D;</mo><msub><mi>E</mi><mrow><msub><mi>K</mi><mn>1</mn></msub></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo></mrow></math> and <code>P = D_K₂(C)</code>. This is the direction shown in the lecture figure. A public key must be verified as belonging to the intended recipient; otherwise an attacker can substitute a different key. Certificate trust and validation belong to <a href="pki.html">Public key infrastructure</a>.</p>
+<figure><div class="diagram-frame" style="--diagram-width:192.6px"><svg role="img" aria-label="For confidentiality, encrypt with the intended recipient’s public key and decrypt with that recipient’s private key." width="193pt" height="378pt"
+ viewBox="0.00 0.00 192.60 377.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="security-public-key-direction-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 366.8)">
+<title>G</title>
+<!-- sender -->
+<g id="security-public-key-direction-node1" class="node">
+<title>sender</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M125.5,-356C125.5,-356 45.5,-356 45.5,-356 39.5,-356 33.5,-350 33.5,-344 33.5,-344 33.5,-320 33.5,-320 33.5,-314 39.5,-308 45.5,-308 45.5,-308 125.5,-308 125.5,-308 131.5,-308 137.5,-314 137.5,-320 137.5,-320 137.5,-344 137.5,-344 137.5,-350 131.5,-356 125.5,-356"/>
+<text text-anchor="middle" x="85.5" y="-337" font-family="Georgia" font-size="15.00">Sender</text>
+<text text-anchor="middle" x="85.5" y="-320" font-family="Georgia" font-size="15.00">plaintext P</text>
+</g>
+<!-- encrypt -->
+<g id="security-public-key-direction-node2" class="node">
+<title>encrypt</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M155.5,-276C155.5,-276 15.5,-276 15.5,-276 9.5,-276 3.5,-270 3.5,-264 3.5,-264 3.5,-240 3.5,-240 3.5,-234 9.5,-228 15.5,-228 15.5,-228 155.5,-228 155.5,-228 161.5,-228 167.5,-234 167.5,-240 167.5,-240 167.5,-264 167.5,-264 167.5,-270 161.5,-276 155.5,-276"/>
+<text text-anchor="middle" x="85.5" y="-257" font-family="Georgia" font-size="15.00">Encrypt with</text>
+<text text-anchor="middle" x="85.5" y="-240" font-family="Georgia" font-size="15.00">recipient public K₁</text>
+</g>
+<!-- sender&#45;&gt;encrypt -->
+<g id="security-public-key-direction-edge1" class="edge">
+<title>sender&#45;&gt;encrypt</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M85.5,-307.6C85.5,-299.66 85.5,-290.69 85.5,-282.35"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="87.6,-282.12 85.5,-276.12 83.4,-282.12 87.6,-282.12"/>
+</g>
+<!-- cipher -->
+<g id="security-public-key-direction-node3" class="node">
+<title>cipher</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M133,-196C133,-196 38,-196 38,-196 32,-196 26,-190 26,-184 26,-184 26,-172 26,-172 26,-166 32,-160 38,-160 38,-160 133,-160 133,-160 139,-160 145,-166 145,-172 145,-172 145,-184 145,-184 145,-190 139,-196 133,-196"/>
+<text text-anchor="middle" x="85.5" y="-174.5" font-family="Georgia" font-size="15.00">Ciphertext C</text>
+</g>
+<!-- encrypt&#45;&gt;cipher -->
+<g id="security-public-key-direction-edge2" class="edge">
+<title>encrypt&#45;&gt;cipher</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M85.5,-227.82C85.5,-219.7 85.5,-210.57 85.5,-202.43"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="87.6,-202.42 85.5,-196.42 83.4,-202.42 87.6,-202.42"/>
+</g>
+<!-- decrypt -->
+<g id="security-public-key-direction-node4" class="node">
+<title>decrypt</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M159,-128C159,-128 12,-128 12,-128 6,-128 0,-122 0,-116 0,-116 0,-92 0,-92 0,-86 6,-80 12,-80 12,-80 159,-80 159,-80 165,-80 171,-86 171,-92 171,-92 171,-116 171,-116 171,-122 165,-128 159,-128"/>
+<text text-anchor="middle" x="85.5" y="-109" font-family="Georgia" font-size="15.00">Decrypt with</text>
+<text text-anchor="middle" x="85.5" y="-92" font-family="Georgia" font-size="15.00">recipient private K₂</text>
+</g>
+<!-- cipher&#45;&gt;decrypt -->
+<g id="security-public-key-direction-edge3" class="edge">
+<title>cipher&#45;&gt;decrypt</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M85.5,-159.94C85.5,-152.31 85.5,-143.09 85.5,-134.41"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="87.6,-134.21 85.5,-128.21 83.4,-134.21 87.6,-134.21"/>
+</g>
+<!-- recipient -->
+<g id="security-public-key-direction-node5" class="node">
+<title>recipient</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M125.5,-48C125.5,-48 45.5,-48 45.5,-48 39.5,-48 33.5,-42 33.5,-36 33.5,-36 33.5,-12 33.5,-12 33.5,-6 39.5,0 45.5,0 45.5,0 125.5,0 125.5,0 131.5,0 137.5,-6 137.5,-12 137.5,-12 137.5,-36 137.5,-36 137.5,-42 131.5,-48 125.5,-48"/>
+<text text-anchor="middle" x="85.5" y="-29" font-family="Georgia" font-size="15.00">Recipient</text>
+<text text-anchor="middle" x="85.5" y="-12" font-family="Georgia" font-size="15.00">plaintext P</text>
+</g>
+<!-- decrypt&#45;&gt;recipient -->
+<g id="security-public-key-direction-edge4" class="edge">
+<title>decrypt&#45;&gt;recipient</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M85.5,-79.6C85.5,-71.66 85.5,-62.69 85.5,-54.35"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="87.6,-54.12 85.5,-48.12 83.4,-54.12 87.6,-54.12"/>
+</g>
+</g>
+</svg>
+</div><figcaption>For confidentiality, encrypt with the intended recipient’s public key and decrypt with that recipient’s private key.</figcaption></figure>
+
+<p>The old slide also describes “encrypt with the private key, decrypt with the public key” as integrity. Treat that as an analogy, not the definition of a digital signature. Signature schemes have specific signing and verification operations, and a signature does not make a message confidential. The protocol page discusses where signatures are used; the PKI page explains how a public key is bound to an identity.</p>
+<section class="walk" aria-label="Trace the public-key direction for confidentiality"><h3>Trace the public-key direction for confidentiality</h3><div class="example-input"><p><strong>Given:</strong> intended recipient has public key <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>K</mi><mn>1</mn></msub></mrow></math> and corresponding private key <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>K</mi><mn>2</mn></msub></mrow></math>; sender wants to protect plaintext <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math>. The lecture supplies symbolic equations, not numeric cipher values.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Recipient publishes K₁ and protects K₂</h4><p>The intended recipient makes public key <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>K</mi><mn>1</mn></msub></mrow></math> available and keeps matching private key <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>K</mi><mn>2</mn></msub></mrow></math> secret.</p></section><section class="step"><h4>2 · Sender encrypts for that recipient</h4><p>The sender computes <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>C</mi><mo>&#x0003D;</mo><msub><mi>E</mi><mrow><msub><mi>K</mi><mn>1</mn></msub></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo></mrow></math>. The operation is directed to the holder of the matching private key.</p></section><section class="step"><h4>3 · Recipient decrypts</h4><p>The recipient computes <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>D</mi><mrow><msub><mi>K</mi><mn>2</mn></msub></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>C</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>P</mi></mrow></math>. The private key is needed to recover the plaintext.</p></section><section class="step"><h4>4 · Verify the identity dependency</h4><p>This reasoning only protects the intended recipient if <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>K</mi><mn>1</mn></msub></mrow></math> is actually that recipient’s public key. A substituted key changes who can decrypt. Check the certificate and trust chain on the PKI page; public-key encryption alone does not prove who sent <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math>.</p></section></section>
+
+<h2 id="section-8">Common mistakes</h2>
+<ul>
+<li><strong>Mixing integrity with identity.</strong> Integrity concerns unauthorised change; authentication checks a claimed identity; accountability links actions to actors. One does not automatically prove the others.</li>
+<li><strong>Assuming encryption detects tampering.</strong> Encryption alone can hide content without authenticating it. Use authenticated encryption or a properly constructed MAC when integrity is required.</li>
+<li><strong>Treating an IP address as an identity.</strong> A packet can carry a spoofed source address; authenticate the communicating party with an appropriate mechanism.</li>
+<li><strong>Treating a firewall as endpoint security.</strong> A firewall filters at a boundary. An allowed service can still have a vulnerable application or weak account permissions.</li>
+<li><strong>Replaying a valid old response.</strong> A challenge-response must use fresh challenges and check that a response answers the current outstanding value.</li>
+<li><strong>Using the wrong public-key direction.</strong> For confidentiality, encrypt to the recipient’s public key and decrypt with the recipient’s private key. Confirm that the public key belongs to that recipient.</li>
+<li><strong>Calling toy ciphers secure, or reusing historical hash constructions.</strong> The examples explain transformations only; the slides’ keyed-MD5 construction and obsolete algorithms are not current guidance.</li>
+</ul>
+<h2 id="section-9">Exam focus</h2>
+<ol>
+<li>Name the asset, threat, security property, and control in a short scenario.</li>
+<li>Distinguish identification, authentication, and authorisation; apply minimum privilege to file operations.</li>
+<li>Match eavesdropping, replay, client/server imposters, man-in-the-middle, DoS, viruses, and worms to their effects.</li>
+<li>Explain the difference between substitution and transposition using the exact source examples.</li>
+<li>Trace <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>C</mi><mo>&#x0003D;</mo><msub><mi>E</mi><mi>K</mi></msub><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>D</mi><mi>K</mi></msub><mo stretchy="false">&#x00028;</mo><msub><mi>E</mi><mi>K</mi></msub><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>P</mi></mrow></math>, then state what encryption does and does not establish.</li>
+<li>Trace both directions of challenge-response and explain why the challenges must be fresh.</li>
+<li>Recompute and compare a keyed integrity value; distinguish it from encryption and an unkeyed digest.</li>
+<li>For public-key confidentiality, encrypt with the recipient’s public key and decrypt with that recipient’s private key; explain why identity binding matters.</li>
+<li>State what a firewall can filter or record and why hosts, clients, applications, and recovery still need attention.</li>
+</ol>
+<h2 id="section-10">Practice questions</h2>
+<p class="question">A user can log in, but should only read one directory and never delete its files. Which security concepts govern these decisions?</p>
+<details class="worked"><summary>Check your answer</summary><p>Authentication checks the user’s claimed identity. Authorisation and file permissions grant read access while withholding delete permission. Minimum privilege says to provide only the access needed.</p></details>
+
+<p class="question">A captured request is sent again later. What happened, and what property should a protocol check?</p>
+<details class="worked"><summary>Check your answer</summary><p>This is replay after eavesdropping. The protocol should authenticate and integrity-protect the request and use freshness or anti-replay handling so an old request is not accepted as new.</p></details>
+
+<p class="question">Does encrypting a message with a shared key prove it was not changed?</p>
+<details class="worked"><summary>Check your answer</summary><p>No. Encryption alone does not assure authenticity. Add a correctly constructed keyed integrity check or use authenticated encryption; decrypting to unexpected data is not a dependable tamper test.</p></details>
+
+<p class="question">In the source substitution example, decode <code>hvxfirgb</code>. Then explain why <code>security → esuciryt</code> is a different cipher type.</p>
+<details class="worked"><summary>Check your answer</summary><p>The reverse-alphabet map gives <code>h→s</code>, <code>v→e</code>, <code>x→c</code>, <code>f→u</code>, <code>i→r</code>, <code>r→i</code>, <code>g→t</code>, <code>b→y</code>, so the result is <code>security</code>. The second example swaps adjacent character pairs, preserving the letters while rearranging their positions: <code>se|cu|ri|ty → es|uc|ir|yt</code>.</p></details>
+
+<p class="question">Why is encrypting to Bob’s public key not proof that Alice sent the message?</p>
+<details class="worked"><summary>Check your answer</summary><p>Anyone with Bob’s public key can encrypt to him. This operation protects confidentiality for Bob but does not authenticate the sender. Sender authentication/signature handling and trustworthy key binding are separate concerns.</p></details>
+
+<p class="question">A flood of requests prevents normal clients from receiving responses. Which goal is primarily affected, and can a border firewall solve every cause?</p>
+<details class="worked"><summary>Check your answer</summary><p>Availability is primarily affected. A firewall can restrict or log some traffic, but it is not a cure-all; service and endpoint protections remain necessary.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="short-range.html"><small>Previous</small>Bluetooth, NFC and ZigBee <span aria-hidden="true">↗</span></a><a href="pki.html"><small>Next</small>Public key infrastructure <span aria-hidden="true">↗</span></a></nav><footer>Networks field notes <span>Follow the packet. Explain the decision.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  root.querySelectorAll('table').forEach(table => {
+    const region = document.createElement('div');
+    region.className = 'table-scroll' + (table.rows[0]?.cells.length > 5 ? ' wide' : '');
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    table.before(region); region.append(table);
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Network diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {osi:'layers encapsulation protocol service interface pdu',link:'framing crc parity arq flow control sliding window',ethernet:'mac switch arp csma token lab',wan:'man atm isdn frame relay x25',routing:'network forwarding distance vector link state dijkstra',ipv4:'ip subnet mask vlsm binary cidr lab',ipv6:'ip address compression transition lab',transport:'tcp udp handshake congestion window port',bluetooth:'wireless nfc zigbee wpan beacon quiz',security:'cia attacks cryptography encryption hash authentication',infrastructure:'pki certificate ca trust revocation signature',tls:'ssl ipsec ah esp tunnel sa',design:'requirements topology availability delay bandwidth'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('a').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('cns-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.CNS_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) expand.textContent = 'Expand examples';
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

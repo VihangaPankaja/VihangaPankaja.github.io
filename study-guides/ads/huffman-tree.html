@@ -1,0 +1,1909 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Combine the two lightest trees repeatedly. Frequent symbols end up with short codes, and small runs get merged first."><title>Huffman tree · ADS field notes</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('ads-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{.table-hint{display:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> ADS <span class="subbrand">field notes</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Heap, delete, trie…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a href="index.html">Data structures, side by side.</a><a href="comparison.html">Operation costs at a glance</a></div><div class="nav-group"><p>Priority queues</p><a href="binary-heap.html">Binary heap</a><a href="d-ary-heap.html">d-ary heap</a><a href="dual-heap.html">Dual min/max heaps</a><a href="correspondence-heaps.html">Correspondence heaps</a><a href="interval-heap.html">Interval heap</a></div><div class="nav-group"><p>Tournament and coding trees</p><a href="winner-tree.html">Winner tree</a><a href="loser-tree.html">Loser tree</a><a href="huffman-tree.html" aria-current="page">Huffman tree</a></div><div class="nav-group"><p>Meldable priority queues</p><a href="leftist-tree.html">Leftist tree</a><a href="binomial-heap.html">Lazy binomial heap</a><a href="fibonacci-heap.html">Fibonacci heap</a><a href="pairing-heap.html">Pairing heap</a></div><div class="nav-group"><p>Dictionaries and search trees</p><a href="hash-table.html">Hash table</a><a href="binary-search-tree.html">Binary search tree</a><a href="indexed-bst.html">Indexed BST</a><a href="optimal-bst.html">Optimal BST</a><a href="avl-tree.html">AVL tree</a><a href="red-black-tree.html">Red-black tree</a><a href="b-tree.html">B-tree</a><a href="two-three-tree.html">2-3 tree</a><a href="two-three-four-tree.html">2-3-4 tree</a><a href="b-plus-tree.html">B+ tree</a><a href="splay-tree.html">Splay tree</a></div><div class="nav-group"><p>Digital search and strings</p><a href="digital-search-tree.html">Digital search tree</a><a href="binary-trie.html">Binary trie</a><a href="compressed-trie.html">Compressed binary trie</a><a href="higher-order-trie.html">Higher-order trie</a><a href="multibit-trie.html">Multibit trie and routing</a><a href="suffix-tree.html">Suffix tree</a></div><div class="nav-group"><p>Reference</p><a href="operation-glossary.html">Operation names and exam traps</a></div><div class="nav-group"><p>Sorting on disk</p><a href="external-sorting.html">External sorting</a></div><div class="nav-group"><p>Analysis</p><a href="amortized-analysis.html">Amortized analysis</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4580<br>Advanced Data Structures</div></aside>
+<main id="main"><div class="eyebrow">Tournament and coding trees <span>/</span> Lecture 2 · Lab 2</div><h1>Huffman tree</h1><p class="lead">Combine the two lightest trees repeatedly. Frequent symbols end up with short codes, and small runs get merged first.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Methods</a><a href="#section-2">Higher-order construction and caveats</a><a href="#section-3">Eight-symbol construction: ties, codes, and a complete cost check</a><a href="#section-4">Ties, singleton alphabets, and higher-order trees</a><a href="#section-5">Method decisions and limits</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Huffman construction minimizes weighted external path length, WEPL = Σ(weight × leaf depth). The same quantity measures encoded bits or total merge work. A min heap helps build the tree, but the finished Huffman tree is a coding tree, not a search tree.</p>
+<section aria-label="Fresh build from weights [2, 5, 4, 7, 9]" class="walk"><h3>Fresh build from weights [2, 5, 4, 7, 9]</h3><div class="example-input"><strong>Input list</strong><span>[2, 5, 4, 7, 9]</span></div><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Start with singleton trees</h4><figure><div class="array"><span class="cell"><small>1</small>2</span><span class="cell"><small>2</small>5</span><span class="cell"><small>3</small>4</span><span class="cell"><small>4</small>7</span><span class="cell"><small>5</small>9</span></div><figcaption>Insert all five leaves into a min-priority queue.</figcaption></figure><div class="step-reason"><p>Create one leaf per symbol and put all five weights in the min-priority queue. The invariant is that the queue contains exactly the current forest roots; stop initializing when every input leaf is present.</p></div></section><section class="step"><h4>2 · Combine 2 and 4</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="Remaining tree weights: 5, 6, 7, 9." height="126pt" role="img" viewbox="0.00 0.00 151.60 125.60" width="152pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="huff-build-1-graph0" transform="scale(1 1) rotate(0) translate(10.8 114.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="huff-build-1-node1">
+<title>r</title>
+<path d="M80,-104C80,-104 50,-104 50,-104 44,-104 38,-98 38,-92 38,-92 38,-80 38,-80 38,-74 44,-68 50,-68 50,-68 80,-68 80,-68 86,-68 92,-74 92,-80 92,-80 92,-92 92,-92 92,-98 86,-104 80,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="65" y="-82.5">6</text>
+</g>
+<!-- r0 -->
+<g class="node" id="huff-build-1-node2">
+<title>r0</title>
+<path d="M42,-36C42,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 42,0 42,0 48,0 54,-6 54,-12 54,-12 54,-24 54,-24 54,-30 48,-36 42,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-14.5">2</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="huff-build-1-edge1">
+<title>r-&gt;r0</title>
+<path d="M55.02,-67.66C50.51,-59.84 45.13,-50.49 40.29,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.86,-40.61 37.05,-36.45 38.22,-42.7 41.86,-40.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="huff-build-1-node3">
+<title>r1</title>
+<path d="M118,-36C118,-36 88,-36 88,-36 82,-36 76,-30 76,-24 76,-24 76,-12 76,-12 76,-6 82,0 88,0 88,0 118,0 118,0 124,0 130,-6 130,-12 130,-12 130,-24 130,-24 130,-30 124,-36 118,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-14.5">4</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="huff-build-1-edge2">
+<title>r-&gt;r1</title>
+<path d="M74.98,-67.66C79.49,-59.84 84.87,-50.49 89.71,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="91.78,-42.7 92.95,-36.45 88.14,-40.61 91.78,-42.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>Remaining tree weights: 5, 6, 7, 9.</figcaption></figure><div class="step-reason"><p>Remove the two minima, 2 and 4, and make them children of a new weight-6 root. The merge preserves all leaves and adds their depths by one; reinsert 6, then continue because four roots remain.</p></div></section><section class="step"><h4>3 · Combine 5 and 6</h4><figure><div class="diagram-frame" style="--diagram-width:189.6px"><svg aria-label="Remaining weights: 7, 9, 11." height="194pt" role="img" viewbox="0.00 0.00 189.60 193.60" width="190pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="huff-build-2-graph0" transform="scale(1 1) rotate(0) translate(10.8 182.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="huff-build-2-node1">
+<title>r</title>
+<path d="M80,-172C80,-172 50,-172 50,-172 44,-172 38,-166 38,-160 38,-160 38,-148 38,-148 38,-142 44,-136 50,-136 50,-136 80,-136 80,-136 86,-136 92,-142 92,-148 92,-148 92,-160 92,-160 92,-166 86,-172 80,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="65" y="-150.5">11</text>
+</g>
+<!-- r0 -->
+<g class="node" id="huff-build-2-node2">
+<title>r0</title>
+<path d="M42,-104C42,-104 12,-104 12,-104 6,-104 0,-98 0,-92 0,-92 0,-80 0,-80 0,-74 6,-68 12,-68 12,-68 42,-68 42,-68 48,-68 54,-74 54,-80 54,-80 54,-92 54,-92 54,-98 48,-104 42,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-82.5">5</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="huff-build-2-edge1">
+<title>r-&gt;r0</title>
+<path d="M55.02,-135.66C50.51,-127.84 45.13,-118.49 40.29,-110.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.86,-108.61 37.05,-104.45 38.22,-110.7 41.86,-108.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="huff-build-2-node3">
+<title>r1</title>
+<path d="M118,-104C118,-104 88,-104 88,-104 82,-104 76,-98 76,-92 76,-92 76,-80 76,-80 76,-74 82,-68 88,-68 88,-68 118,-68 118,-68 124,-68 130,-74 130,-80 130,-80 130,-92 130,-92 130,-98 124,-104 118,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-82.5">6</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="huff-build-2-edge2">
+<title>r-&gt;r1</title>
+<path d="M74.98,-135.66C79.49,-127.84 84.87,-118.49 89.71,-110.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="91.78,-110.7 92.95,-104.45 88.14,-108.61 91.78,-110.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r10 -->
+<g class="node" id="huff-build-2-node4">
+<title>r10</title>
+<path d="M80,-36C80,-36 50,-36 50,-36 44,-36 38,-30 38,-24 38,-24 38,-12 38,-12 38,-6 44,0 50,0 50,0 80,0 80,0 86,0 92,-6 92,-12 92,-12 92,-24 92,-24 92,-30 86,-36 80,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="65" y="-14.5">2</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="huff-build-2-edge3">
+<title>r1-&gt;r10</title>
+<path d="M93.02,-67.66C88.51,-59.84 83.13,-50.49 78.29,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="79.86,-40.61 75.05,-36.45 76.22,-42.7 79.86,-40.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r11 -->
+<g class="node" id="huff-build-2-node5">
+<title>r11</title>
+<path d="M156,-36C156,-36 126,-36 126,-36 120,-36 114,-30 114,-24 114,-24 114,-12 114,-12 114,-6 120,0 126,0 126,0 156,0 156,0 162,0 168,-6 168,-12 168,-12 168,-24 168,-24 168,-30 162,-36 156,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="141" y="-14.5">4</text>
+</g>
+<!-- r1&#45;&gt;r11 -->
+<g class="edge" id="huff-build-2-edge4">
+<title>r1-&gt;r11</title>
+<path d="M112.98,-67.66C117.49,-59.84 122.87,-50.49 127.71,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="129.78,-42.7 130.95,-36.45 126.14,-40.61 129.78,-42.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>Remaining weights: 7, 9, 11.</figcaption></figure><div class="step-reason"><p>The queue minima are now 5 and 6, so merge them into 11 with the 5 leaf on the left and the 6 subtree on the right. The forest roots become 7, 9, and 11; continue while more than one root remains.</p></div></section><section class="step"><h4>4 · Combine 7 and 9</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="Remaining weights: 11, 16." height="126pt" role="img" viewbox="0.00 0.00 151.60 125.60" width="152pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="huff-build-3-graph0" transform="scale(1 1) rotate(0) translate(10.8 114.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="huff-build-3-node1">
+<title>r</title>
+<path d="M80,-104C80,-104 50,-104 50,-104 44,-104 38,-98 38,-92 38,-92 38,-80 38,-80 38,-74 44,-68 50,-68 50,-68 80,-68 80,-68 86,-68 92,-74 92,-80 92,-80 92,-92 92,-92 92,-98 86,-104 80,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="65" y="-82.5">16</text>
+</g>
+<!-- r0 -->
+<g class="node" id="huff-build-3-node2">
+<title>r0</title>
+<path d="M42,-36C42,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 42,0 42,0 48,0 54,-6 54,-12 54,-12 54,-24 54,-24 54,-30 48,-36 42,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-14.5">7</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="huff-build-3-edge1">
+<title>r-&gt;r0</title>
+<path d="M55.02,-67.66C50.51,-59.84 45.13,-50.49 40.29,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.86,-40.61 37.05,-36.45 38.22,-42.7 41.86,-40.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="huff-build-3-node3">
+<title>r1</title>
+<path d="M118,-36C118,-36 88,-36 88,-36 82,-36 76,-30 76,-24 76,-24 76,-12 76,-12 76,-6 82,0 88,0 88,0 118,0 118,0 124,0 130,-6 130,-12 130,-12 130,-24 130,-24 130,-30 124,-36 118,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-14.5">9</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="huff-build-3-edge2">
+<title>r-&gt;r1</title>
+<path d="M74.98,-67.66C79.49,-59.84 84.87,-50.49 89.71,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="91.78,-42.7 92.95,-36.45 88.14,-40.61 91.78,-42.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>Remaining weights: 11, 16.</figcaption></figure><div class="step-reason"><p>The two smallest roots are 7 and 9; combining them produces 16 and leaves roots 11 and 16. Equal weights would permit another deterministic tie choice, but here the minima are distinct, so continue once more.</p></div></section><section class="step"><h4>5 · Combine 11 and 16</h4><figure><div class="diagram-frame" style="--diagram-width:303.6px"><svg aria-label="WEPL = 5×2 + 2×3 + 4×3 + 7×2 + 9×2 = 60. Also 6+11+16+27 = 60." height="262pt" role="img" viewbox="0.00 0.00 303.60 261.60" width="304pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="huff-build-4-graph0" transform="scale(1 1) rotate(0) translate(10.8 250.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="huff-build-4-node1">
+<title>r</title>
+<path d="M156,-240C156,-240 126,-240 126,-240 120,-240 114,-234 114,-228 114,-228 114,-216 114,-216 114,-210 120,-204 126,-204 126,-204 156,-204 156,-204 162,-204 168,-210 168,-216 168,-216 168,-228 168,-228 168,-234 162,-240 156,-240" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="141" y="-218.5">27</text>
+</g>
+<!-- r0 -->
+<g class="node" id="huff-build-4-node2">
+<title>r0</title>
+<path d="M118,-172C118,-172 88,-172 88,-172 82,-172 76,-166 76,-160 76,-160 76,-148 76,-148 76,-142 82,-136 88,-136 88,-136 118,-136 118,-136 124,-136 130,-142 130,-148 130,-148 130,-160 130,-160 130,-166 124,-172 118,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-150.5">11</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="huff-build-4-edge1">
+<title>r-&gt;r0</title>
+<path d="M131.02,-203.66C126.51,-195.84 121.13,-186.49 116.29,-178.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="117.86,-176.61 113.05,-172.45 114.22,-178.7 117.86,-176.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="huff-build-4-node7">
+<title>r1</title>
+<path d="M194,-172C194,-172 164,-172 164,-172 158,-172 152,-166 152,-160 152,-160 152,-148 152,-148 152,-142 158,-136 164,-136 164,-136 194,-136 194,-136 200,-136 206,-142 206,-148 206,-148 206,-160 206,-160 206,-166 200,-172 194,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="179" y="-150.5">16</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="huff-build-4-edge6">
+<title>r-&gt;r1</title>
+<path d="M150.98,-203.66C155.49,-195.84 160.87,-186.49 165.71,-178.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="167.78,-178.7 168.95,-172.45 164.14,-176.61 167.78,-178.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r00 -->
+<g class="node" id="huff-build-4-node3">
+<title>r00</title>
+<path d="M42,-104C42,-104 12,-104 12,-104 6,-104 0,-98 0,-92 0,-92 0,-80 0,-80 0,-74 6,-68 12,-68 12,-68 42,-68 42,-68 48,-68 54,-74 54,-80 54,-80 54,-92 54,-92 54,-98 48,-104 42,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-82.5">5</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="huff-build-4-edge2">
+<title>r0-&gt;r00</title>
+<path d="M83.03,-135.66C73.34,-127.25 61.62,-117.07 51.41,-108.2" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="52.74,-106.57 46.83,-104.22 49.99,-109.74 52.74,-106.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r01 -->
+<g class="node" id="huff-build-4-node4">
+<title>r01</title>
+<path d="M118,-104C118,-104 88,-104 88,-104 82,-104 76,-98 76,-92 76,-92 76,-80 76,-80 76,-74 82,-68 88,-68 88,-68 118,-68 118,-68 124,-68 130,-74 130,-80 130,-80 130,-92 130,-92 130,-98 124,-104 118,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-82.5">6</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="huff-build-4-edge3">
+<title>r0-&gt;r01</title>
+<path d="M103,-135.66C103,-127.99 103,-118.85 103,-110.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="105.1,-110.45 103,-104.45 100.9,-110.45 105.1,-110.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r010 -->
+<g class="node" id="huff-build-4-node5">
+<title>r010</title>
+<path d="M80,-36C80,-36 50,-36 50,-36 44,-36 38,-30 38,-24 38,-24 38,-12 38,-12 38,-6 44,0 50,0 50,0 80,0 80,0 86,0 92,-6 92,-12 92,-12 92,-24 92,-24 92,-30 86,-36 80,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="65" y="-14.5">2</text>
+</g>
+<!-- r01&#45;&gt;r010 -->
+<g class="edge" id="huff-build-4-edge4">
+<title>r01-&gt;r010</title>
+<path d="M93.02,-67.66C88.51,-59.84 83.13,-50.49 78.29,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="79.86,-40.61 75.05,-36.45 76.22,-42.7 79.86,-40.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r011 -->
+<g class="node" id="huff-build-4-node6">
+<title>r011</title>
+<path d="M156,-36C156,-36 126,-36 126,-36 120,-36 114,-30 114,-24 114,-24 114,-12 114,-12 114,-6 120,0 126,0 126,0 156,0 156,0 162,0 168,-6 168,-12 168,-12 168,-24 168,-24 168,-30 162,-36 156,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="141" y="-14.5">4</text>
+</g>
+<!-- r01&#45;&gt;r011 -->
+<g class="edge" id="huff-build-4-edge5">
+<title>r01-&gt;r011</title>
+<path d="M112.98,-67.66C117.49,-59.84 122.87,-50.49 127.71,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="129.78,-42.7 130.95,-36.45 126.14,-40.61 129.78,-42.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r10 -->
+<g class="node" id="huff-build-4-node8">
+<title>r10</title>
+<path d="M194,-104C194,-104 164,-104 164,-104 158,-104 152,-98 152,-92 152,-92 152,-80 152,-80 152,-74 158,-68 164,-68 164,-68 194,-68 194,-68 200,-68 206,-74 206,-80 206,-80 206,-92 206,-92 206,-98 200,-104 194,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="179" y="-82.5">7</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="huff-build-4-edge7">
+<title>r1-&gt;r10</title>
+<path d="M179,-135.66C179,-127.99 179,-118.85 179,-110.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="181.1,-110.45 179,-104.45 176.9,-110.45 181.1,-110.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r11 -->
+<g class="node" id="huff-build-4-node9">
+<title>r11</title>
+<path d="M270,-104C270,-104 240,-104 240,-104 234,-104 228,-98 228,-92 228,-92 228,-80 228,-80 228,-74 234,-68 240,-68 240,-68 270,-68 270,-68 276,-68 282,-74 282,-80 282,-80 282,-92 282,-92 282,-98 276,-104 270,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="255" y="-82.5">9</text>
+</g>
+<!-- r1&#45;&gt;r11 -->
+<g class="edge" id="huff-build-4-edge8">
+<title>r1-&gt;r11</title>
+<path d="M198.97,-135.66C208.66,-127.25 220.38,-117.07 230.59,-108.2" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="232.01,-109.74 235.17,-104.22 229.26,-106.57 232.01,-109.74" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>WEPL = 5×2 + 2×3 + 4×3 + 7×2 + 9×2 = 60. Also 6+11+16+27 = 60.</figcaption></figure><div class="step-reason"><p>Merge the final roots 11 and 16 into 27; one root remains, so construction stops. Its leaf depths give 60, matching merge work 6+11+16+27, which checks both the topology and the WEPL accounting.</p></div></section></section>
+<h2 id="section-1">Methods</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Procedure</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>build(weights)</td>
+<td>Heapify <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math>, then n−1 rounds of two removals and one insert</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math></td>
+</tr>
+<tr>
+<td>generateCodes</td>
+<td>Traverse left as 0, right as 1</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo>+</mo><mi>t</mi><mi>o</mi><mi>t</mi><mi>a</mi><mi>l</mi><mi>c</mi><mi>o</mi><mi>d</mi><mi>e</mi><mi>l</mi><mi>e</mi><mi>n</mi><mi>g</mi><mi>t</mi><mi>h</mi><mi>s</mi><mo stretchy="false">)</mo></mrow></math> to materialize strings</td>
+</tr>
+<tr>
+<td>encode</td>
+<td>Look up each symbol's code</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>o</mi><mi>u</mi><mi>t</mi><mi>p</mi><mi>u</mi><mi>t</mi><mi>b</mi><mi>i</mi><mi>t</mi><mi>s</mi><mo stretchy="false">)</mo></mrow></math>, with constant-time code lookup</td>
+</tr>
+<tr>
+<td>decode</td>
+<td>Walk one edge per bit, reset at every leaf</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>b</mi><mi>i</mi><mi>t</mi><mi>s</mi><mo stretchy="false">)</mo></mrow></math></td>
+</tr>
+<tr>
+<td>search / insert / delete / meld</td>
+<td>Not dictionary operations on this tree</td>
+<td>Rebuild when frequencies change</td>
+</tr>
+</tbody>
+</table>
+<section aria-label="Encode and decode with the built tree" class="walk"><h3>Encode and decode with the built tree</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Assign codewords</h4><figure><div class="diagram-frame" style="--diagram-width:303.6px"><svg aria-label="Choose left=0 and right=1. Weights 5,2,4,7,9 get 00,010,011,10,11." height="262pt" role="img" viewbox="0.00 0.00 303.60 261.60" width="304pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="huff-code-graph0" transform="scale(1 1) rotate(0) translate(10.8 250.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="huff-code-node1">
+<title>r</title>
+<path d="M156,-240C156,-240 126,-240 126,-240 120,-240 114,-234 114,-228 114,-228 114,-216 114,-216 114,-210 120,-204 126,-204 126,-204 156,-204 156,-204 162,-204 168,-210 168,-216 168,-216 168,-228 168,-228 168,-234 162,-240 156,-240" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="141" y="-218.5">27</text>
+</g>
+<!-- r0 -->
+<g class="node" id="huff-code-node2">
+<title>r0</title>
+<path d="M118,-172C118,-172 88,-172 88,-172 82,-172 76,-166 76,-160 76,-160 76,-148 76,-148 76,-142 82,-136 88,-136 88,-136 118,-136 118,-136 124,-136 130,-142 130,-148 130,-148 130,-160 130,-160 130,-166 124,-172 118,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-150.5">11</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="huff-code-edge1">
+<title>r-&gt;r0</title>
+<path d="M131.02,-203.66C126.51,-195.84 121.13,-186.49 116.29,-178.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="117.86,-176.61 113.05,-172.45 114.22,-178.7 117.86,-176.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="huff-code-node7">
+<title>r1</title>
+<path d="M194,-172C194,-172 164,-172 164,-172 158,-172 152,-166 152,-160 152,-160 152,-148 152,-148 152,-142 158,-136 164,-136 164,-136 194,-136 194,-136 200,-136 206,-142 206,-148 206,-148 206,-160 206,-160 206,-166 200,-172 194,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="179" y="-150.5">16</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="huff-code-edge6">
+<title>r-&gt;r1</title>
+<path d="M150.98,-203.66C155.49,-195.84 160.87,-186.49 165.71,-178.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="167.78,-178.7 168.95,-172.45 164.14,-176.61 167.78,-178.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r00 -->
+<g class="node" id="huff-code-node3">
+<title>r00</title>
+<path d="M42,-104C42,-104 12,-104 12,-104 6,-104 0,-98 0,-92 0,-92 0,-80 0,-80 0,-74 6,-68 12,-68 12,-68 42,-68 42,-68 48,-68 54,-74 54,-80 54,-80 54,-92 54,-92 54,-98 48,-104 42,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-82.5">5</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="huff-code-edge2">
+<title>r0-&gt;r00</title>
+<path d="M83.03,-135.66C73.34,-127.25 61.62,-117.07 51.41,-108.2" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="52.74,-106.57 46.83,-104.22 49.99,-109.74 52.74,-106.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r01 -->
+<g class="node" id="huff-code-node4">
+<title>r01</title>
+<path d="M118,-104C118,-104 88,-104 88,-104 82,-104 76,-98 76,-92 76,-92 76,-80 76,-80 76,-74 82,-68 88,-68 88,-68 118,-68 118,-68 124,-68 130,-74 130,-80 130,-80 130,-92 130,-92 130,-98 124,-104 118,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-82.5">6</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="huff-code-edge3">
+<title>r0-&gt;r01</title>
+<path d="M103,-135.66C103,-127.99 103,-118.85 103,-110.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="105.1,-110.45 103,-104.45 100.9,-110.45 105.1,-110.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r010 -->
+<g class="node" id="huff-code-node5">
+<title>r010</title>
+<path d="M80,-36C80,-36 50,-36 50,-36 44,-36 38,-30 38,-24 38,-24 38,-12 38,-12 38,-6 44,0 50,0 50,0 80,0 80,0 86,0 92,-6 92,-12 92,-12 92,-24 92,-24 92,-30 86,-36 80,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="65" y="-14.5">2</text>
+</g>
+<!-- r01&#45;&gt;r010 -->
+<g class="edge" id="huff-code-edge4">
+<title>r01-&gt;r010</title>
+<path d="M93.02,-67.66C88.51,-59.84 83.13,-50.49 78.29,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="79.86,-40.61 75.05,-36.45 76.22,-42.7 79.86,-40.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r011 -->
+<g class="node" id="huff-code-node6">
+<title>r011</title>
+<path d="M156,-36C156,-36 126,-36 126,-36 120,-36 114,-30 114,-24 114,-24 114,-12 114,-12 114,-6 120,0 126,0 126,0 156,0 156,0 162,0 168,-6 168,-12 168,-12 168,-24 168,-24 168,-30 162,-36 156,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="141" y="-14.5">4</text>
+</g>
+<!-- r01&#45;&gt;r011 -->
+<g class="edge" id="huff-code-edge5">
+<title>r01-&gt;r011</title>
+<path d="M112.98,-67.66C117.49,-59.84 122.87,-50.49 127.71,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="129.78,-42.7 130.95,-36.45 126.14,-40.61 129.78,-42.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r10 -->
+<g class="node" id="huff-code-node8">
+<title>r10</title>
+<path d="M194,-104C194,-104 164,-104 164,-104 158,-104 152,-98 152,-92 152,-92 152,-80 152,-80 152,-74 158,-68 164,-68 164,-68 194,-68 194,-68 200,-68 206,-74 206,-80 206,-80 206,-92 206,-92 206,-98 200,-104 194,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="179" y="-82.5">7</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="huff-code-edge7">
+<title>r1-&gt;r10</title>
+<path d="M179,-135.66C179,-127.99 179,-118.85 179,-110.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="181.1,-110.45 179,-104.45 176.9,-110.45 181.1,-110.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r11 -->
+<g class="node" id="huff-code-node9">
+<title>r11</title>
+<path d="M270,-104C270,-104 240,-104 240,-104 234,-104 228,-98 228,-92 228,-92 228,-80 228,-80 228,-74 234,-68 240,-68 240,-68 270,-68 270,-68 276,-68 282,-74 282,-80 282,-80 282,-92 282,-92 282,-98 276,-104 270,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="255" y="-82.5">9</text>
+</g>
+<!-- r1&#45;&gt;r11 -->
+<g class="edge" id="huff-code-edge8">
+<title>r1-&gt;r11</title>
+<path d="M198.97,-135.66C208.66,-127.25 220.38,-117.07 230.59,-108.2" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="232.01,-109.74 235.17,-104.22 229.26,-106.57 232.01,-109.74" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>Choose left=0 and right=1. Weights 5,2,4,7,9 get 00,010,011,10,11.</figcaption></figure><div class="step-reason"><p>Assign 0 to every left edge and 1 to every right edge, then read root-to-leaf paths. The listed paths are prefix-free because a symbol is emitted only at a leaf; a different left/right convention changes bit strings, not lengths or WEPL.</p></div></section><section class="step"><h4>2 · Encode symbols with weights 5, 9, 2</h4><figure><div class="array"><span class="cell"><small>1</small>00</span><span class="cell"><small>2</small>11</span><span class="cell"><small>3</small>010</span></div><figcaption>Concatenate to 0011010. The weights identify example symbols here.</figcaption></figure><div class="step-reason"><p>Look up each requested symbol once: weight-5 symbol gives 00, weight-9 gives 11, and weight-2 gives 010. Concatenation is 0011010; the code table must be shared by sender and receiver, and all source symbols must have entries.</p></div></section><section class="step"><h4>3 · Decode 0011010</h4><figure><div class="array"><span class="cell"><small>1</small>00 → 5</span><span class="cell"><small>2</small>11 → 9</span><span class="cell"><small>3</small>010 → 2</span></div><figcaption>Reset to the root after each codeword. Final decoded sequence is [5,9,2].</figcaption></figure><div class="step-reason"><p>Consume bits from the root until reaching a leaf, emit its symbol, then reset to the root. The stream partitions as 00, 11, 010 and decodes to [5,9,2]; a stream ending at an internal node is incomplete rather than another symbol.</p></div></section></section>
+<h2 id="section-2">Higher-order construction and caveats</h2>
+<p>For a k-way Huffman tree with r leaves, add the smallest q ≥ 0 zero-weight leaves satisfying (r+q−1) mod (k−1) = 0. Then combine k smallest trees each round. For k=3, weights [3,6,1,9] need one dummy 0. Combine 0+1+3=4, then 4+6+9=19. Cost = 4+19 = 23, rather than the unpadded greedy cost 29.</p>
+<p>Ties can produce different optimal codes. No codeword may prefix another. The lab assigns a single-symbol alphabet the code 0, avoiding empty encodings. A two-symbol alphabet uses 0 and 1. Include the code-table storage when comparing compression sizes.</p>
+<p class="question">Must the lightest symbol have the longest code in every tie situation?</p>
+<details class="worked"><summary>Check your answer</summary><p>It may share the longest length with other symbols. The guarantee is optimal total weighted length, not a unique code table.</p></details>
+<h2 id="section-3">Eight-symbol construction: ties, codes, and a complete cost check</h2>
+<p>This fresh example uses named symbols and a stated deterministic tie rule. Keep each current forest root in a min-priority queue ordered by (weight, insertion order); original leaves precede newly created internal nodes on equal weights. This tie rule makes the trace reproducible, while any tie order still gives an optimal binary Huffman tree.</p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th style="text-align: right;">A</th>
+<th style="text-align: right;">B</th>
+<th style="text-align: right;">C</th>
+<th style="text-align: right;">D</th>
+<th style="text-align: right;">E</th>
+<th style="text-align: right;">F</th>
+<th style="text-align: right;">G</th>
+<th style="text-align: right;">H</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Frequency</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">34</td>
+</tr>
+</tbody>
+</table>
+<p>Each state lists the queue after removing its two minima and reinserting their sum. The small tree is the newly formed subtree; the queue includes every other forest root, so no symbol or partial tree disappears.</p>
+<section aria-label="Eight-symbol build from [A:2, B:3, C:3, D:5, E:8, F:13, G:21, H:34]" class="walk"><h3>Eight-symbol build from [A:2, B:3, C:3, D:5, E:8, F:13, G:21, H:34]</h3><div class="example-input"><strong>Input list</strong><span>[A:2, B:3, C:3, D:5, E:8, F:13, G:21, H:34]</span></div><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Insert every singleton leaf</h4><figure><div class="array"><span class="cell"><small>1</small>A:2</span><span class="cell"><small>2</small>B:3</span><span class="cell"><small>3</small>C:3</span><span class="cell"><small>4</small>D:5</span><span class="cell"><small>5</small>E:8</span><span class="cell"><small>6</small>F:13</span><span class="cell"><small>7</small>G:21</span><span class="cell"><small>8</small>H:34</span></div><figcaption>All eight leaves enter the priority queue; equal B and C retain input order.</figcaption></figure></section><section class="step"><h4>2 · Combine A:2 and B:3 → I:5</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="Remove A:2 and B:3; insert I:5. Queue: C:3, D:5, I:5, E:8, F:13, G:21, H:34." height="126pt" role="img" viewbox="0.00 0.00 151.60 125.60" width="152pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-huffman-tree-eight-merge-01-graph0" transform="scale(1 1) rotate(0) translate(10.8 114.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-huffman-tree-eight-merge-01-node1">
+<title>r</title>
+<path d="M80,-104C80,-104 50,-104 50,-104 44,-104 38,-98 38,-92 38,-92 38,-80 38,-80 38,-74 44,-68 50,-68 50,-68 80,-68 80,-68 86,-68 92,-74 92,-80 92,-80 92,-92 92,-92 92,-98 86,-104 80,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="65" y="-82.5">I:5</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-huffman-tree-eight-merge-01-node2">
+<title>r0</title>
+<path d="M42,-36C42,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 42,0 42,0 48,0 54,-6 54,-12 54,-12 54,-24 54,-24 54,-30 48,-36 42,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-14.5">A:2</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-01-edge1">
+<title>r-&gt;r0</title>
+<path d="M55.02,-67.66C50.51,-59.84 45.13,-50.49 40.29,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.86,-40.61 37.05,-36.45 38.22,-42.7 41.86,-40.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-huffman-tree-eight-merge-01-node3">
+<title>r1</title>
+<path d="M118,-36C118,-36 88,-36 88,-36 82,-36 76,-30 76,-24 76,-24 76,-12 76,-12 76,-6 82,0 88,0 88,0 118,0 118,0 124,0 130,-6 130,-12 130,-12 130,-24 130,-24 130,-30 124,-36 118,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-14.5">B:3</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-01-edge2">
+<title>r-&gt;r1</title>
+<path d="M74.98,-67.66C79.49,-59.84 84.87,-50.49 89.71,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="91.78,-42.7 92.95,-36.45 88.14,-40.61 91.78,-42.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>Remove A:2 and B:3; insert I:5. Queue: C:3, D:5, I:5, E:8, F:13, G:21, H:34.</figcaption></figure></section><section class="step"><h4>3 · Combine C:3 and D:5 → J:8</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="C:3 is minimum; the equal-weight D:5 predates I:5, so remove D. Queue: I:5, E:8, J:8, F:13, G:21, H:34." height="126pt" role="img" viewbox="0.00 0.00 151.60 125.60" width="152pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-huffman-tree-eight-merge-02-graph0" transform="scale(1 1) rotate(0) translate(10.8 114.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-huffman-tree-eight-merge-02-node1">
+<title>r</title>
+<path d="M80,-104C80,-104 50,-104 50,-104 44,-104 38,-98 38,-92 38,-92 38,-80 38,-80 38,-74 44,-68 50,-68 50,-68 80,-68 80,-68 86,-68 92,-74 92,-80 92,-80 92,-92 92,-92 92,-98 86,-104 80,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="65" y="-82.5">J:8</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-huffman-tree-eight-merge-02-node2">
+<title>r0</title>
+<path d="M42,-36C42,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 42,0 42,0 48,0 54,-6 54,-12 54,-12 54,-24 54,-24 54,-30 48,-36 42,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-14.5">C:3</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-02-edge1">
+<title>r-&gt;r0</title>
+<path d="M55.02,-67.66C50.51,-59.84 45.13,-50.49 40.29,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.86,-40.61 37.05,-36.45 38.22,-42.7 41.86,-40.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-huffman-tree-eight-merge-02-node3">
+<title>r1</title>
+<path d="M118,-36C118,-36 88,-36 88,-36 82,-36 76,-30 76,-24 76,-24 76,-12 76,-12 76,-6 82,0 88,0 88,0 118,0 118,0 124,0 130,-6 130,-12 130,-12 130,-24 130,-24 130,-30 124,-36 118,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-14.5">D:5</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-02-edge2">
+<title>r-&gt;r1</title>
+<path d="M74.98,-67.66C79.49,-59.84 84.87,-50.49 89.71,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="91.78,-42.7 92.95,-36.45 88.14,-40.61 91.78,-42.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>C:3 is minimum; the equal-weight D:5 predates I:5, so remove D. Queue: I:5, E:8, J:8, F:13, G:21, H:34.</figcaption></figure></section><section class="step"><h4>4 · Combine I:5 and E:8 → K:13</h4><figure><div class="diagram-frame" style="--diagram-width:189.6px"><svg aria-label="I:5 is the minimum; E:8 predates J:8. Queue: J:8, F:13, K:13, G:21, H:34." height="194pt" role="img" viewbox="0.00 0.00 189.60 193.60" width="190pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-huffman-tree-eight-merge-03-graph0" transform="scale(1 1) rotate(0) translate(10.8 182.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-huffman-tree-eight-merge-03-node1">
+<title>r</title>
+<path d="M120.5,-172C120.5,-172 85.5,-172 85.5,-172 79.5,-172 73.5,-166 73.5,-160 73.5,-160 73.5,-148 73.5,-148 73.5,-142 79.5,-136 85.5,-136 85.5,-136 120.5,-136 120.5,-136 126.5,-136 132.5,-142 132.5,-148 132.5,-148 132.5,-160 132.5,-160 132.5,-166 126.5,-172 120.5,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-150.5">K:13</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-huffman-tree-eight-merge-03-node2">
+<title>r0</title>
+<path d="M80,-104C80,-104 50,-104 50,-104 44,-104 38,-98 38,-92 38,-92 38,-80 38,-80 38,-74 44,-68 50,-68 50,-68 80,-68 80,-68 86,-68 92,-74 92,-80 92,-80 92,-92 92,-92 92,-98 86,-104 80,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="65" y="-82.5">I:5</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-03-edge1">
+<title>r-&gt;r0</title>
+<path d="M93.02,-135.66C88.51,-127.84 83.13,-118.49 78.29,-110.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="79.86,-108.61 75.05,-104.45 76.22,-110.7 79.86,-108.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-huffman-tree-eight-merge-03-node5">
+<title>r1</title>
+<path d="M156,-104C156,-104 126,-104 126,-104 120,-104 114,-98 114,-92 114,-92 114,-80 114,-80 114,-74 120,-68 126,-68 126,-68 156,-68 156,-68 162,-68 168,-74 168,-80 168,-80 168,-92 168,-92 168,-98 162,-104 156,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="141" y="-82.5">E:8</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-03-edge4">
+<title>r-&gt;r1</title>
+<path d="M112.98,-135.66C117.49,-127.84 122.87,-118.49 127.71,-110.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="129.78,-110.7 130.95,-104.45 126.14,-108.61 129.78,-110.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-huffman-tree-eight-merge-03-node3">
+<title>r00</title>
+<path d="M42,-36C42,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 42,0 42,0 48,0 54,-6 54,-12 54,-12 54,-24 54,-24 54,-30 48,-36 42,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-14.5">A:2</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-03-edge2">
+<title>r0-&gt;r00</title>
+<path d="M55.02,-67.66C50.51,-59.84 45.13,-50.49 40.29,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.86,-40.61 37.05,-36.45 38.22,-42.7 41.86,-40.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-huffman-tree-eight-merge-03-node4">
+<title>r01</title>
+<path d="M118,-36C118,-36 88,-36 88,-36 82,-36 76,-30 76,-24 76,-24 76,-12 76,-12 76,-6 82,0 88,0 88,0 118,0 118,0 124,0 130,-6 130,-12 130,-12 130,-24 130,-24 130,-30 124,-36 118,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-14.5">B:3</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-03-edge3">
+<title>r0-&gt;r01</title>
+<path d="M74.98,-67.66C79.49,-59.84 84.87,-50.49 89.71,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="91.78,-42.7 92.95,-36.45 88.14,-40.61 91.78,-42.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>I:5 is the minimum; E:8 predates J:8. Queue: J:8, F:13, K:13, G:21, H:34.</figcaption></figure></section><section class="step"><h4>5 · Combine J:8 and F:13 → L:21</h4><figure><div class="diagram-frame" style="--diagram-width:193.1px"><svg aria-label="J:8 is the minimum; F:13 predates K:13. Queue: K:13, G:21, L:21, H:34." height="194pt" role="img" viewbox="0.00 0.00 193.10 193.60" width="193pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-huffman-tree-eight-merge-04-graph0" transform="scale(1 1) rotate(0) translate(10.8 182.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-huffman-tree-eight-merge-04-node1">
+<title>r</title>
+<path d="M120.5,-172C120.5,-172 87.5,-172 87.5,-172 81.5,-172 75.5,-166 75.5,-160 75.5,-160 75.5,-148 75.5,-148 75.5,-142 81.5,-136 87.5,-136 87.5,-136 120.5,-136 120.5,-136 126.5,-136 132.5,-142 132.5,-148 132.5,-148 132.5,-160 132.5,-160 132.5,-166 126.5,-172 120.5,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="104" y="-150.5">L:21</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-huffman-tree-eight-merge-04-node2">
+<title>r0</title>
+<path d="M80,-104C80,-104 50,-104 50,-104 44,-104 38,-98 38,-92 38,-92 38,-80 38,-80 38,-74 44,-68 50,-68 50,-68 80,-68 80,-68 86,-68 92,-74 92,-80 92,-80 92,-92 92,-92 92,-98 86,-104 80,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="65" y="-82.5">J:8</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-04-edge1">
+<title>r-&gt;r0</title>
+<path d="M93.75,-135.66C89.13,-127.84 83.61,-118.49 78.64,-110.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="80.17,-108.55 75.31,-104.45 76.56,-110.69 80.17,-108.55" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-huffman-tree-eight-merge-04-node5">
+<title>r1</title>
+<path d="M159.5,-104C159.5,-104 126.5,-104 126.5,-104 120.5,-104 114.5,-98 114.5,-92 114.5,-92 114.5,-80 114.5,-80 114.5,-74 120.5,-68 126.5,-68 126.5,-68 159.5,-68 159.5,-68 165.5,-68 171.5,-74 171.5,-80 171.5,-80 171.5,-92 171.5,-92 171.5,-98 165.5,-104 159.5,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="143" y="-82.5">F:13</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-04-edge4">
+<title>r-&gt;r1</title>
+<path d="M114.25,-135.66C118.87,-127.84 124.39,-118.49 129.36,-110.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="131.44,-110.69 132.69,-104.45 127.83,-108.55 131.44,-110.69" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-huffman-tree-eight-merge-04-node3">
+<title>r00</title>
+<path d="M42,-36C42,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 42,0 42,0 48,0 54,-6 54,-12 54,-12 54,-24 54,-24 54,-30 48,-36 42,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-14.5">C:3</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-04-edge2">
+<title>r0-&gt;r00</title>
+<path d="M55.02,-67.66C50.51,-59.84 45.13,-50.49 40.29,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.86,-40.61 37.05,-36.45 38.22,-42.7 41.86,-40.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-huffman-tree-eight-merge-04-node4">
+<title>r01</title>
+<path d="M118,-36C118,-36 88,-36 88,-36 82,-36 76,-30 76,-24 76,-24 76,-12 76,-12 76,-6 82,0 88,0 88,0 118,0 118,0 124,0 130,-6 130,-12 130,-12 130,-24 130,-24 130,-30 124,-36 118,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-14.5">D:5</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-04-edge3">
+<title>r0-&gt;r01</title>
+<path d="M74.98,-67.66C79.49,-59.84 84.87,-50.49 89.71,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="91.78,-42.7 92.95,-36.45 88.14,-40.61 91.78,-42.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>J:8 is the minimum; F:13 predates K:13. Queue: K:13, G:21, L:21, H:34.</figcaption></figure></section><section class="step"><h4>6 · Combine K:13 and G:21 → M:34</h4><figure><div class="diagram-frame" style="--diagram-width:235.1px"><svg aria-label="K:13 is the minimum; G:21 predates L:21. Queue: L:21, H:34, M:34." height="262pt" role="img" viewbox="0.00 0.00 235.10 261.60" width="235pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-huffman-tree-eight-merge-05-graph0" transform="scale(1 1) rotate(0) translate(10.8 250.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-huffman-tree-eight-merge-05-node1">
+<title>r</title>
+<path d="M162,-240C162,-240 124,-240 124,-240 118,-240 112,-234 112,-228 112,-228 112,-216 112,-216 112,-210 118,-204 124,-204 124,-204 162,-204 162,-204 168,-204 174,-210 174,-216 174,-216 174,-228 174,-228 174,-234 168,-240 162,-240" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="143" y="-218.5">M:34</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-huffman-tree-eight-merge-05-node2">
+<title>r0</title>
+<path d="M120.5,-172C120.5,-172 85.5,-172 85.5,-172 79.5,-172 73.5,-166 73.5,-160 73.5,-160 73.5,-148 73.5,-148 73.5,-142 79.5,-136 85.5,-136 85.5,-136 120.5,-136 120.5,-136 126.5,-136 132.5,-142 132.5,-148 132.5,-148 132.5,-160 132.5,-160 132.5,-166 126.5,-172 120.5,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-150.5">K:13</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-05-edge1">
+<title>r-&gt;r0</title>
+<path d="M132.49,-203.66C127.66,-195.69 121.87,-186.13 116.7,-177.61" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="118.48,-176.5 113.58,-172.45 114.89,-178.67 118.48,-176.5" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-huffman-tree-eight-merge-05-node7">
+<title>r1</title>
+<path d="M201.5,-172C201.5,-172 166.5,-172 166.5,-172 160.5,-172 154.5,-166 154.5,-160 154.5,-160 154.5,-148 154.5,-148 154.5,-142 160.5,-136 166.5,-136 166.5,-136 201.5,-136 201.5,-136 207.5,-136 213.5,-142 213.5,-148 213.5,-148 213.5,-160 213.5,-160 213.5,-166 207.5,-172 201.5,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="184" y="-150.5">G:21</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-05-edge6">
+<title>r-&gt;r1</title>
+<path d="M153.77,-203.66C158.72,-195.69 164.66,-186.13 169.96,-177.61" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="171.78,-178.66 173.16,-172.45 168.21,-176.44 171.78,-178.66" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-huffman-tree-eight-merge-05-node3">
+<title>r00</title>
+<path d="M80,-104C80,-104 50,-104 50,-104 44,-104 38,-98 38,-92 38,-92 38,-80 38,-80 38,-74 44,-68 50,-68 50,-68 80,-68 80,-68 86,-68 92,-74 92,-80 92,-80 92,-92 92,-92 92,-98 86,-104 80,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="65" y="-82.5">I:5</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-05-edge2">
+<title>r0-&gt;r00</title>
+<path d="M93.02,-135.66C88.51,-127.84 83.13,-118.49 78.29,-110.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="79.86,-108.61 75.05,-104.45 76.22,-110.7 79.86,-108.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-huffman-tree-eight-merge-05-node6">
+<title>r01</title>
+<path d="M156,-104C156,-104 126,-104 126,-104 120,-104 114,-98 114,-92 114,-92 114,-80 114,-80 114,-74 120,-68 126,-68 126,-68 156,-68 156,-68 162,-68 168,-74 168,-80 168,-80 168,-92 168,-92 168,-98 162,-104 156,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="141" y="-82.5">E:8</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-05-edge5">
+<title>r0-&gt;r01</title>
+<path d="M112.98,-135.66C117.49,-127.84 122.87,-118.49 127.71,-110.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="129.78,-110.7 130.95,-104.45 126.14,-108.61 129.78,-110.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r000 -->
+<g class="node" id="rev-huffman-tree-eight-merge-05-node4">
+<title>r000</title>
+<path d="M42,-36C42,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 42,0 42,0 48,0 54,-6 54,-12 54,-12 54,-24 54,-24 54,-30 48,-36 42,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-14.5">A:2</text>
+</g>
+<!-- r00&#45;&gt;r000 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-05-edge3">
+<title>r00-&gt;r000</title>
+<path d="M55.02,-67.66C50.51,-59.84 45.13,-50.49 40.29,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.86,-40.61 37.05,-36.45 38.22,-42.7 41.86,-40.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r001 -->
+<g class="node" id="rev-huffman-tree-eight-merge-05-node5">
+<title>r001</title>
+<path d="M118,-36C118,-36 88,-36 88,-36 82,-36 76,-30 76,-24 76,-24 76,-12 76,-12 76,-6 82,0 88,0 88,0 118,0 118,0 124,0 130,-6 130,-12 130,-12 130,-24 130,-24 130,-30 124,-36 118,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-14.5">B:3</text>
+</g>
+<!-- r00&#45;&gt;r001 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-05-edge4">
+<title>r00-&gt;r001</title>
+<path d="M74.98,-67.66C79.49,-59.84 84.87,-50.49 89.71,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="91.78,-42.7 92.95,-36.45 88.14,-40.61 91.78,-42.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>K:13 is the minimum; G:21 predates L:21. Queue: L:21, H:34, M:34.</figcaption></figure></section><section class="step"><h4>7 · Combine L:21 and H:34 → N:55</h4><figure><div class="diagram-frame" style="--diagram-width:236.6px"><svg aria-label="L:21 is the minimum; H:34 predates M:34. Queue: M:34, N:55." height="262pt" role="img" viewbox="0.00 0.00 236.60 261.60" width="237pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-huffman-tree-eight-merge-06-graph0" transform="scale(1 1) rotate(0) translate(10.8 250.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-huffman-tree-eight-merge-06-node1">
+<title>r</title>
+<path d="M162,-240C162,-240 126,-240 126,-240 120,-240 114,-234 114,-228 114,-228 114,-216 114,-216 114,-210 120,-204 126,-204 126,-204 162,-204 162,-204 168,-204 174,-210 174,-216 174,-216 174,-228 174,-228 174,-234 168,-240 162,-240" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="144" y="-218.5">N:55</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-huffman-tree-eight-merge-06-node2">
+<title>r0</title>
+<path d="M120.5,-172C120.5,-172 87.5,-172 87.5,-172 81.5,-172 75.5,-166 75.5,-160 75.5,-160 75.5,-148 75.5,-148 75.5,-142 81.5,-136 87.5,-136 87.5,-136 120.5,-136 120.5,-136 126.5,-136 132.5,-142 132.5,-148 132.5,-148 132.5,-160 132.5,-160 132.5,-166 126.5,-172 120.5,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="104" y="-150.5">L:21</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-06-edge1">
+<title>r-&gt;r0</title>
+<path d="M133.49,-203.66C128.66,-195.69 122.87,-186.13 117.7,-177.61" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="119.48,-176.5 114.58,-172.45 115.89,-178.67 119.48,-176.5" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-huffman-tree-eight-merge-06-node7">
+<title>r1</title>
+<path d="M203,-172C203,-172 167,-172 167,-172 161,-172 155,-166 155,-160 155,-160 155,-148 155,-148 155,-142 161,-136 167,-136 167,-136 203,-136 203,-136 209,-136 215,-142 215,-148 215,-148 215,-160 215,-160 215,-166 209,-172 203,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="185" y="-150.5">H:34</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-06-edge6">
+<title>r-&gt;r1</title>
+<path d="M154.77,-203.66C159.72,-195.69 165.66,-186.13 170.96,-177.61" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="172.78,-178.66 174.16,-172.45 169.21,-176.44 172.78,-178.66" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-huffman-tree-eight-merge-06-node3">
+<title>r00</title>
+<path d="M80,-104C80,-104 50,-104 50,-104 44,-104 38,-98 38,-92 38,-92 38,-80 38,-80 38,-74 44,-68 50,-68 50,-68 80,-68 80,-68 86,-68 92,-74 92,-80 92,-80 92,-92 92,-92 92,-98 86,-104 80,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="65" y="-82.5">J:8</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-06-edge2">
+<title>r0-&gt;r00</title>
+<path d="M93.75,-135.66C89.13,-127.84 83.61,-118.49 78.64,-110.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="80.17,-108.55 75.31,-104.45 76.56,-110.69 80.17,-108.55" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-huffman-tree-eight-merge-06-node6">
+<title>r01</title>
+<path d="M159.5,-104C159.5,-104 126.5,-104 126.5,-104 120.5,-104 114.5,-98 114.5,-92 114.5,-92 114.5,-80 114.5,-80 114.5,-74 120.5,-68 126.5,-68 126.5,-68 159.5,-68 159.5,-68 165.5,-68 171.5,-74 171.5,-80 171.5,-80 171.5,-92 171.5,-92 171.5,-98 165.5,-104 159.5,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="143" y="-82.5">F:13</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-06-edge5">
+<title>r0-&gt;r01</title>
+<path d="M114.25,-135.66C118.87,-127.84 124.39,-118.49 129.36,-110.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="131.44,-110.69 132.69,-104.45 127.83,-108.55 131.44,-110.69" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r000 -->
+<g class="node" id="rev-huffman-tree-eight-merge-06-node4">
+<title>r000</title>
+<path d="M42,-36C42,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 42,0 42,0 48,0 54,-6 54,-12 54,-12 54,-24 54,-24 54,-30 48,-36 42,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-14.5">C:3</text>
+</g>
+<!-- r00&#45;&gt;r000 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-06-edge3">
+<title>r00-&gt;r000</title>
+<path d="M55.02,-67.66C50.51,-59.84 45.13,-50.49 40.29,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.86,-40.61 37.05,-36.45 38.22,-42.7 41.86,-40.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r001 -->
+<g class="node" id="rev-huffman-tree-eight-merge-06-node5">
+<title>r001</title>
+<path d="M118,-36C118,-36 88,-36 88,-36 82,-36 76,-30 76,-24 76,-24 76,-12 76,-12 76,-6 82,0 88,0 88,0 118,0 118,0 124,0 130,-6 130,-12 130,-12 130,-24 130,-24 130,-30 124,-36 118,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-14.5">D:5</text>
+</g>
+<!-- r00&#45;&gt;r001 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-06-edge4">
+<title>r00-&gt;r001</title>
+<path d="M74.98,-67.66C79.49,-59.84 84.87,-50.49 89.71,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="91.78,-42.7 92.95,-36.45 88.14,-40.61 91.78,-42.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>L:21 is the minimum; H:34 predates M:34. Queue: M:34, N:55.</figcaption></figure></section><section class="step"><h4>8 · Combine M:34 and N:55 → root:89</h4><figure><div class="diagram-frame" style="--diagram-width:393.6px"><svg aria-label="Final root weight is 34+55=89; one root remains, so stop. All original leaves appear once." height="330pt" role="img" viewbox="0.00 0.00 393.60 329.60" width="394pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-huffman-tree-eight-merge-07-graph0" transform="scale(1 1) rotate(0) translate(10.8 318.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-huffman-tree-eight-merge-07-node1">
+<title>r</title>
+<path d="M235,-308C235,-308 205,-308 205,-308 199,-308 193,-302 193,-296 193,-296 193,-284 193,-284 193,-278 199,-272 205,-272 205,-272 235,-272 235,-272 241,-272 247,-278 247,-284 247,-284 247,-296 247,-296 247,-302 241,-308 235,-308" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="220" y="-286.5">89</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-huffman-tree-eight-merge-07-node2">
+<title>r0</title>
+<path d="M198,-240C198,-240 160,-240 160,-240 154,-240 148,-234 148,-228 148,-228 148,-216 148,-216 148,-210 154,-204 160,-204 160,-204 198,-204 198,-204 204,-204 210,-210 210,-216 210,-216 210,-228 210,-228 210,-234 204,-240 198,-240" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="179" y="-218.5">M:34</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-07-edge1">
+<title>r-&gt;r0</title>
+<path d="M209.23,-271.66C204.28,-263.69 198.34,-254.13 193.04,-245.61" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="194.79,-244.44 189.84,-240.45 191.22,-246.66 194.79,-244.44" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-huffman-tree-eight-merge-07-node9">
+<title>r1</title>
+<path d="M280,-240C280,-240 244,-240 244,-240 238,-240 232,-234 232,-228 232,-228 232,-216 232,-216 232,-210 238,-204 244,-204 244,-204 280,-204 280,-204 286,-204 292,-210 292,-216 292,-216 292,-228 292,-228 292,-234 286,-240 280,-240" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="262" y="-218.5">N:55</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-07-edge8">
+<title>r-&gt;r1</title>
+<path d="M231.04,-271.66C236.11,-263.69 242.19,-254.13 247.61,-245.61" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="249.44,-246.64 250.89,-240.45 245.9,-244.39 249.44,-246.64" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-huffman-tree-eight-merge-07-node3">
+<title>r00</title>
+<path d="M116.5,-172C116.5,-172 81.5,-172 81.5,-172 75.5,-172 69.5,-166 69.5,-160 69.5,-160 69.5,-148 69.5,-148 69.5,-142 75.5,-136 81.5,-136 81.5,-136 116.5,-136 116.5,-136 122.5,-136 128.5,-142 128.5,-148 128.5,-148 128.5,-160 128.5,-160 128.5,-166 122.5,-172 116.5,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="99" y="-150.5">K:13</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-07-edge2">
+<title>r0-&gt;r00</title>
+<path d="M157.98,-203.66C147.78,-195.25 135.44,-185.07 124.69,-176.2" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="125.84,-174.42 119.88,-172.22 123.17,-177.66 125.84,-174.42" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-huffman-tree-eight-merge-07-node8">
+<title>r01</title>
+<path d="M197.5,-172C197.5,-172 162.5,-172 162.5,-172 156.5,-172 150.5,-166 150.5,-160 150.5,-160 150.5,-148 150.5,-148 150.5,-142 156.5,-136 162.5,-136 162.5,-136 197.5,-136 197.5,-136 203.5,-136 209.5,-142 209.5,-148 209.5,-148 209.5,-160 209.5,-160 209.5,-166 203.5,-172 197.5,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="180" y="-150.5">G:21</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-07-edge7">
+<title>r0-&gt;r01</title>
+<path d="M179.26,-203.66C179.38,-195.99 179.52,-186.85 179.64,-178.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="181.74,-178.49 179.74,-172.45 177.54,-178.42 181.74,-178.49" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r000 -->
+<g class="node" id="rev-huffman-tree-eight-merge-07-node4">
+<title>r000</title>
+<path d="M80,-104C80,-104 50,-104 50,-104 44,-104 38,-98 38,-92 38,-92 38,-80 38,-80 38,-74 44,-68 50,-68 50,-68 80,-68 80,-68 86,-68 92,-74 92,-80 92,-80 92,-92 92,-92 92,-98 86,-104 80,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="65" y="-82.5">I:5</text>
+</g>
+<!-- r00&#45;&gt;r000 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-07-edge3">
+<title>r00-&gt;r000</title>
+<path d="M90.07,-135.66C86.04,-127.84 81.22,-118.49 76.89,-110.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="78.61,-108.83 73.99,-104.45 74.87,-110.75 78.61,-108.83" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r001 -->
+<g class="node" id="rev-huffman-tree-eight-merge-07-node7">
+<title>r001</title>
+<path d="M156,-104C156,-104 126,-104 126,-104 120,-104 114,-98 114,-92 114,-92 114,-80 114,-80 114,-74 120,-68 126,-68 126,-68 156,-68 156,-68 162,-68 168,-74 168,-80 168,-80 168,-92 168,-92 168,-98 162,-104 156,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="141" y="-82.5">E:8</text>
+</g>
+<!-- r00&#45;&gt;r001 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-07-edge6">
+<title>r00-&gt;r001</title>
+<path d="M110.04,-135.66C115.11,-127.69 121.19,-118.13 126.61,-109.61" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="128.44,-110.64 129.89,-104.45 124.9,-108.39 128.44,-110.64" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r0000 -->
+<g class="node" id="rev-huffman-tree-eight-merge-07-node5">
+<title>r0000</title>
+<path d="M42,-36C42,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 42,0 42,0 48,0 54,-6 54,-12 54,-12 54,-24 54,-24 54,-30 48,-36 42,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-14.5">A:2</text>
+</g>
+<!-- r000&#45;&gt;r0000 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-07-edge4">
+<title>r000-&gt;r0000</title>
+<path d="M55.02,-67.66C50.51,-59.84 45.13,-50.49 40.29,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.86,-40.61 37.05,-36.45 38.22,-42.7 41.86,-40.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r0001 -->
+<g class="node" id="rev-huffman-tree-eight-merge-07-node6">
+<title>r0001</title>
+<path d="M118,-36C118,-36 88,-36 88,-36 82,-36 76,-30 76,-24 76,-24 76,-12 76,-12 76,-6 82,0 88,0 88,0 118,0 118,0 124,0 130,-6 130,-12 130,-12 130,-24 130,-24 130,-30 124,-36 118,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-14.5">B:3</text>
+</g>
+<!-- r000&#45;&gt;r0001 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-07-edge5">
+<title>r000-&gt;r0001</title>
+<path d="M74.98,-67.66C79.49,-59.84 84.87,-50.49 89.71,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="91.78,-42.7 92.95,-36.45 88.14,-40.61 91.78,-42.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-huffman-tree-eight-merge-07-node10">
+<title>r10</title>
+<path d="M277.5,-172C277.5,-172 244.5,-172 244.5,-172 238.5,-172 232.5,-166 232.5,-160 232.5,-160 232.5,-148 232.5,-148 232.5,-142 238.5,-136 244.5,-136 244.5,-136 277.5,-136 277.5,-136 283.5,-136 289.5,-142 289.5,-148 289.5,-148 289.5,-160 289.5,-160 289.5,-166 283.5,-172 277.5,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="261" y="-150.5">L:21</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-07-edge9">
+<title>r1-&gt;r10</title>
+<path d="M261.74,-203.66C261.62,-195.99 261.48,-186.85 261.36,-178.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="263.46,-178.42 261.26,-172.45 259.26,-178.49 263.46,-178.42" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r11 -->
+<g class="node" id="rev-huffman-tree-eight-merge-07-node15">
+<title>r11</title>
+<path d="M360,-172C360,-172 324,-172 324,-172 318,-172 312,-166 312,-160 312,-160 312,-148 312,-148 312,-142 318,-136 324,-136 324,-136 360,-136 360,-136 366,-136 372,-142 372,-148 372,-148 372,-160 372,-160 372,-166 366,-172 360,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="342" y="-150.5">H:34</text>
+</g>
+<!-- r1&#45;&gt;r11 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-07-edge14">
+<title>r1-&gt;r11</title>
+<path d="M283.02,-203.66C293.22,-195.25 305.56,-185.07 316.31,-176.2" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="317.83,-177.66 321.12,-172.22 315.16,-174.42 317.83,-177.66" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r100 -->
+<g class="node" id="rev-huffman-tree-eight-merge-07-node11">
+<title>r100</title>
+<path d="M254,-104C254,-104 224,-104 224,-104 218,-104 212,-98 212,-92 212,-92 212,-80 212,-80 212,-74 218,-68 224,-68 224,-68 254,-68 254,-68 260,-68 266,-74 266,-80 266,-80 266,-92 266,-92 266,-98 260,-104 254,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="239" y="-82.5">J:8</text>
+</g>
+<!-- r10&#45;&gt;r100 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-07-edge10">
+<title>r10-&gt;r100</title>
+<path d="M255.22,-135.66C252.66,-127.99 249.62,-118.85 246.86,-110.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="248.71,-109.48 244.82,-104.45 244.72,-110.81 248.71,-109.48" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r101 -->
+<g class="node" id="rev-huffman-tree-eight-merge-07-node14">
+<title>r101</title>
+<path d="M333.5,-104C333.5,-104 300.5,-104 300.5,-104 294.5,-104 288.5,-98 288.5,-92 288.5,-92 288.5,-80 288.5,-80 288.5,-74 294.5,-68 300.5,-68 300.5,-68 333.5,-68 333.5,-68 339.5,-68 345.5,-74 345.5,-80 345.5,-80 345.5,-92 345.5,-92 345.5,-98 339.5,-104 333.5,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="317" y="-82.5">F:13</text>
+</g>
+<!-- r10&#45;&gt;r101 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-07-edge13">
+<title>r10-&gt;r101</title>
+<path d="M275.71,-135.66C282.6,-127.54 290.89,-117.77 298.23,-109.12" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="299.91,-110.39 302.19,-104.45 296.71,-107.67 299.91,-110.39" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1000 -->
+<g class="node" id="rev-huffman-tree-eight-merge-07-node12">
+<title>r1000</title>
+<path d="M213,-36C213,-36 183,-36 183,-36 177,-36 171,-30 171,-24 171,-24 171,-12 171,-12 171,-6 177,0 183,0 183,0 213,0 213,0 219,0 225,-6 225,-12 225,-12 225,-24 225,-24 225,-30 219,-36 213,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="198" y="-14.5">C:3</text>
+</g>
+<!-- r100&#45;&gt;r1000 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-07-edge11">
+<title>r100-&gt;r1000</title>
+<path d="M228.23,-67.66C223.28,-59.69 217.34,-50.13 212.04,-41.61" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="213.79,-40.44 208.84,-36.45 210.22,-42.66 213.79,-40.44" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1001 -->
+<g class="node" id="rev-huffman-tree-eight-merge-07-node13">
+<title>r1001</title>
+<path d="M289,-36C289,-36 259,-36 259,-36 253,-36 247,-30 247,-24 247,-24 247,-12 247,-12 247,-6 253,0 259,0 259,0 289,0 289,0 295,0 301,-6 301,-12 301,-12 301,-24 301,-24 301,-30 295,-36 289,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="274" y="-14.5">D:5</text>
+</g>
+<!-- r100&#45;&gt;r1001 -->
+<g class="edge" id="rev-huffman-tree-eight-merge-07-edge12">
+<title>r100-&gt;r1001</title>
+<path d="M248.2,-67.66C252.34,-59.84 257.3,-50.49 261.76,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="263.79,-42.74 264.74,-36.45 260.08,-40.77 263.79,-42.74" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>Final root weight is 34+55=89; one root remains, so stop. All original leaves appear once.</figcaption></figure></section></section>
+<p>Walking left as 0 and right as 1 yields these paths. A leaf path cannot prefix another leaf path, since traversal stops at the first leaf.</p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th style="text-align: right;">Frequency</th>
+<th style="text-align: right;">Code</th>
+<th style="text-align: right;">Depth</th>
+<th style="text-align: right;">Frequency × depth</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0000</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">8</td>
+</tr>
+<tr>
+<td>B</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0001</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">12</td>
+</tr>
+<tr>
+<td>C</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">12</td>
+</tr>
+<tr>
+<td>D</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1001</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">20</td>
+</tr>
+<tr>
+<td>E</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">001</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">24</td>
+</tr>
+<tr>
+<td>F</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">101</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">39</td>
+</tr>
+<tr>
+<td>G</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">01</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">42</td>
+</tr>
+<tr>
+<td>H</td>
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">68</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td style="text-align: right;"><strong>89</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>225</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The WEPL check is <code>8+12+12+20+24+39+42+68 = 225</code>. The independent merge-work check is <code>5+8+13+21+34+55+89 = 225</code>. These totals agree because every merge raises each descendant leaf depth by one, adding exactly the merged weight to WEPL.</p>
+<section aria-label="Encode and decode with the eight-symbol code table" class="walk"><h3>Encode and decode with the eight-symbol code table</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Read the code table from the finished tree</h4><figure><div class="diagram-frame" style="--diagram-width:393.6px"><svg aria-label="Codes: A=0000, B=0001, C=1000, D=1001, E=001, F=101, G=01, H=11." height="330pt" role="img" viewbox="0.00 0.00 393.60 329.60" width="394pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-huffman-tree-eight-code-graph0" transform="scale(1 1) rotate(0) translate(10.8 318.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-huffman-tree-eight-code-node1">
+<title>r</title>
+<path d="M235,-308C235,-308 205,-308 205,-308 199,-308 193,-302 193,-296 193,-296 193,-284 193,-284 193,-278 199,-272 205,-272 205,-272 235,-272 235,-272 241,-272 247,-278 247,-284 247,-284 247,-296 247,-296 247,-302 241,-308 235,-308" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="220" y="-286.5">89</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-huffman-tree-eight-code-node2">
+<title>r0</title>
+<path d="M198,-240C198,-240 160,-240 160,-240 154,-240 148,-234 148,-228 148,-228 148,-216 148,-216 148,-210 154,-204 160,-204 160,-204 198,-204 198,-204 204,-204 210,-210 210,-216 210,-216 210,-228 210,-228 210,-234 204,-240 198,-240" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="179" y="-218.5">M:34</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-huffman-tree-eight-code-edge1">
+<title>r-&gt;r0</title>
+<path d="M209.23,-271.66C204.28,-263.69 198.34,-254.13 193.04,-245.61" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="194.79,-244.44 189.84,-240.45 191.22,-246.66 194.79,-244.44" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-huffman-tree-eight-code-node9">
+<title>r1</title>
+<path d="M280,-240C280,-240 244,-240 244,-240 238,-240 232,-234 232,-228 232,-228 232,-216 232,-216 232,-210 238,-204 244,-204 244,-204 280,-204 280,-204 286,-204 292,-210 292,-216 292,-216 292,-228 292,-228 292,-234 286,-240 280,-240" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="262" y="-218.5">N:55</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-huffman-tree-eight-code-edge8">
+<title>r-&gt;r1</title>
+<path d="M231.04,-271.66C236.11,-263.69 242.19,-254.13 247.61,-245.61" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="249.44,-246.64 250.89,-240.45 245.9,-244.39 249.44,-246.64" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-huffman-tree-eight-code-node3">
+<title>r00</title>
+<path d="M116.5,-172C116.5,-172 81.5,-172 81.5,-172 75.5,-172 69.5,-166 69.5,-160 69.5,-160 69.5,-148 69.5,-148 69.5,-142 75.5,-136 81.5,-136 81.5,-136 116.5,-136 116.5,-136 122.5,-136 128.5,-142 128.5,-148 128.5,-148 128.5,-160 128.5,-160 128.5,-166 122.5,-172 116.5,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="99" y="-150.5">K:13</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-huffman-tree-eight-code-edge2">
+<title>r0-&gt;r00</title>
+<path d="M157.98,-203.66C147.78,-195.25 135.44,-185.07 124.69,-176.2" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="125.84,-174.42 119.88,-172.22 123.17,-177.66 125.84,-174.42" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-huffman-tree-eight-code-node8">
+<title>r01</title>
+<path d="M197.5,-172C197.5,-172 162.5,-172 162.5,-172 156.5,-172 150.5,-166 150.5,-160 150.5,-160 150.5,-148 150.5,-148 150.5,-142 156.5,-136 162.5,-136 162.5,-136 197.5,-136 197.5,-136 203.5,-136 209.5,-142 209.5,-148 209.5,-148 209.5,-160 209.5,-160 209.5,-166 203.5,-172 197.5,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="180" y="-150.5">G:21</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-huffman-tree-eight-code-edge7">
+<title>r0-&gt;r01</title>
+<path d="M179.26,-203.66C179.38,-195.99 179.52,-186.85 179.64,-178.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="181.74,-178.49 179.74,-172.45 177.54,-178.42 181.74,-178.49" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r000 -->
+<g class="node" id="rev-huffman-tree-eight-code-node4">
+<title>r000</title>
+<path d="M80,-104C80,-104 50,-104 50,-104 44,-104 38,-98 38,-92 38,-92 38,-80 38,-80 38,-74 44,-68 50,-68 50,-68 80,-68 80,-68 86,-68 92,-74 92,-80 92,-80 92,-92 92,-92 92,-98 86,-104 80,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="65" y="-82.5">I:5</text>
+</g>
+<!-- r00&#45;&gt;r000 -->
+<g class="edge" id="rev-huffman-tree-eight-code-edge3">
+<title>r00-&gt;r000</title>
+<path d="M90.07,-135.66C86.04,-127.84 81.22,-118.49 76.89,-110.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="78.61,-108.83 73.99,-104.45 74.87,-110.75 78.61,-108.83" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r001 -->
+<g class="node" id="rev-huffman-tree-eight-code-node7">
+<title>r001</title>
+<path d="M156,-104C156,-104 126,-104 126,-104 120,-104 114,-98 114,-92 114,-92 114,-80 114,-80 114,-74 120,-68 126,-68 126,-68 156,-68 156,-68 162,-68 168,-74 168,-80 168,-80 168,-92 168,-92 168,-98 162,-104 156,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="141" y="-82.5">E:8</text>
+</g>
+<!-- r00&#45;&gt;r001 -->
+<g class="edge" id="rev-huffman-tree-eight-code-edge6">
+<title>r00-&gt;r001</title>
+<path d="M110.04,-135.66C115.11,-127.69 121.19,-118.13 126.61,-109.61" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="128.44,-110.64 129.89,-104.45 124.9,-108.39 128.44,-110.64" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r0000 -->
+<g class="node" id="rev-huffman-tree-eight-code-node5">
+<title>r0000</title>
+<path d="M42,-36C42,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 42,0 42,0 48,0 54,-6 54,-12 54,-12 54,-24 54,-24 54,-30 48,-36 42,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-14.5">A:2</text>
+</g>
+<!-- r000&#45;&gt;r0000 -->
+<g class="edge" id="rev-huffman-tree-eight-code-edge4">
+<title>r000-&gt;r0000</title>
+<path d="M55.02,-67.66C50.51,-59.84 45.13,-50.49 40.29,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.86,-40.61 37.05,-36.45 38.22,-42.7 41.86,-40.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r0001 -->
+<g class="node" id="rev-huffman-tree-eight-code-node6">
+<title>r0001</title>
+<path d="M118,-36C118,-36 88,-36 88,-36 82,-36 76,-30 76,-24 76,-24 76,-12 76,-12 76,-6 82,0 88,0 88,0 118,0 118,0 124,0 130,-6 130,-12 130,-12 130,-24 130,-24 130,-30 124,-36 118,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-14.5">B:3</text>
+</g>
+<!-- r000&#45;&gt;r0001 -->
+<g class="edge" id="rev-huffman-tree-eight-code-edge5">
+<title>r000-&gt;r0001</title>
+<path d="M74.98,-67.66C79.49,-59.84 84.87,-50.49 89.71,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="91.78,-42.7 92.95,-36.45 88.14,-40.61 91.78,-42.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-huffman-tree-eight-code-node10">
+<title>r10</title>
+<path d="M277.5,-172C277.5,-172 244.5,-172 244.5,-172 238.5,-172 232.5,-166 232.5,-160 232.5,-160 232.5,-148 232.5,-148 232.5,-142 238.5,-136 244.5,-136 244.5,-136 277.5,-136 277.5,-136 283.5,-136 289.5,-142 289.5,-148 289.5,-148 289.5,-160 289.5,-160 289.5,-166 283.5,-172 277.5,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="261" y="-150.5">L:21</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-huffman-tree-eight-code-edge9">
+<title>r1-&gt;r10</title>
+<path d="M261.74,-203.66C261.62,-195.99 261.48,-186.85 261.36,-178.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="263.46,-178.42 261.26,-172.45 259.26,-178.49 263.46,-178.42" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r11 -->
+<g class="node" id="rev-huffman-tree-eight-code-node15">
+<title>r11</title>
+<path d="M360,-172C360,-172 324,-172 324,-172 318,-172 312,-166 312,-160 312,-160 312,-148 312,-148 312,-142 318,-136 324,-136 324,-136 360,-136 360,-136 366,-136 372,-142 372,-148 372,-148 372,-160 372,-160 372,-166 366,-172 360,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="342" y="-150.5">H:34</text>
+</g>
+<!-- r1&#45;&gt;r11 -->
+<g class="edge" id="rev-huffman-tree-eight-code-edge14">
+<title>r1-&gt;r11</title>
+<path d="M283.02,-203.66C293.22,-195.25 305.56,-185.07 316.31,-176.2" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="317.83,-177.66 321.12,-172.22 315.16,-174.42 317.83,-177.66" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r100 -->
+<g class="node" id="rev-huffman-tree-eight-code-node11">
+<title>r100</title>
+<path d="M254,-104C254,-104 224,-104 224,-104 218,-104 212,-98 212,-92 212,-92 212,-80 212,-80 212,-74 218,-68 224,-68 224,-68 254,-68 254,-68 260,-68 266,-74 266,-80 266,-80 266,-92 266,-92 266,-98 260,-104 254,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="239" y="-82.5">J:8</text>
+</g>
+<!-- r10&#45;&gt;r100 -->
+<g class="edge" id="rev-huffman-tree-eight-code-edge10">
+<title>r10-&gt;r100</title>
+<path d="M255.22,-135.66C252.66,-127.99 249.62,-118.85 246.86,-110.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="248.71,-109.48 244.82,-104.45 244.72,-110.81 248.71,-109.48" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r101 -->
+<g class="node" id="rev-huffman-tree-eight-code-node14">
+<title>r101</title>
+<path d="M333.5,-104C333.5,-104 300.5,-104 300.5,-104 294.5,-104 288.5,-98 288.5,-92 288.5,-92 288.5,-80 288.5,-80 288.5,-74 294.5,-68 300.5,-68 300.5,-68 333.5,-68 333.5,-68 339.5,-68 345.5,-74 345.5,-80 345.5,-80 345.5,-92 345.5,-92 345.5,-98 339.5,-104 333.5,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="317" y="-82.5">F:13</text>
+</g>
+<!-- r10&#45;&gt;r101 -->
+<g class="edge" id="rev-huffman-tree-eight-code-edge13">
+<title>r10-&gt;r101</title>
+<path d="M275.71,-135.66C282.6,-127.54 290.89,-117.77 298.23,-109.12" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="299.91,-110.39 302.19,-104.45 296.71,-107.67 299.91,-110.39" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1000 -->
+<g class="node" id="rev-huffman-tree-eight-code-node12">
+<title>r1000</title>
+<path d="M213,-36C213,-36 183,-36 183,-36 177,-36 171,-30 171,-24 171,-24 171,-12 171,-12 171,-6 177,0 183,0 183,0 213,0 213,0 219,0 225,-6 225,-12 225,-12 225,-24 225,-24 225,-30 219,-36 213,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="198" y="-14.5">C:3</text>
+</g>
+<!-- r100&#45;&gt;r1000 -->
+<g class="edge" id="rev-huffman-tree-eight-code-edge11">
+<title>r100-&gt;r1000</title>
+<path d="M228.23,-67.66C223.28,-59.69 217.34,-50.13 212.04,-41.61" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="213.79,-40.44 208.84,-36.45 210.22,-42.66 213.79,-40.44" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1001 -->
+<g class="node" id="rev-huffman-tree-eight-code-node13">
+<title>r1001</title>
+<path d="M289,-36C289,-36 259,-36 259,-36 253,-36 247,-30 247,-24 247,-24 247,-12 247,-12 247,-6 253,0 259,0 259,0 289,0 289,0 295,0 301,-6 301,-12 301,-12 301,-24 301,-24 301,-30 295,-36 289,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="274" y="-14.5">D:5</text>
+</g>
+<!-- r100&#45;&gt;r1001 -->
+<g class="edge" id="rev-huffman-tree-eight-code-edge12">
+<title>r100-&gt;r1001</title>
+<path d="M248.2,-67.66C252.34,-59.84 257.3,-50.49 261.76,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="263.79,-42.74 264.74,-36.45 260.08,-40.77 263.79,-42.74" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>Codes: A=0000, B=0001, C=1000, D=1001, E=001, F=101, G=01, H=11.</figcaption></figure></section><section class="step"><h4>2 · Encode B, H, A, C</h4><figure><div class="array"><span class="cell"><small>1</small>0001</span><span class="cell"><small>2</small>11</span><span class="cell"><small>3</small>0000</span><span class="cell"><small>4</small>1000</span></div><figcaption>Lookup each symbol, then concatenate: 00011100001000. Output length is 4+2+4+4=14 bits.</figcaption></figure></section><section class="step"><h4>3 · Decode the concatenated stream</h4><figure><div class="array"><span class="cell"><small>1</small>0001 → B</span><span class="cell"><small>2</small>11 → H</span><span class="cell"><small>3</small>0000 → A</span><span class="cell"><small>4</small>1000 → C</span></div><figcaption>Start at root for each codeword; the decoded sequence is [B,H,A,C], recovering the input exactly.</figcaption></figure></section></section>
+<h2 id="section-4">Ties, singleton alphabets, and higher-order trees</h2>
+<p>Equal frequencies do not make the code unique. With four equal-frequency symbols A, B, C, D, one valid tie order pairs (A,B) and (C,D), while another pairs (A,C) and (B,D). Both trees have four leaves at depth 2, so each has WEPL <code>4×2 = 8</code>; only the bit assignments differ. The queue must use a consistent tie breaker so a trace can be reproduced. Do not claim a unique code or that one tied symbol must receive a particular longest code.</p>
+<figure><div class="diagram-frame" style="--diagram-width:303.6px"><svg aria-label="Tie outcome one: pair A/B and C/D; all four codes have length 2 and WEPL is 8." height="194pt" role="img" viewbox="0.00 0.00 303.60 193.60" width="304pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-huffman-tree-equal-tie-pairing-ab-cd-graph0" transform="scale(1 1) rotate(0) translate(10.8 182.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-huffman-tree-equal-tie-pairing-ab-cd-node1">
+<title>r</title>
+<path d="M156,-172C156,-172 126,-172 126,-172 120,-172 114,-166 114,-160 114,-160 114,-148 114,-148 114,-142 120,-136 126,-136 126,-136 156,-136 156,-136 162,-136 168,-142 168,-148 168,-148 168,-160 168,-160 168,-166 162,-172 156,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="141" y="-150.5">4</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-huffman-tree-equal-tie-pairing-ab-cd-node2">
+<title>r0</title>
+<path d="M118,-104C118,-104 88,-104 88,-104 82,-104 76,-98 76,-92 76,-92 76,-80 76,-80 76,-74 82,-68 88,-68 88,-68 118,-68 118,-68 124,-68 130,-74 130,-80 130,-80 130,-92 130,-92 130,-98 124,-104 118,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-82.5">2</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-huffman-tree-equal-tie-pairing-ab-cd-edge1">
+<title>r-&gt;r0</title>
+<path d="M131.02,-135.66C126.51,-127.84 121.13,-118.49 116.29,-110.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="117.86,-108.61 113.05,-104.45 114.22,-110.7 117.86,-108.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-huffman-tree-equal-tie-pairing-ab-cd-node5">
+<title>r1</title>
+<path d="M194,-104C194,-104 164,-104 164,-104 158,-104 152,-98 152,-92 152,-92 152,-80 152,-80 152,-74 158,-68 164,-68 164,-68 194,-68 194,-68 200,-68 206,-74 206,-80 206,-80 206,-92 206,-92 206,-98 200,-104 194,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="179" y="-82.5">2</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-huffman-tree-equal-tie-pairing-ab-cd-edge4">
+<title>r-&gt;r1</title>
+<path d="M150.98,-135.66C155.49,-127.84 160.87,-118.49 165.71,-110.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="167.78,-110.7 168.95,-104.45 164.14,-108.61 167.78,-110.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-huffman-tree-equal-tie-pairing-ab-cd-node3">
+<title>r00</title>
+<path d="M42,-36C42,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 42,0 42,0 48,0 54,-6 54,-12 54,-12 54,-24 54,-24 54,-30 48,-36 42,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-14.5">A:1</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-huffman-tree-equal-tie-pairing-ab-cd-edge2">
+<title>r0-&gt;r00</title>
+<path d="M83.03,-67.66C73.34,-59.25 61.62,-49.07 51.41,-40.2" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="52.74,-38.57 46.83,-36.22 49.99,-41.74 52.74,-38.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-huffman-tree-equal-tie-pairing-ab-cd-node4">
+<title>r01</title>
+<path d="M118,-36C118,-36 88,-36 88,-36 82,-36 76,-30 76,-24 76,-24 76,-12 76,-12 76,-6 82,0 88,0 88,0 118,0 118,0 124,0 130,-6 130,-12 130,-12 130,-24 130,-24 130,-30 124,-36 118,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-14.5">B:1</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-huffman-tree-equal-tie-pairing-ab-cd-edge3">
+<title>r0-&gt;r01</title>
+<path d="M103,-67.66C103,-59.99 103,-50.85 103,-42.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="105.1,-42.45 103,-36.45 100.9,-42.45 105.1,-42.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-huffman-tree-equal-tie-pairing-ab-cd-node6">
+<title>r10</title>
+<path d="M194,-36C194,-36 164,-36 164,-36 158,-36 152,-30 152,-24 152,-24 152,-12 152,-12 152,-6 158,0 164,0 164,0 194,0 194,0 200,0 206,-6 206,-12 206,-12 206,-24 206,-24 206,-30 200,-36 194,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="179" y="-14.5">C:1</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-huffman-tree-equal-tie-pairing-ab-cd-edge5">
+<title>r1-&gt;r10</title>
+<path d="M179,-67.66C179,-59.99 179,-50.85 179,-42.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="181.1,-42.45 179,-36.45 176.9,-42.45 181.1,-42.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r11 -->
+<g class="node" id="rev-huffman-tree-equal-tie-pairing-ab-cd-node7">
+<title>r11</title>
+<path d="M270,-36C270,-36 240,-36 240,-36 234,-36 228,-30 228,-24 228,-24 228,-12 228,-12 228,-6 234,0 240,0 240,0 270,0 270,0 276,0 282,-6 282,-12 282,-12 282,-24 282,-24 282,-30 276,-36 270,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="255" y="-14.5">D:1</text>
+</g>
+<!-- r1&#45;&gt;r11 -->
+<g class="edge" id="rev-huffman-tree-equal-tie-pairing-ab-cd-edge6">
+<title>r1-&gt;r11</title>
+<path d="M198.97,-67.66C208.66,-59.25 220.38,-49.07 230.59,-40.2" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="232.01,-41.74 235.17,-36.22 229.26,-38.57 232.01,-41.74" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>Tie outcome one: pair A/B and C/D; all four codes have length 2 and WEPL is 8.</figcaption></figure>
+<figure><div class="diagram-frame" style="--diagram-width:303.6px"><svg aria-label="Tie outcome two: pair A/C and B/D; code assignments change but WEPL remains 8." height="194pt" role="img" viewbox="0.00 0.00 303.60 193.60" width="304pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-huffman-tree-equal-tie-pairing-ac-bd-graph0" transform="scale(1 1) rotate(0) translate(10.8 182.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-huffman-tree-equal-tie-pairing-ac-bd-node1">
+<title>r</title>
+<path d="M156,-172C156,-172 126,-172 126,-172 120,-172 114,-166 114,-160 114,-160 114,-148 114,-148 114,-142 120,-136 126,-136 126,-136 156,-136 156,-136 162,-136 168,-142 168,-148 168,-148 168,-160 168,-160 168,-166 162,-172 156,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="141" y="-150.5">4</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-huffman-tree-equal-tie-pairing-ac-bd-node2">
+<title>r0</title>
+<path d="M118,-104C118,-104 88,-104 88,-104 82,-104 76,-98 76,-92 76,-92 76,-80 76,-80 76,-74 82,-68 88,-68 88,-68 118,-68 118,-68 124,-68 130,-74 130,-80 130,-80 130,-92 130,-92 130,-98 124,-104 118,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-82.5">2</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-huffman-tree-equal-tie-pairing-ac-bd-edge1">
+<title>r-&gt;r0</title>
+<path d="M131.02,-135.66C126.51,-127.84 121.13,-118.49 116.29,-110.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="117.86,-108.61 113.05,-104.45 114.22,-110.7 117.86,-108.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-huffman-tree-equal-tie-pairing-ac-bd-node5">
+<title>r1</title>
+<path d="M194,-104C194,-104 164,-104 164,-104 158,-104 152,-98 152,-92 152,-92 152,-80 152,-80 152,-74 158,-68 164,-68 164,-68 194,-68 194,-68 200,-68 206,-74 206,-80 206,-80 206,-92 206,-92 206,-98 200,-104 194,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="179" y="-82.5">2</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-huffman-tree-equal-tie-pairing-ac-bd-edge4">
+<title>r-&gt;r1</title>
+<path d="M150.98,-135.66C155.49,-127.84 160.87,-118.49 165.71,-110.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="167.78,-110.7 168.95,-104.45 164.14,-108.61 167.78,-110.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-huffman-tree-equal-tie-pairing-ac-bd-node3">
+<title>r00</title>
+<path d="M42,-36C42,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 42,0 42,0 48,0 54,-6 54,-12 54,-12 54,-24 54,-24 54,-30 48,-36 42,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-14.5">A:1</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-huffman-tree-equal-tie-pairing-ac-bd-edge2">
+<title>r0-&gt;r00</title>
+<path d="M83.03,-67.66C73.34,-59.25 61.62,-49.07 51.41,-40.2" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="52.74,-38.57 46.83,-36.22 49.99,-41.74 52.74,-38.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-huffman-tree-equal-tie-pairing-ac-bd-node4">
+<title>r01</title>
+<path d="M118,-36C118,-36 88,-36 88,-36 82,-36 76,-30 76,-24 76,-24 76,-12 76,-12 76,-6 82,0 88,0 88,0 118,0 118,0 124,0 130,-6 130,-12 130,-12 130,-24 130,-24 130,-30 124,-36 118,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-14.5">C:1</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-huffman-tree-equal-tie-pairing-ac-bd-edge3">
+<title>r0-&gt;r01</title>
+<path d="M103,-67.66C103,-59.99 103,-50.85 103,-42.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="105.1,-42.45 103,-36.45 100.9,-42.45 105.1,-42.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-huffman-tree-equal-tie-pairing-ac-bd-node6">
+<title>r10</title>
+<path d="M194,-36C194,-36 164,-36 164,-36 158,-36 152,-30 152,-24 152,-24 152,-12 152,-12 152,-6 158,0 164,0 164,0 194,0 194,0 200,0 206,-6 206,-12 206,-12 206,-24 206,-24 206,-30 200,-36 194,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="179" y="-14.5">B:1</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-huffman-tree-equal-tie-pairing-ac-bd-edge5">
+<title>r1-&gt;r10</title>
+<path d="M179,-67.66C179,-59.99 179,-50.85 179,-42.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="181.1,-42.45 179,-36.45 176.9,-42.45 181.1,-42.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r11 -->
+<g class="node" id="rev-huffman-tree-equal-tie-pairing-ac-bd-node7">
+<title>r11</title>
+<path d="M270,-36C270,-36 240,-36 240,-36 234,-36 228,-30 228,-24 228,-24 228,-12 228,-12 228,-6 234,0 240,0 240,0 270,0 270,0 276,0 282,-6 282,-12 282,-12 282,-24 282,-24 282,-30 276,-36 270,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="255" y="-14.5">D:1</text>
+</g>
+<!-- r1&#45;&gt;r11 -->
+<g class="edge" id="rev-huffman-tree-equal-tie-pairing-ac-bd-edge6">
+<title>r1-&gt;r11</title>
+<path d="M198.97,-67.66C208.66,-59.25 220.38,-49.07 230.59,-40.2" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="232.01,-41.74 235.17,-36.22 229.26,-38.57 232.01,-41.74" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>Tie outcome two: pair A/C and B/D; code assignments change but WEPL remains 8.</figcaption></figure>
+<p>For one symbol, the course lab convention assigns code <code>0</code>; this avoids an empty codeword. For two symbols, make them the two children of the root and assign <code>0</code> and <code>1</code>. A zero-frequency dummy added for k-way padding is a structural leaf only: omit it from the symbol table, encoded message, and real-symbol WEPL.</p>
+<figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="Singleton convention from the lab: assign A the one-bit code 0 even though a one-leaf tree has no root-to-child edge." height="58pt" role="img" viewbox="0.00 0.00 75.60 57.60" width="76pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-huffman-tree-singleton-convention-graph0" transform="scale(1 1) rotate(0) translate(10.8 46.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-huffman-tree-singleton-convention-node1">
+<title>r</title>
+<path d="M42,-36C42,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 42,0 42,0 48,0 54,-6 54,-12 54,-12 54,-24 54,-24 54,-30 48,-36 42,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-14.5">A:1</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Singleton convention from the lab: assign A the one-bit code 0 even though a one-leaf tree has no root-to-child edge.</figcaption></figure>
+<figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="Two-symbol tree: left A is 0 and right B is 1; both codewords have length 1." height="126pt" role="img" viewbox="0.00 0.00 151.60 125.60" width="152pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-huffman-tree-two-symbol-codes-graph0" transform="scale(1 1) rotate(0) translate(10.8 114.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-huffman-tree-two-symbol-codes-node1">
+<title>r</title>
+<path d="M80,-104C80,-104 50,-104 50,-104 44,-104 38,-98 38,-92 38,-92 38,-80 38,-80 38,-74 44,-68 50,-68 50,-68 80,-68 80,-68 86,-68 92,-74 92,-80 92,-80 92,-92 92,-92 92,-98 86,-104 80,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="65" y="-82.5">2</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-huffman-tree-two-symbol-codes-node2">
+<title>r0</title>
+<path d="M42,-36C42,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 42,0 42,0 48,0 54,-6 54,-12 54,-12 54,-24 54,-24 54,-30 48,-36 42,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-14.5">A:1</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-huffman-tree-two-symbol-codes-edge1">
+<title>r-&gt;r0</title>
+<path d="M55.02,-67.66C50.51,-59.84 45.13,-50.49 40.29,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.86,-40.61 37.05,-36.45 38.22,-42.7 41.86,-40.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-huffman-tree-two-symbol-codes-node3">
+<title>r1</title>
+<path d="M118,-36C118,-36 88,-36 88,-36 82,-36 76,-30 76,-24 76,-24 76,-12 76,-12 76,-6 82,0 88,0 88,0 118,0 118,0 124,0 130,-6 130,-12 130,-12 130,-24 130,-24 130,-30 124,-36 118,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-14.5">B:1</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-huffman-tree-two-symbol-codes-edge2">
+<title>r-&gt;r1</title>
+<path d="M74.98,-67.66C79.49,-59.84 84.87,-50.49 89.71,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="91.78,-42.7 92.95,-36.45 88.14,-40.61 91.78,-42.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>Two-symbol tree: left A is 0 and right B is 1; both codewords have length 1.</figcaption></figure>
+<h3>Why a three-way tree needs padding</h3>
+<p>For k-way merging, each full internal node has exactly k children, so each merge reduces the forest count by k−1. With r real leaves, choose the least q≥0 satisfying <code>(r+q−1) mod (k−1)=0</code>; then repeatedly merge the k minima. If the congruence already holds, q=0. A 2-way tree needs no padding.</p>
+<p>For k=3 and weights <code>[3,6,1,9]</code>, q=1. Insert a dummy 0, then merge 0+1+3=4 and finally 4+6+9=19. The real leaves have depths 2,1,2,1 respectively, giving real WEPL <code>3×2 + 6×1 + 1×2 + 9×1 = 23</code>; merge sums are <code>4+19=23</code> as well.</p>
+<figure><div class="diagram-frame" style="--diagram-width:343.6px"><svg aria-label="Valid full 3-way construction: every internal node has exactly three children; the dummy contributes zero cost." height="194pt" role="img" viewbox="0.00 0.00 343.60 193.60" width="344pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-huffman-tree-ternary-padded-graph0" transform="scale(1 1) rotate(0) translate(10.8 182.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-huffman-tree-ternary-padded-node1">
+<title>r</title>
+<path d="M234,-172C234,-172 204,-172 204,-172 198,-172 192,-166 192,-160 192,-160 192,-148 192,-148 192,-142 198,-136 204,-136 204,-136 234,-136 234,-136 240,-136 246,-142 246,-148 246,-148 246,-160 246,-160 246,-166 240,-172 234,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="219" y="-150.5">19</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-huffman-tree-ternary-padded-node2">
+<title>r0</title>
+<path d="M158,-104C158,-104 128,-104 128,-104 122,-104 116,-98 116,-92 116,-92 116,-80 116,-80 116,-74 122,-68 128,-68 128,-68 158,-68 158,-68 164,-68 170,-74 170,-80 170,-80 170,-92 170,-92 170,-98 164,-104 158,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="143" y="-82.5">4</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-huffman-tree-ternary-padded-edge1">
+<title>r-&gt;r0</title>
+<path d="M199.03,-135.66C189.34,-127.25 177.62,-117.07 167.41,-108.2" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="168.74,-106.57 162.83,-104.22 165.99,-109.74 168.74,-106.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-huffman-tree-ternary-padded-node6">
+<title>r1</title>
+<path d="M234,-104C234,-104 204,-104 204,-104 198,-104 192,-98 192,-92 192,-92 192,-80 192,-80 192,-74 198,-68 204,-68 204,-68 234,-68 234,-68 240,-68 246,-74 246,-80 246,-80 246,-92 246,-92 246,-98 240,-104 234,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="219" y="-82.5">6</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-huffman-tree-ternary-padded-edge5">
+<title>r-&gt;r1</title>
+<path d="M219,-135.66C219,-127.99 219,-118.85 219,-110.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="221.1,-110.45 219,-104.45 216.9,-110.45 221.1,-110.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r2 -->
+<g class="node" id="rev-huffman-tree-ternary-padded-node7">
+<title>r2</title>
+<path d="M310,-104C310,-104 280,-104 280,-104 274,-104 268,-98 268,-92 268,-92 268,-80 268,-80 268,-74 274,-68 280,-68 280,-68 310,-68 310,-68 316,-68 322,-74 322,-80 322,-80 322,-92 322,-92 322,-98 316,-104 310,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="295" y="-82.5">9</text>
+</g>
+<!-- r&#45;&gt;r2 -->
+<g class="edge" id="rev-huffman-tree-ternary-padded-edge6">
+<title>r-&gt;r2</title>
+<path d="M238.97,-135.66C248.66,-127.25 260.38,-117.07 270.59,-108.2" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="272.01,-109.74 275.17,-104.22 269.26,-106.57 272.01,-109.74" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-huffman-tree-ternary-padded-node3">
+<title>r00</title>
+<path d="M82,-36C82,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 82,0 82,0 88,0 94,-6 94,-12 94,-12 94,-24 94,-24 94,-30 88,-36 82,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="47" y="-14.5">dummy:0</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-huffman-tree-ternary-padded-edge2">
+<title>r0-&gt;r00</title>
+<path d="M118.03,-67.83C105.47,-59.2 90.16,-48.67 76.97,-39.61" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="77.98,-37.75 71.85,-36.08 75.6,-41.21 77.98,-37.75" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-huffman-tree-ternary-padded-node4">
+<title>r01</title>
+<path d="M158,-36C158,-36 128,-36 128,-36 122,-36 116,-30 116,-24 116,-24 116,-12 116,-12 116,-6 122,0 128,0 128,0 158,0 158,0 164,0 170,-6 170,-12 170,-12 170,-24 170,-24 170,-30 164,-36 158,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="143" y="-14.5">1</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-huffman-tree-ternary-padded-edge3">
+<title>r0-&gt;r01</title>
+<path d="M143,-67.66C143,-59.99 143,-50.85 143,-42.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="145.1,-42.45 143,-36.45 140.9,-42.45 145.1,-42.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r02 -->
+<g class="node" id="rev-huffman-tree-ternary-padded-node5">
+<title>r02</title>
+<path d="M234,-36C234,-36 204,-36 204,-36 198,-36 192,-30 192,-24 192,-24 192,-12 192,-12 192,-6 198,0 204,0 204,0 234,0 234,0 240,0 246,-6 246,-12 246,-12 246,-24 246,-24 246,-30 240,-36 234,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="219" y="-14.5">3</text>
+</g>
+<!-- r0&#45;&gt;r02 -->
+<g class="edge" id="rev-huffman-tree-ternary-padded-edge4">
+<title>r0-&gt;r02</title>
+<path d="M162.97,-67.66C172.66,-59.25 184.38,-49.07 194.59,-40.2" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="196.01,-41.74 199.17,-36.22 193.26,-38.57 196.01,-41.74" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>Valid full 3-way construction: every internal node has exactly three children; the dummy contributes zero cost.</figcaption></figure>
+<p>The unpadded greedy attempt first combines 1, 3, and 6 into 10, leaving only 10 and 9. Attaching those two beneath 19 makes a 2-child internal node, which is not a full 3-way tree; its cost is <code>3×2+6×2+1×2+9×1=29</code>. This is why the padding step is required, not an optional optimization.</p>
+<figure><div class="diagram-frame" style="--diagram-width:227.6px"><svg aria-label="Unpadded greedy counterexample from the lecture: the root has only two children and WEPL 29, so it is not the required full 3-way tree." height="194pt" role="img" viewbox="0.00 0.00 227.60 193.60" width="228pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-huffman-tree-ternary-unpadded-counterexample-graph0" transform="scale(1 1) rotate(0) translate(10.8 182.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-huffman-tree-ternary-unpadded-counterexample-node1">
+<title>r</title>
+<path d="M156,-172C156,-172 126,-172 126,-172 120,-172 114,-166 114,-160 114,-160 114,-148 114,-148 114,-142 120,-136 126,-136 126,-136 156,-136 156,-136 162,-136 168,-142 168,-148 168,-148 168,-160 168,-160 168,-166 162,-172 156,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="141" y="-150.5">19</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-huffman-tree-ternary-unpadded-counterexample-node2">
+<title>r0</title>
+<path d="M118,-104C118,-104 88,-104 88,-104 82,-104 76,-98 76,-92 76,-92 76,-80 76,-80 76,-74 82,-68 88,-68 88,-68 118,-68 118,-68 124,-68 130,-74 130,-80 130,-80 130,-92 130,-92 130,-98 124,-104 118,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-82.5">10</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-huffman-tree-ternary-unpadded-counterexample-edge1">
+<title>r-&gt;r0</title>
+<path d="M131.02,-135.66C126.51,-127.84 121.13,-118.49 116.29,-110.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="117.86,-108.61 113.05,-104.45 114.22,-110.7 117.86,-108.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-huffman-tree-ternary-unpadded-counterexample-node6">
+<title>r1</title>
+<path d="M194,-104C194,-104 164,-104 164,-104 158,-104 152,-98 152,-92 152,-92 152,-80 152,-80 152,-74 158,-68 164,-68 164,-68 194,-68 194,-68 200,-68 206,-74 206,-80 206,-80 206,-92 206,-92 206,-98 200,-104 194,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="179" y="-82.5">9</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-huffman-tree-ternary-unpadded-counterexample-edge5">
+<title>r-&gt;r1</title>
+<path d="M150.98,-135.66C155.49,-127.84 160.87,-118.49 165.71,-110.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="167.78,-110.7 168.95,-104.45 164.14,-108.61 167.78,-110.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-huffman-tree-ternary-unpadded-counterexample-node3">
+<title>r00</title>
+<path d="M42,-36C42,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 42,0 42,0 48,0 54,-6 54,-12 54,-12 54,-24 54,-24 54,-30 48,-36 42,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-14.5">3</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-huffman-tree-ternary-unpadded-counterexample-edge2">
+<title>r0-&gt;r00</title>
+<path d="M83.03,-67.66C73.34,-59.25 61.62,-49.07 51.41,-40.2" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="52.74,-38.57 46.83,-36.22 49.99,-41.74 52.74,-38.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-huffman-tree-ternary-unpadded-counterexample-node4">
+<title>r01</title>
+<path d="M118,-36C118,-36 88,-36 88,-36 82,-36 76,-30 76,-24 76,-24 76,-12 76,-12 76,-6 82,0 88,0 88,0 118,0 118,0 124,0 130,-6 130,-12 130,-12 130,-24 130,-24 130,-30 124,-36 118,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-14.5">6</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-huffman-tree-ternary-unpadded-counterexample-edge3">
+<title>r0-&gt;r01</title>
+<path d="M103,-67.66C103,-59.99 103,-50.85 103,-42.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="105.1,-42.45 103,-36.45 100.9,-42.45 105.1,-42.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r02 -->
+<g class="node" id="rev-huffman-tree-ternary-unpadded-counterexample-node5">
+<title>r02</title>
+<path d="M194,-36C194,-36 164,-36 164,-36 158,-36 152,-30 152,-24 152,-24 152,-12 152,-12 152,-6 158,0 164,0 164,0 194,0 194,0 200,0 206,-6 206,-12 206,-12 206,-24 206,-24 206,-30 200,-36 194,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="179" y="-14.5">1</text>
+</g>
+<!-- r0&#45;&gt;r02 -->
+<g class="edge" id="rev-huffman-tree-ternary-unpadded-counterexample-edge4">
+<title>r0-&gt;r02</title>
+<path d="M122.97,-67.66C132.66,-59.25 144.38,-49.07 154.59,-40.2" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="156.01,-41.74 159.17,-36.22 153.26,-38.57 156.01,-41.74" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>Unpadded greedy counterexample from the lecture: the root has only two children and WEPL 29, so it is not the required full 3-way tree.</figcaption></figure>
+<h2 id="section-5">Method decisions and limits</h2>
+<p>Construction bounds below are worst-case for a binary min-heap. Code generation, encoding, and decoding are deterministic output-sensitive bounds; they do not rely on an expected- or amortized-time claim.</p>
+<table>
+<thead>
+<tr>
+<th>Method or question</th>
+<th>Course procedure and decision</th>
+<th>Stop condition</th>
+<th>Edge cases and cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Build a binary Huffman tree</td>
+<td>Heapify the n singleton leaves, remove the two minimum roots, make them children of a summed root, and reinsert; repeat.</td>
+<td>Stop at one root; n−1 merges for n≥1.</td>
+<td>Worst-case heapify <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math>, then <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> heap work in total; lecture also describes n−1 remove-min plus n−1 change-min. A singleton needs no merge.</td>
+</tr>
+<tr>
+<td>Generate codes</td>
+<td>Traverse the finished tree, appending 0 on left edges and 1 on right edges.</td>
+<td>Emit a code at each symbol leaf.</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo>+</mo><mi>L</mi><mo stretchy="false">)</mo></mrow></math>, where L is the total emitted code length; a singleton uses the lab's explicit code <code>0</code>.</td>
+</tr>
+<tr>
+<td>Encode</td>
+<td>Look up each source symbol in the generated code table and concatenate.</td>
+<td>Stop after the last input symbol.</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>u</mi><mi>m</mi><mi>b</mi><mi>e</mi><mi>r</mi><mi>o</mi><mi>f</mi><mi>o</mi><mi>u</mi><mi>t</mi><mi>p</mi><mi>u</mi><mi>t</mi><mi>b</mi><mi>i</mi><mi>t</mi><mi>s</mi><mo stretchy="false">)</mo></mrow></math> with constant-time table lookup; unknown symbols have no code and must be rejected/handled outside this construction. Include code-table storage when assessing compression.</td>
+</tr>
+<tr>
+<td>Decode</td>
+<td>Follow one edge per bit; emit at a leaf and reset to root.</td>
+<td>Stop exactly at end of input, which should be at root.</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>u</mi><mi>m</mi><mi>b</mi><mi>e</mi><mi>r</mi><mi>o</mi><mi>f</mi><mi>i</mi><mi>n</mi><mi>p</mi><mi>u</mi><mi>t</mi><mi>b</mi><mi>i</mi><mi>t</mi><mi>s</mi><mo stretchy="false">)</mo></mrow></math>; an invalid edge or unfinished internal-node path is malformed input, not a decoded symbol.</td>
+</tr>
+<tr>
+<td>Search, insert, delete, or meld symbols</td>
+<td>These are not dictionary operations on a coding tree. Change the frequency set and rebuild the tree/code table.</td>
+<td>Rebuild ends when one root remains.</td>
+<td>Rebuild costs <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> worst case with a binary min heap; no search-tree key ordering or direct meld guarantee applies.</td>
+</tr>
+<tr>
+<td>Update a frequency</td>
+<td>Treat the changed frequencies as a new construction input and rebuild.</td>
+<td>Complete the same n−1 merge process.</td>
+<td>Existing codewords may all change; updating one leaf locally is not the lecture's algorithm.</td>
+</tr>
+<tr>
+<td>Build a k-way tree</td>
+<td>Compute q from the congruence, add q zero-weight dummy leaves, then combine k minima per round.</td>
+<td>Stop at one root; each merge removes k−1 forest roots.</td>
+<td>q=0 when already congruent; k=2 always has q=0. Exclude dummy leaves from real symbols and their WEPL.</td>
+</tr>
+<tr>
+<td>Resolve equal minima</td>
+<td>Apply one deterministic tie rule for a reproducible trace. Any legal minimum pair is allowed.</td>
+<td>Continue until one root, regardless of ties.</td>
+<td>Equal weights can yield different optimal trees/codewords; compare WEPL or code lengths, not literal code strings.</td>
+</tr>
+</tbody>
+</table>
+<p class="question">For the eight-symbol example, why does merge work equal WEPL?</p>
+<details class="worked"><summary>Check your answer</summary><p>Each merge raises every leaf below the new parent by one level. That adds the two child-tree weights, namely the new parent weight, to the sum of frequency × depth. Summing all seven merge weights gives 225, the same as the leaf-depth calculation.</p></details>
+<p class="question">For a ternary tree with r=5 real leaves, how many dummy leaves are needed?</p>
+<details class="worked"><summary>Check your answer</summary><p>q=(1−5) mod 2 = 0, so no dummy is needed: 5−1 is divisible by 3−1.</p></details>
+<p class="question">Can an encoded stream end halfway down an internal path?</p>
+<details class="worked"><summary>Check your answer</summary><p>No. A valid complete encoding ends at the root after the final leaf reset; ending at an internal node means the final codeword is incomplete.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="loser-tree.html"><small>Previous</small>Loser tree <span aria-hidden="true">↗</span></a><a href="dual-heap.html"><small>Next</small>Dual min/max heaps <span aria-hidden="true">↗</span></a></nav><footer>ADS field notes <span>Understand the rule. Trace the repair.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  root.querySelectorAll('table').forEach(table => {
+    const region = document.createElement('div');
+    region.className = 'table-scroll' + (table.rows[0]?.cells.length > 5 ? ' wide' : '');
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    table.before(region); region.append(table);
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Data structure diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect every node.'; frame.after(hint);
+    const update = () => { hint.hidden = frame.scrollWidth <= frame.clientWidth + 1 && frame.scrollHeight <= frame.clientHeight + 1; };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {heap:'priority queue insert delete meld minimum maximum trickle down bubble up build',tree:'insert delete search build rotate rotation',trie:'insert delete search build prefix',sorting:'run merge buffer freeze build',analysis:'potential aggregate accounting'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('a').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('ads-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.ADS_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) expand.textContent = 'Expand examples';
+    const section = new URLSearchParams(url.hash.slice(1)).get('section') || (url.hash.startsWith('#topic=') ? '' : url.hash.slice(1));
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = new URLSearchParams(location.hash.slice(1)).get('section') || location.hash.slice(1);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+})();
+</script></body></html>

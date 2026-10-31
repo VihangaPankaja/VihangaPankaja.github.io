@@ -1,0 +1,1137 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="From shared-medium access rules to Ethernet frames, switch learning, VLAN tags, and the two MAC-address labs."><title>LAN, Ethernet and switching · Networks field notes</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('cns-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{.table-hint{display:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#243740;--muted:#5e737d;--secondary:#edf2f3;--border:#d5e0e3;--primary:#1e647c;--accent:#dcecf0;--diagram-fill:#eff4f5;--diagram-border:#829da8;--diagram-edge:#65838f;--active-text:#174b61;--focus:#227b98}:root[data-theme=dark]{--background:#141d23;--foreground:#e1eaf0;--muted:#a8beca;--card:#1a2730;--secondary:#22333e;--border:#3b505c;--primary:#90d1e4;--accent:#254757;--diagram-fill:#22333e;--diagram-border:#93b2c1;--diagram-edge:#9bbac9;--topbar:#141d23f5;--active-text:#b6e5f1;--focus:#90d1e4} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> CNS <span class="subbrand">field notes</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Subnet, TCP, TLS…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a href="index.html">Computer networks and security</a></div><div class="nav-group"><p>Foundations</p><a href="osi.html">OSI model and encapsulation</a><a href="data-link.html">Data link framing, errors and flow control</a><a href="wan.html">WAN and MAN technologies</a><a href="lan.html" aria-current="page">LAN, Ethernet and switching</a></div><div class="nav-group"><p>Internetworking</p><a href="routing.html">Network layer and routing</a><a href="ipv4.html">IPv4 addressing, subnetting and VLSM</a><a href="ip-delivery.html">IP packets, ARP, ICMP, DHCP and NAT</a><a href="ipv6.html">IPv6 addressing and transition</a></div><div class="nav-group"><p>Transport and wireless</p><a href="transport.html">Transport services and connections</a><a href="short-range.html">Bluetooth, NFC and ZigBee</a></div><div class="nav-group"><p>Security and design</p><a href="security.html">Security foundations and cryptography</a><a href="pki.html">Public key infrastructure</a><a href="secure-protocols.html">IPsec and TLS</a><a href="network-design.html">Network design</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS3131<br>Computer Networks and Security</div></aside>
+<main id="main"><div class="eyebrow">Foundations <span>/</span> Lectures 2 and 4 · Labs 1.1–1.2 · Quiz 1</div><h1>LAN, Ethernet and switching</h1><p class="lead">From shared-medium access rules to Ethernet frames, switch learning, VLAN tags, and the two MAC-address labs.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">LAN scope and IEEE 802 context</a><a href="#section-2">Three ways to decide who sends</a><a href="#section-3">Token access: a turn circulates instead of competing</a><a href="#section-4">Ethernet frames and medium access</a><a href="#section-5">Switch learning and forwarding</a><a href="#section-6">VLANs and the 802.1Q tag</a><a href="#section-7">Lab 1.1: inspect MAC addresses on a PC and switch</a><a href="#section-8">Lab 1.2: observe a switch MAC table change</a><a href="#section-9">Common mistakes</a><a href="#section-10">Exam focus</a><a href="#section-11">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>A local area network joins nearby devices over a shared or switched link. Before switches gave each Ethernet device a point-to-point path, stations had to coordinate who could use a shared medium. This page follows that problem from scheduled access and token passing through contention-based Ethernet, then shows how a switch learns where MAC addresses live and how VLAN tags carry logical separation across switches.</p>
+<p>The older access methods explain the ideas behind MAC. The practical focus is Ethernet frames, collision/backoff behavior on a shared half-duplex segment, and the source-learning and destination-lookup decisions used by the two-switch labs.</p>
+<h2 id="section-1">LAN scope and IEEE 802 context</h2>
+<p>A LAN covers a limited local area, from a few metres to several hundred metres in the lecture's examples. The two Lecture 4 sources describe different technology generations: the PDF gives a historical range of 1–100 Mb/s and the PowerPoint gives 100 Mb/s–1 Gb/s. Treat those as period-specific snapshots, not a disagreement about one fixed LAN speed. The PDF contrasts a typical LAN error ratio of about 1 in 10⁸ with WAN examples around 1 in 10³ to 1 in 10⁵; these are also historical lecture figures.</p>
+<p>The lecture distinguishes two signaling approaches. A <strong>baseband</strong> LAN carries digital signaling over the medium; stations share it through an access rule when the link is shared. A <strong>broadband</strong> LAN uses analog signaling and modems, with frequency-division multiplexing (FDM) separating subchannels. On shared IEEE 802 links, MAC (Media Access Control) frames and addresses medium use; LLC (Logical Link Control) provides the logical-link interface above it. The OSI layer map belongs in the <a href="osi.html">OSI notes</a>; the one relevant distinction here is that MAC procedures decide when a station may send.</p>
+<figure><div class="diagram-frame" style="--diagram-width:456.1px"><svg role="img" aria-label="Lecture mapping of IEEE 802 work: 802.1 management, 802.2 LLC, and 802.3, 802.4, and 802.5 MAC families. The arrows show the lecture’s grouping, not packet flow." width="456pt" height="230pt"
+ viewBox="0.00 0.00 456.10 229.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="lan-ieee802-context-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 218.8)">
+<title>G</title>
+<!-- management -->
+<g id="lan-ieee802-context-node1" class="node">
+<title>management</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M302.5,-208C302.5,-208 204.5,-208 204.5,-208 198.5,-208 192.5,-202 192.5,-196 192.5,-196 192.5,-172 192.5,-172 192.5,-166 198.5,-160 204.5,-160 204.5,-160 302.5,-160 302.5,-160 308.5,-160 314.5,-166 314.5,-172 314.5,-172 314.5,-196 314.5,-196 314.5,-202 308.5,-208 302.5,-208"/>
+<text text-anchor="middle" x="253.5" y="-189" font-family="Georgia" font-size="15.00">802.1</text>
+<text text-anchor="middle" x="253.5" y="-172" font-family="Georgia" font-size="15.00">management</text>
+</g>
+<!-- llc -->
+<g id="lan-ieee802-context-node2" class="node">
+<title>llc</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M274.5,-128C274.5,-128 232.5,-128 232.5,-128 226.5,-128 220.5,-122 220.5,-116 220.5,-116 220.5,-92 220.5,-92 220.5,-86 226.5,-80 232.5,-80 232.5,-80 274.5,-80 274.5,-80 280.5,-80 286.5,-86 286.5,-92 286.5,-92 286.5,-116 286.5,-116 286.5,-122 280.5,-128 274.5,-128"/>
+<text text-anchor="middle" x="253.5" y="-109" font-family="Georgia" font-size="15.00">802.2</text>
+<text text-anchor="middle" x="253.5" y="-92" font-family="Georgia" font-size="15.00">LLC</text>
+</g>
+<!-- management&#45;&gt;llc -->
+<g id="lan-ieee802-context-edge1" class="edge">
+<title>management&#45;&gt;llc</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M253.5,-159.6C253.5,-151.66 253.5,-142.69 253.5,-134.35"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="255.6,-134.12 253.5,-128.12 251.4,-134.12 255.6,-134.12"/>
+</g>
+<!-- ethernet -->
+<g id="lan-ieee802-context-node3" class="node">
+<title>ethernet</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M169,-48C169,-48 12,-48 12,-48 6,-48 0,-42 0,-36 0,-36 0,-12 0,-12 0,-6 6,0 12,0 12,0 169,0 169,0 175,0 181,-6 181,-12 181,-12 181,-36 181,-36 181,-42 175,-48 169,-48"/>
+<text text-anchor="middle" x="90.5" y="-29" font-family="Georgia" font-size="15.00">802.3</text>
+<text text-anchor="middle" x="90.5" y="-12" font-family="Georgia" font-size="15.00">Ethernet / CSMA&#45;CD</text>
+</g>
+<!-- llc&#45;&gt;ethernet -->
+<g id="lan-ieee802-context-edge2" class="edge">
+<title>llc&#45;&gt;ethernet</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M220.12,-87.03C198.3,-76.59 169.31,-62.71 144.28,-50.73"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="144.99,-48.75 138.67,-48.05 143.18,-52.54 144.99,-48.75"/>
+</g>
+<!-- bus -->
+<g id="lan-ieee802-context-node4" class="node">
+<title>bus</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M292,-48C292,-48 215,-48 215,-48 209,-48 203,-42 203,-36 203,-36 203,-12 203,-12 203,-6 209,0 215,0 215,0 292,0 292,0 298,0 304,-6 304,-12 304,-12 304,-36 304,-36 304,-42 298,-48 292,-48"/>
+<text text-anchor="middle" x="253.5" y="-29" font-family="Georgia" font-size="15.00">802.4</text>
+<text text-anchor="middle" x="253.5" y="-12" font-family="Georgia" font-size="15.00">Token Bus</text>
+</g>
+<!-- llc&#45;&gt;bus -->
+<g id="lan-ieee802-context-edge3" class="edge">
+<title>llc&#45;&gt;bus</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M253.5,-79.6C253.5,-71.66 253.5,-62.69 253.5,-54.35"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="255.6,-54.12 253.5,-48.12 251.4,-54.12 255.6,-54.12"/>
+</g>
+<!-- ring -->
+<g id="lan-ieee802-context-node5" class="node">
+<title>ring</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M422.5,-48C422.5,-48 338.5,-48 338.5,-48 332.5,-48 326.5,-42 326.5,-36 326.5,-36 326.5,-12 326.5,-12 326.5,-6 332.5,0 338.5,0 338.5,0 422.5,0 422.5,0 428.5,0 434.5,-6 434.5,-12 434.5,-12 434.5,-36 434.5,-36 434.5,-42 428.5,-48 422.5,-48"/>
+<text text-anchor="middle" x="380.5" y="-29" font-family="Georgia" font-size="15.00">802.5</text>
+<text text-anchor="middle" x="380.5" y="-12" font-family="Georgia" font-size="15.00">Token Ring</text>
+</g>
+<!-- llc&#45;&gt;ring -->
+<g id="lan-ieee802-context-edge4" class="edge">
+<title>llc&#45;&gt;ring</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M286.54,-82.71C301.99,-73.22 320.59,-61.79 337.16,-51.62"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="338.67,-53.15 342.69,-48.22 336.48,-49.57 338.67,-53.15"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Lecture mapping of IEEE 802 work: 802.1 management, 802.2 LLC, and 802.3, 802.4, and 802.5 MAC families. The arrows show the lecture’s grouping, not packet flow.</figcaption></figure>
+<p>The PDF describes IEEE 802 as splitting the data-link functions into LLC and MAC; it identifies LLC as a subset of HDLC and associates MAC with the 802.3/4/5 families. The second Lecture 4 source names Token Ring, Token Bus, and Ethernet as CSMA/CD examples. These labels are useful historical context; the following sections explain their access rules once, then follow Ethernet into its switched form.</p>
+<h2 id="section-2">Three ways to decide who sends</h2>
+<p>Medium-access methods solve the same question in different ways: <strong>who gets to transmit now?</strong> The slides group methods into primary/secondary control and peer-to-peer access. Polling and TDMA assign turns; ALOHA and CSMA let stations contend; token methods circulate permission. The table preserves the source families without treating ARQ reliability methods as access protocols.</p>
+<table>
+<thead>
+<tr>
+<th>Family</th>
+<th>Rule for taking a turn</th>
+<th>What the source emphasizes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Poll/select</td>
+<td>A primary asks a secondary whether it has data or selects a secondary to receive.</td>
+<td>The primary controls when secondaries may send or receive.</td>
+</tr>
+<tr>
+<td>TDMA</td>
+<td>A reference station announces which station owns each time slot.</td>
+<td>Satellites; secondaries indicate demand to the reference station.</td>
+</tr>
+<tr>
+<td>TDM</td>
+<td>Each station has a pre-assigned slot and transmits only in that slot.</td>
+<td>The simplest peer-to-peer schedule in the slide.</td>
+</tr>
+<tr>
+<td>ALOHA</td>
+<td>A station transmits when it has data; overlapping frames can collide.</td>
+<td>Arbitrary start times make collision risk rise under heavy traffic.</td>
+</tr>
+<tr>
+<td>CSMA</td>
+<td>A station listens and transmits when the channel sounds idle.</td>
+<td>Near-simultaneous starts can still collide because signals take time to propagate.</td>
+</tr>
+<tr>
+<td>CSMA/CD</td>
+<td>A wired station listens while sending, stops on collision, then retries after a random wait.</td>
+<td>Historical shared-medium Ethernet; the LAN slides supply the jam and backoff details below.</td>
+</tr>
+<tr>
+<td>Token passing</td>
+<td>Only the station holding a free token may send.</td>
+<td>Token Ring and Token Bus provide turns without Ethernet collision contention.</td>
+</tr>
+</tbody>
+</table>
+<p>Polling and ARQ are separate dimensions even though the lecture's slide 29 lists “stop and wait” and “continuous ARQ” under polling. <strong>Polling chooses who may access the medium; ARQ handles loss or corruption after a frame is sent.</strong> A system can combine a poll schedule with an ARQ recovery method. The data-link guide covers ARQ itself.</p>
+<h3>Poll/select, TDMA and TDM</h3>
+<p>In the lecture's poll/select dialogue, a primary polls with “Do you have data for me?” or selects a secondary with “I have data for you and I am selecting you. Can you receive?” The key is centralized turn control, not a numeric efficiency calculation; none is supplied.</p>
+<p>For satellite TDMA, one site is the master/reference station. Secondary stations indicate that they need the channel; the reference station periodically announces which station may use each time slot. The separate TDM slide describes pre-assigned slots: a station sends only in its own slot. Keep those source descriptions distinct: TDMA's slide includes a reference station and requests, whereas the TDM slide only states fixed slots. </p>
+<h3>ALOHA and carrier sensing</h3>
+<p>Pure ALOHA allows transmission at arbitrary times. If two frames overlap, the lecture says stations detect the collision and retransmit; as traffic grows, overlaps become more likely and performance degrades. Its A–E timeline shows arbitrary frame placement and overlaps only; it has no measured outcomes or time values. On radio links, senders generally cannot detect a collision while transmitting; successful reception is commonly inferred from an acknowledgement. That wireless qualification is supplemental and is explained below.</p>
+<p>CSMA improves on ALOHA by listening first. A station transmits only if it senses the channel free, but two stations can both sense idle before either signal reaches the other. They may therefore start nearly together and collide. CSMA/CD adds collision detection while transmitting: abort the damaged attempt and back off. The source's conceptual timeline marks three states—contention, transmission, and idle—without assigning numeric slot lengths.</p>
+<figure><div class="diagram-frame" style="--diagram-width:826.6px"><svg role="img" aria-label="CSMA/CD states named in dataLink.ppt slide 39, with the collision response from slides 38–39 and the Ethernet lecture. The source assigns no timing values to this timeline." width="827pt" height="139pt"
+ viewBox="0.00 0.00 826.60 138.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="lan-csma-cd-states-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- idle -->
+<g id="lan-csma-cd-states-node1" class="node">
+<title>idle</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M107,-48C107,-48 12,-48 12,-48 6,-48 0,-42 0,-36 0,-36 0,-12 0,-12 0,-6 6,0 12,0 12,0 107,0 107,0 113,0 119,-6 119,-12 119,-12 119,-36 119,-36 119,-42 113,-48 107,-48"/>
+<text text-anchor="middle" x="59.5" y="-29" font-family="Georgia" font-size="15.00">Idle</text>
+<text text-anchor="middle" x="59.5" y="-12" font-family="Georgia" font-size="15.00">medium free</text>
+</g>
+<!-- contend -->
+<g id="lan-csma-cd-states-node2" class="node">
+<title>contend</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M352,-88C352,-88 238,-88 238,-88 232,-88 226,-82 226,-76 226,-76 226,-52 226,-52 226,-46 232,-40 238,-40 238,-40 352,-40 352,-40 358,-40 364,-46 364,-52 364,-52 364,-76 364,-76 364,-82 358,-88 352,-88"/>
+<text text-anchor="middle" x="295" y="-69" font-family="Georgia" font-size="15.00">Contention</text>
+<text text-anchor="middle" x="295" y="-52" font-family="Georgia" font-size="15.00">listen / back off</text>
+</g>
+<!-- idle&#45;&gt;contend -->
+<g id="lan-csma-cd-states-edge1" class="edge">
+<title>idle&#45;&gt;contend</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M119.12,-34.04C149.64,-39.27 187.28,-45.72 219.81,-51.29"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="219.56,-53.38 225.82,-52.32 220.27,-49.24 219.56,-53.38"/>
+<text text-anchor="middle" x="172.5" y="-51.4" font-family="Georgia" font-size="12.00">frame ready</text>
+</g>
+<!-- send -->
+<g id="lan-csma-cd-states-node3" class="node">
+<title>send</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M602,-117C602,-117 470,-117 470,-117 464,-117 458,-111 458,-105 458,-105 458,-81 458,-81 458,-75 464,-69 470,-69 470,-69 602,-69 602,-69 608,-69 614,-75 614,-81 614,-81 614,-105 614,-105 614,-111 608,-117 602,-117"/>
+<text text-anchor="middle" x="536" y="-98" font-family="Georgia" font-size="15.00">Transmission</text>
+<text text-anchor="middle" x="536" y="-81" font-family="Georgia" font-size="15.00">send and monitor</text>
+</g>
+<!-- contend&#45;&gt;send -->
+<g id="lan-csma-cd-states-edge2" class="edge">
+<title>contend&#45;&gt;send</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M364.17,-72.27C391.48,-75.58 423.2,-79.43 451.84,-82.91"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="451.7,-85.01 457.91,-83.65 452.2,-80.84 451.7,-85.01"/>
+<text text-anchor="middle" x="411" y="-84.4" font-family="Georgia" font-size="12.00">idle + IFG</text>
+</g>
+<!-- send&#45;&gt;idle -->
+<g id="lan-csma-cd-states-edge3" class="edge">
+<title>send&#45;&gt;idle</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M471.77,-68.91C467.09,-66.96 462.46,-64.98 458,-63 415.3,-44.06 409.46,-26.73 364,-16 283.41,3.03 187.43,-4.31 125.3,-12.82"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="124.67,-10.79 119.02,-13.7 125.26,-14.95 124.67,-10.79"/>
+<text text-anchor="middle" x="295" y="-19.4" font-family="Georgia" font-size="12.00">success</text>
+</g>
+<!-- collision -->
+<g id="lan-csma-cd-states-node4" class="node">
+<title>collision</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M793,-77C793,-77 704,-77 704,-77 698,-77 692,-71 692,-65 692,-65 692,-41 692,-41 692,-35 698,-29 704,-29 704,-29 793,-29 793,-29 799,-29 805,-35 805,-41 805,-41 805,-65 805,-65 805,-71 799,-77 793,-77"/>
+<text text-anchor="middle" x="748.5" y="-58" font-family="Georgia" font-size="15.00">Collision</text>
+<text text-anchor="middle" x="748.5" y="-41" font-family="Georgia" font-size="15.00">jam + abort</text>
+</g>
+<!-- send&#45;&gt;collision -->
+<g id="lan-csma-cd-states-edge4" class="edge">
+<title>send&#45;&gt;collision</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M614.19,-78.33C637.78,-73.85 663.39,-68.98 685.81,-64.72"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="686.24,-66.78 691.74,-63.6 685.45,-62.65 686.24,-66.78"/>
+<text text-anchor="middle" x="653" y="-77.4" font-family="Georgia" font-size="12.00">overlap</text>
+</g>
+<!-- collision&#45;&gt;contend -->
+<g id="lan-csma-cd-states-edge5" class="edge">
+<title>collision&#45;&gt;contend</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M692,-48.93C668.02,-47.36 639.65,-45.77 614,-45 544.7,-42.93 527.22,-40.95 458,-45 429.22,-46.68 397.71,-50.03 370.2,-53.45"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="369.72,-51.4 364.03,-54.23 370.24,-55.57 369.72,-51.4"/>
+<text text-anchor="middle" x="536" y="-48.4" font-family="Georgia" font-size="12.00">random retry</text>
+</g>
+</g>
+</svg>
+</div><figcaption>CSMA/CD states named in dataLink.ppt slide 39, with the collision response from slides 38–39 and the Ethernet lecture. The source assigns no timing values to this timeline.</figcaption></figure>
+<p>The Pure ALOHA slide also has five separate user lanes (A–E) with frames placed at arbitrary times. The exact horizontal positions are illustrative only; the slide does not mark which frame succeeded or provide throughput data. Its teaching point is that there is no common start slot, so frame overlap is possible. CSMA/CD's source timeline above differs because stations first sense the medium and detect collisions while sending.</p>
+
+<details class="worked"><summary>Worked conceptual trace: why carrier sensing can still collide</summary><section class="walk" aria-label="Two stations both observe idle before either signal arrives"><h3>Two stations both observe idle before either signal arrives</h3><div class="example-input"><p><b>Given:</b> shared wired medium; two stations have frames ready; propagation delay means each may sense the other only after it starts. This is a conceptual trace, not a timed source example.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. The shared channel is idle</h4><p>Stations A and B are separated along a shared cable. Neither has yet received a signal from the other.</p></section><section class="step"><h4>2. Both sense before propagation completes</h4><p>A and B each observe an idle channel and begin transmitting within the propagation delay between them. Carrier sensing is local evidence, not a simultaneous global reservation.</p></section><section class="step"><h4>3. Their signals meet</h4><p>The transmissions overlap on the medium. CSMA alone cannot prevent this collision because both decisions were made from an idle observation.</p></section><section class="step"><h4>4. CSMA/CD reacts</h4><p>On a shared wired half-duplex Ethernet segment, each sender detects the collision while transmitting, sends the collision-enforcement jam, aborts the frame, and waits a random backoff before retrying.</p></section></section></details>
+
+<h3>Collision-avoidance scheduling and two RTS/CTS contexts</h3>
+<p>The lecture also names “carrier-sense systems (collision free)” and describes two broad ideas: a timer or arbiter chooses a safe time, or stations use pre-determined timing thresholds that may reflect priority. No specific protocol, synchronization rule, or failure behavior is shown, so treat these as scheduling goals rather than a guarantee that every real deployment has zero collisions.</p>
+<p>The slide 31 RTS/CTS sketch is a ready/clear handshake: one side sends RTS, the other replies CTS, data follows, and a later CTS-Off / interrupted data line indicates that the receiver is no longer ready. The slide compares this to RS-232-C control signaling. That example is about gating a data exchange; it does not show the wireless medium reservation procedure.</p>
+<p><strong>Wireless distinction:</strong> IEEE 802.11 WLAN uses CSMA/CA rather than wired Ethernet's CSMA/CD. Its medium-access behavior differs from the serial-style RTS/CTS control signals shown here; see <a href="https://www.rfc-editor.org/rfc/rfc8325.html">RFC 8325 §6.1</a>.</p>
+<h2 id="section-3">Token access: a turn circulates instead of competing</h2>
+<p>In Token Ring, a logical ring carries a free token while no station owns the turn. A station with data waits for the free token, removes it, and sends a busy token plus its frame. Each station repeats the circulating traffic; the destination copies its data. When the busy token and data return to the sender, the sender removes them and releases a free token. The recovered speaker notes emphasize that the basic scheme has one token; a slotted-ring scheme is the later multi-token exception mentioned in the notes. If the sender wants to send again, the next node gets first chance, so it waits for another turn.</p>
+<p>The original Token Ring slides identify it as IBM-promoted and IEEE 802.5, with historical 4→16 Mb/s performance and priority-based access. The lecture's compact frame view has an 8-bit start delimiter, 8-bit access-control field, and 8-bit end delimiter for a 3-byte token; the data/command form adds frame control, 6-byte destination and source addresses, payload, CRC, and frame status. That structure is context for the token procedure, not another Ethernet frame format.</p>
+<p>The PowerPoint shows a star-like physical layout through a Token Ring MAU, while frames follow a logical ring. Token Bus uses a physical coaxial bus but a logical/virtual ring: stations pass permission in a sequence even though transmissions travel on the bus. The LAN PDF says the sequence can be based on numeric address; after passing the token to a successor, a station watches for evidence such as that successor's next transmission, and may choose a new successor if needed. The separate slide 46 only shows the bus/virtual-ring distinction, so that successor detail is a lecture-PDF supplement.</p>
+<p>Token access is orderly under a functioning ring: the lecture says every station gets a chance within a bounded time and that token methods can be fairer and more efficient than CSMA/CD under heavy load. Waiting for the token and maintaining the ring add delay and complexity. Some rings use a special monitor node to restore a lost token; others share recovery responsibility and must avoid creating multiple replacement tokens. Centralized maintenance creates a single point of failure, while distributed maintenance adds coordination and complexity.</p>
+<figure><div class="diagram-frame" style="--diagram-width:543.6px"><svg role="img" aria-label="Logical Token Ring path for the six stations in the lecture figure. The token and busy frame move in this order; the physical cabling can be arranged differently." width="544pt" height="96pt"
+ viewBox="0.00 0.00 543.60 95.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="lan-token-ring-logical-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 84.8)">
+<title>G</title>
+<!-- n1 -->
+<g id="lan-token-ring-logical-node1" class="node">
+<title>n1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M42,-41C42,-41 12,-41 12,-41 6,-41 0,-35 0,-29 0,-29 0,-17 0,-17 0,-11 6,-5 12,-5 12,-5 42,-5 42,-5 48,-5 54,-11 54,-17 54,-17 54,-29 54,-29 54,-35 48,-41 42,-41"/>
+<text text-anchor="middle" x="27" y="-19.5" font-family="Georgia" font-size="15.00">1</text>
+</g>
+<!-- n2 -->
+<g id="lan-token-ring-logical-node2" class="node">
+<title>n2</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M162,-74C162,-74 132,-74 132,-74 126,-74 120,-68 120,-62 120,-62 120,-50 120,-50 120,-44 126,-38 132,-38 132,-38 162,-38 162,-38 168,-38 174,-44 174,-50 174,-50 174,-62 174,-62 174,-68 168,-74 162,-74"/>
+<text text-anchor="middle" x="147" y="-52.5" font-family="Georgia" font-size="15.00">2</text>
+</g>
+<!-- n1&#45;&gt;n2 -->
+<g id="lan-token-ring-logical-edge1" class="edge">
+<title>n1&#45;&gt;n2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M54.19,-30.32C71.76,-35.24 95.02,-41.74 113.73,-46.97"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="113.54,-49.1 119.89,-48.7 114.67,-45.06 113.54,-49.1"/>
+<text text-anchor="middle" x="87" y="-46.4" font-family="Georgia" font-size="12.00">token</text>
+</g>
+<!-- n3 -->
+<g id="lan-token-ring-logical-node3" class="node">
+<title>n3</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M249,-74C249,-74 219,-74 219,-74 213,-74 207,-68 207,-62 207,-62 207,-50 207,-50 207,-44 213,-38 219,-38 219,-38 249,-38 249,-38 255,-38 261,-44 261,-50 261,-50 261,-62 261,-62 261,-68 255,-74 249,-74"/>
+<text text-anchor="middle" x="234" y="-52.5" font-family="Georgia" font-size="15.00">3</text>
+</g>
+<!-- n2&#45;&gt;n3 -->
+<g id="lan-token-ring-logical-edge2" class="edge">
+<title>n2&#45;&gt;n3</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M174.43,-56C182.74,-56 192.02,-56 200.69,-56"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="200.88,-58.1 206.88,-56 200.88,-53.9 200.88,-58.1"/>
+</g>
+<!-- n4 -->
+<g id="lan-token-ring-logical-node4" class="node">
+<title>n4</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M336,-74C336,-74 306,-74 306,-74 300,-74 294,-68 294,-62 294,-62 294,-50 294,-50 294,-44 300,-38 306,-38 306,-38 336,-38 336,-38 342,-38 348,-44 348,-50 348,-50 348,-62 348,-62 348,-68 342,-74 336,-74"/>
+<text text-anchor="middle" x="321" y="-52.5" font-family="Georgia" font-size="15.00">4</text>
+</g>
+<!-- n3&#45;&gt;n4 -->
+<g id="lan-token-ring-logical-edge3" class="edge">
+<title>n3&#45;&gt;n4</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M261.43,-56C269.74,-56 279.02,-56 287.69,-56"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="287.88,-58.1 293.88,-56 287.88,-53.9 287.88,-58.1"/>
+</g>
+<!-- n5 -->
+<g id="lan-token-ring-logical-node5" class="node">
+<title>n5</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M423,-74C423,-74 393,-74 393,-74 387,-74 381,-68 381,-62 381,-62 381,-50 381,-50 381,-44 387,-38 393,-38 393,-38 423,-38 423,-38 429,-38 435,-44 435,-50 435,-50 435,-62 435,-62 435,-68 429,-74 423,-74"/>
+<text text-anchor="middle" x="408" y="-52.5" font-family="Georgia" font-size="15.00">5</text>
+</g>
+<!-- n4&#45;&gt;n5 -->
+<g id="lan-token-ring-logical-edge4" class="edge">
+<title>n4&#45;&gt;n5</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M348.43,-56C356.74,-56 366.02,-56 374.69,-56"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="374.88,-58.1 380.88,-56 374.88,-53.9 374.88,-58.1"/>
+</g>
+<!-- n6 -->
+<g id="lan-token-ring-logical-node6" class="node">
+<title>n6</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M510,-36C510,-36 480,-36 480,-36 474,-36 468,-30 468,-24 468,-24 468,-12 468,-12 468,-6 474,0 480,0 480,0 510,0 510,0 516,0 522,-6 522,-12 522,-12 522,-24 522,-24 522,-30 516,-36 510,-36"/>
+<text text-anchor="middle" x="495" y="-14.5" font-family="Georgia" font-size="15.00">6</text>
+</g>
+<!-- n5&#45;&gt;n6 -->
+<g id="lan-token-ring-logical-edge5" class="edge">
+<title>n5&#45;&gt;n6</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M435.43,-44.18C443.9,-40.4 453.38,-36.16 462.2,-32.22"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="463.26,-34.04 467.88,-29.68 461.55,-30.21 463.26,-34.04"/>
+</g>
+<!-- n6&#45;&gt;n1 -->
+<g id="lan-token-ring-logical-edge6" class="edge">
+<title>n6&#45;&gt;n1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M467.76,-11.41C451.06,-7.78 428.89,-4 409,-4 146,-4 146,-4 146,-4 116.67,-4 83.75,-9.79 60.15,-14.98"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="59.44,-12.99 54.05,-16.35 60.37,-17.09 59.44,-12.99"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Logical Token Ring path for the six stations in the lecture figure. The token and busy frame move in this order; the physical cabling can be arranged differently.</figcaption></figure>
+
+<details class="worked"><summary>Lecture sequence: a free token becomes a busy frame and returns</summary><section class="walk" aria-label="Follow the six-station Token Ring lifecycle"><h3>Follow the six-station Token Ring lifecycle</h3><div class="example-input"><p><b>Given:</b> stations 1–6 in logical order, one free token, and station 2 has data for station 5. Receiver copying and the lifecycle follow the Lecture 4 slides 42–43 and recovered speaker notes; the sender/receiver labels illustrate one path.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Free token circulates</h4><p>Stations 1→2→3→4→5→6→1 pass the single free token. A waiting station may take the turn only when the free token reaches it.</p></section><section class="step"><h4>2. Station 2 captures the turn</h4><p>Station 2 removes the free token and sends a busy token with its message toward station 3. No other station can take that same token while the frame is circulating.</p></section><section class="step"><h4>3. Intermediate stations repeat; destination copies</h4><p>Stations 3, 4, 5, and 6 forward the circulating frame. If station 5 is the destination in this teaching example, it copies the data and continues forwarding the frame around the ring.</p></section><section class="step"><h4>4. Sender removes returned data and busy token</h4><p>The busy frame returns through station 1 to station 2. The sender removes the frame and its busy token, rather than leaving a duplicate circulating indefinitely.</p></section><section class="step"><h4>5. Sender releases a free token</h4><p>Station 2 transmits a new free token. The following station in ring order gets the next chance; station 2 cannot immediately capture the same turn ahead of others.</p></section></section></details>
+
+<figure><div class="diagram-frame" style="--diagram-width:281.6px"><svg role="img" aria-label="Physical Token Ring example: hosts cable to a multipoint access unit in a star-like arrangement; the logical token path remains a ring." width="282pt" height="126pt"
+ viewBox="0.00 0.00 281.60 125.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="lan-token-ring-mau-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 114.8)">
+<title>G</title>
+<!-- mau -->
+<g id="lan-token-ring-mau-node1" class="node">
+<title>mau</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M148.5,-104C148.5,-104 111.5,-104 111.5,-104 105.5,-104 99.5,-98 99.5,-92 99.5,-92 99.5,-80 99.5,-80 99.5,-74 105.5,-68 111.5,-68 111.5,-68 148.5,-68 148.5,-68 154.5,-68 160.5,-74 160.5,-80 160.5,-80 160.5,-92 160.5,-92 160.5,-98 154.5,-104 148.5,-104"/>
+<text text-anchor="middle" x="130" y="-82.5" font-family="Georgia" font-size="15.00">MAU</text>
+</g>
+<!-- a -->
+<g id="lan-token-ring-mau-node2" class="node">
+<title>a</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M60,-36C60,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 60,0 60,0 66,0 72,-6 72,-12 72,-12 72,-24 72,-24 72,-30 66,-36 60,-36"/>
+<text text-anchor="middle" x="36" y="-14.5" font-family="Georgia" font-size="15.00">Host 1</text>
+</g>
+<!-- mau&#45;&gt;a -->
+<g id="lan-token-ring-mau-edge1" class="edge">
+<title>mau&#45;&gt;a</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M99.27,-68.52C85.86,-59.9 70.53,-49.25 58.22,-40.04"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="59.2,-38.15 53.15,-36.19 56.66,-41.49 59.2,-38.15"/>
+</g>
+<!-- b -->
+<g id="lan-token-ring-mau-node3" class="node">
+<title>b</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M154,-36C154,-36 106,-36 106,-36 100,-36 94,-30 94,-24 94,-24 94,-12 94,-12 94,-6 100,0 106,0 106,0 154,0 154,0 160,0 166,-6 166,-12 166,-12 166,-24 166,-24 166,-30 160,-36 154,-36"/>
+<text text-anchor="middle" x="130" y="-14.5" font-family="Georgia" font-size="15.00">Host 2</text>
+</g>
+<!-- mau&#45;&gt;b -->
+<g id="lan-token-ring-mau-edge3" class="edge">
+<title>mau&#45;&gt;b</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M122.64,-67.66C121.7,-59.99 121.5,-50.85 122.06,-42.58"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="124.16,-42.62 122.62,-36.45 119.98,-42.23 124.16,-42.62"/>
+</g>
+<!-- c -->
+<g id="lan-token-ring-mau-node4" class="node">
+<title>c</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M248,-36C248,-36 200,-36 200,-36 194,-36 188,-30 188,-24 188,-24 188,-12 188,-12 188,-6 194,0 200,0 200,0 248,0 248,0 254,0 260,-6 260,-12 260,-12 260,-24 260,-24 260,-30 254,-36 248,-36"/>
+<text text-anchor="middle" x="224" y="-14.5" font-family="Georgia" font-size="15.00">Host 3</text>
+</g>
+<!-- mau&#45;&gt;c -->
+<g id="lan-token-ring-mau-edge5" class="edge">
+<title>mau&#45;&gt;c</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M147.34,-67.66C158.48,-59.1 173.17,-48.7 186.77,-39.72"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="188.25,-41.26 192.12,-36.22 185.95,-37.75 188.25,-41.26"/>
+</g>
+<!-- a&#45;&gt;mau -->
+<g id="lan-token-ring-mau-edge2" class="edge">
+<title>a&#45;&gt;mau</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M67.88,-36.22C80.99,-44.7 95.78,-54.98 107.73,-63.92"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="106.61,-65.71 112.66,-67.66 109.15,-62.36 106.61,-65.71"/>
+</g>
+<!-- b&#45;&gt;mau -->
+<g id="lan-token-ring-mau-edge4" class="edge">
+<title>b&#45;&gt;mau</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M137.38,-36.45C138.31,-44.14 138.49,-53.28 137.94,-61.55"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="135.83,-61.49 137.36,-67.66 140.01,-61.88 135.83,-61.49"/>
+</g>
+<!-- c&#45;&gt;mau -->
+<g id="lan-token-ring-mau-edge6" class="edge">
+<title>c&#45;&gt;mau</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M206.85,-36.19C195.31,-45.08 179.9,-55.96 165.84,-65.2"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="164.62,-63.49 160.73,-68.52 166.91,-67.01 164.62,-63.49"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Physical Token Ring example: hosts cable to a multipoint access unit in a star-like arrangement; the logical token path remains a ring.</figcaption></figure>
+<figure><div class="diagram-frame" style="--diagram-width:455.6px"><svg role="img" aria-label="Token Bus physical layout: each station attaches to the shared coaxial bus. The bus layout does not determine the token order." width="456pt" height="126pt"
+ viewBox="0.00 0.00 455.60 125.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="lan-token-bus-physical-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 114.8)">
+<title>G</title>
+<!-- bus -->
+<g id="lan-token-bus-physical-node1" class="node">
+<title>bus</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M288.5,-36C288.5,-36 145.5,-36 145.5,-36 139.5,-36 133.5,-30 133.5,-24 133.5,-24 133.5,-12 133.5,-12 133.5,-6 139.5,0 145.5,0 145.5,0 288.5,0 288.5,0 294.5,0 300.5,-6 300.5,-12 300.5,-12 300.5,-24 300.5,-24 300.5,-30 294.5,-36 288.5,-36"/>
+<text text-anchor="middle" x="217" y="-14.5" font-family="Georgia" font-size="15.00">Shared coaxial bus</text>
+</g>
+<!-- n1 -->
+<g id="lan-token-bus-physical-node2" class="node">
+<title>n1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M80,-104C80,-104 12,-104 12,-104 6,-104 0,-98 0,-92 0,-92 0,-80 0,-80 0,-74 6,-68 12,-68 12,-68 80,-68 80,-68 86,-68 92,-74 92,-80 92,-80 92,-92 92,-92 92,-98 86,-104 80,-104"/>
+<text text-anchor="middle" x="46" y="-82.5" font-family="Georgia" font-size="15.00">Station 1</text>
+</g>
+<!-- n1&#45;&gt;bus -->
+<g id="lan-token-bus-physical-edge1" class="edge">
+<title>n1&#45;&gt;bus</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M90.48,-67.83C115.82,-58.05 147.44,-45.85 172.74,-36.08"/>
+</g>
+<!-- n2 -->
+<g id="lan-token-bus-physical-node3" class="node">
+<title>n2</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M194,-104C194,-104 126,-104 126,-104 120,-104 114,-98 114,-92 114,-92 114,-80 114,-80 114,-74 120,-68 126,-68 126,-68 194,-68 194,-68 200,-68 206,-74 206,-80 206,-80 206,-92 206,-92 206,-98 200,-104 194,-104"/>
+<text text-anchor="middle" x="160" y="-82.5" font-family="Georgia" font-size="15.00">Station 2</text>
+</g>
+<!-- n2&#45;&gt;bus -->
+<g id="lan-token-bus-physical-edge2" class="edge">
+<title>n2&#45;&gt;bus</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M174.98,-67.66C183.29,-58.03 193.6,-46.1 201.93,-36.45"/>
+</g>
+<!-- n3 -->
+<g id="lan-token-bus-physical-node4" class="node">
+<title>n3</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M308,-104C308,-104 240,-104 240,-104 234,-104 228,-98 228,-92 228,-92 228,-80 228,-80 228,-74 234,-68 240,-68 240,-68 308,-68 308,-68 314,-68 320,-74 320,-80 320,-80 320,-92 320,-92 320,-98 314,-104 308,-104"/>
+<text text-anchor="middle" x="274" y="-82.5" font-family="Georgia" font-size="15.00">Station 3</text>
+</g>
+<!-- n3&#45;&gt;bus -->
+<g id="lan-token-bus-physical-edge3" class="edge">
+<title>n3&#45;&gt;bus</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M259.02,-67.66C250.71,-58.03 240.4,-46.1 232.07,-36.45"/>
+</g>
+<!-- n4 -->
+<g id="lan-token-bus-physical-node5" class="node">
+<title>n4</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M422,-104C422,-104 354,-104 354,-104 348,-104 342,-98 342,-92 342,-92 342,-80 342,-80 342,-74 348,-68 354,-68 354,-68 422,-68 422,-68 428,-68 434,-74 434,-80 434,-80 434,-92 434,-92 434,-98 428,-104 422,-104"/>
+<text text-anchor="middle" x="388" y="-82.5" font-family="Georgia" font-size="15.00">Station 4</text>
+</g>
+<!-- n4&#45;&gt;bus -->
+<g id="lan-token-bus-physical-edge4" class="edge">
+<title>n4&#45;&gt;bus</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M343.52,-67.83C318.18,-58.05 286.56,-45.85 261.26,-36.08"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Token Bus physical layout: each station attaches to the shared coaxial bus. The bus layout does not determine the token order.</figcaption></figure>
+<figure><div class="diagram-frame" style="--diagram-width:521.6px"><svg role="img" aria-label="Token Bus logical/virtual ring: the token moves in this agreed station sequence even though the stations are physically connected to a bus." width="522pt" height="96pt"
+ viewBox="0.00 0.00 521.60 95.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="lan-token-bus-logical-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 84.8)">
+<title>G</title>
+<!-- n1 -->
+<g id="lan-token-bus-logical-node1" class="node">
+<title>n1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M80,-41C80,-41 12,-41 12,-41 6,-41 0,-35 0,-29 0,-29 0,-17 0,-17 0,-11 6,-5 12,-5 12,-5 80,-5 80,-5 86,-5 92,-11 92,-17 92,-17 92,-29 92,-29 92,-35 86,-41 80,-41"/>
+<text text-anchor="middle" x="46" y="-19.5" font-family="Georgia" font-size="15.00">Station 1</text>
+</g>
+<!-- n2 -->
+<g id="lan-token-bus-logical-node2" class="node">
+<title>n2</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M238,-74C238,-74 170,-74 170,-74 164,-74 158,-68 158,-62 158,-62 158,-50 158,-50 158,-44 164,-38 170,-38 170,-38 238,-38 238,-38 244,-38 250,-44 250,-50 250,-50 250,-62 250,-62 250,-68 244,-74 238,-74"/>
+<text text-anchor="middle" x="204" y="-52.5" font-family="Georgia" font-size="15.00">Station 2</text>
+</g>
+<!-- n1&#45;&gt;n2 -->
+<g id="lan-token-bus-logical-edge1" class="edge">
+<title>n1&#45;&gt;n2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M92.12,-32.54C110.88,-36.51 132.74,-41.14 152.07,-45.23"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="151.68,-47.29 157.98,-46.48 152.54,-43.18 151.68,-47.29"/>
+<text text-anchor="middle" x="125" y="-45.4" font-family="Georgia" font-size="12.00">token</text>
+</g>
+<!-- n3 -->
+<g id="lan-token-bus-logical-node3" class="node">
+<title>n3</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M363,-74C363,-74 295,-74 295,-74 289,-74 283,-68 283,-62 283,-62 283,-50 283,-50 283,-44 289,-38 295,-38 295,-38 363,-38 363,-38 369,-38 375,-44 375,-50 375,-50 375,-62 375,-62 375,-68 369,-74 363,-74"/>
+<text text-anchor="middle" x="329" y="-52.5" font-family="Georgia" font-size="15.00">Station 3</text>
+</g>
+<!-- n2&#45;&gt;n3 -->
+<g id="lan-token-bus-logical-edge2" class="edge">
+<title>n2&#45;&gt;n3</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M250.1,-56C258.79,-56 267.95,-56 276.82,-56"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="276.9,-58.1 282.9,-56 276.9,-53.9 276.9,-58.1"/>
+</g>
+<!-- n4 -->
+<g id="lan-token-bus-logical-node4" class="node">
+<title>n4</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M488,-36C488,-36 420,-36 420,-36 414,-36 408,-30 408,-24 408,-24 408,-12 408,-12 408,-6 414,0 420,0 420,0 488,0 488,0 494,0 500,-6 500,-12 500,-12 500,-24 500,-24 500,-30 494,-36 488,-36"/>
+<text text-anchor="middle" x="454" y="-14.5" font-family="Georgia" font-size="15.00">Station 4</text>
+</g>
+<!-- n3&#45;&gt;n4 -->
+<g id="lan-token-bus-logical-edge3" class="edge">
+<title>n3&#45;&gt;n4</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M375.1,-42.07C383.88,-39.36 393.13,-36.5 402.08,-33.73"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="402.79,-35.71 407.9,-31.93 401.55,-31.7 402.79,-35.71"/>
+</g>
+<!-- n4&#45;&gt;n1 -->
+<g id="lan-token-bus-logical-edge4" class="edge">
+<title>n4&#45;&gt;n1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M407.8,-18.56C331.6,-19.5 178.09,-21.39 98.1,-22.37"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="97.97,-20.27 92,-22.45 98.03,-24.47 97.97,-20.27"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Token Bus logical/virtual ring: the token moves in this agreed station sequence even though the stations are physically connected to a bus.</figcaption></figure>
+<h3>Wireless LAN signpost</h3>
+<p>The last slide of the LAN PDF lists Wireless LANs (WLANs), IEEE 802.11a and 802.11b, as related topics; it supplies no WLAN procedure. Those are historical labels in this lecture, not a current standards inventory. Wireless uses collision avoidance (CSMA/CA), while old shared-cable Ethernet used collision detection (CSMA/CD).</p>
+<h2 id="section-4">Ethernet frames and medium access</h2>
+<p>Ethernet's frame fields carry destination and source MAC addresses, a Type/Length value, payload/padding, and the frame check sequence. The preamble and start-frame delimiter (SFD) help synchronize and identify the frame start. The sizes below preserve Lecture 4's frame illustration. The maximum basic untagged frame is <strong>1518 bytes, excluding the 8-byte preamble/SFD</strong>.</p>
+<figure><div class="diagram-frame" style="--diagram-width:1045.6px"><svg role="img" aria-label="Basic untagged Ethernet frame fields and widths from Lecture 4 PDF p.24. The 1518-byte maximum counts destination through FCS, not preamble/SFD." width="1046pt" height="70pt"
+ viewBox="0.00 0.00 1045.60 69.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="lan-ethernet-frame-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 58.8)">
+<title>G</title>
+<!-- pre -->
+<g id="lan-ethernet-frame-node1" class="node">
+<title>pre</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M138,-48C138,-48 12,-48 12,-48 6,-48 0,-42 0,-36 0,-36 0,-12 0,-12 0,-6 6,0 12,0 12,0 138,0 138,0 144,0 150,-6 150,-12 150,-12 150,-36 150,-36 150,-42 144,-48 138,-48"/>
+<text text-anchor="middle" x="75" y="-29" font-family="Georgia" font-size="15.00">Preamble + SFD</text>
+<text text-anchor="middle" x="75" y="-12" font-family="Georgia" font-size="15.00">64 bits / 8 bytes</text>
+</g>
+<!-- dst -->
+<g id="lan-ethernet-frame-node2" class="node">
+<title>dst</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M321,-48C321,-48 194,-48 194,-48 188,-48 182,-42 182,-36 182,-36 182,-12 182,-12 182,-6 188,0 194,0 194,0 321,0 321,0 327,0 333,-6 333,-12 333,-12 333,-36 333,-36 333,-42 327,-48 321,-48"/>
+<text text-anchor="middle" x="257.5" y="-29" font-family="Georgia" font-size="15.00">Destination MAC</text>
+<text text-anchor="middle" x="257.5" y="-12" font-family="Georgia" font-size="15.00">48 bits / 6 bytes</text>
+</g>
+<!-- pre&#45;&gt;dst -->
+<g id="lan-ethernet-frame-edge1" class="edge">
+<title>pre&#45;&gt;dst</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M150.2,-24C158.49,-24 166.97,-24 175.34,-24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="175.72,-26.1 181.72,-24 175.72,-21.9 175.72,-26.1"/>
+</g>
+<!-- src -->
+<g id="lan-ethernet-frame-node3" class="node">
+<title>src</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M496,-48C496,-48 377,-48 377,-48 371,-48 365,-42 365,-36 365,-36 365,-12 365,-12 365,-6 371,0 377,0 377,0 496,0 496,0 502,0 508,-6 508,-12 508,-12 508,-36 508,-36 508,-42 502,-48 496,-48"/>
+<text text-anchor="middle" x="436.5" y="-29" font-family="Georgia" font-size="15.00">Source MAC</text>
+<text text-anchor="middle" x="436.5" y="-12" font-family="Georgia" font-size="15.00">48 bits / 6 bytes</text>
+</g>
+<!-- dst&#45;&gt;src -->
+<g id="lan-ethernet-frame-edge2" class="edge">
+<title>dst&#45;&gt;src</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M333.05,-24C341.48,-24 350.09,-24 358.55,-24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="358.99,-26.1 364.99,-24 358.99,-21.9 358.99,-26.1"/>
+</g>
+<!-- type -->
+<g id="lan-ethernet-frame-node4" class="node">
+<title>type</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M671,-48C671,-48 552,-48 552,-48 546,-48 540,-42 540,-36 540,-36 540,-12 540,-12 540,-6 546,0 552,0 552,0 671,0 671,0 677,0 683,-6 683,-12 683,-12 683,-36 683,-36 683,-42 677,-48 671,-48"/>
+<text text-anchor="middle" x="611.5" y="-29" font-family="Georgia" font-size="15.00">Type / Length</text>
+<text text-anchor="middle" x="611.5" y="-12" font-family="Georgia" font-size="15.00">16 bits / 2 bytes</text>
+</g>
+<!-- src&#45;&gt;type -->
+<g id="lan-ethernet-frame-edge3" class="edge">
+<title>src&#45;&gt;type</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M508.36,-24C516.62,-24 525.07,-24 533.4,-24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="533.75,-26.1 539.75,-24 533.75,-21.9 533.75,-26.1"/>
+</g>
+<!-- data -->
+<g id="lan-ethernet-frame-node5" class="node">
+<title>data</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M837,-48C837,-48 727,-48 727,-48 721,-48 715,-42 715,-36 715,-36 715,-12 715,-12 715,-6 721,0 727,0 727,0 837,0 837,0 843,0 849,-6 849,-12 849,-12 849,-36 849,-36 849,-42 843,-48 837,-48"/>
+<text text-anchor="middle" x="782" y="-29" font-family="Georgia" font-size="15.00">Data / pad</text>
+<text text-anchor="middle" x="782" y="-12" font-family="Georgia" font-size="15.00">46–1500 bytes</text>
+</g>
+<!-- type&#45;&gt;data -->
+<g id="lan-ethernet-frame-edge4" class="edge">
+<title>type&#45;&gt;data</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M683.47,-24C691.78,-24 700.28,-24 708.61,-24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="708.94,-26.1 714.94,-24 708.94,-21.9 708.94,-26.1"/>
+</g>
+<!-- fcs -->
+<g id="lan-ethernet-frame-node6" class="node">
+<title>fcs</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M1012,-48C1012,-48 893,-48 893,-48 887,-48 881,-42 881,-36 881,-36 881,-12 881,-12 881,-6 887,0 893,0 893,0 1012,0 1012,0 1018,0 1024,-6 1024,-12 1024,-12 1024,-36 1024,-36 1024,-42 1018,-48 1012,-48"/>
+<text text-anchor="middle" x="952.5" y="-29" font-family="Georgia" font-size="15.00">FCS (CRC)</text>
+<text text-anchor="middle" x="952.5" y="-12" font-family="Georgia" font-size="15.00">32 bits / 4 bytes</text>
+</g>
+<!-- data&#45;&gt;fcs -->
+<g id="lan-ethernet-frame-edge5" class="edge">
+<title>data&#45;&gt;fcs</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M849.11,-24C857.41,-24 865.96,-24 874.42,-24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="874.85,-26.1 880.85,-24 874.85,-21.9 874.85,-26.1"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Basic untagged Ethernet frame fields and widths from Lecture 4 PDF p.24. The 1518-byte maximum counts destination through FCS, not preamble/SFD.</figcaption></figure>
+<figure><div class="diagram-frame" style="--diagram-width:841.6px"><svg role="img" aria-label="802.1Q inserts a 4-byte tag after the source MAC: 2-byte TPID then 2-byte TCI, before the original Type/Length field." width="842pt" height="87pt"
+ viewBox="0.00 0.00 841.60 86.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="lan-vlan-tag-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 75.8)">
+<title>G</title>
+<!-- da -->
+<g id="lan-vlan-tag-node1" class="node">
+<title>da</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M98,-56.5C98,-56.5 12,-56.5 12,-56.5 6,-56.5 0,-50.5 0,-44.5 0,-44.5 0,-20.5 0,-20.5 0,-14.5 6,-8.5 12,-8.5 12,-8.5 98,-8.5 98,-8.5 104,-8.5 110,-14.5 110,-20.5 110,-20.5 110,-44.5 110,-44.5 110,-50.5 104,-56.5 98,-56.5"/>
+<text text-anchor="middle" x="55" y="-37.5" font-family="Georgia" font-size="15.00">Destination</text>
+<text text-anchor="middle" x="55" y="-20.5" font-family="Georgia" font-size="15.00">MAC</text>
+</g>
+<!-- sa -->
+<g id="lan-vlan-tag-node2" class="node">
+<title>sa</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M207,-56.5C207,-56.5 154,-56.5 154,-56.5 148,-56.5 142,-50.5 142,-44.5 142,-44.5 142,-20.5 142,-20.5 142,-14.5 148,-8.5 154,-8.5 154,-8.5 207,-8.5 207,-8.5 213,-8.5 219,-14.5 219,-20.5 219,-20.5 219,-44.5 219,-44.5 219,-50.5 213,-56.5 207,-56.5"/>
+<text text-anchor="middle" x="180.5" y="-37.5" font-family="Georgia" font-size="15.00">Source</text>
+<text text-anchor="middle" x="180.5" y="-20.5" font-family="Georgia" font-size="15.00">MAC</text>
+</g>
+<!-- da&#45;&gt;sa -->
+<g id="lan-vlan-tag-edge1" class="edge">
+<title>da&#45;&gt;sa</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M110.17,-32.5C118.64,-32.5 127.3,-32.5 135.51,-32.5"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="135.68,-34.6 141.68,-32.5 135.68,-30.4 135.68,-34.6"/>
+</g>
+<!-- tpid -->
+<g id="lan-vlan-tag-node3" class="node">
+<title>tpid</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M319,-65C319,-65 263,-65 263,-65 257,-65 251,-59 251,-53 251,-53 251,-12 251,-12 251,-6 257,0 263,0 263,0 319,0 319,0 325,0 331,-6 331,-12 331,-12 331,-53 331,-53 331,-59 325,-65 319,-65"/>
+<text text-anchor="middle" x="291" y="-46" font-family="Georgia" font-size="15.00">TPID</text>
+<text text-anchor="middle" x="291" y="-29" font-family="Georgia" font-size="15.00">2 bytes</text>
+<text text-anchor="middle" x="291" y="-12" font-family="Georgia" font-size="15.00">0x8100</text>
+</g>
+<!-- sa&#45;&gt;tpid -->
+<g id="lan-vlan-tag-edge2" class="edge">
+<title>sa&#45;&gt;tpid</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M219.14,-32.5C227.34,-32.5 236.09,-32.5 244.55,-32.5"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="244.95,-34.6 250.95,-32.5 244.95,-30.4 244.95,-34.6"/>
+</g>
+<!-- tci -->
+<g id="lan-vlan-tag-node4" class="node">
+<title>tci</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M428,-56.5C428,-56.5 375,-56.5 375,-56.5 369,-56.5 363,-50.5 363,-44.5 363,-44.5 363,-20.5 363,-20.5 363,-14.5 369,-8.5 375,-8.5 375,-8.5 428,-8.5 428,-8.5 434,-8.5 440,-14.5 440,-20.5 440,-20.5 440,-44.5 440,-44.5 440,-50.5 434,-56.5 428,-56.5"/>
+<text text-anchor="middle" x="401.5" y="-37.5" font-family="Georgia" font-size="15.00">TCI</text>
+<text text-anchor="middle" x="401.5" y="-20.5" font-family="Georgia" font-size="15.00">2 bytes</text>
+</g>
+<!-- tpid&#45;&gt;tci -->
+<g id="lan-vlan-tag-edge3" class="edge">
+<title>tpid&#45;&gt;tci</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M331.17,-32.5C339.39,-32.5 348.12,-32.5 356.5,-32.5"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="356.84,-34.6 362.84,-32.5 356.84,-30.4 356.84,-34.6"/>
+</g>
+<!-- type -->
+<g id="lan-vlan-tag-node5" class="node">
+<title>type</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M588,-50.5C588,-50.5 484,-50.5 484,-50.5 478,-50.5 472,-44.5 472,-38.5 472,-38.5 472,-26.5 472,-26.5 472,-20.5 478,-14.5 484,-14.5 484,-14.5 588,-14.5 588,-14.5 594,-14.5 600,-20.5 600,-26.5 600,-26.5 600,-38.5 600,-38.5 600,-44.5 594,-50.5 588,-50.5"/>
+<text text-anchor="middle" x="536" y="-29" font-family="Georgia" font-size="15.00">Type / Length</text>
+</g>
+<!-- tci&#45;&gt;type -->
+<g id="lan-vlan-tag-edge4" class="edge">
+<title>tci&#45;&gt;type</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M440.11,-32.5C448.2,-32.5 456.98,-32.5 465.84,-32.5"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="465.97,-34.6 471.97,-32.5 465.97,-30.4 465.97,-34.6"/>
+</g>
+<!-- data -->
+<g id="lan-vlan-tag-node6" class="node">
+<title>data</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M721,-50.5C721,-50.5 644,-50.5 644,-50.5 638,-50.5 632,-44.5 632,-38.5 632,-38.5 632,-26.5 632,-26.5 632,-20.5 638,-14.5 644,-14.5 644,-14.5 721,-14.5 721,-14.5 727,-14.5 733,-20.5 733,-26.5 733,-26.5 733,-38.5 733,-38.5 733,-44.5 727,-50.5 721,-50.5"/>
+<text text-anchor="middle" x="682.5" y="-29" font-family="Georgia" font-size="15.00">Data / pad</text>
+</g>
+<!-- type&#45;&gt;data -->
+<g id="lan-vlan-tag-edge5" class="edge">
+<title>type&#45;&gt;data</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M600.38,-32.5C608.72,-32.5 617.22,-32.5 625.42,-32.5"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="625.63,-34.6 631.63,-32.5 625.63,-30.4 625.63,-34.6"/>
+</g>
+<!-- fcs -->
+<g id="lan-vlan-tag-node7" class="node">
+<title>fcs</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M808,-50.5C808,-50.5 777,-50.5 777,-50.5 771,-50.5 765,-44.5 765,-38.5 765,-38.5 765,-26.5 765,-26.5 765,-20.5 771,-14.5 777,-14.5 777,-14.5 808,-14.5 808,-14.5 814,-14.5 820,-20.5 820,-26.5 820,-26.5 820,-38.5 820,-38.5 820,-44.5 814,-50.5 808,-50.5"/>
+<text text-anchor="middle" x="792.5" y="-29" font-family="Georgia" font-size="15.00">FCS</text>
+</g>
+<!-- data&#45;&gt;fcs -->
+<g id="lan-vlan-tag-edge6" class="edge">
+<title>data&#45;&gt;fcs</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M733.07,-32.5C741.82,-32.5 750.73,-32.5 758.86,-32.5"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="758.92,-34.6 764.92,-32.5 758.92,-30.4 758.92,-34.6"/>
+</g>
+</g>
+</svg>
+</div><figcaption>802.1Q inserts a 4-byte tag after the source MAC: 2-byte TPID then 2-byte TCI, before the original Type/Length field.</figcaption></figure>
+<p>The lecture describes the preamble as 56 alternating bits and the SFD as 8 bits; the SFD ends in <code>10101011</code>. A frame has 6-byte destination and source addresses, a 2-byte Type/Length field, 46–1500 bytes of data/padding, and a 4-byte FCS. If the payload is shorter than 46 bytes, padding makes the data/pad field reach its minimum. The FCS carries a CRC check; error detection and recovery are covered in the <a href="data-link.html">data-link notes</a>.</p>
+<p>The source slide's Type/Length cutoff is incorrect: it says “1518 or less” means length, but <strong>1518 is the total frame-size limit</strong>. In Ethernet's conventional field interpretation, values up to 1500 indicate payload length; EtherType values start at 1536 (<code>0x0600</code>), leaving 1501–1535 as a reserved gap. This correction follows <a href="https://www.rfc-editor.org/rfc/rfc7042.html">RFC 7042</a> and the <a href="https://www.ieee802.org/1/files/public/docs2020/maint-seaman-protocol-ids-in-std-802-0520-v01.pdf">IEEE maintenance contribution on the Type/Length field</a>.</p>
+<h3>Carrier sense, collisions and retry</h3>
+<p>On a shared half-duplex segment, a station listens while the carrier is present. When the channel becomes idle, it waits one interframe gap (IFG) and transmits. The lecture sets IFG to 96 bit times: at 10 Mb/s, 96 bits take 9.6 μs; at 100 Mb/s, 960 ns. If two stations begin close enough together that both sensed idle, they detect the collision while transmitting. Each sends a 32-bit collision-enforcement (jam) signal—even if the collision was detected during the preamble—then stops the failed frame and waits a random number of slot times.</p>
+<p>For 10/100 Mb/s Ethernet, a slot is 512 bit times. If 512 bits go out without collision, the lecture calls the channel acquired. Its propagation examples say this slot allowed about 2800 m on coax at 10 Mb/s and about 205 m at 100 Mb/s; twisted-pair segment length is stated as 100 m for other physical reasons. The lecture reports a maximum of 16 retries before reporting failure upward; treat that as the source's historical rule, not a universal current Ethernet claim.</p>
+<p>As a timing check, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>512</mn><mtext>&#x000A0;</mtext><mtext>bits</mtext><mo>&#x0002F;</mo><mn>10</mn><mtext>&#x000A0;</mtext><mtext>Mb/s</mtext><mo>&#x0003D;</mo><mn>51.2</mn><mtext>&#x000A0;</mtext><mi>&#x003BC;</mi><mtext>s</mtext></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>512</mn><mtext>&#x000A0;</mtext><mtext>bits</mtext><mo>&#x0002F;</mo><mn>100</mn><mtext>&#x000A0;</mtext><mtext>Mb/s</mtext><mo>&#x0003D;</mo><mn>5.12</mn><mtext>&#x000A0;</mtext><mi>&#x003BC;</mi><mtext>s</mtext></mrow></math>. At the faster rate, the same 512-bit collision window is much shorter, which is why the historical Gigabit half-duplex case needed a longer slot.</p>
+
+<details class="worked"><summary>Worked source-rule example: choose an Ethernet backoff delay</summary><section class="walk" aria-label="Calculate a hypothetical backoff draw at 10 and 100 Mb/s"><h3>Calculate a hypothetical backoff draw at 10 and 100 Mb/s</h3><div class="example-input"><p><b>Lecture rule:</b> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi><mo>&#x0003D;</mo><mo>min</mo><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo>&#x0002C;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; choose integer <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x02264;</mo><mi>r</mi><mo>&#x0003C;</mo><msup><mn>2</mn><mi>k</mi></msup></mrow></math>; at 10/100 Mb/s wait <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi><mo>&#x000D7;</mo><mn>512</mn></mrow></math> bit times. For this worked example, <code>n = 3</code> and the hypothetical random draw is <code>r = 5</code>.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Set the attempt-count convention</h4><p>Use the lecture’s variable <code>n</code> as the attempt number supplied to its formula. This teaching example chooses <code>n = 3</code>; the slide does not specify whether to count the initial attempt or collisions only, so do not translate this into a retry count.</p></section><section class="step"><h4>2. Compute the exponent cap</h4><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi><mo>&#x0003D;</mo><mo>min</mo><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo>&#x0002C;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>min</mo><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x0002C;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>3</mn></mrow></math>. The random integer must satisfy <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x02264;</mo><mi>r</mi><mo>&#x0003C;</mo><msup><mn>2</mn><mn>3</mn></msup></mrow></math>, so the possible draws are 0 through 7.</p></section><section class="step"><h4>3. Apply the hypothetical draw</h4><p>Suppose the random choice is <code>r = 5</code>. The wait is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi><mo>&#x000D7;</mo><mn>512</mn><mo>&#x0003D;</mo><mn>5</mn><mo>&#x000D7;</mo><mn>512</mn><mo>&#x0003D;</mo><mn>2560</mn><mtext>&#x000A0;</mtext><mtext>bit&#x000A0;times</mtext></mrow></math>. The draw is illustrative, not a measured or fixed outcome.</p></section><section class="step"><h4>4. Convert bit times to seconds</h4><p>At 10 Mb/s, one bit time is 100 ns: <code>2560 × 100 ns = 256,000 ns = 256 μs</code>. At 100 Mb/s, one bit time is 10 ns: <code>2560 × 10 ns = 25,600 ns = 25.6 μs</code>.</p></section><section class="step"><h4>5. Check the cap case</h4><p>When <code>k = 10</code>, there are <code>2¹⁰ = 1024</code> possible integer draws: <code>r = 0…1023</code>. This checks the strict upper bound; 1024 itself is not a valid draw.</p></section></section></details>
+
+<p>After a successful transmission the lecture resets the backoff counter. If collisions continue, the selection range grows up to the cap; choosing independent random waits makes repeat collisions less likely than if every station retried at the same instant.</p>
+<h3>Why half-duplex Gigabit Ethernet extended the slot</h3>
+<p>At 1 Gb/s, a 512-bit slot would correspond to only about a 20 m collision diameter under the lecture's timing assumptions. The historical half-duplex solution extended the slot to 4096 bits (512 bytes) with <strong>carrier extension</strong>, filling short-frame transmission time so collision detection still had the required window. Short frames then carried considerable extension overhead.</p>
+<p><strong>Frame bursting</strong> lets a station contend normally for a first frame; if it succeeds, it can send additional frames in a burst. Extension symbols fill the inter-frame gaps so another station does not seize the medium between the burst frames. The lecture gives a 65,536-bit burst limit and claims efficiency above 90% for small data frames; these are source-era figures, not a promise for every link.</p>
+<h3>Full duplex removes shared-medium contention</h3>
+<p>Full-duplex Ethernet is point-to-point: transmit and receive use independent paths at the same time. With only two endpoints on the link, there is no shared-medium contention, collision detection, or collision backoff. The IFG still applies between frames. A 100 Mb/s full-duplex link can carry up to 100 Mb/s in each direction simultaneously; the old slide's “200 Mb/s” is the sum of both directions, not a 200 Mb/s one-way rate. Thus collision/backoff discussion applies to a shared half-duplex link, not ordinary full-duplex switched Ethernet.</p>
+<figure><div class="diagram-frame" style="--diagram-width:483.6px"><svg role="img" aria-label="Full duplex uses independent simultaneous directions. At 100 Mb/s, the rate is 100 Mb/s in each direction; 200 Mb/s is only the bidirectional sum." width="484pt" height="102pt"
+ viewBox="0.00 0.00 483.60 101.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="lan-duplex-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 90.8)">
+<title>G</title>
+<!-- a -->
+<g id="lan-duplex-node1" class="node">
+<title>a</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M77,-45C77,-45 12,-45 12,-45 6,-45 0,-39 0,-33 0,-33 0,-21 0,-21 0,-15 6,-9 12,-9 12,-9 77,-9 77,-9 83,-9 89,-15 89,-21 89,-21 89,-33 89,-33 89,-39 83,-45 77,-45"/>
+<text text-anchor="middle" x="44.5" y="-23.5" font-family="Georgia" font-size="15.00">Device A</text>
+</g>
+<!-- ab -->
+<g id="lan-duplex-node3" class="node">
+<title>ab</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M203,-80C203,-80 133,-80 133,-80 127,-80 121,-74 121,-68 121,-68 121,-44 121,-44 121,-38 127,-32 133,-32 133,-32 203,-32 203,-32 209,-32 215,-38 215,-44 215,-44 215,-68 215,-68 215,-74 209,-80 203,-80"/>
+<text text-anchor="middle" x="168" y="-61" font-family="Georgia" font-size="15.00">A → B</text>
+<text text-anchor="middle" x="168" y="-44" font-family="Georgia" font-size="15.00">100 Mb/s</text>
+</g>
+<!-- a&#45;&gt;ab -->
+<g id="lan-duplex-edge1" class="edge">
+<title>a&#45;&gt;ab</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M89.02,-37.39C97.43,-39.39 106.32,-41.52 114.97,-43.58"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="114.59,-45.65 120.91,-45 115.56,-41.56 114.59,-45.65"/>
+</g>
+<!-- b -->
+<g id="lan-duplex-node2" class="node">
+<title>b</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M324,-71C324,-71 259,-71 259,-71 253,-71 247,-65 247,-59 247,-59 247,-47 247,-47 247,-41 253,-35 259,-35 259,-35 324,-35 324,-35 330,-35 336,-41 336,-47 336,-47 336,-59 336,-59 336,-65 330,-71 324,-71"/>
+<text text-anchor="middle" x="291.5" y="-49.5" font-family="Georgia" font-size="15.00">Device B</text>
+</g>
+<!-- ba -->
+<g id="lan-duplex-node4" class="node">
+<title>ba</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M450,-48C450,-48 380,-48 380,-48 374,-48 368,-42 368,-36 368,-36 368,-12 368,-12 368,-6 374,0 380,0 380,0 450,0 450,0 456,0 462,-6 462,-12 462,-12 462,-36 462,-36 462,-42 456,-48 450,-48"/>
+<text text-anchor="middle" x="415" y="-29" font-family="Georgia" font-size="15.00">B → A</text>
+<text text-anchor="middle" x="415" y="-12" font-family="Georgia" font-size="15.00">100 Mb/s</text>
+</g>
+<!-- b&#45;&gt;ba -->
+<g id="lan-duplex-edge3" class="edge">
+<title>b&#45;&gt;ba</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M336.02,-42.61C344.43,-40.61 353.32,-38.48 361.97,-36.42"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="362.56,-38.44 367.91,-35 361.59,-34.35 362.56,-38.44"/>
+</g>
+<!-- ab&#45;&gt;b -->
+<g id="lan-duplex-edge2" class="edge">
+<title>ab&#45;&gt;b</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M215.28,-54.86C223.51,-54.65 232.12,-54.44 240.45,-54.24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="240.8,-56.33 246.75,-54.08 240.7,-52.13 240.8,-56.33"/>
+</g>
+<!-- ba&#45;&gt;a -->
+<g id="lan-duplex-edge4" class="edge">
+<title>ba&#45;&gt;a</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M367.8,-22.1C310.05,-20.06 208.17,-17.54 121,-21 112.83,-21.32 104.18,-21.84 95.76,-22.45"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="95.21,-20.38 89.38,-22.92 95.52,-24.57 95.21,-20.38"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Full duplex uses independent simultaneous directions. At 100 Mb/s, the rate is 100 Mb/s in each direction; 200 Mb/s is only the bidirectional sum.</figcaption></figure>
+<h2 id="section-5">Switch learning and forwarding</h2>
+<p>A switch builds a table by reading each arriving frame's <strong>source MAC</strong> and associating it with the local ingress port and VLAN. It then looks up the <strong>destination MAC</strong> in that VLAN. The two lookups answer different questions: where did this source arrive, and where should this destination go? The switch buffers and forwards the frame; the lecture slide's “connection” means a temporary forwarding action, not a persistent circuit.</p>
+<table>
+<thead>
+<tr>
+<th>Destination lookup in the ingress VLAN</th>
+<th>Forwarding decision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Known unicast on another port</td>
+<td>Send the frame only through the mapped port.</td>
+</tr>
+<tr>
+<td>Known unicast mapped to the ingress port</td>
+<td>Filter it; sending it back through the same port is unnecessary.</td>
+</tr>
+<tr>
+<td>Unknown unicast</td>
+<td>Flood copies through eligible forwarding ports in the same VLAN, except the ingress port. The destination field remains the original unicast MAC.</td>
+</tr>
+<tr>
+<td>Broadcast (<code>FF:FF:FF:FF:FF:FF</code>)</td>
+<td>Flood within the VLAN, except the ingress port.</td>
+</tr>
+</tbody>
+</table>
+<p>Unknown-unicast flooding is not the same as changing the destination to broadcast. The lab worksheet calls an unknown destination “broadcasted”; the precise term is <strong>unknown-unicast flooding</strong>. Cisco's switching explanation confirms that a frame with no destination entry is sent to forwarding ports in the VLAN except the ingress port (<a href="https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6000-series-switches/23563-143.html">Cisco, Unicast Flooding in Switched Campus Networks</a>). Broadcast frames also flood, but their destination MAC is already all ones.</p>
+<figure><div class="diagram-frame" style="--diagram-width:703.6px"><svg role="img" aria-label="Lab 1.2 physical topology and port numbers. S1 and S2 each learn remote MACs on their own F0/1 uplink; the port numbers are local to each switch." width="704pt" height="70pt"
+ viewBox="0.00 0.00 703.60 69.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="lan-lab-two-switches-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 58.8)">
+<title>G</title>
+<!-- a -->
+<g id="lan-lab-two-switches-node1" class="node">
+<title>a</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M102,-48C102,-48 12,-48 12,-48 6,-48 0,-42 0,-36 0,-36 0,-12 0,-12 0,-6 6,0 12,0 12,0 102,0 102,0 108,0 114,-6 114,-12 114,-12 114,-36 114,-36 114,-42 108,-48 102,-48"/>
+<text text-anchor="middle" x="57" y="-29" font-family="Georgia" font-size="15.00">PC&#45;A</text>
+<text text-anchor="middle" x="57" y="-12" font-family="Georgia" font-size="15.00">192.168.1.3</text>
+</g>
+<!-- s1 -->
+<g id="lan-lab-two-switches-node2" class="node">
+<title>s1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M269,-48C269,-48 186,-48 186,-48 180,-48 174,-42 174,-36 174,-36 174,-12 174,-12 174,-6 180,0 186,0 186,0 269,0 269,0 275,0 281,-6 281,-12 281,-12 281,-36 281,-36 281,-42 275,-48 269,-48"/>
+<text text-anchor="middle" x="227.5" y="-29" font-family="Georgia" font-size="15.00">S1</text>
+<text text-anchor="middle" x="227.5" y="-12" font-family="Georgia" font-size="15.00">F0/6 · F0/1</text>
+</g>
+<!-- a&#45;&gt;s1 -->
+<g id="lan-lab-two-switches-edge1" class="edge">
+<title>a&#45;&gt;s1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M114.11,-24C131.25,-24 150.14,-24 167.47,-24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="167.77,-26.1 173.77,-24 167.77,-21.9 167.77,-26.1"/>
+<text text-anchor="middle" x="144" y="-27.4" font-family="Georgia" font-size="12.00">F0/6</text>
+</g>
+<!-- s2 -->
+<g id="lan-lab-two-switches-node3" class="node">
+<title>s2</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M489,-48C489,-48 397,-48 397,-48 391,-48 385,-42 385,-36 385,-36 385,-12 385,-12 385,-6 391,0 397,0 397,0 489,0 489,0 495,0 501,-6 501,-12 501,-12 501,-36 501,-36 501,-42 495,-48 489,-48"/>
+<text text-anchor="middle" x="443" y="-29" font-family="Georgia" font-size="15.00">S2</text>
+<text text-anchor="middle" x="443" y="-12" font-family="Georgia" font-size="15.00">F0/1 · F0/18</text>
+</g>
+<!-- s1&#45;&gt;s2 -->
+<g id="lan-lab-two-switches-edge2" class="edge">
+<title>s1&#45;&gt;s2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M281,-24C310.52,-24 347.57,-24 378.69,-24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="378.83,-26.1 384.83,-24 378.83,-21.9 378.83,-26.1"/>
+<text text-anchor="middle" x="333" y="-27.4" font-family="Georgia" font-size="12.00">F0/1 ↔ F0/1</text>
+</g>
+<!-- b -->
+<g id="lan-lab-two-switches-node4" class="node">
+<title>b</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M670,-48C670,-48 580,-48 580,-48 574,-48 568,-42 568,-36 568,-36 568,-12 568,-12 568,-6 574,0 580,0 580,0 670,0 670,0 676,0 682,-6 682,-12 682,-12 682,-36 682,-36 682,-42 676,-48 670,-48"/>
+<text text-anchor="middle" x="625" y="-29" font-family="Georgia" font-size="15.00">PC&#45;B</text>
+<text text-anchor="middle" x="625" y="-12" font-family="Georgia" font-size="15.00">192.168.1.2</text>
+</g>
+<!-- s2&#45;&gt;b -->
+<g id="lan-lab-two-switches-edge3" class="edge">
+<title>s2&#45;&gt;b</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M501.45,-24C520.66,-24 542.15,-24 561.71,-24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="561.71,-26.1 567.71,-24 561.71,-21.9 561.71,-26.1"/>
+<text text-anchor="middle" x="534.5" y="-27.4" font-family="Georgia" font-size="12.00">F0/18</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Lab 1.2 physical topology and port numbers. S1 and S2 each learn remote MACs on their own F0/1 uplink; the port numbers are local to each switch.</figcaption></figure>
+
+<details class="worked"><summary>Teaching trace: an ARP request and reply teach both switches</summary><section class="walk" aria-label="Follow source learning and destination lookup across Lab 1.2 topology"><h3>Follow source learning and destination lookup across Lab 1.2 topology</h3><div class="example-input"><p><b>Topology:</b> PC-A—S1 F0/6—S1 F0/1—S2 F0/1—S2 F0/18—PC-B. Addresses: PC-A <code>192.168.1.3/24</code>, PC-B <code>192.168.1.2/24</code>, S1 VLAN 1 <code>.11/24</code>, S2 VLAN 1 <code>.12/24</code>; no default gateways. The trace uses symbolic MACs and assumes an empty dynamic table only to teach the transition.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Start with a declared illustrative state</h4><p>Assume the dynamic entries are empty and call PC-A’s MAC <code>A</code> and PC-B’s MAC <code>B</code>. This is a teaching assumption, not a claim about the lab’s observed startup table. PC-B sends an ARP request with source <code>B</code> and broadcast destination.</p></section><section class="step"><h4>2. S2 learns B locally and floods the broadcast</h4><p>The request enters S2 on F0/18. S2 records <code>B → F0/18</code>. Because the destination is broadcast, S2 floods within the VLAN except F0/18, including the inter-switch port F0/1.</p></section><section class="step"><h4>3. S1 learns B behind its uplink</h4><p>The same request enters S1 on F0/1. S1 records <code>B → F0/1</code>. It floods the broadcast to other eligible VLAN 1 ports, including PC-A on F0/6.</p></section><section class="step"><h4>4. PC-A replies; S1 learns A on its access port</h4><p>PC-A’s reply has source <code>A</code> and destination <code>B</code>. It enters S1 on F0/6, so S1 records <code>A → F0/6</code>. S1 already knows <code>B → F0/1</code>, so it forwards the unicast reply only to F0/1.</p></section><section class="step"><h4>5. S2 learns A behind its uplink and forwards to B</h4><p>The reply enters S2 on F0/1, so S2 records <code>A → F0/1</code>. S2 already knows <code>B → F0/18</code> and sends the reply only to PC-B through F0/18. The tables now contain local source-to-ingress-port mappings at both switches.</p></section></section></details>
+
+<p>The two-switch topology is the actual Lab 1.2 layout. A MAC table entry identifies the port from which the frame arrived, not necessarily the endpoint's own physical location: multiple downstream hosts can be learned behind one switch-to-switch uplink. The lab asks students to record actual table entries rather than assume the table is empty. Clearing dynamic entries on S2 does not clear a PC's ARP cache, and background traffic can relearn a MAC before the next command is entered.</p>
+<h2 id="section-6">VLANs and the 802.1Q tag</h2>
+<p>A VLAN groups switch ports and their frames into separate logical LANs. The lecture describes each group as acting like an independent hub and notes that filtering rules can restrict traffic between VLANs. A VLAN can span multiple switches when frames carry a tag, so the physical switch topology and the logical LAN membership are not the same thing.</p>
+<p>IEEE 802.1Q adds four bytes between the source MAC and the original Type/Length field. Its two-byte TPID is 0x8100, which identifies a tagged frame; the two-byte TCI carries 3 priority bits (802.1p) and a 12-bit VLAN identifier.  Because the tag adds four bytes, the basic untagged 1518-byte maximum becomes 1522 bytes. The lecture warns that configuration and traffic rules become harder to track as VLANs grow. </p>
+<h2 id="section-7">Lab 1.1: inspect MAC addresses on a PC and switch</h2>
+<p>Lab 1.1 has PC-A on S1 FastEthernet0/6. PC-A uses <code>192.168.1.3/24</code> with gateway <code>192.168.1.1</code>; S1's VLAN 1 management SVI uses <code>192.168.1.1/24</code>. The worksheet's sample MAC <code>5C-26-0A-24-2A-60</code> is a sample from another PC, not the student's expected value. In the lab's manufacturer-assigned example, the first three bytes are its OUI (<code>5C-26-0A</code>) and the remaining three are the NIC-assigned portion (<code>24-2A-60</code>). MAC notation may be hyphen-separated, colon-separated, or Cisco dotted notation; <code>00-05-9A-3C-78-00</code>, <code>00:05:9A:3C:78:00</code>, and <code>0005.9A3C.7800</code> represent the same 48 bits. Locally administered and special-use addresses may not follow the worksheet's simple OUI/device split.</p>
+<p>The task heading says “S1 F0/6,” but its command is <code>show interfaces vlan 1</code>; that command reports the VLAN 1 SVI, not the FastEthernet0/6 port. In the sample output, <code>address is 001b.0c6d.8f40 (bia 001b.0c6d.8f40)</code>: BIA means burned-in address, and the sample shows the current SVI address equal to its BIA. Use the values returned by the actual device.</p>
+
+<details class="worked"><summary>Lab 1.1 procedure: configure and distinguish the three address views</summary><section class="walk" aria-label="Use the commands and interpret each table for what it actually maps"><h3>Use the commands and interpret each table for what it actually maps</h3><div class="example-input"><p><b>Topology and addressing:</b> PC-A—S1 Fa0/6; PC-A <code>192.168.1.3/24</code>, gateway <code>192.168.1.1</code>; S1 VLAN 1 <code>192.168.1.1/24</code>. Commands show different maps: SVI hardware identity, IPv4-to-MAC ARP cache, and VLAN/MAC-to-port switch table.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Configure the host and test before SVI setup</h4><p>Set PC-A to <code>192.168.1.3</code>, mask <code>255.255.255.0</code>, gateway <code>192.168.1.1</code>. Ping the switch before configuring its management SVI and record the real result; do not assume success or failure from the worksheet alone.</p></section><section class="step"><h4>2. Configure S1 VLAN 1</h4><pre><code>enable
+configure terminal
+hostname S1
+no ip domain-lookup
+interface vlan 1
+ip address 192.168.1.1 255.255.255.0
+no shutdown
+end</code></pre>
+<p>Ping S1 again and record the observed result.</p></section><section class="step"><h4>3. Read the PC NIC address</h4><p>On PC-A run <code>ipconfig /all</code>. Record its Ethernet Physical Address and format it as six hexadecimal bytes. Split the example only if it matches the actual value: the source example is <code>5C-26-0A-24-2A-60</code>, not a value to copy as a measurement.</p></section><section class="step"><h4>4. Read SVI, ARP, and switch-table views separately</h4><p><code>show interfaces vlan 1</code> reports SVI state, address, and BIA. <code>show arp</code> maps IPv4 addresses to link-layer addresses; the source sample has <code>192.168.1.1 → 001b.0c6d.8f40</code> and <code>192.168.1.3 → 5c26.0a24.2a60</code>. <code>show mac address-table</code> maps VLAN/MAC to switch port; the sample dynamically learns PC-A on VLAN 1, Fa0/6. Twenty static CPU entries are switch control entries, not 20 attached PCs.</p></section><section class="step"><h4>5. Answer the broadcast and identification questions</h4><p>The Ethernet broadcast MAC is <code>FF:FF:FF:FF:FF:FF</code>. Knowing a MAC lets an administrator correlate an endpoint with local switch forwarding and compare that identity with a host’s ARP view.</p></section></section></details>
+
+<h2 id="section-8">Lab 1.2: observe a switch MAC table change</h2>
+<p>Lab 1.2 uses the two-switch diagram above. Addressing is PC-A <code>192.168.1.3/24</code>, PC-B <code>192.168.1.2/24</code>, S1 VLAN 1 <code>192.168.1.11/24</code>, and S2 VLAN 1 <code>192.168.1.12/24</code>, all with no default gateway. The worksheet asks for PC NIC addresses using <code>ipconfig /all</code> and switch-port burned-in addresses using <code>show interface F0/1</code>. On the supplied 2960, a straight-through cable may work between switches because Fast Ethernet ports autosense; another model may require crossover.</p>
+<p>The topology description calls S1 F0/1–S2 F0/1 a trunk, but the original step list does not include an explicit <code>switchport mode trunk</code> command. Verify that the link carries VLAN 1 in the simulator/device; if configuration is needed, treat trunk setup as a completion for the stated topology rather than a command printed in the source. The base worksheet specifies hostnames, management IPs, console/VTY password <code>cisco</code>, and privileged EXEC password <code>class</code> but does not provide full configuration command blocks.</p>
+
+<details class="worked"><summary>Lab 1.2 observation sequence: clear, wait, generate traffic, compare</summary><section class="walk" aria-label="Use observations instead of assuming a clean MAC table"><h3>Use observations instead of assuming a clean MAC table</h3><div class="example-input"><p><b>Lab ports:</b> PC-A→S1 F0/6; S1 F0/1↔S2 F0/1; PC-B→S2 F0/18. Addresses: PC-A <code>.3</code>, PC-B <code>.2</code>, S1 SVI <code>.11</code>, S2 SVI <code>.12</code>, all <code>/24</code>; gateways are N/A. Use actual device outputs; the worksheet leaves observations blank.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Record identifiers before interpreting the table</h4><p>On each PC run <code>ipconfig /all</code>; on S1 and S2 run <code>show interface F0/1</code> and record the hardware address/BIA. The MAC table alone may not tell you which named PC is behind a learned entry if you have not recorded these identifiers.</p></section><section class="step"><h4>2. Inspect S2 before pings</h4><p>Run <code>show mac address-table</code> on S2. There may already be dynamic entries from attached devices, the other switch, or background traffic. Ignore CPU entries when matching host addresses to ports.</p></section><section class="step"><h4>3. Clear only dynamic entries, then sample twice</h4><p>Run <code>clear mac address-table dynamic</code>; immediately run <code>show mac address-table</code>, then wait 10 seconds and run it again. Clearing the switch table does not flush PC-B’s ARP cache. New frames can repopulate the table during the interval.</p></section><section class="step"><h4>4. Observe PC-B ARP and generate the requested pings</h4><p>On PC-B run <code>arp -a</code>; count unicast IP/MAC pairs and exclude broadcast/multicast entries. Ping PC-A, S1, and S2; record actual success or failure and check cabling/addressing if necessary.</p></section><section class="step"><h4>5. Compare both caches</h4><p>Run <code>show mac address-table</code> on S2 and <code>arp -a</code> on PC-B again. The switch learns source MACs to local ports as frames arrive; PC-B learns IP-to-MAC mappings for local peers. The counts need not match because the tables map different identifiers and may contain different kinds of entries.</p></section></section></details>
+
+<h2 id="section-9">Common mistakes</h2>
+<ul>
+<li>Carrier sensing lowers collision risk; it cannot prevent two distant stations from starting before either signal arrives.</li>
+<li>Polling selects who may use the medium. Stop-and-wait and continuous ARQ recover delivery problems; they are not MAC access families.</li>
+<li>The lecture's serial-style RTS/CTS sketch, slide 25's flow-control label, and optional 802.11 RTS/CTS reservation have different contexts.</li>
+<li>A token-ring physical star through a MAU can still carry a logical ring. Token Bus has physical bus wiring and a separate logical token order.</li>
+<li>In an Ethernet backoff calculation, <code>r</code> is a random integer and <code>0 ≤ r &lt; 2ᵏ</code>; the upper endpoint is excluded. The lecture's attempt-count wording does not define whether <code>n</code> counts collisions or all attempts.</li>
+<li>The 1518-byte untagged Ethernet maximum is a total frame limit excluding preamble/SFD; it is not the Type/Length threshold. Length is at most 1500; EtherType starts at 1536.</li>
+<li>A switch learns from the <strong>source</strong> MAC and looks up the <strong>destination</strong> MAC. Unknown unicast is flooded as copies of the original unicast frame; broadcast has an all-ones destination.</li>
+<li>A MAC table maps MAC/VLAN to a local port. Behind another switch, many device MACs can map to the same uplink.</li>
+<li><code>show arp</code> maps network-layer IP addresses to MAC addresses. <code>show mac address-table</code> maps VLAN/MAC addresses to switch ports. <code>show interfaces vlan 1</code> reports the management SVI, not Fa0/6.</li>
+<li>The lab worksheets ask for actual measurements. Do not copy sample addresses or treat the illustrative empty-table trace as measured output.</li>
+</ul>
+<h2 id="section-10">Exam focus</h2>
+<ul>
+<li>IEEE 802.3 is the lecture's Ethernet/CSMA-CD family; 802.4 is Token Bus; 802.5 is Token Ring; 802.2 is LLC.</li>
+<li>Token Ring gives a controlled turn by passing a free token. A transmitter turns it busy, lets the frame circulate and be copied, removes it when it returns, then releases a free token.</li>
+<li>CSMA listens first; CSMA/CD detects collision while sending on a shared wired half-duplex link, jams, aborts, and applies a random slot backoff.</li>
+<li>Ethernet frame fields: 64-bit preamble/SFD, 48-bit destination, 48-bit source, 16-bit Type/Length, 46–1500-byte data/pad, 32-bit FCS. Basic maximum frame is 1518 bytes without preamble/SFD.</li>
+<li>IFG is 96 bit times; the 10/100 Mb/s slot time is 512 bit times. In the lecture's backoff formula, <code>k=min(n,10)</code> and <code>r</code> ranges from zero through <code>2ᵏ−1</code>.</li>
+<li>Half-duplex Gigabit used a 4096-bit extended slot and carrier extension; frame bursting shares the contention win across a bounded burst. Full duplex has independent simultaneous transmit/receive paths, no collision backoff, and retains IFG.</li>
+<li>Switches learn <code>source MAC → ingress port</code> within a VLAN, then look up the destination. Known unicast goes to its mapped port; unknown unicast and broadcast are flooded in that VLAN, except ingress.</li>
+<li>VLAN tagging uses a 4-byte 802.1Q tag: 2-byte TPID <code>0x8100</code> and 2-byte TCI with 3 priority bits and 12 VLAN-ID bits; the lecture does not expand the remaining TCI bit. Basic maximum grows from 1518 to 1522 bytes.</li>
+</ul>
+<h2 id="section-11">Practice questions</h2>
+<p class="question"><b>Quiz 1, Q2.</b> Why does Token Ring give predictable access under heavy traffic?</p>
+<details class="worked"><summary>Check your answer</summary><p>Stations take turns as the free token circulates, so each station has a bounded opportunity to capture it under the lecture’s functioning-ring assumption. This differs from contention, where repeated collisions can delay a station.</p></details>
+
+<p class="question">In Token Ring, what happens after the busy frame returns to the transmitter?</p>
+<details class="worked"><summary>Check your answer</summary><p>The transmitting station removes the busy token and its data, then transmits a free token. The next node gets first opportunity; the sender does not keep the same turn indefinitely.</p></details>
+
+<p class="question">For the worked Ethernet backoff rule, what integer values may <code>r</code> take when <code>n=3</code>?</p>
+<details class="worked"><summary>Check your answer</summary><p><code>k=min(3,10)=3</code>, so <code>0 ≤ r &lt; 8</code>: the possible values are 0 through 7. At <code>r=5</code>, the wait is <code>5 × 512 = 2560</code> bit times, which is 256 μs at 10 Mb/s and 25.6 μs at 100 Mb/s.</p></details>
+
+<p class="question"><b>Quiz 1, Q8.</b> After detecting an Ethernet collision, what does CSMA/CD do?</p>
+<details class="worked"><summary>Check your answer</summary><p>It sends the collision-enforcement jam, aborts that frame, waits a random backoff period, then retries. The quiz’s short answer is abort and wait a random backoff before retransmission.</p></details>
+
+<p class="question"><b>Quiz 1, Q10.</b> Which shared-medium data-link sublayer controls access?</p>
+<details class="worked"><summary>Check your answer</summary><p>MAC (Media Access Control). LLC provides the logical-link interface; MAC handles medium access.</p></details>
+
+<p class="question">A frame arrives on S2 F0/18 with source MAC B and an unknown unicast destination MAC A. What does S2 learn, and where can the frame go?</p>
+<details class="worked"><summary>Check your answer</summary><p>S2 first learns <code>B → F0/18</code>. It then floods a copy of the original unicast frame to eligible forwarding ports in that VLAN except F0/18. The destination field remains A; it is not rewritten to the broadcast address.</p></details>
+
+<p class="question">How do you distinguish the three Lab 1.1 commands <code>show interfaces vlan 1</code>, <code>show arp</code>, and <code>show mac address-table</code>?</p>
+<details class="worked"><summary>Check your answer</summary><p>The first reports the VLAN 1 SVI and its MAC/BIA; ARP maps IP addresses to MAC addresses; the switch MAC table maps VLAN/MAC addresses to local switch ports.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="wan.html"><small>Previous</small>WAN and MAN technologies <span aria-hidden="true">↗</span></a><a href="routing.html"><small>Next</small>Network layer and routing <span aria-hidden="true">↗</span></a></nav><footer>Networks field notes <span>Follow the packet. Explain the decision.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  root.querySelectorAll('table').forEach(table => {
+    const region = document.createElement('div');
+    region.className = 'table-scroll' + (table.rows[0]?.cells.length > 5 ? ' wide' : '');
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    table.before(region); region.append(table);
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Network diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {osi:'layers encapsulation protocol service interface pdu',link:'framing crc parity arq flow control sliding window',ethernet:'mac switch arp csma token lab',wan:'man atm isdn frame relay x25',routing:'network forwarding distance vector link state dijkstra',ipv4:'ip subnet mask vlsm binary cidr lab',ipv6:'ip address compression transition lab',transport:'tcp udp handshake congestion window port',bluetooth:'wireless nfc zigbee wpan beacon quiz',security:'cia attacks cryptography encryption hash authentication',infrastructure:'pki certificate ca trust revocation signature',tls:'ssl ipsec ah esp tunnel sa',design:'requirements topology availability delay bandwidth'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('a').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('cns-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.CNS_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) expand.textContent = 'Expand examples';
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

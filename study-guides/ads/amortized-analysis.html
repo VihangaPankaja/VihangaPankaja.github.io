@@ -1,0 +1,691 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Bound total cost across a sequence, using earlier cheap operations to pay for later expensive ones without assuming random inputs."><title>Amortized analysis · ADS field notes</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('ads-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{.table-hint{display:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> ADS <span class="subbrand">field notes</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Heap, delete, trie…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a href="index.html">Data structures, side by side.</a><a href="comparison.html">Operation costs at a glance</a></div><div class="nav-group"><p>Priority queues</p><a href="binary-heap.html">Binary heap</a><a href="d-ary-heap.html">d-ary heap</a><a href="dual-heap.html">Dual min/max heaps</a><a href="correspondence-heaps.html">Correspondence heaps</a><a href="interval-heap.html">Interval heap</a></div><div class="nav-group"><p>Tournament and coding trees</p><a href="winner-tree.html">Winner tree</a><a href="loser-tree.html">Loser tree</a><a href="huffman-tree.html">Huffman tree</a></div><div class="nav-group"><p>Meldable priority queues</p><a href="leftist-tree.html">Leftist tree</a><a href="binomial-heap.html">Lazy binomial heap</a><a href="fibonacci-heap.html">Fibonacci heap</a><a href="pairing-heap.html">Pairing heap</a></div><div class="nav-group"><p>Dictionaries and search trees</p><a href="hash-table.html">Hash table</a><a href="binary-search-tree.html">Binary search tree</a><a href="indexed-bst.html">Indexed BST</a><a href="optimal-bst.html">Optimal BST</a><a href="avl-tree.html">AVL tree</a><a href="red-black-tree.html">Red-black tree</a><a href="b-tree.html">B-tree</a><a href="two-three-tree.html">2-3 tree</a><a href="two-three-four-tree.html">2-3-4 tree</a><a href="b-plus-tree.html">B+ tree</a><a href="splay-tree.html">Splay tree</a></div><div class="nav-group"><p>Digital search and strings</p><a href="digital-search-tree.html">Digital search tree</a><a href="binary-trie.html">Binary trie</a><a href="compressed-trie.html">Compressed binary trie</a><a href="higher-order-trie.html">Higher-order trie</a><a href="multibit-trie.html">Multibit trie and routing</a><a href="suffix-tree.html">Suffix tree</a></div><div class="nav-group"><p>Reference</p><a href="operation-glossary.html">Operation names and exam traps</a></div><div class="nav-group"><p>Sorting on disk</p><a href="external-sorting.html">External sorting</a></div><div class="nav-group"><p>Analysis</p><a href="amortized-analysis.html" aria-current="page">Amortized analysis</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4580<br>Advanced Data Structures</div></aside>
+<main id="main"><div class="eyebrow">Analysis <span>/</span> Lecture 5; heap applications in Lectures 6–7</div><h1>Amortized analysis</h1><p class="lead">Bound total cost across a sequence, using earlier cheap operations to pay for later expensive ones without assuming random inputs.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Three accounts for the same four increments</a><a href="#section-2">Expression stack: why one closing symbol is not quadratic work</a><a href="#section-3">Lazy heaps: what the course slides establish</a><a href="#section-4">Consolidate the six remaining roots one link at a time</a><a href="#section-5">Common mistakes</a><a href="#section-6">Exam focus</a><a href="#section-7">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Three questions are easy to mix up. <strong>Actual cost</strong> is the work this operation really does. <strong>Amortized cost</strong> is the amount we charge it in a proof; a cheap operation may be charged extra so a later expensive one is already paid for. <strong>Expected cost</strong> is an average over a probability distribution or randomized choices. Amortized analysis needs no probability and does not promise that every operation is fast.</p>
+<p>For an operation that changes state <code>D</code> to <code>D′</code>, choose a potential Φ that measures saved credit in the state. Then charge actual work plus the change in potential:</p>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mover><mi>c</mi><mo>^</mo></mover><mi>i</mi></msub><mo>=</mo><msub><mi>c</mi><mi>i</mi></msub><mo>+</mo><mi>Δ</mi><msub><mi>Φ</mi><mi>i</mi></msub><mo>=</mo><msub><mi>c</mi><mi>i</mi></msub><mo>+</mo><mi>Φ</mi><mo stretchy="false">(</mo><msub><mi>D</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo>−</mo><mi>Φ</mi><mo stretchy="false">(</mo><msub><mi>D</mi><mrow><mi>i</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="false">)</mo></mrow></math></div>
+<p>Adding the charges makes the intermediate potentials cancel (the <strong>telescoping sum</strong>):</p>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mrow><mi>m</mi></mrow></munderover><msub><mi>c</mi><mi>i</mi></msub><mo>=</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mrow><mi>m</mi></mrow></munderover><msub><mover><mi>c</mi><mo>^</mo></mover><mi>i</mi></msub><mo>+</mo><mi>Φ</mi><mo stretchy="false">(</mo><msub><mi>D</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mo>−</mo><mi>Φ</mi><mo stretchy="false">(</mo><msub><mi>D</mi><mi>m</mi></msub><mo stretchy="false">)</mo></mrow></math></div>
+<p>If the initial potential is zero and every reachable final potential is nonnegative, total actual work is at most the total charge. More generally, it is enough that <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>Φ</mi><mo stretchy="false">(</mo><msub><mi>D</mi><mi>m</mi></msub><mo stretchy="false">)</mo><mo>≥</mo><mi>Φ</mi><mo stretchy="false">(</mo><msub><mi>D</mi><mn>0</mn></msub><mo stretchy="false">)</mo></mrow></math> . This is why the starting state and the end of the sequence matter: an expensive initialization must be charged or explicitly excluded, and resetting to an empty state is another operation with a cost and a potential change. A claim fails if it silently spends more credit than the state contains, chooses a potential that can end below its initial value, or omits an expensive reset.</p>
+<h2 id="section-1">Three accounts for the same four increments</h2>
+<p>We will account for the exact same sequence three ways. A four-bit binary counter starts at <code>0000</code> and increments to <code>0100</code>. One unit of actual cost is one bit flip. For this source-supported example, each increment is charged 2. “Credit” and “potential” below are two descriptions of the same saved units: one credit sits on each 1 bit, so <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>Φ</mi><mo>=</mo><mtext>number of 1 bits</mtext></mrow></math>.</p>
+<h3>1. Aggregate: count the work in the whole sequence</h3>
+<p>The counter visits <code>0000 → 0001 → 0010 → 0011 → 0100</code>. The bit flips per increment are 1, 2, 1, and 3. The aggregate method first bounds the total, then gives each operation an equal share of that bound.</p>
+<section aria-label="Aggregate account: four increments from 0000 to 0100" class="walk"><h3>Aggregate account: four increments from 0000 to 0100</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>Start · Empty counter</h4><figure><div class="array"><span class="cell"><small>1</small>0</span><span class="cell"><small>2</small>0</span><span class="cell"><small>3</small>0</span><span class="cell"><small>4</small>0</span></div><figcaption>Initial state 0000. Running actual work A=0; running charge C=0.</figcaption></figure></section><section class="step"><h4>1 · 0000 → 0001</h4><figure><div class="array"><span class="cell"><small>1</small>0</span><span class="cell"><small>2</small>0</span><span class="cell"><small>3</small>0</span><span class="cell"><small>4</small>1</span></div><figcaption>Actual flips: 1. Charge: 2. Cross-check balance (not needed by aggregate): 0→1 one-bit credit. Running totals: A=1, C=2.</figcaption></figure></section><section class="step"><h4>2 · 0001 → 0010</h4><figure><div class="array"><span class="cell"><small>1</small>0</span><span class="cell"><small>2</small>0</span><span class="cell"><small>3</small>1</span><span class="cell"><small>4</small>0</span></div><figcaption>Flip the rightmost 1 to 0, then the next 0 to 1: actual=2. Charge=2. Cross-check balance: 1→1. Running totals: A=3, C=4.</figcaption></figure></section><section class="step"><h4>3 · 0010 → 0011</h4><figure><div class="array"><span class="cell"><small>1</small>0</span><span class="cell"><small>2</small>0</span><span class="cell"><small>3</small>1</span><span class="cell"><small>4</small>1</span></div><figcaption>Actual flips: 1. Charge: 2. Cross-check balance: 1→2. Running totals: A=4, C=6.</figcaption></figure></section><section class="step"><h4>4 · 0011 → 0100</h4><figure><div class="array"><span class="cell"><small>1</small>0</span><span class="cell"><small>2</small>1</span><span class="cell"><small>3</small>0</span><span class="cell"><small>4</small>0</span></div><figcaption>Two trailing 1s clear and the next bit turns on: actual=3. Charge=2. Cross-check balance: 2→1. Totals: A=7, C=8.</figcaption></figure></section><section class="step"><h4>Check · Same sequence, whole total</h4><figure><div class="array"><span class="cell"><small>1</small>0</span><span class="cell"><small>2</small>1</span><span class="cell"><small>3</small>0</span><span class="cell"><small>4</small>0</span></div><figcaption>A=1+2+1+3=7 flips. The least-significant bit flips 4 times, the next bit 2 times, and the third bit once: 4+2+1=7. Thus 7≤4×2=8. The final 1 bit accounts for the one unused unit.</figcaption></figure></section></section>
+<p>For m increments from zero, bit j flips at most ⌊m/2ʲ⌋ times, so the total is less than m+m/2+m/4+…&lt;2m. The aggregate method proves the total bound first; 2 is then a convenient amortized charge per increment. It does not claim each increment costs at most 2.</p>
+<p>For a single increment with q trailing 1s, q bits turn off and one turns on. The potential counts 1s, so:</p>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo>+</mo><mi>q</mi><mo>,</mo><mspace width="2em"></mspace><mi>Δ</mi><msub><mi>Φ</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo>−</mo><mi>q</mi><mo>,</mo><mspace width="2em"></mspace><msub><mover><mi>c</mi><mo>^</mo></mover><mi>i</mi></msub><mo>=</mo><mo stretchy="false">(</mo><mn>1</mn><mo>+</mo><mi>q</mi><mo stretchy="false">)</mo><mo>+</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>q</mi><mo stretchy="false">)</mo><mo>=</mo><mn>2</mn></mrow></math></div>
+<h3>2. Accounting: leave coins on bits</h3>
+<p>Now interpret the charge as two coins collected for each increment. Pay for actual flips; keep one coin on every bit that is 1. A 1 bit will eventually need one flip to become 0, so its coin is reserved for that future flip.</p>
+<section aria-label="Accounting account: coins carried by the same counter" class="walk"><h3>Accounting account: coins carried by the same counter</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>Start · Bits and saved coins</h4><figure><div class="array"><span class="cell"><small>1</small>0</span><span class="cell"><small>2</small>0</span><span class="cell"><small>3</small>0</span><span class="cell"><small>4</small>0</span></div><figcaption>Bits 0000; credit 0. Initial actual total=0; charges collected=0.</figcaption></figure></section><section class="step"><h4>1 · 0000 → 0001</h4><figure><div class="array"><span class="cell"><small>1</small>0</span><span class="cell"><small>2</small>0</span><span class="cell"><small>3</small>0</span><span class="cell"><small>4</small>1</span></div><figcaption>Collect charge 2; pay 1 flip; leave credit 1 on the new 1. Credit before→after: 0→1. Running actual=1, charge=2.</figcaption></figure></section><section class="step"><h4>2 · 0001 → 0010</h4><figure><div class="array"><span class="cell"><small>1</small>0</span><span class="cell"><small>2</small>0</span><span class="cell"><small>3</small>1</span><span class="cell"><small>4</small>0</span></div><figcaption>Collect 2; the old bit-0 coin pays for its 1→0 flip, and one new charge coin pays for bit 1 becoming 1. Leave 1 coin on bit 1. Credit: 1→1. This step uses 1 old coin + 2 new coins to pay 2 flips and retain 1. Running actual=3, charge=4.</figcaption></figure></section><section class="step"><h4>3 · 0010 → 0011</h4><figure><div class="array"><span class="cell"><small>1</small>0</span><span class="cell"><small>2</small>0</span><span class="cell"><small>3</small>1</span><span class="cell"><small>4</small>1</span></div><figcaption>Collect 2; pay the new 0→1 flip and leave its coin on bit 0. The old bit-1 coin stays reserved. Credit: 1→2. Running actual=4, charge=6.</figcaption></figure></section><section class="step"><h4>4 · 0011 → 0100</h4><figure><div class="array"><span class="cell"><small>1</small>0</span><span class="cell"><small>2</small>1</span><span class="cell"><small>3</small>0</span><span class="cell"><small>4</small>0</span></div><figcaption>Collect 2. The two saved coins pay for the two 1→0 flips; one new coin pays for bit 2 becoming 1. Keep the other new coin on bit 2. Credit: 2→1. Running actual=7, charge=8.</figcaption></figure></section><section class="step"><h4>Check · No debt remains</h4><figure><div class="array"><span class="cell"><small>1</small>0</span><span class="cell"><small>2</small>1</span><span class="cell"><small>3</small>0</span><span class="cell"><small>4</small>0</span></div><figcaption>The final state has one 1 and one saved coin. Total charges 8 = 7 actual flips + 1 remaining credit. Credits never go negative.</figcaption></figure></section></section>
+<h3>3. Potential: calculate the same balance from the state</h3>
+<p>The potential method does not track physical coins one by one. It uses the number of 1 bits as a mathematical balance, Φ = number of 1s. For the same four transitions, actual costs stay 1, 2, 1, 3, and each charge is actual cost plus the change in Φ.</p>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mover><mi>c</mi><mo>^</mo></mover><mi>i</mi></msub><mo>=</mo><msub><mi>c</mi><mi>i</mi></msub><mo>+</mo><mo stretchy="false">(</mo><msub><mi>Φ</mi><mrow><mi>a</mi><mi>f</mi><mi>t</mi><mi>e</mi><mi>r</mi></mrow></msub><mo>−</mo><msub><mi>Φ</mi><mrow><mi>b</mi><mi>e</mi><mi>f</mi><mi>o</mi><mi>r</mi><mi>e</mi></mrow></msub><mo stretchy="false">)</mo></mrow></math></div>
+<section aria-label="Potential account: the same counter and the same totals" class="walk"><h3>Potential account: the same counter and the same totals</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>Start · Potential zero</h4><figure><div class="array"><span class="cell"><small>1</small>0</span><span class="cell"><small>2</small>0</span><span class="cell"><small>3</small>0</span><span class="cell"><small>4</small>0</span></div><figcaption>Initial Φ=0. Running actual=0; running amortized charge=0.</figcaption></figure></section><section class="step"><h4>1 · 0000 → 0001</h4><figure><div class="array"><span class="cell"><small>1</small>0</span><span class="cell"><small>2</small>0</span><span class="cell"><small>3</small>0</span><span class="cell"><small>4</small>1</span></div><figcaption>Actual=1. Φ: 0→1, so ΔΦ=+1. Charge=1+1=2. Running actual=1, charge=2.</figcaption></figure></section><section class="step"><h4>2 · 0001 → 0010</h4><figure><div class="array"><span class="cell"><small>1</small>0</span><span class="cell"><small>2</small>0</span><span class="cell"><small>3</small>1</span><span class="cell"><small>4</small>0</span></div><figcaption>Actual=2. Φ: 1→1, so ΔΦ=0. Charge=2+0=2. Running actual=3, charge=4.</figcaption></figure></section><section class="step"><h4>3 · 0010 → 0011</h4><figure><div class="array"><span class="cell"><small>1</small>0</span><span class="cell"><small>2</small>0</span><span class="cell"><small>3</small>1</span><span class="cell"><small>4</small>1</span></div><figcaption>Actual=1. Φ: 1→2, so ΔΦ=+1. Charge=1+1=2. Running actual=4, charge=6.</figcaption></figure></section><section class="step"><h4>4 · 0011 → 0100</h4><figure><div class="array"><span class="cell"><small>1</small>0</span><span class="cell"><small>2</small>1</span><span class="cell"><small>3</small>0</span><span class="cell"><small>4</small>0</span></div><figcaption>Actual=3. Φ: 2→1, so ΔΦ=−1. Charge=3−1=2. Running actual=7, charge=8.</figcaption></figure></section><section class="step"><h4>Check · Telescoping</h4><figure><div class="array"><span class="cell"><small>1</small>0</span><span class="cell"><small>2</small>1</span><span class="cell"><small>3</small>0</span><span class="cell"><small>4</small>0</span></div><figcaption>Σactual=Σcharge+Φinitial−Φfinal=8+0−1=7. The expensive fourth step draws down one unit of earlier potential.</figcaption></figure></section></section>
+<p>All three accounts describe one fact: the sequence costs 7 flips, so charging 2 per increment covers its total of 8 units. Aggregate counts the flips; accounting assigns saved coins; potential computes their balance from the counter. The accounting/potential rows match exactly here because Φ was chosen to equal the number of saved coins.</p>
+<h2 id="section-2">Expression stack: why one closing symbol is not quadratic work</h2>
+<p>Lecture 5 rewrites <code>a = x+((a+b)*c+d)+y;</code> into <code>z1 = a+b;</code>, <code>z2 = z1*c+d;</code>, then <code>a = x+z2+y;</code>. Ordinary symbols are pushed. A <code>)</code> pops through the matching <code>(</code>, emits a temporary assignment, and pushes the temporary name. A <code>;</code> empties the remaining stack. One <code>)</code> may pop many symbols, so charging each call only its actual cost misses the sequence pattern: each symbol is pushed once and popped at most once.</p>
+<p>The lecture's unit cost is one stack push or pop. Its example has 18 input symbols, counting the assignment target and equals sign as separate symbols. Below, consecutive ordinary symbols are grouped only where each still costs exactly one push. The stack is shown bottom-to-top.</p>
+<section aria-label="Expression reduction: exact stack-operation costs by phase" class="walk"><h3>Expression reduction: exact stack-operation costs by phase</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>Start · Empty stack</h4><figure><div class="array"></div><figcaption>Initial stack size and potential are 0.</figcaption></figure></section><section class="step"><h4>1 · Read the nine-symbol prefix <code>a = x + ( ( a + b</code></h4><figure><div class="array"><span class="cell"><small>1</small>a</span><span class="cell"><small>2</small>=</span><span class="cell"><small>3</small>x</span><span class="cell"><small>4</small>+</span><span class="cell"><small>5</small>(</span><span class="cell"><small>6</small>(</span><span class="cell"><small>7</small>a</span><span class="cell"><small>8</small>+</span><span class="cell"><small>9</small>b</span></div><figcaption>Nine ordinary symbols are pushed. Actual cost=9; stack size/potential 0→9; amortized charge=9+9=18.</figcaption></figure></section><section class="step"><h4>2 · Process the first <code>)</code></h4><figure><div class="array"><span class="cell"><small>1</small>a</span><span class="cell"><small>2</small>=</span><span class="cell"><small>3</small>x</span><span class="cell"><small>4</small>+</span><span class="cell"><small>5</small>(</span><span class="cell"><small>6</small>z1</span></div><figcaption>Pop b,+,a,( (4 pops), emit z1=a+b, then push z1 (1 push). Actual=4+1=5. Potential 9→6, ΔΦ=−3. Charge=5−3=2. Running actual=14, charge=20.</figcaption></figure></section><section class="step"><h4>3 · Read <code>* c + d</code></h4><figure><div class="array"><span class="cell"><small>1</small>a</span><span class="cell"><small>2</small>=</span><span class="cell"><small>3</small>x</span><span class="cell"><small>4</small>+</span><span class="cell"><small>5</small>(</span><span class="cell"><small>6</small>z1</span><span class="cell"><small>7</small>*</span><span class="cell"><small>8</small>c</span><span class="cell"><small>9</small>+</span><span class="cell"><small>10</small>d</span></div><figcaption>Four ordinary symbols are pushed. Actual=4; potential 6→10; charge=4+4=8. Running actual=18, charge=28.</figcaption></figure></section><section class="step"><h4>4 · Process the second <code>)</code></h4><figure><div class="array"><span class="cell"><small>1</small>a</span><span class="cell"><small>2</small>=</span><span class="cell"><small>3</small>x</span><span class="cell"><small>4</small>+</span><span class="cell"><small>5</small>z2</span></div><figcaption>Pop d,+,c,*,z1,( (6 pops), emit z2=z1*c+d, and push z2. Actual=6+1=7. Potential 10→5, ΔΦ=−5. Charge=7−5=2. Running actual=25, charge=30.</figcaption></figure></section><section class="step"><h4>5 · Read <code>+ y</code></h4><figure><div class="array"><span class="cell"><small>1</small>a</span><span class="cell"><small>2</small>=</span><span class="cell"><small>3</small>x</span><span class="cell"><small>4</small>+</span><span class="cell"><small>5</small>z2</span><span class="cell"><small>6</small>+</span><span class="cell"><small>7</small>y</span></div><figcaption>Two ordinary pushes. Actual=2; potential 5→7; charge=2+2=4. Running actual=27, charge=34.</figcaption></figure></section><section class="step"><h4>6 · Process the final <code>;</code> — lecture convention</h4><figure><div class="array"></div><figcaption>The stack has 7 symbols, so the semicolon pops 7: actual=7. The lecture defines terminal potential Φ(n)=2, so Φ: 7→2, ΔΦ=−5, and charge=7−5=2. Running actual=34, charge=36. Check: 36+0−2=34.</figcaption></figure></section></section>
+<p>The two closing symbols cost 5 and 7 actual units, but each is charged only 2 because it removes symbols whose earlier pushes increased the potential. Across all 18 calls, actual work is 34 stack operations and charge is 36, matching the lecture's terminal potential of 2.</p>
+<p><strong>Keep the terminal convention straight.</strong> The lecture explicitly sets Φ(n)=2 on the final <code>;</code> call so that even this call has amortized cost 2. It is a bookkeeping exception; after the semicolon, the physical stack is empty. Under the natural potential “stack size after every operation,” the last call instead has Φ: 7→0, charge 7−7=0, and the sequence total is still 34. Both conventions prove the same total; never use the lecture's terminal value 2 in the natural-potential calculation (or vice versa).</p>
+<h2 id="section-3">Lazy heaps: what the course slides establish</h2>
+<p>Lecture 6's binomial heap adds a new one-node tree on insert, leaving the root list uncombined. A later remove-min finds and removes the minimum root, puts its children back on the root list, then combines equal-degree trees. The basic version scans all roots. The enhanced version uses a degree table, with cost <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>M</mi><mi>a</mi><mi>x</mi><mi>D</mi><mi>e</mi><mi>g</mi><mi>r</mi><mi>e</mi><mi>e</mi><mo>+</mo><mi>s</mi><mo stretchy="false">)</mo></mrow></math>, where s is the number of roots examined; MaxDegree is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math>. The lecture's summary table gives binomial insert <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math> actual/amortized and remove-min <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math> actual, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> amortized. Lecture 7 gives Fibonacci-heap remove-min <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math> actual and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> amortized, and decrease-key <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math> actual and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math> amortized.</p>
+<p>The course example makes the deferred work visible: after removing the minimum and promoting its children, seven roots await consolidation. Equal-degree pairs are then linked, leaving fewer roots. Each insert is cheap partly because it leaves consolidation for later. That explains the amortized idea, but the slides do not derive the heap's potential function or show a full numeric credit ledger; do not read the table as a worst-case latency promise for one remove-min.
+The following smaller example is supplemental and uses seven singleton roots so the saved-work calculation is easy to check. Its exact action count charges one unit per initial-root inspection, exposed child and link; degree-table setup/reset adds the separate logarithmic term in the proof below.</p>
+<section aria-label="Seven cheap inserts pay for a later remove-min: [9, 7, 4, 10, 3, 8, 2]" class="walk"><h3>Seven cheap inserts pay for a later remove-min: [9, 7, 4, 10, 3, 8, 2]</h3><div class="example-input"><strong>Input list</strong><span>[9, 7, 4, 10, 3, 8, 2]</span></div><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Insert seven records into an empty lazy heap</h4><figure><div class="array"><span class="cell"><small>1</small>9</span><span class="cell"><small>2</small>7</span><span class="cell"><small>3</small>4</span><span class="cell"><small>4</small>10</span><span class="cell"><small>5</small>3</span><span class="cell"><small>6</small>8</span><span class="cell"><small>7</small>2</span></div><figcaption>Seven inserts make seven separate singleton roots. Actual insert cost is 7 units in this model. With two credits saved per root, Φ=14; charge collected is 7+14=21. Equal-degree trees are deliberately not combined yet.</figcaption></figure></section><section class="step"><h4>2 · Remove root 2; expose zero children</h4><figure><div class="array"><span class="cell"><small>1</small>9</span><span class="cell"><small>2</small>7</span><span class="cell"><small>3</small>4</span><span class="cell"><small>4</small>10</span><span class="cell"><small>5</small>3</span><span class="cell"><small>6</small>8</span></div><figcaption>The minimum root 2 has degree d=0, so it exposes no children. The other six roots await consolidation. Start s=7 roots before removal; keep s separate from the six roots now left.</figcaption></figure></section><section class="step"><h4>3 · Make four links</h4><figure><div class="diagram-frame" style="--diagram-width:317.6px"><svg aria-label="Link 9 under 7, 10 under 4, then 7 under 4; link 8 under 3. There are L=4 links and two final roots, 4 and 3." height="194pt" role="img" viewbox="0.00 0.00 317.60 193.60" width="318pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="amortized-binomial-link-forest-graph0" transform="scale(1 1) rotate(0) translate(10.8 182.8)">
+<title>G</title>
+<!-- r4 -->
+<g class="node" id="amortized-binomial-link-forest-node1">
+<title>r4</title>
+<path d="M125,-172C125,-172 35,-172 35,-172 29,-172 23,-166 23,-160 23,-160 23,-148 23,-148 23,-142 29,-136 35,-136 35,-136 125,-136 125,-136 131,-136 137,-142 137,-148 137,-148 137,-160 137,-160 137,-166 131,-172 125,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="80" y="-150.5">4 · degree 2</text>
+</g>
+<!-- r7 -->
+<g class="node" id="amortized-binomial-link-forest-node2">
+<title>r7</title>
+<path d="M102,-104C102,-104 12,-104 12,-104 6,-104 0,-98 0,-92 0,-92 0,-80 0,-80 0,-74 6,-68 12,-68 12,-68 102,-68 102,-68 108,-68 114,-74 114,-80 114,-80 114,-92 114,-92 114,-98 108,-104 102,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="57" y="-82.5">7 · degree 1</text>
+</g>
+<!-- r4&#45;&gt;r7 -->
+<g class="edge" id="amortized-binomial-link-forest-edge1">
+<title>r4-&gt;r7</title>
+<path d="M73.96,-135.66C71.28,-127.99 68.1,-118.85 65.22,-110.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="67.04,-109.43 63.08,-104.45 63.07,-110.81 67.04,-109.43" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r10 -->
+<g class="node" id="amortized-binomial-link-forest-node3">
+<title>r10</title>
+<path d="M178,-104C178,-104 148,-104 148,-104 142,-104 136,-98 136,-92 136,-92 136,-80 136,-80 136,-74 142,-68 148,-68 148,-68 178,-68 178,-68 184,-68 190,-74 190,-80 190,-80 190,-92 190,-92 190,-98 184,-104 178,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="163" y="-82.5">10</text>
+</g>
+<!-- r4&#45;&gt;r10 -->
+<g class="edge" id="amortized-binomial-link-forest-edge2">
+<title>r4-&gt;r10</title>
+<path d="M101.81,-135.66C112.39,-127.25 125.19,-117.07 136.34,-108.2" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="137.95,-109.6 141.34,-104.22 135.34,-106.32 137.95,-109.6" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r9 -->
+<g class="node" id="amortized-binomial-link-forest-node4">
+<title>r9</title>
+<path d="M72,-36C72,-36 42,-36 42,-36 36,-36 30,-30 30,-24 30,-24 30,-12 30,-12 30,-6 36,0 42,0 42,0 72,0 72,0 78,0 84,-6 84,-12 84,-12 84,-24 84,-24 84,-30 78,-36 72,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="57" y="-14.5">9</text>
+</g>
+<!-- r7&#45;&gt;r9 -->
+<g class="edge" id="amortized-binomial-link-forest-edge3">
+<title>r7-&gt;r9</title>
+<path d="M57,-67.66C57,-59.99 57,-50.85 57,-42.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="59.1,-42.45 57,-36.45 54.9,-42.45 59.1,-42.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r3 -->
+<g class="node" id="amortized-binomial-link-forest-node5">
+<title>r3</title>
+<path d="M284,-172C284,-172 194,-172 194,-172 188,-172 182,-166 182,-160 182,-160 182,-148 182,-148 182,-142 188,-136 194,-136 194,-136 284,-136 284,-136 290,-136 296,-142 296,-148 296,-148 296,-160 296,-160 296,-166 290,-172 284,-172" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="239" y="-150.5">3 · degree 1</text>
+</g>
+<!-- r8 -->
+<g class="node" id="amortized-binomial-link-forest-node6">
+<title>r8</title>
+<path d="M254,-104C254,-104 224,-104 224,-104 218,-104 212,-98 212,-92 212,-92 212,-80 212,-80 212,-74 218,-68 224,-68 224,-68 254,-68 254,-68 260,-68 266,-74 266,-80 266,-80 266,-92 266,-92 266,-98 260,-104 254,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="239" y="-82.5">8</text>
+</g>
+<!-- r3&#45;&gt;r8 -->
+<g class="edge" id="amortized-binomial-link-forest-edge4">
+<title>r3-&gt;r8</title>
+<path d="M239,-135.66C239,-127.99 239,-118.85 239,-110.58" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="241.1,-110.45 239,-104.45 236.9,-110.45 241.1,-110.45" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>Link 9 under 7, 10 under 4, then 7 under 4; link 8 under 3. There are L=4 links and two final roots, 4 and 3.</figcaption></figure>
+<p>Each equal-degree link eliminates one root. Six roots minus four links leaves two roots. The two final degrees, 2 and 1, differ, so consolidation stops.</p></section><section class="step"><h4>4 · Pay for the removal from saved potential</h4><figure><div class="array"><span class="cell"><small>1</small>s=7</span><span class="cell"><small>2</small>d=0</span><span class="cell"><small>3</small>L=4</span><span class="cell"><small>4</small>final roots=2</span></div><figcaption>The simplified removal cost is s+d+L=7+0+4=11 units, plus logarithmic degree-table work. Φ falls from 14 to 4, so ΔΦ=−10. The amortized removal charge is 11−10=1 plus that table work.</figcaption></figure></section><section class="step"><h4>5 · Check the whole sequence</h4><figure><div class="array"><span class="cell"><small>1</small>actual: 7+11=18</span><span class="cell"><small>2</small>charges: 21+1=22</span><span class="cell"><small>3</small>final Φ=4</span></div><figcaption>Ignoring the same separately stated table term on both sides: actual total 18 = charges 22 + initial potential 0 − final potential 4. The removal is expensive individually, while seven earlier inserts left enough potential to pay for it.</figcaption></figure></section></section>
+<h2 id="section-4">Consolidate the six remaining roots one link at a time</h2>
+<p>The cost summary above groups four equal-degree links. This trace starts just after root <code>2</code> was removed and exposes each legal link. In this supplemental model, each root link costs one unit; one root disappears per link, so Φ=2R falls by two each time.</p>
+<section aria-label="Four binomial links after remove-min, shown separately" class="walk"><h3>Four binomial links after remove-min, shown separately</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Six singleton roots before linking</h4><figure><div class="diagram-frame" style="--diagram-width:1071.6px"><svg aria-label="Root 2 has been removed; its degree was 0, so no child was added. Six roots remain." height="58pt" role="img" viewbox="0.00 0.00 1071.60 57.60" width="1072pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="amortized-links-start-graph0" transform="scale(1 1) rotate(0) translate(10.8 46.8)">
+<title>G</title>
+<!-- r9 -->
+<g class="node" id="amortized-links-start-node1">
+<title>r9</title>
+<path d="M143,-36C143,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 143,0 143,0 149,0 155,-6 155,-12 155,-12 155,-24 155,-24 155,-30 149,-36 143,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="77.5" y="-14.5">9 · root, degree 0</text>
+</g>
+<!-- r7 -->
+<g class="node" id="amortized-links-start-node2">
+<title>r7</title>
+<path d="M320,-36C320,-36 189,-36 189,-36 183,-36 177,-30 177,-24 177,-24 177,-12 177,-12 177,-6 183,0 189,0 189,0 320,0 320,0 326,0 332,-6 332,-12 332,-12 332,-24 332,-24 332,-30 326,-36 320,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="254.5" y="-14.5">7 · root, degree 0</text>
+</g>
+<!-- r4 -->
+<g class="node" id="amortized-links-start-node3">
+<title>r4</title>
+<path d="M497,-36C497,-36 366,-36 366,-36 360,-36 354,-30 354,-24 354,-24 354,-12 354,-12 354,-6 360,0 366,0 366,0 497,0 497,0 503,0 509,-6 509,-12 509,-12 509,-24 509,-24 509,-30 503,-36 497,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="431.5" y="-14.5">4 · root, degree 0</text>
+</g>
+<!-- r10 -->
+<g class="node" id="amortized-links-start-node4">
+<title>r10</title>
+<path d="M683.5,-36C683.5,-36 543.5,-36 543.5,-36 537.5,-36 531.5,-30 531.5,-24 531.5,-24 531.5,-12 531.5,-12 531.5,-6 537.5,0 543.5,0 543.5,0 683.5,0 683.5,0 689.5,0 695.5,-6 695.5,-12 695.5,-12 695.5,-24 695.5,-24 695.5,-30 689.5,-36 683.5,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="613.5" y="-14.5">10 · root, degree 0</text>
+</g>
+<!-- r3 -->
+<g class="node" id="amortized-links-start-node5">
+<title>r3</title>
+<path d="M861,-36C861,-36 730,-36 730,-36 724,-36 718,-30 718,-24 718,-24 718,-12 718,-12 718,-6 724,0 730,0 730,0 861,0 861,0 867,0 873,-6 873,-12 873,-12 873,-24 873,-24 873,-30 867,-36 861,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="795.5" y="-14.5">3 · root, degree 0</text>
+</g>
+<!-- r8 -->
+<g class="node" id="amortized-links-start-node6">
+<title>r8</title>
+<path d="M1038,-36C1038,-36 907,-36 907,-36 901,-36 895,-30 895,-24 895,-24 895,-12 895,-12 895,-6 901,0 907,0 907,0 1038,0 1038,0 1044,0 1050,-6 1050,-12 1050,-12 1050,-24 1050,-24 1050,-30 1044,-36 1038,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="972.5" y="-14.5">8 · root, degree 0</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Root 2 has been removed; its degree was 0, so no child was added. Six roots remain.</figcaption></figure>
+<figure><div class="array"><span class="cell"><small>1</small>roots R=6</span><span class="cell"><small>2</small>links L=0</span><span class="cell"><small>3</small>Φ=2R=12</span><span class="cell"><small>4</small>unlinked roots: 9, 7, 4, 10, 3, 8</span></div><figcaption>This is the state before any consolidation link.</figcaption></figure></section><section class="step"><h4>2 · Link 9 under 7</h4><figure><div class="diagram-frame" style="--diagram-width:897.1px"><svg aria-label="Equal degree-0 roots 9 and 7 link; 7 wins because 7 &lt; 9. The other four roots do not move." height="139pt" role="img" viewbox="0.00 0.00 897.10 138.60" width="897pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="amortized-links-after-1-graph0" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- r7 -->
+<g class="node" id="amortized-links-after-1-node1">
+<title>r7</title>
+<path d="M145.5,-117C145.5,-117 14.5,-117 14.5,-117 8.5,-117 2.5,-111 2.5,-105 2.5,-105 2.5,-93 2.5,-93 2.5,-87 8.5,-81 14.5,-81 14.5,-81 145.5,-81 145.5,-81 151.5,-81 157.5,-87 157.5,-93 157.5,-93 157.5,-105 157.5,-105 157.5,-111 151.5,-117 145.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="80" y="-95.5">7 · root, degree 1</text>
+</g>
+<!-- r9 -->
+<g class="node" id="amortized-links-after-1-node2">
+<title>r9</title>
+<path d="M148,-36C148,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 148,0 148,0 154,0 160,-6 160,-12 160,-12 160,-24 160,-24 160,-30 154,-36 148,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="80" y="-14.5">9 · child, degree 0</text>
+</g>
+<!-- r7&#45;&gt;r9 -->
+<g class="edge" id="amortized-links-after-1-edge1">
+<title>r7-&gt;r9</title>
+<path d="M80,-80.86C80,-69.57 80,-54.66 80,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="82.1,-42.11 80,-36.11 77.9,-42.11 82.1,-42.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="95" y="-55.4">child</text>
+</g>
+<!-- r4 -->
+<g class="node" id="amortized-links-after-1-node3">
+<title>r4</title>
+<path d="M322.5,-117C322.5,-117 191.5,-117 191.5,-117 185.5,-117 179.5,-111 179.5,-105 179.5,-105 179.5,-93 179.5,-93 179.5,-87 185.5,-81 191.5,-81 191.5,-81 322.5,-81 322.5,-81 328.5,-81 334.5,-87 334.5,-93 334.5,-93 334.5,-105 334.5,-105 334.5,-111 328.5,-117 322.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="257" y="-95.5">4 · root, degree 0</text>
+</g>
+<!-- r10 -->
+<g class="node" id="amortized-links-after-1-node4">
+<title>r10</title>
+<path d="M509,-117C509,-117 369,-117 369,-117 363,-117 357,-111 357,-105 357,-105 357,-93 357,-93 357,-87 363,-81 369,-81 369,-81 509,-81 509,-81 515,-81 521,-87 521,-93 521,-93 521,-105 521,-105 521,-111 515,-117 509,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="439" y="-95.5">10 · root, degree 0</text>
+</g>
+<!-- r3 -->
+<g class="node" id="amortized-links-after-1-node5">
+<title>r3</title>
+<path d="M686.5,-117C686.5,-117 555.5,-117 555.5,-117 549.5,-117 543.5,-111 543.5,-105 543.5,-105 543.5,-93 543.5,-93 543.5,-87 549.5,-81 555.5,-81 555.5,-81 686.5,-81 686.5,-81 692.5,-81 698.5,-87 698.5,-93 698.5,-93 698.5,-105 698.5,-105 698.5,-111 692.5,-117 686.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="621" y="-95.5">3 · root, degree 0</text>
+</g>
+<!-- r8 -->
+<g class="node" id="amortized-links-after-1-node6">
+<title>r8</title>
+<path d="M863.5,-117C863.5,-117 732.5,-117 732.5,-117 726.5,-117 720.5,-111 720.5,-105 720.5,-105 720.5,-93 720.5,-93 720.5,-87 726.5,-81 732.5,-81 732.5,-81 863.5,-81 863.5,-81 869.5,-81 875.5,-87 875.5,-93 875.5,-93 875.5,-105 875.5,-105 875.5,-111 869.5,-117 863.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="798" y="-95.5">8 · root, degree 0</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Equal degree-0 roots 9 and 7 link; 7 wins because 7 &lt; 9. The other four roots do not move.</figcaption></figure>
+<figure><div class="array"><span class="cell"><small>1</small>roots R=5</span><span class="cell"><small>2</small>links L=1</span><span class="cell"><small>3</small>link actual cost=1</span><span class="cell"><small>4</small>Φ: 12→10 (ΔΦ=−2)</span><span class="cell"><small>5</small>link amortized cost=−1</span></div><figcaption>One equal-degree link removes exactly one root from the forest.</figcaption></figure></section><section class="step"><h4>3 · Link 10 under 4</h4><figure><div class="diagram-frame" style="--diagram-width:720.1px"><svg aria-label="Equal degree-0 roots 10 and 4 link; 4 wins. Root 7 and the roots 3, 8 are unchanged." height="139pt" role="img" viewbox="0.00 0.00 720.10 138.60" width="720pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="amortized-links-after-2-graph0" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- r7 -->
+<g class="node" id="amortized-links-after-2-node1">
+<title>r7</title>
+<path d="M145.5,-117C145.5,-117 14.5,-117 14.5,-117 8.5,-117 2.5,-111 2.5,-105 2.5,-105 2.5,-93 2.5,-93 2.5,-87 8.5,-81 14.5,-81 14.5,-81 145.5,-81 145.5,-81 151.5,-81 157.5,-87 157.5,-93 157.5,-93 157.5,-105 157.5,-105 157.5,-111 151.5,-117 145.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="80" y="-95.5">7 · root, degree 1</text>
+</g>
+<!-- r9 -->
+<g class="node" id="amortized-links-after-2-node2">
+<title>r9</title>
+<path d="M148,-36C148,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 148,0 148,0 154,0 160,-6 160,-12 160,-12 160,-24 160,-24 160,-30 154,-36 148,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="80" y="-14.5">9 · child, degree 0</text>
+</g>
+<!-- r7&#45;&gt;r9 -->
+<g class="edge" id="amortized-links-after-2-edge1">
+<title>r7-&gt;r9</title>
+<path d="M80,-80.86C80,-69.57 80,-54.66 80,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="82.1,-42.11 80,-36.11 77.9,-42.11 82.1,-42.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="95" y="-55.4">child</text>
+</g>
+<!-- r4 -->
+<g class="node" id="amortized-links-after-2-node3">
+<title>r4</title>
+<path d="M332.5,-117C332.5,-117 201.5,-117 201.5,-117 195.5,-117 189.5,-111 189.5,-105 189.5,-105 189.5,-93 189.5,-93 189.5,-87 195.5,-81 201.5,-81 201.5,-81 332.5,-81 332.5,-81 338.5,-81 344.5,-87 344.5,-93 344.5,-93 344.5,-105 344.5,-105 344.5,-111 338.5,-117 332.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="267" y="-95.5">4 · root, degree 1</text>
+</g>
+<!-- r10 -->
+<g class="node" id="amortized-links-after-2-node4">
+<title>r10</title>
+<path d="M340,-36C340,-36 194,-36 194,-36 188,-36 182,-30 182,-24 182,-24 182,-12 182,-12 182,-6 188,0 194,0 194,0 340,0 340,0 346,0 352,-6 352,-12 352,-12 352,-24 352,-24 352,-30 346,-36 340,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="267" y="-14.5">10 · child, degree 0</text>
+</g>
+<!-- r4&#45;&gt;r10 -->
+<g class="edge" id="amortized-links-after-2-edge2">
+<title>r4-&gt;r10</title>
+<path d="M267,-80.86C267,-69.57 267,-54.66 267,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="269.1,-42.11 267,-36.11 264.9,-42.11 269.1,-42.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="282" y="-55.4">child</text>
+</g>
+<!-- r3 -->
+<g class="node" id="amortized-links-after-2-node5">
+<title>r3</title>
+<path d="M509.5,-117C509.5,-117 378.5,-117 378.5,-117 372.5,-117 366.5,-111 366.5,-105 366.5,-105 366.5,-93 366.5,-93 366.5,-87 372.5,-81 378.5,-81 378.5,-81 509.5,-81 509.5,-81 515.5,-81 521.5,-87 521.5,-93 521.5,-93 521.5,-105 521.5,-105 521.5,-111 515.5,-117 509.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="444" y="-95.5">3 · root, degree 0</text>
+</g>
+<!-- r8 -->
+<g class="node" id="amortized-links-after-2-node6">
+<title>r8</title>
+<path d="M686.5,-117C686.5,-117 555.5,-117 555.5,-117 549.5,-117 543.5,-111 543.5,-105 543.5,-105 543.5,-93 543.5,-93 543.5,-87 549.5,-81 555.5,-81 555.5,-81 686.5,-81 686.5,-81 692.5,-81 698.5,-87 698.5,-93 698.5,-93 698.5,-105 698.5,-105 698.5,-111 692.5,-117 686.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="621" y="-95.5">8 · root, degree 0</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Equal degree-0 roots 10 and 4 link; 4 wins. Root 7 and the roots 3, 8 are unchanged.</figcaption></figure>
+<figure><div class="array"><span class="cell"><small>1</small>roots R=4</span><span class="cell"><small>2</small>links L=2</span><span class="cell"><small>3</small>link actual cost=1</span><span class="cell"><small>4</small>Φ: 10→8 (ΔΦ=−2)</span><span class="cell"><small>5</small>link amortized cost=−1</span></div><figcaption>The new degree-1 root 4 can now link with the degree-1 root 7.</figcaption></figure></section><section class="step"><h4>4 · Link 7 under 4</h4><figure><div class="diagram-frame" style="--diagram-width:599.1px"><svg aria-label="Equal degree-1 roots 4 and 7 link; 4 wins. Its degree-1 child 7 keeps child 9." height="220pt" role="img" viewbox="0.00 0.00 599.10 219.60" width="599pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="amortized-links-after-3-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r4 -->
+<g class="node" id="amortized-links-after-3-node1">
+<title>r4</title>
+<path d="M211.5,-198C211.5,-198 80.5,-198 80.5,-198 74.5,-198 68.5,-192 68.5,-186 68.5,-186 68.5,-174 68.5,-174 68.5,-168 74.5,-162 80.5,-162 80.5,-162 211.5,-162 211.5,-162 217.5,-162 223.5,-168 223.5,-174 223.5,-174 223.5,-186 223.5,-186 223.5,-192 217.5,-198 211.5,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="146" y="-176.5">4 · root, degree 2</text>
+</g>
+<!-- r10 -->
+<g class="node" id="amortized-links-after-3-node2">
+<title>r10</title>
+<path d="M158,-117C158,-117 12,-117 12,-117 6,-117 0,-111 0,-105 0,-105 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 158,-81 158,-81 164,-81 170,-87 170,-93 170,-93 170,-105 170,-105 170,-111 164,-117 158,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="85" y="-95.5">10 · child, degree 0</text>
+</g>
+<!-- r4&#45;&gt;r10 -->
+<g class="edge" id="amortized-links-after-3-edge1">
+<title>r4-&gt;r10</title>
+<path d="M132.76,-161.86C123.73,-150.16 111.69,-134.56 101.95,-121.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="103.54,-120.57 98.21,-117.11 100.22,-123.14 103.54,-120.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="134" y="-136.4">child</text>
+</g>
+<!-- r7 -->
+<g class="node" id="amortized-links-after-3-node3">
+<title>r7</title>
+<path d="M340,-117C340,-117 204,-117 204,-117 198,-117 192,-111 192,-105 192,-105 192,-93 192,-93 192,-87 198,-81 204,-81 204,-81 340,-81 340,-81 346,-81 352,-87 352,-93 352,-93 352,-105 352,-105 352,-111 346,-117 340,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="272" y="-95.5">7 · child, degree 1</text>
+</g>
+<!-- r4&#45;&gt;r7 -->
+<g class="edge" id="amortized-links-after-3-edge2">
+<title>r4-&gt;r7</title>
+<path d="M173.34,-161.86C192.82,-149.64 219.09,-133.17 239.62,-120.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="240.75,-122.07 244.71,-117.11 238.51,-118.52 240.75,-122.07" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="231" y="-136.4">child</text>
+</g>
+<!-- r9 -->
+<g class="node" id="amortized-links-after-3-node4">
+<title>r9</title>
+<path d="M340,-36C340,-36 204,-36 204,-36 198,-36 192,-30 192,-24 192,-24 192,-12 192,-12 192,-6 198,0 204,0 204,0 340,0 340,0 346,0 352,-6 352,-12 352,-12 352,-24 352,-24 352,-30 346,-36 340,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="272" y="-14.5">9 · child, degree 0</text>
+</g>
+<!-- r7&#45;&gt;r9 -->
+<g class="edge" id="amortized-links-after-3-edge3">
+<title>r7-&gt;r9</title>
+<path d="M272,-80.86C272,-69.57 272,-54.66 272,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="274.1,-42.11 272,-36.11 269.9,-42.11 274.1,-42.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="287" y="-55.4">child</text>
+</g>
+<!-- r3 -->
+<g class="node" id="amortized-links-after-3-node5">
+<title>r3</title>
+<path d="M388.5,-198C388.5,-198 257.5,-198 257.5,-198 251.5,-198 245.5,-192 245.5,-186 245.5,-186 245.5,-174 245.5,-174 245.5,-168 251.5,-162 257.5,-162 257.5,-162 388.5,-162 388.5,-162 394.5,-162 400.5,-168 400.5,-174 400.5,-174 400.5,-186 400.5,-186 400.5,-192 394.5,-198 388.5,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="323" y="-176.5">3 · root, degree 0</text>
+</g>
+<!-- r8 -->
+<g class="node" id="amortized-links-after-3-node6">
+<title>r8</title>
+<path d="M565.5,-198C565.5,-198 434.5,-198 434.5,-198 428.5,-198 422.5,-192 422.5,-186 422.5,-186 422.5,-174 422.5,-174 422.5,-168 428.5,-162 434.5,-162 434.5,-162 565.5,-162 565.5,-162 571.5,-162 577.5,-168 577.5,-174 577.5,-174 577.5,-186 577.5,-186 577.5,-192 571.5,-198 565.5,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="500" y="-176.5">8 · root, degree 0</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Equal degree-1 roots 4 and 7 link; 4 wins. Its degree-1 child 7 keeps child 9.</figcaption></figure>
+<figure><div class="array"><span class="cell"><small>1</small>roots R=3</span><span class="cell"><small>2</small>links L=3</span><span class="cell"><small>3</small>link actual cost=1</span><span class="cell"><small>4</small>Φ: 8→6 (ΔΦ=−2)</span><span class="cell"><small>5</small>link amortized cost=−1</span></div><figcaption>The remaining degree-0 roots 3 and 8 form the last equal-degree pair.</figcaption></figure></section><section class="step"><h4>5 · Link 8 under 3 and stop</h4><figure><div class="diagram-frame" style="--diagram-width:555.6px"><svg aria-label="Equal degree-0 roots 3 and 8 link; 3 wins. The final root degrees are 2 and 1, so no equal-degree pair remains." height="220pt" role="img" viewbox="0.00 0.00 555.60 219.60" width="556pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="amortized-links-final-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r4 -->
+<g class="node" id="amortized-links-final-node1">
+<title>r4</title>
+<path d="M211.5,-198C211.5,-198 80.5,-198 80.5,-198 74.5,-198 68.5,-192 68.5,-186 68.5,-186 68.5,-174 68.5,-174 68.5,-168 74.5,-162 80.5,-162 80.5,-162 211.5,-162 211.5,-162 217.5,-162 223.5,-168 223.5,-174 223.5,-174 223.5,-186 223.5,-186 223.5,-192 217.5,-198 211.5,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="146" y="-176.5">4 · root, degree 2</text>
+</g>
+<!-- r10 -->
+<g class="node" id="amortized-links-final-node2">
+<title>r10</title>
+<path d="M158,-117C158,-117 12,-117 12,-117 6,-117 0,-111 0,-105 0,-105 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 158,-81 158,-81 164,-81 170,-87 170,-93 170,-93 170,-105 170,-105 170,-111 164,-117 158,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="85" y="-95.5">10 · child, degree 0</text>
+</g>
+<!-- r4&#45;&gt;r10 -->
+<g class="edge" id="amortized-links-final-edge1">
+<title>r4-&gt;r10</title>
+<path d="M132.76,-161.86C123.73,-150.16 111.69,-134.56 101.95,-121.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="103.54,-120.57 98.21,-117.11 100.22,-123.14 103.54,-120.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="135" y="-136.4">child</text>
+</g>
+<!-- r7 -->
+<g class="node" id="amortized-links-final-node3">
+<title>r7</title>
+<path d="M340,-117C340,-117 204,-117 204,-117 198,-117 192,-111 192,-105 192,-105 192,-93 192,-93 192,-87 198,-81 204,-81 204,-81 340,-81 340,-81 346,-81 352,-87 352,-93 352,-93 352,-105 352,-105 352,-111 346,-117 340,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="272" y="-95.5">7 · child, degree 1</text>
+</g>
+<!-- r4&#45;&gt;r7 -->
+<g class="edge" id="amortized-links-final-edge2">
+<title>r4-&gt;r7</title>
+<path d="M173.34,-161.86C192.82,-149.64 219.09,-133.17 239.62,-120.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="240.75,-122.07 244.71,-117.11 238.51,-118.52 240.75,-122.07" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="232" y="-136.4">child</text>
+</g>
+<!-- r9 -->
+<g class="node" id="amortized-links-final-node4">
+<title>r9</title>
+<path d="M340,-36C340,-36 204,-36 204,-36 198,-36 192,-30 192,-24 192,-24 192,-12 192,-12 192,-6 198,0 204,0 204,0 340,0 340,0 346,0 352,-6 352,-12 352,-12 352,-24 352,-24 352,-30 346,-36 340,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="272" y="-14.5">9 · child, degree 0</text>
+</g>
+<!-- r7&#45;&gt;r9 -->
+<g class="edge" id="amortized-links-final-edge3">
+<title>r7-&gt;r9</title>
+<path d="M272,-80.86C272,-69.57 272,-54.66 272,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="274.1,-42.11 272,-36.11 269.9,-42.11 274.1,-42.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="287" y="-55.4">child</text>
+</g>
+<!-- r3 -->
+<g class="node" id="amortized-links-final-node5">
+<title>r3</title>
+<path d="M519.5,-198C519.5,-198 388.5,-198 388.5,-198 382.5,-198 376.5,-192 376.5,-186 376.5,-186 376.5,-174 376.5,-174 376.5,-168 382.5,-162 388.5,-162 388.5,-162 519.5,-162 519.5,-162 525.5,-162 531.5,-168 531.5,-174 531.5,-174 531.5,-186 531.5,-186 531.5,-192 525.5,-198 519.5,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="454" y="-176.5">3 · root, degree 1</text>
+</g>
+<!-- r8 -->
+<g class="node" id="amortized-links-final-node6">
+<title>r8</title>
+<path d="M522,-117C522,-117 386,-117 386,-117 380,-117 374,-111 374,-105 374,-105 374,-93 374,-93 374,-87 380,-81 386,-81 386,-81 522,-81 522,-81 528,-81 534,-87 534,-93 534,-93 534,-105 534,-105 534,-111 528,-117 522,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="454" y="-95.5">8 · child, degree 0</text>
+</g>
+<!-- r3&#45;&gt;r8 -->
+<g class="edge" id="amortized-links-final-edge4">
+<title>r3-&gt;r8</title>
+<path d="M454,-161.86C454,-150.57 454,-135.66 454,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="456.1,-123.11 454,-117.11 451.9,-123.11 456.1,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="469" y="-136.4">child</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Equal degree-0 roots 3 and 8 link; 3 wins. The final root degrees are 2 and 1, so no equal-degree pair remains.</figcaption></figure>
+<figure><div class="array"><span class="cell"><small>1</small>roots R=2</span><span class="cell"><small>2</small>links L=4</span><span class="cell"><small>3</small>link actual cost=1</span><span class="cell"><small>4</small>Φ: 6→4 (ΔΦ=−2)</span><span class="cell"><small>5</small>all six roots are represented</span><span class="cell"><small>6</small>final root degrees: 2, 1</span></div><figcaption>The four links reduce six roots to two: 6−4=2. This is the completed consolidation forest.</figcaption></figure></section></section>
+<p><strong>Supplemental binomial-heap potential proof (not shown in the lectures).</strong> To make the earlier-work story precise, use <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>Φ</mi><mo>=</mo><mn>2</mn><mi>R</mi></mrow></math> for a simplified model, where R is the number of roots. Each <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math> insert adds one root and therefore only <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math> amortized cost. Suppose remove-min starts with s roots, removes a root of degree d, exposes its d children, links L equal-degree pairs, and ends with R′ roots. Then:</p>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>R</mi><mi>′</mi><mo>=</mo><mi>s</mi><mo>−</mo><mn>1</mn><mo>+</mo><mi>d</mi><mo>−</mo><mi>L</mi><mo>,</mo><mspace width="2em"></mspace><mi>c</mi><mo>=</mo><mi>s</mi><mo>+</mo><mi>d</mi><mo>+</mo><mi>L</mi><mo>+</mo><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math></div>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mover><mi>c</mi><mo>^</mo></mover><mo>=</mo><mi>c</mi><mo>+</mo><mi>Δ</mi><mi>Φ</mi><mo>=</mo><mi>s</mi><mo>+</mo><mi>d</mi><mo>+</mo><mi>L</mi><mo>+</mo><mn>2</mn><mo stretchy="false">(</mo><mi>d</mi><mo>−</mo><mn>1</mn><mo>−</mo><mi>L</mi><mo stretchy="false">)</mo><mo>+</mo><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo><mo>=</mo><mn>2</mn><mi>d</mi><mo>+</mo><mi>R</mi><mi>′</mi><mo>−</mo><mn>1</mn><mo>+</mo><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo><mo>=</mo><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math></div>
+<p>After consolidation, both d and R′ are <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math>; the potential decrease pays for the many root inspections and links. This is an illustrative proof under the stated action-count model, not a cost derivation presented by the course slides. A proof must include initialization or start from the empty heap. For Fibonacci heaps, a standard textbook choice is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>Φ</mi><mo>=</mo><mi>t</mi><mo>+</mo><mn>2</mn><mi>m</mi></mrow></math>, where t is the number of roots and m the number of marked nonroot nodes. The lecture introduces the child-cut mark and reports amortized bounds, but does not teach this formula; treat it as supplemental context.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th style="text-align: right;">One-operation cost can be</th>
+<th style="text-align: right;">Sequence guarantee in the course material</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Binary-counter increment with w bits</td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>w</mi><mo stretchy="false">)</mo></mrow></math></td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math> amortized bit flips</td>
+</tr>
+<tr>
+<td>One expression-stack call</td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math> on a closing symbol</td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math> amortized; <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math> total for n symbols</td>
+</tr>
+<tr>
+<td>Binomial-heap insert</td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math></td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math> amortized</td>
+</tr>
+<tr>
+<td>Binomial-heap remove-min</td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math></td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> amortized</td>
+</tr>
+<tr>
+<td>Fibonacci-heap decrease-key</td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math></td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math> amortized</td>
+</tr>
+<tr>
+<td>Fibonacci-heap remove-min</td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math></td>
+<td style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> amortized</td>
+</tr>
+</tbody>
+</table>
+<h2 id="section-5">Common mistakes</h2>
+<p>An amortized bound is not an average over inputs and does not cap each operation. “This four-bit increment costs at most four” proves nothing about counters of arbitrary width. The chosen potential must cover the operations actually allowed, including initialization and reset. Keep the cost model fixed: the counter example counts bit flips; the stack example counts pushes and pops; the heap slide's asymptotic table should not be turned into invented exact costs.</p>
+<h2 id="section-6">Exam focus</h2>
+<p>For a potential proof: state the initial state and Φ; compute each operation's actual cost and ΔΦ; simplify the amortized charge; sum and telescope; verify Φ(Dₘ)≥Φ(D₀). For the stack, explain that each symbol is pushed at most once and popped at most once, even if a close triggers many pops. For a counter with q trailing 1s, actual flips are q+1 and the number of 1s changes by 1−q, so the amortized charge is (q+1)+(1−q)=2. For lazy heaps, separate actual work on a particular remove-min from the amortized guarantee across operations.</p>
+<h2 id="section-7">Practice questions</h2>
+<p class="question">A counter has state `0111` before increment. Under the bit-flip cost model and Φ = number of 1s, find actual cost, ΔΦ, and amortized cost.</p>
+<details class="worked"><summary>Check your answer</summary><p>The three trailing 1s turn to 0 and the next bit turns to 1, so actual cost is 4. Potential changes from 3 to 1, so ΔΦ=−2. Amortized cost is 4−2=2.</p></details>
+<p class="question">A sequence has total charge 50, initial potential 3, and final potential 8. What upper bound does this give on actual cost?</p>
+<details class="worked"><summary>Check your answer</summary><p>By telescoping, actual cost = total charge + initial potential − final potential = 50+3−8=45.</p></details>
+<p class="question">Why can the lecture charge the final semicolon of its stack example 2 even though its natural stack-size potential would charge 0?</p>
+<details class="worked"><summary>Check your answer</summary><p>The lecture defines the terminal potential as 2, not the physical final stack size 0. From stack size 7, its ΔΦ is 2−7=−5; actual cost 7 plus ΔΦ gives charge 2. With natural potential ending at zero, ΔΦ=−7 and the final charge is 0. Either convention works only when used consistently.</p></details>
+<p class="question">The lecture reports <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math> actual and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> amortized binomial remove-min. Does that mean every remove-min scans only <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> roots?</p>
+<details class="worked"><summary>Check your answer</summary><p>No. One remove-min may scan <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math> roots. The amortized bound concerns a sequence of operations; it is not a per-operation worst-case latency guarantee.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="external-sorting.html"><small>Previous</small>External sorting <span aria-hidden="true">↗</span></a></nav><footer>ADS field notes <span>Understand the rule. Trace the repair.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  root.querySelectorAll('table').forEach(table => {
+    const region = document.createElement('div');
+    region.className = 'table-scroll' + (table.rows[0]?.cells.length > 5 ? ' wide' : '');
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    table.before(region); region.append(table);
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Data structure diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect every node.'; frame.after(hint);
+    const update = () => { hint.hidden = frame.scrollWidth <= frame.clientWidth + 1 && frame.scrollHeight <= frame.clientHeight + 1; };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {heap:'priority queue insert delete meld minimum maximum trickle down bubble up build',tree:'insert delete search build rotate rotation',trie:'insert delete search build prefix',sorting:'run merge buffer freeze build',analysis:'potential aggregate accounting'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('a').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('ads-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.ADS_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) expand.textContent = 'Expand examples';
+    const section = new URLSearchParams(url.hash.slice(1)).get('section') || (url.hash.startsWith('#topic=') ? '' : url.hash.slice(1));
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = new URLSearchParams(location.hash.slice(1)).get('section') || location.hash.slice(1);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+})();
+</script></body></html>

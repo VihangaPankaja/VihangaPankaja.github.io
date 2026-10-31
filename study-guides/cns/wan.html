@@ -1,0 +1,1067 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Follow the lecture’s historical path from dedicated lines to shared packet services, ATM cells, MPLS labels, and Ethernet First Mile access."><title>WAN and MAN technologies · Networks field notes</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('cns-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{.table-hint{display:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#243740;--muted:#5e737d;--secondary:#edf2f3;--border:#d5e0e3;--primary:#1e647c;--accent:#dcecf0;--diagram-fill:#eff4f5;--diagram-border:#829da8;--diagram-edge:#65838f;--active-text:#174b61;--focus:#227b98}:root[data-theme=dark]{--background:#141d23;--foreground:#e1eaf0;--muted:#a8beca;--card:#1a2730;--secondary:#22333e;--border:#3b505c;--primary:#90d1e4;--accent:#254757;--diagram-fill:#22333e;--diagram-border:#93b2c1;--diagram-edge:#9bbac9;--topbar:#141d23f5;--active-text:#b6e5f1;--focus:#90d1e4} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> CNS <span class="subbrand">field notes</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Subnet, TCP, TLS…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a href="index.html">Computer networks and security</a></div><div class="nav-group"><p>Foundations</p><a href="osi.html">OSI model and encapsulation</a><a href="data-link.html">Data link framing, errors and flow control</a><a href="wan.html" aria-current="page">WAN and MAN technologies</a><a href="lan.html">LAN, Ethernet and switching</a></div><div class="nav-group"><p>Internetworking</p><a href="routing.html">Network layer and routing</a><a href="ipv4.html">IPv4 addressing, subnetting and VLSM</a><a href="ip-delivery.html">IP packets, ARP, ICMP, DHCP and NAT</a><a href="ipv6.html">IPv6 addressing and transition</a></div><div class="nav-group"><p>Transport and wireless</p><a href="transport.html">Transport services and connections</a><a href="short-range.html">Bluetooth, NFC and ZigBee</a></div><div class="nav-group"><p>Security and design</p><a href="security.html">Security foundations and cryptography</a><a href="pki.html">Public key infrastructure</a><a href="secure-protocols.html">IPsec and TLS</a><a href="network-design.html">Network design</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS3131<br>Computer Networks and Security</div></aside>
+<main id="main"><div class="eyebrow">Foundations <span>/</span> Lecture 3</div><h1>WAN and MAN technologies</h1><p class="lead">Follow the lecture’s historical path from dedicated lines to shared packet services, ATM cells, MPLS labels, and Ethernet First Mile access.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">WAN, MAN, and the provider network</a><a href="#section-2">Dedicated line or shared packet network?</a><a href="#section-3">Datagram forwarding and virtual circuits</a><a href="#section-4">X.25 and Frame Relay</a><a href="#section-5">ATM: fixed cells and virtual paths</a><a href="#section-6">Compare the lecture’s X.25 / Frame Relay / ATM table</a><a href="#section-7">MPLS: labels through a carrier core</a><a href="#section-8">Ethernet First Mile (EFM): the lecture’s Metro Ethernet section</a><a href="#section-9">Quick revision</a><a href="#section-10">Practice</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>A WAN connects distant sites through a service-provider network; a MAN serves a metropolitan area. The lecture follows a historical design question: reserve a whole line, or share provider links with other traffic? Packet WANs evolved from X.25 toward lighter Frame Relay service and fixed-size ATM cells. MPLS adds label-based forwarding to a carrier core, while Ethernet First Mile extends Ethernet over provider access links.</p>
+<p>The shared theme is where capacity and forwarding state live. A leased line reserves a physical link. Packet networks share transmission capacity; virtual circuits add logical per-flow state without dedicating a wire. These are historical lecture topics, not a survey of current carrier products.</p>
+
+<h2 id="section-1">WAN, MAN, and the provider network</h2>
+<p>In the lecture’s approximate boundaries, a LAN is generally under 1 km in diameter, a WAN typically exceeds 30 km, and a MAN covers a metropolitan area up to about 50 km. The Colombo Metro example runs from Moratuwa to Ja-Ela. The lecturer’s organizing premise is that formerly distinct LAN/MAN/WAN technologies were converging, with Ethernet used at all three scales; this does not mean geography or provider roles disappear.</p>
+<p>A provider network has customer-facing access links, switches, and higher-capacity transmission links between switches. Its core can have alternate paths. Access brings subscribers into the network; transmission carries traffic among provider switches.</p>
+
+<figure><div class="diagram-frame" style="--diagram-width:818.6px"><svg role="img" aria-label="Provider structure: subscriber access reaches switches; higher-capacity transmission links form a core with alternate paths." width="819pt" height="116pt"
+ viewBox="0.00 0.00 818.60 115.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="wan-provider-network-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 104.8)">
+<title>G</title>
+<!-- sub -->
+<g id="wan-provider-network-node1" class="node">
+<title>sub</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M102,-65C102,-65 12,-65 12,-65 6,-65 0,-59 0,-53 0,-53 0,-41 0,-41 0,-35 6,-29 12,-29 12,-29 102,-29 102,-29 108,-29 114,-35 114,-41 114,-41 114,-53 114,-53 114,-59 108,-65 102,-65"/>
+<text text-anchor="middle" x="57" y="-43.5" font-family="Georgia" font-size="15.00">Subscribers</text>
+</g>
+<!-- access -->
+<g id="wan-provider-network-node2" class="node">
+<title>access</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M283,-71C283,-71 158,-71 158,-71 152,-71 146,-65 146,-59 146,-59 146,-35 146,-35 146,-29 152,-23 158,-23 158,-23 283,-23 283,-23 289,-23 295,-29 295,-35 295,-35 295,-59 295,-59 295,-65 289,-71 283,-71"/>
+<text text-anchor="middle" x="220.5" y="-52" font-family="Georgia" font-size="15.00">Customer&#45;facing</text>
+<text text-anchor="middle" x="220.5" y="-35" font-family="Georgia" font-size="15.00">access</text>
+</g>
+<!-- sub&#45;&gt;access -->
+<g id="wan-provider-network-edge1" class="edge">
+<title>sub&#45;&gt;access</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M114.03,-47C122.4,-47 131.15,-47 139.89,-47"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="139.93,-49.1 145.93,-47 139.93,-44.9 139.93,-49.1"/>
+</g>
+<!-- edge1 -->
+<g id="wan-provider-network-node3" class="node">
+<title>edge1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M389,-65C389,-65 339,-65 339,-65 333,-65 327,-59 327,-53 327,-53 327,-41 327,-41 327,-35 333,-29 339,-29 339,-29 389,-29 389,-29 395,-29 401,-35 401,-41 401,-41 401,-53 401,-53 401,-59 395,-65 389,-65"/>
+<text text-anchor="middle" x="364" y="-43.5" font-family="Georgia" font-size="15.00">Switch</text>
+</g>
+<!-- access&#45;&gt;edge1 -->
+<g id="wan-provider-network-edge2" class="edge">
+<title>access&#45;&gt;edge1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M295.15,-47C303.93,-47 312.64,-47 320.76,-47"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="320.84,-49.1 326.84,-47 320.84,-44.9 320.84,-49.1"/>
+</g>
+<!-- c1 -->
+<g id="wan-provider-network-node5" class="node">
+<title>c1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M534,-94C534,-94 445,-94 445,-94 439,-94 433,-88 433,-82 433,-82 433,-70 433,-70 433,-64 439,-58 445,-58 445,-58 534,-58 534,-58 540,-58 546,-64 546,-70 546,-70 546,-82 546,-82 546,-88 540,-94 534,-94"/>
+<text text-anchor="middle" x="489.5" y="-72.5" font-family="Georgia" font-size="15.00">Core switch</text>
+</g>
+<!-- edge1&#45;&gt;c1 -->
+<g id="wan-provider-network-edge3" class="edge">
+<title>edge1&#45;&gt;c1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M401.05,-55.47C409.15,-57.37 417.97,-59.44 426.78,-61.51"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="426.56,-63.61 432.88,-62.94 427.52,-59.52 426.56,-63.61"/>
+</g>
+<!-- c2 -->
+<g id="wan-provider-network-node6" class="node">
+<title>c2</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M534,-36C534,-36 445,-36 445,-36 439,-36 433,-30 433,-24 433,-24 433,-12 433,-12 433,-6 439,0 445,0 445,0 534,0 534,0 540,0 546,-6 546,-12 546,-12 546,-24 546,-24 546,-30 540,-36 534,-36"/>
+<text text-anchor="middle" x="489.5" y="-14.5" font-family="Georgia" font-size="15.00">Core switch</text>
+</g>
+<!-- edge1&#45;&gt;c2 -->
+<g id="wan-provider-network-edge4" class="edge">
+<title>edge1&#45;&gt;c2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M401.05,-38.53C409.15,-36.63 417.97,-34.56 426.78,-32.49"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="427.52,-34.48 432.88,-31.06 426.56,-30.39 427.52,-34.48"/>
+</g>
+<!-- edge2 -->
+<g id="wan-provider-network-node4" class="node">
+<title>edge2</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M785,-65C785,-65 735,-65 735,-65 729,-65 723,-59 723,-53 723,-53 723,-41 723,-41 723,-35 729,-29 735,-29 735,-29 785,-29 785,-29 791,-29 797,-35 797,-41 797,-41 797,-53 797,-53 797,-59 791,-65 785,-65"/>
+<text text-anchor="middle" x="760" y="-43.5" font-family="Georgia" font-size="15.00">Switch</text>
+</g>
+<!-- c3 -->
+<g id="wan-provider-network-node7" class="node">
+<title>c3</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M679,-94C679,-94 590,-94 590,-94 584,-94 578,-88 578,-82 578,-82 578,-70 578,-70 578,-64 584,-58 590,-58 590,-58 679,-58 679,-58 685,-58 691,-64 691,-70 691,-70 691,-82 691,-82 691,-88 685,-94 679,-94"/>
+<text text-anchor="middle" x="634.5" y="-72.5" font-family="Georgia" font-size="15.00">Core switch</text>
+</g>
+<!-- c1&#45;&gt;c3 -->
+<g id="wan-provider-network-edge5" class="edge">
+<title>c1&#45;&gt;c3</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M546.2,-76C554.45,-76 562.99,-76 571.36,-76"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="571.72,-78.1 577.72,-76 571.72,-73.9 571.72,-78.1"/>
+</g>
+<!-- c4 -->
+<g id="wan-provider-network-node8" class="node">
+<title>c4</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M679,-36C679,-36 590,-36 590,-36 584,-36 578,-30 578,-24 578,-24 578,-12 578,-12 578,-6 584,0 590,0 590,0 679,0 679,0 685,0 691,-6 691,-12 691,-12 691,-24 691,-24 691,-30 685,-36 679,-36"/>
+<text text-anchor="middle" x="634.5" y="-14.5" font-family="Georgia" font-size="15.00">Core switch</text>
+</g>
+<!-- c1&#45;&gt;c4 -->
+<g id="wan-provider-network-edge6" class="edge">
+<title>c1&#45;&gt;c4</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M534.96,-57.97C550.3,-51.75 567.58,-44.74 583.33,-38.35"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="584.29,-40.22 589.07,-36.02 582.72,-36.33 584.29,-40.22"/>
+</g>
+<!-- c2&#45;&gt;c3 -->
+<g id="wan-provider-network-edge7" class="edge">
+<title>c2&#45;&gt;c3</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M534.96,-36.03C550.3,-42.25 567.58,-49.26 583.33,-55.65"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="582.72,-57.67 589.07,-57.98 584.29,-53.78 582.72,-57.67"/>
+</g>
+<!-- c2&#45;&gt;c4 -->
+<g id="wan-provider-network-edge8" class="edge">
+<title>c2&#45;&gt;c4</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M546.2,-18C554.45,-18 562.99,-18 571.36,-18"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="571.72,-20.1 577.72,-18 571.72,-15.9 571.72,-20.1"/>
+</g>
+<!-- c3&#45;&gt;edge2 -->
+<g id="wan-provider-network-edge9" class="edge">
+<title>c3&#45;&gt;edge2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M691.11,-62.94C699.68,-60.93 708.41,-58.88 716.63,-56.95"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="717.45,-58.91 722.81,-55.5 716.49,-54.83 717.45,-58.91"/>
+</g>
+<!-- c4&#45;&gt;edge2 -->
+<g id="wan-provider-network-edge10" class="edge">
+<title>c4&#45;&gt;edge2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M691.11,-31.06C699.68,-33.07 708.41,-35.12 716.63,-37.05"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="716.49,-39.17 722.81,-38.5 717.45,-35.09 716.49,-39.17"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Provider structure: subscriber access reaches switches; higher-capacity transmission links form a core with alternate paths.</figcaption></figure>
+
+<h2 id="section-2">Dedicated line or shared packet network?</h2>
+<p>A leased line is a full-time dedicated point-to-point connection, continuously available at a specified capacity. The lecture’s examples are 64 kb/s, 2 Mb/s, and 155 Mb/s. Its period-specific common range is 64 kb/s–2 Mb/s, with 64 kb/s for a few computers and 2 Mb/s for a large office. One slide prints “2MB”; the rate context suggests a unit typo for 2 Mb/s, not megabytes per second.</p>
+<p>The slides distinguish analog and digital leased lines, noting most had become digital by the lecture’s period. Customers pay a fixed monthly cost regardless of use. Uses include voice and tie lines, corporate data networks, Internet access, and combined voice/data. Dedicated capacity is straightforward and continuously available, but idle capacity is still paid for.</p>
+<p>Packet switching divides a stream into packets. Packets from different connections take turns on shared links, so one flow’s idle periods can be used by another. This statistical sharing helps with bursty traffic; it does not mean every flow can transmit at peak simultaneously or that capacity is unlimited.</p>
+
+<details class="worked"><summary>Teaching example: why burst sharing can save reserved capacity</summary><section class="walk" aria-label="Compare idle reservation with shared bursts"><h3>Compare idle reservation with shared bursts</h3><div class="example-input">Assumption: three customers, short non-overlapping bursts, no rates supplied.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>State the workload</h4><p>Assume three customers each need the same link only during brief, non-overlapping bursts. No rates are supplied, so this compares usage patterns, not a numerical saving.</p></section><section class="step"><h4>Reserve separate lines</h4><p>With one leased line per customer, all three capacities remain reserved while two customers are idle.</p></section><section class="step"><h4>Share a provider link</h4><p>With packet switching, packets from whichever customer is active can use the shared link. Capacity is statistically shared across flows.</p></section><section class="step"><h4>Check the conclusion</h4><p>Sharing avoids reserving three separate physical routes for this pattern. If bursts overlap or exceed shared capacity, queues or loss may occur; no guaranteed rate follows from this example.</p></section></section></details>
+
+<h2 id="section-3">Datagram forwarding and virtual circuits</h2>
+<p>A datagram is routed independently, packet by packet. Packets in one conversation can encounter different routes and may arrive in a different order. A virtual circuit (VC) selects a route for a connection or flow; packets carry a connection identifier and follow that logical route. The network keeps per-connection state.</p>
+<p>A VC is not a dedicated physical circuit: it is a logical path over shared links. Route selection once per flow and physical reservation are separate properties.</p>
+
+<figure><div class="diagram-frame" style="--diagram-width:586.6px"><svg role="img" aria-label="Illustrative topology: datagrams may take different routes; a virtual circuit selects one logical route. Both use shared links." width="587pt" height="116pt"
+ viewBox="0.00 0.00 586.60 115.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="wan-datagram-vc-paths-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 104.8)">
+<title>G</title>
+<!-- s -->
+<g id="wan-datagram-vc-paths-node1" class="node">
+<title>s</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M65,-65C65,-65 12,-65 12,-65 6,-65 0,-59 0,-53 0,-53 0,-41 0,-41 0,-35 6,-29 12,-29 12,-29 65,-29 65,-29 71,-29 77,-35 77,-41 77,-41 77,-53 77,-53 77,-59 71,-65 65,-65"/>
+<text text-anchor="middle" x="38.5" y="-43.5" font-family="Georgia" font-size="15.00">Source</text>
+</g>
+<!-- a -->
+<g id="wan-datagram-vc-paths-node2" class="node">
+<title>a</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M230.5,-94C230.5,-94 165.5,-94 165.5,-94 159.5,-94 153.5,-88 153.5,-82 153.5,-82 153.5,-70 153.5,-70 153.5,-64 159.5,-58 165.5,-58 165.5,-58 230.5,-58 230.5,-58 236.5,-58 242.5,-64 242.5,-70 242.5,-70 242.5,-82 242.5,-82 242.5,-88 236.5,-94 230.5,-94"/>
+<text text-anchor="middle" x="198" y="-72.5" font-family="Georgia" font-size="15.00">Switch A</text>
+</g>
+<!-- s&#45;&gt;a -->
+<g id="wan-datagram-vc-paths-edge1" class="edge">
+<title>s&#45;&gt;a</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M77.23,-53.95C98.28,-57.82 124.76,-62.7 147.46,-66.88"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="147.17,-68.96 153.45,-67.98 147.93,-64.83 147.17,-68.96"/>
+<text text-anchor="middle" x="115" y="-67.4" font-family="Georgia" font-size="12.00">route 1</text>
+</g>
+<!-- b -->
+<g id="wan-datagram-vc-paths-node3" class="node">
+<title>b</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M231,-36C231,-36 165,-36 165,-36 159,-36 153,-30 153,-24 153,-24 153,-12 153,-12 153,-6 159,0 165,0 165,0 231,0 231,0 237,0 243,-6 243,-12 243,-12 243,-24 243,-24 243,-30 237,-36 231,-36"/>
+<text text-anchor="middle" x="198" y="-14.5" font-family="Georgia" font-size="15.00">Switch B</text>
+</g>
+<!-- s&#45;&gt;b -->
+<g id="wan-datagram-vc-paths-edge2" class="edge">
+<title>s&#45;&gt;b</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M77.23,-40.05C98.11,-36.21 124.34,-31.38 146.92,-27.22"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="147.36,-29.28 152.88,-26.12 146.6,-25.14 147.36,-29.28"/>
+<text text-anchor="middle" x="115" y="-39.4" font-family="Georgia" font-size="12.00">route 2</text>
+</g>
+<!-- j -->
+<g id="wan-datagram-vc-paths-node4" class="node">
+<title>j</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M410,-70C410,-70 288,-70 288,-70 282,-70 276,-64 276,-58 276,-58 276,-34 276,-34 276,-28 282,-22 288,-22 288,-22 410,-22 410,-22 416,-22 422,-28 422,-34 422,-34 422,-58 422,-58 422,-64 416,-70 410,-70"/>
+<text text-anchor="middle" x="349" y="-51" font-family="Georgia" font-size="15.00">Destination&#45;side</text>
+<text text-anchor="middle" x="349" y="-34" font-family="Georgia" font-size="15.00">switch</text>
+</g>
+<!-- a&#45;&gt;j -->
+<g id="wan-datagram-vc-paths-edge3" class="edge">
+<title>a&#45;&gt;j</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M242.9,-67.16C251.42,-65.45 260.59,-63.6 269.83,-61.74"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="270.44,-63.76 275.91,-60.52 269.61,-59.64 270.44,-63.76"/>
+</g>
+<!-- b&#45;&gt;j -->
+<g id="wan-datagram-vc-paths-edge4" class="edge">
+<title>b&#45;&gt;j</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M243.3,-26.33C251.75,-27.91 260.81,-29.62 269.95,-31.33"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="269.68,-33.42 275.96,-32.46 270.45,-29.29 269.68,-33.42"/>
+</g>
+<!-- d -->
+<g id="wan-datagram-vc-paths-node5" class="node">
+<title>d</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M553,-64C553,-64 467,-64 467,-64 461,-64 455,-58 455,-52 455,-52 455,-40 455,-40 455,-34 461,-28 467,-28 467,-28 553,-28 553,-28 559,-28 565,-34 565,-40 565,-40 565,-52 565,-52 565,-58 559,-64 553,-64"/>
+<text text-anchor="middle" x="510" y="-42.5" font-family="Georgia" font-size="15.00">Destination</text>
+</g>
+<!-- j&#45;&gt;d -->
+<g id="wan-datagram-vc-paths-edge5" class="edge">
+<title>j&#45;&gt;d</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M422.06,-46C430.92,-46 439.9,-46 448.56,-46"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="448.81,-48.1 454.81,-46 448.81,-43.9 448.81,-48.1"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Illustrative topology: datagrams may take different routes; a virtual circuit selects one logical route. Both use shared links.</figcaption></figure>
+
+<details class="worked"><summary>Teaching example: route choice and packet order</summary><section class="walk" aria-label="Track three packets"><h3>Track three packets</h3><div class="example-input">Illustrative topology and packet arrival times; no source timing values are asserted.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Set the topology</h4><p>Use the diagram above. Suppose P1 uses Switch A, P2 uses Switch B, and P3 uses A.</p></section><section class="step"><h4>Datagram forwarding</h4><p>Each packet is decided independently. If the B route delivers P2 before P1, the receiver sees P2, P1, P3. This is possible, not inevitable.</p></section><section class="step"><h4>Virtual-circuit forwarding</h4><p>Select one logical route, say through A. P1, P2, and P3 carry the VC identifier and use that route while its state exists.</p></section><section class="step"><h4>Check the distinction</h4><p>Both paths use shared links. The VC does not create a dedicated wire.</p></section></section></details>
+
+<h2 id="section-4">X.25 and Frame Relay</h2>
+<h3>X.25: early virtual-circuit packet service</h3>
+<p>The lecture describes X.25 as the ITU standard for a user interface to a packet-data network, used by banks and airlines. It characterizes X.25 as expensive and slow, at about 64 kb/s. The slide also says “Introduced in the 1960s”; distinguish packet-network research history from the standard date: ITU-T’s history says the first X.25 Recommendation was approved in 1976 (<a href="https://www.itu.int/en/ITU-T/studygroups/2009-2012/Pages/17/history.aspx">ITU-T history</a>).</p>
+<p>In the comparison, X.25 is connection-oriented and uses virtual circuits. The lecture presents substantial internal error/flow-control work as a reason it was slower than later alternatives.</p>
+<h3>Frame Relay: lighter frame service over provider VCs</h3>
+<p>Frame Relay was presented as an X.25 replacement: it relays frames, is virtual-circuit oriented, and can carry IP datagrams, so IP can use it as a link-layer service. The lecture dates its design to the late 1980s and wide deployment to the 1990s. Its contrast with X.25 is reduced hop-by-hop sequencing and recovery work under an assumption of more reliable links.</p>
+<p>The slide shorthand “no error control” is too broad. Frame Relay reduces link-by-link recovery overhead; it still detects frame errors. Congestion notification is also distinct from end-to-end congestion control. The simpler source point is that more recovery responsibility sits with endpoints. See the Frame Relay operational model in <a href="https://www.rfc-editor.org/rfc/rfc1315.html">RFC 1315</a> and reduced sequencing/flow-control scope in <a href="https://www.rfc-editor.org/rfc/rfc1973.html">RFC 1973</a>.</p>
+<p>A corporate customer could lease service from a public provider and use permanent VCs as logical pipes between routers. Multiple VCs can share one physical access link. CIR means Committed Information Rate: a negotiated per-VC service commitment that affects the charge. The slide calls it “guaranteed”; read that as a commitment within service terms, not an unconditional end-to-end throughput, delay, or availability promise.</p>
+
+<figure><div class="diagram-frame" style="--diagram-width:1327.6px"><svg role="img" aria-label="Several permanent logical circuits cross the provider network while each customer router has one physical access link. CIR is per VC." width="1328pt" height="174pt"
+ viewBox="0.00 0.00 1327.60 173.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="wan-frame-relay-vcs-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 162.8)">
+<title>G</title>
+<!-- la -->
+<g id="wan-frame-relay-vcs-node1" class="node">
+<title>la</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M138,-94C138,-94 12,-94 12,-94 6,-94 0,-88 0,-82 0,-82 0,-70 0,-70 0,-64 6,-58 12,-58 12,-58 138,-58 138,-58 144,-58 150,-64 150,-70 150,-70 150,-82 150,-82 150,-88 144,-94 138,-94"/>
+<text text-anchor="middle" x="75" y="-72.5" font-family="Georgia" font-size="15.00">Customer LAN A</text>
+</g>
+<!-- ra -->
+<g id="wan-frame-relay-vcs-node2" class="node">
+<title>ra</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M260,-94C260,-94 194,-94 194,-94 188,-94 182,-88 182,-82 182,-82 182,-70 182,-70 182,-64 188,-58 194,-58 194,-58 260,-58 260,-58 266,-58 272,-64 272,-70 272,-70 272,-82 272,-82 272,-88 266,-94 260,-94"/>
+<text text-anchor="middle" x="227" y="-72.5" font-family="Georgia" font-size="15.00">Router A</text>
+</g>
+<!-- la&#45;&gt;ra -->
+<g id="wan-frame-relay-vcs-edge1" class="edge">
+<title>la&#45;&gt;ra</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M150.12,-76C158.71,-76 167.31,-76 175.48,-76"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="175.63,-78.1 181.63,-76 175.63,-73.9 175.63,-78.1"/>
+</g>
+<!-- accessa -->
+<g id="wan-frame-relay-vcs-node3" class="node">
+<title>accessa</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M411,-100C411,-100 316,-100 316,-100 310,-100 304,-94 304,-88 304,-88 304,-64 304,-64 304,-58 310,-52 316,-52 316,-52 411,-52 411,-52 417,-52 423,-58 423,-64 423,-64 423,-88 423,-88 423,-94 417,-100 411,-100"/>
+<text text-anchor="middle" x="363.5" y="-81" font-family="Georgia" font-size="15.00">One physical</text>
+<text text-anchor="middle" x="363.5" y="-64" font-family="Georgia" font-size="15.00">access link</text>
+</g>
+<!-- ra&#45;&gt;accessa -->
+<g id="wan-frame-relay-vcs-edge2" class="edge">
+<title>ra&#45;&gt;accessa</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M272.04,-76C280.18,-76 288.83,-76 297.44,-76"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="297.69,-78.1 303.69,-76 297.69,-73.9 297.69,-78.1"/>
+</g>
+<!-- sw1 -->
+<g id="wan-frame-relay-vcs-node4" class="node">
+<title>sw1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M573,-94C573,-94 467,-94 467,-94 461,-94 455,-88 455,-82 455,-82 455,-70 455,-70 455,-64 461,-58 467,-58 467,-58 573,-58 573,-58 579,-58 585,-64 585,-70 585,-70 585,-82 585,-82 585,-88 579,-94 573,-94"/>
+<text text-anchor="middle" x="520" y="-72.5" font-family="Georgia" font-size="15.00">Provider edge</text>
+</g>
+<!-- accessa&#45;&gt;sw1 -->
+<g id="wan-frame-relay-vcs-edge3" class="edge">
+<title>accessa&#45;&gt;sw1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M423.35,-76C431.57,-76 440.09,-76 448.5,-76"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="448.9,-78.1 454.9,-76 448.9,-73.9 448.9,-78.1"/>
+</g>
+<!-- va -->
+<g id="wan-frame-relay-vcs-node5" class="node">
+<title>va</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M674.5,-152C674.5,-152 629.5,-152 629.5,-152 623.5,-152 617.5,-146 617.5,-140 617.5,-140 617.5,-128 617.5,-128 617.5,-122 623.5,-116 629.5,-116 629.5,-116 674.5,-116 674.5,-116 680.5,-116 686.5,-122 686.5,-128 686.5,-128 686.5,-140 686.5,-140 686.5,-146 680.5,-152 674.5,-152"/>
+<text text-anchor="middle" x="652" y="-130.5" font-family="Georgia" font-size="15.00">PVC A</text>
+</g>
+<!-- sw1&#45;&gt;va -->
+<g id="wan-frame-relay-vcs-edge4" class="edge">
+<title>sw1&#45;&gt;va</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M561.42,-94.03C577.35,-101.14 595.59,-109.28 611.44,-116.35"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="610.83,-118.38 617.16,-118.9 612.54,-114.54 610.83,-118.38"/>
+</g>
+<!-- vb -->
+<g id="wan-frame-relay-vcs-node6" class="node">
+<title>vb</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M675,-94C675,-94 629,-94 629,-94 623,-94 617,-88 617,-82 617,-82 617,-70 617,-70 617,-64 623,-58 629,-58 629,-58 675,-58 675,-58 681,-58 687,-64 687,-70 687,-70 687,-82 687,-82 687,-88 681,-94 675,-94"/>
+<text text-anchor="middle" x="652" y="-72.5" font-family="Georgia" font-size="15.00">PVC B</text>
+</g>
+<!-- sw1&#45;&gt;vb -->
+<g id="wan-frame-relay-vcs-edge5" class="edge">
+<title>sw1&#45;&gt;vb</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M585.24,-76C593.9,-76 602.59,-76 610.67,-76"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="610.73,-78.1 616.73,-76 610.73,-73.9 610.73,-78.1"/>
+</g>
+<!-- vc -->
+<g id="wan-frame-relay-vcs-node7" class="node">
+<title>vc</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M675,-36C675,-36 629,-36 629,-36 623,-36 617,-30 617,-24 617,-24 617,-12 617,-12 617,-6 623,0 629,0 629,0 675,0 675,0 681,0 687,-6 687,-12 687,-12 687,-24 687,-24 687,-30 681,-36 675,-36"/>
+<text text-anchor="middle" x="652" y="-14.5" font-family="Georgia" font-size="15.00">PVC C</text>
+</g>
+<!-- sw1&#45;&gt;vc -->
+<g id="wan-frame-relay-vcs-edge6" class="edge">
+<title>sw1&#45;&gt;vc</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M561.42,-57.97C577.22,-50.92 595.29,-42.86 611.04,-35.83"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="612.11,-37.65 616.74,-33.29 610.4,-33.81 612.11,-37.65"/>
+</g>
+<!-- sw2 -->
+<g id="wan-frame-relay-vcs-node8" class="node">
+<title>sw2</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M837,-94C837,-94 731,-94 731,-94 725,-94 719,-88 719,-82 719,-82 719,-70 719,-70 719,-64 725,-58 731,-58 731,-58 837,-58 837,-58 843,-58 849,-64 849,-70 849,-70 849,-82 849,-82 849,-88 843,-94 837,-94"/>
+<text text-anchor="middle" x="784" y="-72.5" font-family="Georgia" font-size="15.00">Provider edge</text>
+</g>
+<!-- va&#45;&gt;sw2 -->
+<g id="wan-frame-relay-vcs-edge7" class="edge">
+<title>va&#45;&gt;sw2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M686.82,-118.91C702.09,-112.1 720.38,-103.94 736.89,-96.57"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="737.79,-98.47 742.41,-94.11 736.07,-94.64 737.79,-98.47"/>
+</g>
+<!-- vb&#45;&gt;sw2 -->
+<g id="wan-frame-relay-vcs-edge8" class="edge">
+<title>vb&#45;&gt;sw2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M687.16,-76C695.1,-76 703.85,-76 712.73,-76"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="712.89,-78.1 718.89,-76 712.89,-73.9 712.89,-78.1"/>
+</g>
+<!-- vc&#45;&gt;sw2 -->
+<g id="wan-frame-relay-vcs-edge9" class="edge">
+<title>vc&#45;&gt;sw2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M687.16,-33.24C702.43,-40.05 720.66,-48.19 737.11,-55.52"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="736.27,-57.45 742.61,-57.98 737.98,-53.62 736.27,-57.45"/>
+</g>
+<!-- accessb -->
+<g id="wan-frame-relay-vcs-node9" class="node">
+<title>accessb</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M988,-100C988,-100 893,-100 893,-100 887,-100 881,-94 881,-88 881,-88 881,-64 881,-64 881,-58 887,-52 893,-52 893,-52 988,-52 988,-52 994,-52 1000,-58 1000,-64 1000,-64 1000,-88 1000,-88 1000,-94 994,-100 988,-100"/>
+<text text-anchor="middle" x="940.5" y="-81" font-family="Georgia" font-size="15.00">One physical</text>
+<text text-anchor="middle" x="940.5" y="-64" font-family="Georgia" font-size="15.00">access link</text>
+</g>
+<!-- sw2&#45;&gt;accessb -->
+<g id="wan-frame-relay-vcs-edge10" class="edge">
+<title>sw2&#45;&gt;accessb</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M849.18,-76C857.5,-76 866.04,-76 874.38,-76"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="874.71,-78.1 880.71,-76 874.71,-73.9 874.71,-78.1"/>
+</g>
+<!-- rb -->
+<g id="wan-frame-relay-vcs-node10" class="node">
+<title>rb</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M1111,-94C1111,-94 1044,-94 1044,-94 1038,-94 1032,-88 1032,-82 1032,-82 1032,-70 1032,-70 1032,-64 1038,-58 1044,-58 1044,-58 1111,-58 1111,-58 1117,-58 1123,-64 1123,-70 1123,-70 1123,-82 1123,-82 1123,-88 1117,-94 1111,-94"/>
+<text text-anchor="middle" x="1077.5" y="-72.5" font-family="Georgia" font-size="15.00">Router B</text>
+</g>
+<!-- accessb&#45;&gt;rb -->
+<g id="wan-frame-relay-vcs-edge11" class="edge">
+<title>accessb&#45;&gt;rb</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M1000.32,-76C1008.7,-76 1017.26,-76 1025.48,-76"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="1025.68,-78.1 1031.68,-76 1025.68,-73.9 1025.68,-78.1"/>
+</g>
+<!-- lb -->
+<g id="wan-frame-relay-vcs-node11" class="node">
+<title>lb</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M1294,-94C1294,-94 1167,-94 1167,-94 1161,-94 1155,-88 1155,-82 1155,-82 1155,-70 1155,-70 1155,-64 1161,-58 1167,-58 1167,-58 1294,-58 1294,-58 1300,-58 1306,-64 1306,-70 1306,-70 1306,-82 1306,-82 1306,-88 1300,-94 1294,-94"/>
+<text text-anchor="middle" x="1230.5" y="-72.5" font-family="Georgia" font-size="15.00">Customer LAN B</text>
+</g>
+<!-- rb&#45;&gt;lb -->
+<g id="wan-frame-relay-vcs-edge12" class="edge">
+<title>rb&#45;&gt;lb</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M1123.4,-76C1131.45,-76 1140.06,-76 1148.76,-76"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="1148.8,-78.1 1154.8,-76 1148.8,-73.9 1148.8,-78.1"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Several permanent logical circuits cross the provider network while each customer router has one physical access link. CIR is per VC.</figcaption></figure>
+
+<details class="worked"><summary>Supplemental example: read two CIRs on one access link</summary><section class="walk" aria-label="Check offered traffic and contracted rates"><h3>Check offered traffic and contracted rates</h3><div class="example-input">Teaching example only: access 2 Mb/s; CIR(A)=0.8 Mb/s; CIR(B)=0.6 Mb/s; offers 0.7 and 0.5 Mb/s.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Record the assumptions</h4><p>Suppose one 2 Mb/s access link carries two VCs: A has CIR 0.8 Mb/s and B has CIR 0.6 Mb/s. These are teaching-example values, not lecture values.</p></section><section class="step"><h4>Add contracted rates</h4><p>Committed CIR sum: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.8</mn><mo>&#x0002B;</mo><mn>0.6</mn><mo>&#x0003D;</mo><mn>1.4</mn><mtext>&#x000A0;</mtext><mrow><mi mathvariant="normal">M</mi><mi mathvariant="normal">b</mi><mo>&#x0002F;</mo><mi mathvariant="normal">s</mi></mrow></mrow></math>.</p>
+<p>This is 0.6 Mb/s below the nominal 2 Mb/s access rate.</p></section><section class="step"><h4>Check current offered traffic</h4><p>If A offers 0.7 Mb/s and B 0.5 Mb/s, their aggregate is 1.2 Mb/s. Each is below its example CIR; the aggregate is below the access rate.</p></section><section class="step"><h4>Interpret carefully</h4><p>The arithmetic checks this example only. The unused 0.6 Mb/s is not automatically guaranteed to either VC; burst treatment depends on the service contract.</p></section></section></details>
+
+<h2 id="section-5">ATM: fixed cells and virtual paths</h2>
+<p>Asynchronous Transfer Mode (ATM) switches fixed-size 53-byte cells: a 5-byte header and a 48-byte information field. These sizes are specified in <a href="https://www.itu.int/rec/T-REC-I.361">ITU-T Recommendation I.361</a>. The lecturer’s motivation was integrated data, voice, and video: uniformly small cells and a simple header were expected to process quickly and reduce variation in switching time. That is a design rationale, not a guarantee of low end-to-end latency.</p>
+<table>
+<thead>
+<tr>
+<th>Cell part</th>
+<th style="text-align: right;">Size</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Header</td>
+<td style="text-align: right;">5 bytes</td>
+<td>Carries forwarding and control fields</td>
+</tr>
+<tr>
+<td>Information field (payload)</td>
+<td style="text-align: right;">48 bytes</td>
+<td>Carries the cell data</td>
+</tr>
+<tr>
+<td>Total cell</td>
+<td style="text-align: right;">53 bytes</td>
+<td>Fixed-size unit switched by ATM</td>
+</tr>
+</tbody>
+</table>
+<p>The lecture describes ATM as scalable and flexible, with possible charging by cell count rather than a fixed rate such as 64 kb/s or 2 Mb/s. It says ATM generally used optical fibre; treat that as a typical medium in the lecture’s period, not a defining requirement.</p>
+<p>Cells follow a VC and carry a VC identifier rather than a full destination ID. Switches keep state for active connections; bandwidth or buffers may be allocated for circuit-like behavior. In the slide’s simplified hierarchy, VPI groups a virtual path and VCI identifies a virtual channel in that forwarding context. Values are forwarding identifiers, not global IP destinations; switches may translate them. The slide also labels GFC, PT, and HEC fields.</p>
+<p>The source's header sketch occupies five rows, each representing a header octet. Its boxes are schematic rather than a complete bit-width specification:</p>
+<table>
+<thead>
+<tr>
+<th>Header octet</th>
+<th>Fields shown, left to right</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>GFC, VPI</td>
+</tr>
+<tr>
+<td>2</td>
+<td>VPI, VCI</td>
+</tr>
+<tr>
+<td>3</td>
+<td>VCI</td>
+</tr>
+<tr>
+<td>4</td>
+<td>VCI, PT</td>
+</tr>
+<tr>
+<td>5</td>
+<td>HEC</td>
+</tr>
+</tbody>
+</table>
+<p>A virtual path groups virtual channels; that grouping describes the identifiers, not two successive routing decisions. At a virtual-channel switch, use the incoming interface and VPI/VCI context together to find the outgoing mapping. The <a href="https://www.itu.int/ITU-T/recommendations/rec.aspx?rec=4561">ATM cell specification, I.361</a>, defines the routing-field interpretation. The drawing above shows the forwarding lookup rather than branching from a path into several simultaneous destinations.</p>
+<p>The original vision was ATM from desktop to desktop as a network technology. In practice, the lecture says ATM was used as a switched link layer connecting IP backbone routers; layer role depends on context.</p>
+
+<figure><div class="diagram-frame" style="--diagram-width:188.6px"><svg role="img" aria-label="Connection forwarding maps an incoming interface and VPI/VCI pair to an outgoing interface and identifiers. Identifiers have local meaning and may change at a switch." width="189pt" height="230pt"
+ viewBox="0.00 0.00 188.60 229.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="wan-atm-vpi-vci-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 218.8)">
+<title>G</title>
+<!-- in -->
+<g id="wan-atm-vpi-vci-node1" class="node">
+<title>in</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M155,-208C155,-208 12,-208 12,-208 6,-208 0,-202 0,-196 0,-196 0,-172 0,-172 0,-166 6,-160 12,-160 12,-160 155,-160 155,-160 161,-160 167,-166 167,-172 167,-172 167,-196 167,-196 167,-202 161,-208 155,-208"/>
+<text text-anchor="middle" x="83.5" y="-189" font-family="Georgia" font-size="15.00">Incoming interface</text>
+<text text-anchor="middle" x="83.5" y="-172" font-family="Georgia" font-size="15.00">(VPI, VCI)</text>
+</g>
+<!-- sw -->
+<g id="wan-atm-vpi-vci-node2" class="node">
+<title>sw</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M152,-128C152,-128 15,-128 15,-128 9,-128 3,-122 3,-116 3,-116 3,-92 3,-92 3,-86 9,-80 15,-80 15,-80 152,-80 152,-80 158,-80 164,-86 164,-92 164,-92 164,-116 164,-116 164,-122 158,-128 152,-128"/>
+<text text-anchor="middle" x="83.5" y="-109" font-family="Georgia" font-size="15.00">ATM switch</text>
+<text text-anchor="middle" x="83.5" y="-92" font-family="Georgia" font-size="15.00">connection lookup</text>
+</g>
+<!-- in&#45;&gt;sw -->
+<g id="wan-atm-vpi-vci-edge1" class="edge">
+<title>in&#45;&gt;sw</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M83.5,-159.6C83.5,-151.66 83.5,-142.69 83.5,-134.35"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="85.6,-134.12 83.5,-128.12 81.4,-134.12 85.6,-134.12"/>
+</g>
+<!-- out -->
+<g id="wan-atm-vpi-vci-node3" class="node">
+<title>out</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M154.5,-48C154.5,-48 12.5,-48 12.5,-48 6.5,-48 0.5,-42 0.5,-36 0.5,-36 0.5,-12 0.5,-12 0.5,-6 6.5,0 12.5,0 12.5,0 154.5,0 154.5,0 160.5,0 166.5,-6 166.5,-12 166.5,-12 166.5,-36 166.5,-36 166.5,-42 160.5,-48 154.5,-48"/>
+<text text-anchor="middle" x="83.5" y="-29" font-family="Georgia" font-size="15.00">Outgoing interface</text>
+<text text-anchor="middle" x="83.5" y="-12" font-family="Georgia" font-size="15.00">(VPI′, VCI′)</text>
+</g>
+<!-- sw&#45;&gt;out -->
+<g id="wan-atm-vpi-vci-edge2" class="edge">
+<title>sw&#45;&gt;out</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M83.5,-79.6C83.5,-71.66 83.5,-62.69 83.5,-54.35"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="85.6,-54.12 83.5,-48.12 81.4,-54.12 85.6,-54.12"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Connection forwarding maps an incoming interface and VPI/VCI pair to an outgoing interface and identifiers. Identifiers have local meaning and may change at a switch.</figcaption></figure>
+
+<details class="worked"><summary>Worked example: derive ATM cell payload efficiency</summary><section class="walk" aria-label="Calculate the payload share"><h3>Calculate the payload share</h3><div class="example-input">Lecture values: header 5 bytes; payload 48 bytes; total 53 bytes.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Identify sizes</h4><p>Header = 5 bytes and payload = 48 bytes, so total = 5 + 48 = 53 bytes.</p></section><section class="step"><h4>Set the fraction</h4><p>Payload efficiency = payload / total = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>48</mn></mrow><mrow><mn>53</mn></mrow></mfrac></mrow></math>.</p></section><section class="step"><h4>Convert to percent</h4><p>Payload share: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>48</mn></mrow><mrow><mn>53</mn></mrow></mfrac><mo>&#x000D7;</mo><mn>100</mn><mi>&#x00025;</mi><mo>&#x02248;</mo><mn>90.566</mn><mi>&#x00025;</mi></mrow></math> ≈ 90.6%. Header share: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>5</mn></mrow><mrow><mn>53</mn></mrow></mfrac><mo>&#x000D7;</mo><mn>100</mn><mi>&#x00025;</mi><mo>&#x02248;</mo><mn>9.4</mn><mi>&#x00025;</mi></mrow></math>.</p></section><section class="step"><h4>Check</h4><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>90.6</mn><mi>&#x00025;</mi><mo>&#x0002B;</mo><mn>9.4</mn><mi>&#x00025;</mi><mo>&#x0003D;</mo><mn>100.0</mn><mi>&#x00025;</mi></mrow></math> after rounding. This is a size ratio, not application throughput.</p></section></section></details>
+
+<h2 id="section-6">Compare the lecture’s X.25 / Frame Relay / ATM table</h2>
+<p>This table records what the lecturer presented, but compresses variants and conflicts with the lecture’s own descriptions. Use its literal entries only when asked to reproduce the slide.</p>
+<table>
+<thead>
+<tr>
+<th>Property as printed on slide 23</th>
+<th style="text-align: right;">X.25</th>
+<th style="text-align: right;">Frame Relay</th>
+<th style="text-align: right;">ATM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Connection oriented</td>
+<td style="text-align: right;">Yes</td>
+<td style="text-align: right;">Yes</td>
+<td style="text-align: right;">Yes</td>
+</tr>
+<tr>
+<td>“Normal speed” (Mb/s)</td>
+<td style="text-align: right;">0.64</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">155</td>
+</tr>
+<tr>
+<td>“Switched”</td>
+<td style="text-align: right;">Yes</td>
+<td style="text-align: right;">No</td>
+<td style="text-align: right;">Yes</td>
+</tr>
+<tr>
+<td>Maximum payload (bytes)</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">1600</td>
+<td style="text-align: right;">48</td>
+</tr>
+<tr>
+<td>Permanent VCs</td>
+<td style="text-align: right;">Yes</td>
+<td style="text-align: right;">Yes</td>
+<td style="text-align: right;">Yes</td>
+</tr>
+<tr>
+<td>Multicasting</td>
+<td style="text-align: right;">No</td>
+<td style="text-align: right;">No</td>
+<td style="text-align: right;">Yes</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Two source conflicts:</strong> slide 13 gives X.25 as about 64 kb/s, which is 0.064 Mb/s, not 0.64 Mb/s; the table value is ten times larger. Also, the table marks Frame Relay “Switched: No” although slides 14–16 describe VCs relayed through provider switches. RFC 1315 describes a physical interface with multiple virtual connections. Preserve the literal table only for source recall and name these inconsistencies.</p>
+
+<h2 id="section-7">MPLS: labels through a carrier core</h2>
+<p>Multiprotocol Label Switching (MPLS) forwards packets using labels. The lecture’s simplified stack places it between IP or another multi-service layer and Layer 2 technologies such as PPP, ATM, or Frame Relay. It emphasizes service-provider and carrier networks.</p>
+<p>At the MPLS edge, traffic is classified into a forwarding-equivalence class and a label is added. Core nodes use the label to choose the next forwarding action rather than repeating the same network-header analysis at every hop. “Multiprotocol” describes support across network-layer protocols and link technologies. The slide says “IP is used to signal MPLS connections”; more precisely, IP routing supplies reachability while label bindings are distributed by label-distribution mechanisms. The slide names BGP-4, OSPF, and IS-IS in its IP-routing context, without teaching their operation here. <a href="https://www.rfc-editor.org/rfc/rfc3031.html">RFC 3031</a> defines labels as locally significant forwarding identifiers and separates label distribution from IP reachability. The lecture says MPLS is typically used in service-provider/carrier networks rather than private networks.</p>
+<p>The lecturer’s before/after figure shows separate PSTN, IP, and Frame Relay/ATM/TDM networks consolidated onto an IP/MPLS core to support varied service needs. Named capabilities include RSVP, IP multicast, IP CoS, network scalability, traffic engineering, and VPNs. “Route at the edge, switch at the core” is a conceptual summary, not a complete protocol specification.</p>
+<p>The “best of both worlds” slide attributes scalability, flexibility, ease of deployment, low cost, and dynamic routing to IP packet forwarding; it contrasts these with connection orientation, performance, traffic engineering, security, and QoS support associated with ATM/Frame Relay. A VPN is logical service separation; MPLS alone does not encrypt traffic.</p>
+
+<table>
+<thead>
+<tr>
+<th>IP packet-forwarding strengths in the slide</th>
+<th>ATM/Frame Relay packet-switching strengths in the slide</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scalable; flexible; easily deployable; inexpensive; dynamic routing</td>
+<td>Performance; connection oriented; traffic engineering; security; QoS</td>
+</tr>
+</tbody>
+</table>
+<p>The slide’s summary is “Route at the Edge &amp; Switch at the Core.” The labels below visualize that conceptual forwarding path; no label values or setup-message sequence are assumed.</p>
+
+<figure><div class="diagram-frame" style="--diagram-width:287.6px"><svg role="img" aria-label="The lecture’s simplified stack places MPLS between IP or multi-service traffic and the link technology." width="288pt" height="330pt"
+ viewBox="0.00 0.00 287.60 329.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="wan-mpls-stack-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 318.8)">
+<title>G</title>
+<!-- app -->
+<g id="wan-mpls-stack-node1" class="node">
+<title>app</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M175,-308C175,-308 91,-308 91,-308 85,-308 79,-302 79,-296 79,-296 79,-284 79,-284 79,-278 85,-272 91,-272 91,-272 175,-272 175,-272 181,-272 187,-278 187,-284 187,-284 187,-296 187,-296 187,-302 181,-308 175,-308"/>
+<text text-anchor="middle" x="133" y="-286.5" font-family="Georgia" font-size="15.00">Application</text>
+</g>
+<!-- ip -->
+<g id="wan-mpls-stack-node2" class="node">
+<title>ip</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M202,-240C202,-240 64,-240 64,-240 58,-240 52,-234 52,-228 52,-228 52,-216 52,-216 52,-210 58,-204 64,-204 64,-204 202,-204 202,-204 208,-204 214,-210 214,-216 214,-216 214,-228 214,-228 214,-234 208,-240 202,-240"/>
+<text text-anchor="middle" x="133" y="-218.5" font-family="Georgia" font-size="15.00">IP or multi&#45;service</text>
+</g>
+<!-- app&#45;&gt;ip -->
+<g id="wan-mpls-stack-edge1" class="edge">
+<title>app&#45;&gt;ip</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M133,-271.66C133,-263.99 133,-254.85 133,-246.58"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="135.1,-246.45 133,-240.45 130.9,-246.45 135.1,-246.45"/>
+</g>
+<!-- mpls -->
+<g id="wan-mpls-stack-node3" class="node">
+<title>mpls</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M220,-172C220,-172 46,-172 46,-172 40,-172 34,-166 34,-160 34,-160 34,-148 34,-148 34,-142 40,-136 46,-136 46,-136 220,-136 220,-136 226,-136 232,-142 232,-148 232,-148 232,-160 232,-160 232,-166 226,-172 220,-172"/>
+<text text-anchor="middle" x="133" y="-150.5" font-family="Georgia" font-size="15.00">MPLS label forwarding</text>
+</g>
+<!-- ip&#45;&gt;mpls -->
+<g id="wan-mpls-stack-edge2" class="edge">
+<title>ip&#45;&gt;mpls</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M133,-203.66C133,-195.99 133,-186.85 133,-178.58"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="135.1,-178.45 133,-172.45 130.9,-178.45 135.1,-178.45"/>
+</g>
+<!-- l2 -->
+<g id="wan-mpls-stack-node4" class="node">
+<title>l2</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M254,-104C254,-104 12,-104 12,-104 6,-104 0,-98 0,-92 0,-92 0,-80 0,-80 0,-74 6,-68 12,-68 12,-68 254,-68 254,-68 260,-68 266,-74 266,-80 266,-80 266,-92 266,-92 266,-98 260,-104 254,-104"/>
+<text text-anchor="middle" x="133" y="-82.5" font-family="Georgia" font-size="15.00">Layer 2: PPP, ATM, Frame Relay</text>
+</g>
+<!-- mpls&#45;&gt;l2 -->
+<g id="wan-mpls-stack-edge3" class="edge">
+<title>mpls&#45;&gt;l2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M133,-135.66C133,-127.99 133,-118.85 133,-110.58"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="135.1,-110.45 133,-104.45 130.9,-110.45 135.1,-110.45"/>
+</g>
+<!-- phy -->
+<g id="wan-mpls-stack-node5" class="node">
+<title>phy</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M163,-36C163,-36 103,-36 103,-36 97,-36 91,-30 91,-24 91,-24 91,-12 91,-12 91,-6 97,0 103,0 103,0 163,0 163,0 169,0 175,-6 175,-12 175,-12 175,-24 175,-24 175,-30 169,-36 163,-36"/>
+<text text-anchor="middle" x="133" y="-14.5" font-family="Georgia" font-size="15.00">Physical</text>
+</g>
+<!-- l2&#45;&gt;phy -->
+<g id="wan-mpls-stack-edge4" class="edge">
+<title>l2&#45;&gt;phy</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M133,-67.66C133,-59.99 133,-50.85 133,-42.58"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="135.1,-42.45 133,-36.45 130.9,-42.45 135.1,-42.45"/>
+</g>
+</g>
+</svg>
+</div><figcaption>The lecture’s simplified stack places MPLS between IP or multi-service traffic and the link technology.</figcaption></figure>
+
+<figure><div class="diagram-frame" style="--diagram-width:405.1px"><svg role="img" aria-label="The lecture’s before/after illustration: separate service networks consolidate onto an IP/MPLS core." width="405pt" height="206pt"
+ viewBox="0.00 0.00 405.10 205.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="wan-mpls-convergence-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 194.8)">
+<title>G</title>
+<!-- pstn -->
+<g id="wan-mpls-convergence-node1" class="node">
+<title>pstn</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M54,-184C54,-184 12,-184 12,-184 6,-184 0,-178 0,-172 0,-172 0,-160 0,-160 0,-154 6,-148 12,-148 12,-148 54,-148 54,-148 60,-148 66,-154 66,-160 66,-160 66,-172 66,-172 66,-178 60,-184 54,-184"/>
+<text text-anchor="middle" x="33" y="-162.5" font-family="Georgia" font-size="15.00">PSTN</text>
+</g>
+<!-- core -->
+<g id="wan-mpls-convergence-node4" class="node">
+<title>core</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M177.5,-116C177.5,-116 52.5,-116 52.5,-116 46.5,-116 40.5,-110 40.5,-104 40.5,-104 40.5,-80 40.5,-80 40.5,-74 46.5,-68 52.5,-68 52.5,-68 177.5,-68 177.5,-68 183.5,-68 189.5,-74 189.5,-80 189.5,-80 189.5,-104 189.5,-104 189.5,-110 183.5,-116 177.5,-116"/>
+<text text-anchor="middle" x="115" y="-97" font-family="Georgia" font-size="15.00">Shared IP/MPLS</text>
+<text text-anchor="middle" x="115" y="-80" font-family="Georgia" font-size="15.00">provider core</text>
+</g>
+<!-- pstn&#45;&gt;core -->
+<g id="wan-mpls-convergence-edge1" class="edge">
+<title>pstn&#45;&gt;core</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M52.43,-147.94C61.8,-139.71 73.26,-129.65 83.8,-120.39"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="85.45,-121.74 88.57,-116.21 82.68,-118.59 85.45,-121.74"/>
+</g>
+<!-- ip -->
+<g id="wan-mpls-convergence-node2" class="node">
+<title>ip</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M130,-184C130,-184 100,-184 100,-184 94,-184 88,-178 88,-172 88,-172 88,-160 88,-160 88,-154 94,-148 100,-148 100,-148 130,-148 130,-148 136,-148 142,-154 142,-160 142,-160 142,-172 142,-172 142,-178 136,-184 130,-184"/>
+<text text-anchor="middle" x="115" y="-162.5" font-family="Georgia" font-size="15.00">IP</text>
+</g>
+<!-- ip&#45;&gt;core -->
+<g id="wan-mpls-convergence-edge2" class="edge">
+<title>ip&#45;&gt;core</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M115,-147.94C115,-140.31 115,-131.09 115,-122.41"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="117.1,-122.21 115,-116.21 112.9,-122.21 117.1,-122.21"/>
+</g>
+<!-- legacy -->
+<g id="wan-mpls-convergence-node3" class="node">
+<title>legacy</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M371.5,-184C371.5,-184 176.5,-184 176.5,-184 170.5,-184 164.5,-178 164.5,-172 164.5,-172 164.5,-160 164.5,-160 164.5,-154 170.5,-148 176.5,-148 176.5,-148 371.5,-148 371.5,-148 377.5,-148 383.5,-154 383.5,-160 383.5,-160 383.5,-172 383.5,-172 383.5,-178 377.5,-184 371.5,-184"/>
+<text text-anchor="middle" x="274" y="-162.5" font-family="Georgia" font-size="15.00">Frame Relay / ATM / TDM</text>
+</g>
+<!-- legacy&#45;&gt;core -->
+<g id="wan-mpls-convergence-edge3" class="edge">
+<title>legacy&#45;&gt;core</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M236.32,-147.94C217.01,-139.2 193.11,-128.37 171.64,-118.65"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="172.28,-116.63 165.95,-116.07 170.55,-120.46 172.28,-116.63"/>
+</g>
+<!-- service -->
+<g id="wan-mpls-convergence-node5" class="node">
+<title>service</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M184.5,-36C184.5,-36 45.5,-36 45.5,-36 39.5,-36 33.5,-30 33.5,-24 33.5,-24 33.5,-12 33.5,-12 33.5,-6 39.5,0 45.5,0 45.5,0 184.5,0 184.5,0 190.5,0 196.5,-6 196.5,-12 196.5,-12 196.5,-24 196.5,-24 196.5,-30 190.5,-36 184.5,-36"/>
+<text text-anchor="middle" x="115" y="-14.5" font-family="Georgia" font-size="15.00">Customer services</text>
+</g>
+<!-- core&#45;&gt;service -->
+<g id="wan-mpls-convergence-edge4" class="edge">
+<title>core&#45;&gt;service</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M115,-67.82C115,-59.7 115,-50.57 115,-42.43"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="117.1,-42.42 115,-36.42 112.9,-42.42 117.1,-42.42"/>
+</g>
+</g>
+</svg>
+</div><figcaption>The lecture’s before/after illustration: separate service networks consolidate onto an IP/MPLS core.</figcaption></figure>
+
+<figure><div class="diagram-frame" style="--diagram-width:885.6px"><svg role="img" aria-label="Conceptual label path: classify at the domain edge, then use label state through the core. No particular label value or signaling sequence is implied." width="886pt" height="70pt"
+ viewBox="0.00 0.00 885.60 69.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="wan-mpls-label-forwarding-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 58.8)">
+<title>G</title>
+<!-- entry -->
+<g id="wan-mpls-label-forwarding-node1" class="node">
+<title>entry</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M134,-48C134,-48 12,-48 12,-48 6,-48 0,-42 0,-36 0,-36 0,-12 0,-12 0,-6 6,0 12,0 12,0 134,0 134,0 140,0 146,-6 146,-12 146,-12 146,-36 146,-36 146,-42 140,-48 134,-48"/>
+<text text-anchor="middle" x="73" y="-29" font-family="Georgia" font-size="15.00">Ingress edge</text>
+<text text-anchor="middle" x="73" y="-12" font-family="Georgia" font-size="15.00">classifies packet</text>
+</g>
+<!-- labnode -->
+<g id="wan-mpls-label-forwarding-node2" class="node">
+<title>labnode</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M282,-42C282,-42 190,-42 190,-42 184,-42 178,-36 178,-30 178,-30 178,-18 178,-18 178,-12 184,-6 190,-6 190,-6 282,-6 282,-6 288,-6 294,-12 294,-18 294,-18 294,-30 294,-30 294,-36 288,-42 282,-42"/>
+<text text-anchor="middle" x="236" y="-20.5" font-family="Georgia" font-size="15.00">Label added</text>
+</g>
+<!-- entry&#45;&gt;labnode -->
+<g id="wan-mpls-label-forwarding-edge1" class="edge">
+<title>entry&#45;&gt;labnode</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M146.02,-24C154.43,-24 162.96,-24 171.25,-24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="171.53,-26.1 177.53,-24 171.53,-21.9 171.53,-26.1"/>
+</g>
+<!-- core1 -->
+<g id="wan-mpls-label-forwarding-node3" class="node">
+<title>core1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M427,-48C427,-48 338,-48 338,-48 332,-48 326,-42 326,-36 326,-36 326,-12 326,-12 326,-6 332,0 338,0 338,0 427,0 427,0 433,0 439,-6 439,-12 439,-12 439,-36 439,-36 439,-42 433,-48 427,-48"/>
+<text text-anchor="middle" x="382.5" y="-29" font-family="Georgia" font-size="15.00">Core switch</text>
+<text text-anchor="middle" x="382.5" y="-12" font-family="Georgia" font-size="15.00">uses label</text>
+</g>
+<!-- labnode&#45;&gt;core1 -->
+<g id="wan-mpls-label-forwarding-edge2" class="edge">
+<title>labnode&#45;&gt;core1</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M294.11,-24C302.41,-24 310.99,-24 319.38,-24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="319.75,-26.1 325.75,-24 319.75,-21.9 319.75,-26.1"/>
+</g>
+<!-- core2 -->
+<g id="wan-mpls-label-forwarding-node4" class="node">
+<title>core2</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M614,-48C614,-48 483,-48 483,-48 477,-48 471,-42 471,-36 471,-36 471,-12 471,-12 471,-6 477,0 483,0 483,0 614,0 614,0 620,0 626,-6 626,-12 626,-12 626,-36 626,-36 626,-42 620,-48 614,-48"/>
+<text text-anchor="middle" x="548.5" y="-29" font-family="Georgia" font-size="15.00">Core switch</text>
+<text text-anchor="middle" x="548.5" y="-12" font-family="Georgia" font-size="15.00">forwards by label</text>
+</g>
+<!-- core1&#45;&gt;core2 -->
+<g id="wan-mpls-label-forwarding-edge3" class="edge">
+<title>core1&#45;&gt;core2</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M439.02,-24C447.33,-24 456.04,-24 464.76,-24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="464.8,-26.1 470.8,-24 464.8,-21.9 464.8,-26.1"/>
+</g>
+<!-- egress -->
+<g id="wan-mpls-label-forwarding-node5" class="node">
+<title>egress</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M852,-48C852,-48 670,-48 670,-48 664,-48 658,-42 658,-36 658,-36 658,-12 658,-12 658,-6 664,0 670,0 670,0 852,0 852,0 858,0 864,-6 864,-12 864,-12 864,-36 864,-36 864,-42 858,-48 852,-48"/>
+<text text-anchor="middle" x="761" y="-29" font-family="Georgia" font-size="15.00">Egress edge</text>
+<text text-anchor="middle" x="761" y="-12" font-family="Georgia" font-size="15.00">continues IP forwarding</text>
+</g>
+<!-- core2&#45;&gt;egress -->
+<g id="wan-mpls-label-forwarding-edge4" class="edge">
+<title>core2&#45;&gt;egress</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M626.09,-24C634.5,-24 643.16,-24 651.86,-24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="651.88,-26.1 657.88,-24 651.88,-21.9 651.88,-26.1"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Conceptual label path: classify at the domain edge, then use label state through the core. No particular label value or signaling sequence is implied.</figcaption></figure>
+
+<h2 id="section-8">Ethernet First Mile (EFM): the lecture’s Metro Ethernet section</h2>
+<p>Ethernet First Mile (EFM), standardized in IEEE 802.3ah, is the lecture's Metro Ethernet access technology. EFM connects homes and offices using Ethernet over copper or fibre.</p>
+<table>
+<thead>
+<tr>
+<th>EFM form</th>
+<th>Medium and method</th>
+<th>Exact lecture values or examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EFMC (copper)</td>
+<td>DSL modulation carries Ethernet frames</td>
+<td>Short reach: 10 Mb/s at 750 m; long reach: 2 Mb/s at 2,700 m. The lecturer says products may exceed these objectives over longer distances.</td>
+</tr>
+<tr>
+<td>EFMF (fibre)</td>
+<td>Point-to-point fibre or Passive Optical Networks (PON)</td>
+<td>Dual fibre: 100BASE-LX10, 1000BASE-LX10. Single fibre: 100BASE-BX10, 1000BASE-BX10.</td>
+</tr>
+</tbody>
+</table>
+<p>These are the lecture’s historical objectives and standard labels. Do not infer current product performance from them.</p>
+
+<h2 id="section-9">Quick revision</h2>
+<ul>
+<li>LAN: generally under 1 km; MAN: up to about 50 km in this lecture; WAN: typically over 30 km. Access connects subscribers; transmission links connect provider switches.</li>
+<li>Leased line: dedicated, always available, fixed monthly charge. Packet switching: statistical sharing, useful for bursty traffic.</li>
+<li>Datagram: independent packet routing. VC: one logical route and per-flow state; not a dedicated wire.</li>
+<li>X.25: about 64 kb/s on its dedicated slide; the “1960s” date and 0.64 Mb/s comparison entry need caveats.</li>
+<li>Frame Relay: virtual-circuit frame service with reduced hop-by-hop recovery overhead; CIR is a per-VC commitment within service terms.</li>
+<li>ATM: 53-byte cell = 5-byte header + 48-byte payload; VPI/VCI identify path/channel forwarding context.</li>
+<li>MPLS: labels identify forwarding classes inside a provider domain; IP reachability and label distribution are related but distinct.</li>
+<li>EFM: the copper objectives and fibre standards above are the actual scope of the Metro Ethernet slide section.</li>
+</ul>
+
+<h2 id="section-10">Practice</h2>
+
+<p class="question">1. Why might a bursty customer choose packet switching instead of a leased line?</p>
+<details class="worked"><summary>Check your answer</summary><p>Flows share provider links, while a leased line reserves and charges for capacity even when idle.</p></details>
+
+<p class="question">2. Explain why a virtual circuit is not a leased line.</p>
+<details class="worked"><summary>Check your answer</summary><p>A VC is logical per-flow forwarding state over shared links; a leased line is a dedicated physical point-to-point connection.</p></details>
+
+<p class="question">3. What should you report for X.25 if asked to reproduce slide 23, and what caveat belongs with it?</p>
+<details class="worked"><summary>Check your answer</summary><p>The table literally says 0.64 Mb/s. Note that slide 13 says about 64 kb/s = 0.064 Mb/s, so the slides conflict by a factor of ten.</p></details>
+
+<p class="question">4. Correct the claim “Frame Relay has no error control and end-to-end congestion control.”</p>
+<details class="worked"><summary>Check your answer</summary><p>It omits much hop-by-hop sequencing/recovery overhead, but the shorthand is too broad: frames have error detection, and congestion notification is not the same as end-to-end congestion control.</p></details>
+
+<p class="question">5. Calculate ATM payload efficiency from the lecture’s cell sizes.</p>
+<details class="worked"><summary>Check your answer</summary><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>48</mn></mrow><mrow><mn>53</mn></mrow></mfrac><mo>&#x000D7;</mo><mn>100</mn><mi>&#x00025;</mi><mo>&#x02248;</mo><mn>90.6</mn><mi>&#x00025;</mi></mrow></math>
+<p>payload; 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>5</mn></mrow><mrow><mn>53</mn></mrow></mfrac><mo>&#x000D7;</mo><mn>100</mn><mi>&#x00025;</mi><mo>&#x02248;</mo><mn>9.4</mn><mi>&#x00025;</mi></mrow></math></p>
+<p>header. This is a size ratio, not application throughput.</p></details>
+
+<p class="question">6. State the EFMC objectives and explain their limit.</p>
+<details class="worked"><summary>Check your answer</summary><p>10 Mb/s at 750 m short reach and 2 Mb/s at 2,700 m long reach. They are lecture-era objectives, not current product specifications.</p></details>
+
+<p class="question">7. Explain the difference between VPI and VCI.</p>
+<details class="worked"><summary>Check your answer</summary><p>The lecture’s simplified hierarchy uses VPI for a virtual path that groups channels and VCI for a virtual channel within that context. These are forwarding identifiers, not IP destination addresses.</p></details>
+
+<p class="question">8. Name three MPLS capabilities from the lecture and qualify what a VPN means here.</p>
+<details class="worked"><summary>Check your answer</summary><p>The slides name network scalability, traffic engineering, and VPNs (also RSVP, IP multicast, and IP CoS). An MPLS VPN provides logical service separation; MPLS alone does not encrypt traffic.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="data-link.html"><small>Previous</small>Data link framing, errors and flow control <span aria-hidden="true">↗</span></a><a href="lan.html"><small>Next</small>LAN, Ethernet and switching <span aria-hidden="true">↗</span></a></nav><footer>Networks field notes <span>Follow the packet. Explain the decision.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  root.querySelectorAll('table').forEach(table => {
+    const region = document.createElement('div');
+    region.className = 'table-scroll' + (table.rows[0]?.cells.length > 5 ? ' wide' : '');
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    table.before(region); region.append(table);
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Network diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {osi:'layers encapsulation protocol service interface pdu',link:'framing crc parity arq flow control sliding window',ethernet:'mac switch arp csma token lab',wan:'man atm isdn frame relay x25',routing:'network forwarding distance vector link state dijkstra',ipv4:'ip subnet mask vlsm binary cidr lab',ipv6:'ip address compression transition lab',transport:'tcp udp handshake congestion window port',bluetooth:'wireless nfc zigbee wpan beacon quiz',security:'cia attacks cryptography encryption hash authentication',infrastructure:'pki certificate ca trust revocation signature',tls:'ssl ipsec ah esp tunnel sa',design:'requirements topology availability delay bandwidth'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('a').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('cns-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.CNS_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) expand.textContent = 'Expand examples';
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

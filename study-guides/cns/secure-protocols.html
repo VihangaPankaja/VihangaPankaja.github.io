@@ -1,0 +1,598 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Trace who terminates IPsec or TLS protection, what each packet mode authenticates or encrypts, and how the lecture’s TLS 1.0-era handshake sets up protected records."><title>IPsec and TLS · Networks field notes</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('cns-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{.table-hint{display:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#243740;--muted:#5e737d;--secondary:#edf2f3;--border:#d5e0e3;--primary:#1e647c;--accent:#dcecf0;--diagram-fill:#eff4f5;--diagram-border:#829da8;--diagram-edge:#65838f;--active-text:#174b61;--focus:#227b98}:root[data-theme=dark]{--background:#141d23;--foreground:#e1eaf0;--muted:#a8beca;--card:#1a2730;--secondary:#22333e;--border:#3b505c;--primary:#90d1e4;--accent:#254757;--diagram-fill:#22333e;--diagram-border:#93b2c1;--diagram-edge:#9bbac9;--topbar:#141d23f5;--active-text:#b6e5f1;--focus:#90d1e4} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> CNS <span class="subbrand">field notes</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Subnet, TCP, TLS…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a href="index.html">Computer networks and security</a></div><div class="nav-group"><p>Foundations</p><a href="osi.html">OSI model and encapsulation</a><a href="data-link.html">Data link framing, errors and flow control</a><a href="wan.html">WAN and MAN technologies</a><a href="lan.html">LAN, Ethernet and switching</a></div><div class="nav-group"><p>Internetworking</p><a href="routing.html">Network layer and routing</a><a href="ipv4.html">IPv4 addressing, subnetting and VLSM</a><a href="ip-delivery.html">IP packets, ARP, ICMP, DHCP and NAT</a><a href="ipv6.html">IPv6 addressing and transition</a></div><div class="nav-group"><p>Transport and wireless</p><a href="transport.html">Transport services and connections</a><a href="short-range.html">Bluetooth, NFC and ZigBee</a></div><div class="nav-group"><p>Security and design</p><a href="security.html">Security foundations and cryptography</a><a href="pki.html">Public key infrastructure</a><a href="secure-protocols.html" aria-current="page">IPsec and TLS</a><a href="network-design.html">Network design</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS3131<br>Computer Networks and Security</div></aside>
+<main id="main"><div class="eyebrow">Security and design <span>/</span> Lecture 11 · pages 26–47</div><h1>IPsec and TLS</h1><p class="lead">Trace who terminates IPsec or TLS protection, what each packet mode authenticates or encrypts, and how the lecture’s TLS 1.0-era handshake sets up protected records.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Endpoints and layer placement</a><a href="#section-2">IPsec state: Security Associations and replay</a><a href="#section-3">AH: authentication and integrity without privacy</a><a href="#section-4">ESP: privacy, with optional separate authentication data</a><a href="#section-5">SSL/TLS above TCP: handshake state and protected records</a><a href="#section-6">Common confusions</a><a href="#section-7">Quick review</a><a href="#section-8">Practice</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Secure-protocol questions become easier when you identify three things first: which endpoints terminate protection, which layer applies it, and which packet fields remain visible. IPsec protects IP traffic between hosts or gateways; TLS in this lecture sits over TCP and protects application records after a handshake. The focus here is protocol mechanics. For the short privacy, integrity, authentication, and cryptography reminder, see <a href="security.html">Security foundations</a>; certificate trust is covered in <a href="pki.html">Public key infrastructure</a>.</p>
+<h2 id="section-1">Endpoints and layer placement</h2>
+<p>The slides show three connection choices. Direct hosts A and B communicate through the Internet, facing eavesdropping, imposters, and denial-of-service attempts. Observers can see ordinary IP headers needed for routing and may infer usage from them even when some content is encrypted. With a site-to-site tunnel, each internal network has a gateway; those gateways become the IPsec peers, while packets from internal host A to B travel inside the protected tunnel. A remote mobile user can instead terminate protected access at one gateway. The gateway controls access, may need to protect the user's identity, and must account for the user's changing address.</p>
+<figure><div class="diagram-frame" style="--diagram-width:898.6px"><svg role="img" aria-label="Gateway A and Gateway B are an IPsec peer pair across the Internet. The mobile user forms a separate peer pair with its access gateway." width="899pt" height="141pt"
+ viewBox="0.00 0.00 898.60 140.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="secure-protocols-endpoint-paths-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 129.8)">
+<title>G</title>
+<!-- host_a -->
+<g id="secure-protocols-endpoint-paths-node1" class="node">
+<title>host_a</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M61,-113C61,-113 12,-113 12,-113 6,-113 0,-107 0,-101 0,-101 0,-89 0,-89 0,-83 6,-77 12,-77 12,-77 61,-77 61,-77 67,-77 73,-83 73,-89 73,-89 73,-101 73,-101 73,-107 67,-113 61,-113"/>
+<text text-anchor="middle" x="36.5" y="-91.5" font-family="Georgia" font-size="15.00">Host A</text>
+</g>
+<!-- gw_a -->
+<g id="secure-protocols-endpoint-paths-node2" class="node">
+<title>gw_a</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M202.5,-119C202.5,-119 122.5,-119 122.5,-119 116.5,-119 110.5,-113 110.5,-107 110.5,-107 110.5,-83 110.5,-83 110.5,-77 116.5,-71 122.5,-71 122.5,-71 202.5,-71 202.5,-71 208.5,-71 214.5,-77 214.5,-83 214.5,-83 214.5,-107 214.5,-107 214.5,-113 208.5,-119 202.5,-119"/>
+<text text-anchor="middle" x="162.5" y="-100" font-family="Georgia" font-size="15.00">Gateway A</text>
+<text text-anchor="middle" x="162.5" y="-83" font-family="Georgia" font-size="15.00">IPsec peer</text>
+</g>
+<!-- host_a&#45;&gt;gw_a -->
+<g id="secure-protocols-endpoint-paths-edge1" class="edge">
+<title>host_a&#45;&gt;gw_a</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M79.14,-95C87.09,-95 95.55,-95 103.9,-95"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="79.03,-92.9 73.03,-95 79.03,-97.1 79.03,-92.9"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="104.25,-97.1 110.25,-95 104.25,-92.9 104.25,-97.1"/>
+</g>
+<!-- internet -->
+<g id="secure-protocols-endpoint-paths-node3" class="node">
+<title>internet</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M404,-68C404,-68 342,-68 342,-68 336,-68 330,-62 330,-56 330,-56 330,-44 330,-44 330,-38 336,-32 342,-32 342,-32 404,-32 404,-32 410,-32 416,-38 416,-44 416,-44 416,-56 416,-56 416,-62 410,-68 404,-68"/>
+<text text-anchor="middle" x="373" y="-46.5" font-family="Georgia" font-size="15.00">Internet</text>
+</g>
+<!-- gw_a&#45;&gt;internet -->
+<g id="secure-protocols-endpoint-paths-edge2" class="edge">
+<title>gw_a&#45;&gt;internet</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M220.42,-82.72C252.85,-75.72 293.05,-67.04 323.89,-60.38"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="219.93,-80.67 214.5,-83.99 220.81,-84.78 219.93,-80.67"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="324.51,-62.4 329.93,-59.08 323.63,-58.29 324.51,-62.4"/>
+<text text-anchor="middle" x="274.5" y="-83.4" font-family="Georgia" font-size="12.00">Internet path</text>
+</g>
+<!-- gw_b -->
+<g id="secure-protocols-endpoint-paths-node4" class="node">
+<title>gw_b</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M661,-106C661,-106 581,-106 581,-106 575,-106 569,-100 569,-94 569,-94 569,-70 569,-70 569,-64 575,-58 581,-58 581,-58 661,-58 661,-58 667,-58 673,-64 673,-70 673,-70 673,-94 673,-94 673,-100 667,-106 661,-106"/>
+<text text-anchor="middle" x="621" y="-87" font-family="Georgia" font-size="15.00">Gateway B</text>
+<text text-anchor="middle" x="621" y="-70" font-family="Georgia" font-size="15.00">IPsec peer</text>
+</g>
+<!-- internet&#45;&gt;gw_b -->
+<g id="secure-protocols-endpoint-paths-edge3" class="edge">
+<title>internet&#45;&gt;gw_b</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M422.1,-56.26C462.37,-61.49 519.93,-68.98 562.6,-74.53"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="422.23,-54.16 416.01,-55.46 421.69,-58.32 422.23,-54.16"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="562.56,-76.65 568.78,-75.34 563.1,-72.48 562.56,-76.65"/>
+<text text-anchor="middle" x="483" y="-74.4" font-family="Georgia" font-size="12.00">Internet path</text>
+</g>
+<!-- gw_c -->
+<g id="secure-protocols-endpoint-paths-node7" class="node">
+<title>gw_c</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M680,-36C680,-36 562,-36 562,-36 556,-36 550,-30 550,-24 550,-24 550,-12 550,-12 550,-6 556,0 562,0 562,0 680,0 680,0 686,0 692,-6 692,-12 692,-12 692,-24 692,-24 692,-30 686,-36 680,-36"/>
+<text text-anchor="middle" x="621" y="-14.5" font-family="Georgia" font-size="15.00">Access gateway</text>
+</g>
+<!-- internet&#45;&gt;gw_c -->
+<g id="secure-protocols-endpoint-paths-edge6" class="edge">
+<title>internet&#45;&gt;gw_c</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M422.11,-41.5C425.46,-40.97 428.78,-40.47 432,-40 468.59,-34.71 509.32,-29.82 543.5,-26"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="421.68,-39.44 416.09,-42.47 422.35,-43.59 421.68,-39.44"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="544.07,-28.05 549.8,-25.3 543.6,-23.88 544.07,-28.05"/>
+<text text-anchor="middle" x="483" y="-43.4" font-family="Georgia" font-size="12.00">protected access</text>
+</g>
+<!-- host_b -->
+<g id="secure-protocols-endpoint-paths-node5" class="node">
+<title>host_b</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M826,-100C826,-100 776,-100 776,-100 770,-100 764,-94 764,-88 764,-88 764,-76 764,-76 764,-70 770,-64 776,-64 776,-64 826,-64 826,-64 832,-64 838,-70 838,-76 838,-76 838,-88 838,-88 838,-94 832,-100 826,-100"/>
+<text text-anchor="middle" x="801" y="-78.5" font-family="Georgia" font-size="15.00">Host B</text>
+</g>
+<!-- gw_b&#45;&gt;host_b -->
+<g id="secure-protocols-endpoint-paths-edge4" class="edge">
+<title>gw_b&#45;&gt;host_b</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M679.23,-82C704.78,-82 734.34,-82 757.82,-82"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="679.01,-79.9 673.01,-82 679.01,-84.1 679.01,-79.9"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="757.96,-84.1 763.96,-82 757.96,-79.9 757.96,-84.1"/>
+</g>
+<!-- mobile -->
+<g id="secure-protocols-endpoint-paths-node6" class="node">
+<title>mobile</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M207,-49C207,-49 118,-49 118,-49 112,-49 106,-43 106,-37 106,-37 106,-25 106,-25 106,-19 112,-13 118,-13 118,-13 207,-13 207,-13 213,-13 219,-19 219,-25 219,-25 219,-37 219,-37 219,-43 213,-49 207,-49"/>
+<text text-anchor="middle" x="162.5" y="-27.5" font-family="Georgia" font-size="15.00">Mobile user</text>
+</g>
+<!-- mobile&#45;&gt;internet -->
+<g id="secure-protocols-endpoint-paths-edge5" class="edge">
+<title>mobile&#45;&gt;internet</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M225.3,-36.63C256.73,-39.5 294.36,-42.93 323.64,-45.59"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="225.27,-34.52 219.1,-36.07 224.88,-38.7 225.27,-34.52"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="323.59,-47.7 329.76,-46.15 323.98,-43.51 323.59,-47.7"/>
+</g>
+<!-- inside -->
+<g id="secure-protocols-endpoint-paths-node8" class="node">
+<title>inside</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M865,-36C865,-36 737,-36 737,-36 731,-36 725,-30 725,-24 725,-24 725,-12 725,-12 725,-6 731,0 737,0 737,0 865,0 865,0 871,0 877,-6 877,-12 877,-12 877,-24 877,-24 877,-30 871,-36 865,-36"/>
+<text text-anchor="middle" x="801" y="-14.5" font-family="Georgia" font-size="15.00">Internal network</text>
+</g>
+<!-- gw_c&#45;&gt;inside -->
+<g id="secure-protocols-endpoint-paths-edge7" class="edge">
+<title>gw_c&#45;&gt;inside</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M698.21,-18C705,-18 711.89,-18 718.73,-18"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="698.09,-15.9 692.09,-18 698.09,-20.1 698.09,-15.9"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="718.98,-20.1 724.98,-18 718.98,-15.9 718.98,-20.1"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Gateway A and Gateway B are an IPsec peer pair across the Internet. The mobile user forms a separate peer pair with its access gateway.</figcaption></figure>
+<p>The protocol layer determines where protection begins and ends. Link-layer protection applies between adjacent devices. IPsec applies at the IP layer and can protect traffic across an internetwork. The lecture places SSL/TLS above TCP and below an application such as HTTP. Choosing one layer does not remove the need for a routable outer IP header.</p>
+<figure><div class="diagram-frame" style="--diagram-width:160px"><svg role="img" aria-label="The lecture places TLS above TCP, IPsec at the IP layer, and link protection between adjacent devices." width="158pt" height="330pt"
+ viewBox="0.00 0.00 157.60 329.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="secure-protocols-layer-placement-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 318.8)">
+<title>G</title>
+<!-- application -->
+<g id="secure-protocols-layer-placement-node1" class="node">
+<title>application</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M110,-308C110,-308 26,-308 26,-308 20,-308 14,-302 14,-296 14,-296 14,-284 14,-284 14,-278 20,-272 26,-272 26,-272 110,-272 110,-272 116,-272 122,-278 122,-284 122,-284 122,-296 122,-296 122,-302 116,-308 110,-308"/>
+<text text-anchor="middle" x="68" y="-286.5" font-family="Georgia" font-size="15.00">Application</text>
+</g>
+<!-- tls -->
+<g id="secure-protocols-layer-placement-node2" class="node">
+<title>tls</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M112,-240C112,-240 24,-240 24,-240 18,-240 12,-234 12,-228 12,-228 12,-216 12,-216 12,-210 18,-204 24,-204 24,-204 112,-204 112,-204 118,-204 124,-210 124,-216 124,-216 124,-228 124,-228 124,-234 118,-240 112,-240"/>
+<text text-anchor="middle" x="68" y="-218.5" font-family="Georgia" font-size="15.00">TLS Record</text>
+</g>
+<!-- application&#45;&gt;tls -->
+<g id="secure-protocols-layer-placement-edge1" class="edge">
+<title>application&#45;&gt;tls</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M68,-271.66C68,-263.99 68,-254.85 68,-246.58"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="70.1,-246.45 68,-240.45 65.9,-246.45 70.1,-246.45"/>
+</g>
+<!-- tcp -->
+<g id="secure-protocols-layer-placement-node3" class="node">
+<title>tcp</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M83,-172C83,-172 53,-172 53,-172 47,-172 41,-166 41,-160 41,-160 41,-148 41,-148 41,-142 47,-136 53,-136 53,-136 83,-136 83,-136 89,-136 95,-142 95,-148 95,-148 95,-160 95,-160 95,-166 89,-172 83,-172"/>
+<text text-anchor="middle" x="68" y="-150.5" font-family="Georgia" font-size="15.00">TCP</text>
+</g>
+<!-- tls&#45;&gt;tcp -->
+<g id="secure-protocols-layer-placement-edge2" class="edge">
+<title>tls&#45;&gt;tcp</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M68,-203.66C68,-195.99 68,-186.85 68,-178.58"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="70.1,-178.45 68,-172.45 65.9,-178.45 70.1,-178.45"/>
+</g>
+<!-- ipsec -->
+<g id="secure-protocols-layer-placement-node4" class="node">
+<title>ipsec</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M124,-104C124,-104 12,-104 12,-104 6,-104 0,-98 0,-92 0,-92 0,-80 0,-80 0,-74 6,-68 12,-68 12,-68 124,-68 124,-68 130,-68 136,-74 136,-80 136,-80 136,-92 136,-92 136,-98 130,-104 124,-104"/>
+<text text-anchor="middle" x="68" y="-82.5" font-family="Georgia" font-size="15.00">IP layer / IPsec</text>
+</g>
+<!-- tcp&#45;&gt;ipsec -->
+<g id="secure-protocols-layer-placement-edge3" class="edge">
+<title>tcp&#45;&gt;ipsec</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M68,-135.66C68,-127.99 68,-118.85 68,-110.58"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="70.1,-110.45 68,-104.45 65.9,-110.45 70.1,-110.45"/>
+</g>
+<!-- link -->
+<g id="secure-protocols-layer-placement-node5" class="node">
+<title>link</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M101.5,-36C101.5,-36 34.5,-36 34.5,-36 28.5,-36 22.5,-30 22.5,-24 22.5,-24 22.5,-12 22.5,-12 22.5,-6 28.5,0 34.5,0 34.5,0 101.5,0 101.5,0 107.5,0 113.5,-6 113.5,-12 113.5,-12 113.5,-24 113.5,-24 113.5,-30 107.5,-36 101.5,-36"/>
+<text text-anchor="middle" x="68" y="-14.5" font-family="Georgia" font-size="15.00">Data link</text>
+</g>
+<!-- ipsec&#45;&gt;link -->
+<g id="secure-protocols-layer-placement-edge4" class="edge">
+<title>ipsec&#45;&gt;link</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M68,-67.66C68,-59.99 68,-50.85 68,-42.58"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="70.1,-42.45 68,-36.45 65.9,-42.45 70.1,-42.45"/>
+</g>
+</g>
+</svg>
+</div><figcaption>The lecture places TLS above TCP, IPsec at the IP layer, and link protection between adjacent devices.</figcaption></figure>
+<h2 id="section-2">IPsec state: Security Associations and replay</h2>
+<p>IPsec is presented as providing integrity, authentication, confidentiality, and access control at the IP layer. Which services an application needs depends on its risk: the lecture treats integrity and authentication as essential for protected applications, while privacy is not always justified. It names Authentication Header (AH) and Encapsulating Security Payload (ESP), each usable in transport or tunnel mode. It cites RFC 2401, RFC 2402, and RFC 2406 as the period's IPsec specifications. Those identifiers are historical: RFC 4301 explicitly obsoletes RFC 2401 and provides the later architecture (<a href="https://www.rfc-editor.org/rfc/rfc4301.html">RFC 4301</a>); the updated AH and ESP specifications are <a href="https://www.rfc-editor.org/rfc/rfc4302.html">RFC 4302</a> and <a href="https://www.rfc-editor.org/rfc/rfc4303.html">RFC 4303</a>.</p>
+<p>A <b>Security Association (SA)</b> is a negotiated, one-way arrangement between two network-layer entities. Its state identifies the association and records the selected services, algorithms, key-establishment approach, and lifetime. A bidirectional exchange therefore uses two SAs: one for each direction. A Security Parameters Index (SPI) carried in AH or ESP helps the receiver select the matching SA; it is an identifier, not the secret key itself.</p>
+<details class="worked"><summary>Worked example: set up both directions for two gateways</summary><section class="walk" aria-label="Two one-way SAs"><h3>Two one-way SAs</h3><div class="example-input"><p>G1 ↔ G2; one SA carries packets in only one direction.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Choose the peer pair</h4><p><b>Givens:</b> gateways G1 and G2 need protected traffic in both directions.</p>
+<p>Set the peers to G1 and G2. Each SA is associated with a direction and selected services, algorithms, keys, and lifetime.</p></section><section class="step"><h4>Create the first direction</h4><p>Install an outbound SA for G1 → G2 and the corresponding inbound state at G2. Packets in this direction carry the SPI selected for this association.</p></section><section class="step"><h4>Create the reverse direction</h4><p>Install a separate outbound SA for G2 → G1 and matching inbound state at G1. Its keying and sequence state are independent of the first direction.</p></section><section class="step"><h4>Check the count</h4><p>There are two directions and each SA is simplex, so the secure bidirectional arrangement uses <b>2 SAs</b>.</p>
+<p><b>Independent check:</b> reversing the arrow changes the sender/receiver roles; the first SA does not cover that reverse path.</p></section></section></details>
+
+<p>Integrity checks detect whether protected packet data changed. Under the lecture's keyed-check model, binding the shared secret, sender or association context, and message can also support authentication. IP fields that may change in transit are not compared as if immutable: the source says they are set to zero during the calculation; the more precise AH wording is that mutable fields are normalized (often to zero) or treated according to their defined predictability (<a href="https://www.rfc-editor.org/rfc/rfc4302.html">RFC 4302, mutable fields</a>).</p>
+<p>Integrity does not establish freshness. A valid packet copied by an attacker can still be a replay. The protected sequence number and receiver's replay window track packets already accepted and reject duplicates or packets too old for the window. The receiver checks the packet's selected integrity/authentication protection before accepting a fresh sequence value.</p>
+<details class="worked"><summary>Teaching example: walk a replay window</summary><section class="walk" aria-label="Receive and check packet sequence values"><h3>Receive and check packet sequence values</h3><div class="example-input"><p>Simplified receive window width = 4; accepted values are tracked as well as the high end. The exact bitmap mechanics are a teaching visualization, not values from the lecture.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Starting state</h4><p><b>Givens:</b> for this simplified teaching example, a four-number receive window currently spans 39–42. The receiver has accepted 40, 41, and 42. Incoming packets still require a valid integrity check.</p>
+<p>Window: <code>[39, 40✓, 41✓, 42✓]</code>; highest accepted value: <code>42</code>.</p></section><section class="step"><h4>Receive sequence 43</h4><p><b>Rule:</b> a number newer than the current high end can move the window forward if the packet passes its integrity check. Packet 43 is new and authenticated, so accept it. The window advances to <code>[40, 41, 42, 43]</code>.</p>
+<p><b>Reason:</b> the highest value increased from 42 to 43; previously accepted 40–42 remain in range.</p></section><section class="step"><h4>Receive duplicate 41</h4><p>Packet 41 is inside the current range but is already marked accepted. Reject it as a replay even if its integrity value is still valid. The window does not change.</p></section><section class="step"><h4>Receive sequence 45</h4><p>Assume 45 passes the integrity check. It is newer than 43, so accept and move the four-value window to <code>[42, 43, 44, 45]</code>. Values 44 and 45 were not previously accepted; 42 and 43 remain tracked.</p></section><section class="step"><h4>Check an old packet</h4><p>Sequence 40 is now below the window's lower edge 42, so reject it as too old. <b>Independent check:</b> duplicate 41 was rejected while still in range; 40 is rejected because advancing the window moved it out of range. Integrity alone would not detect either replay.</p></section></section></details>
+
+<p>The lecture lists manual key setup, a Key Distribution Center, a Certificate Authority, and IKE as setup approaches. Its IKE note cites RFC 2409 and assumes peer identities plus pre-established secret material; preserve that as a historical lecture summary. <a href="https://www.rfc-editor.org/rfc/rfc9395.html">RFC 9395</a> moves IKEv1 RFC 2409 to Historic status and records its deprecation; modern IPsec key exchange is specified by IKEv2 (<a href="https://www.rfc-editor.org/rfc/rfc7296.html">RFC 7296</a>). A CA can support identity credentials, but it is not itself the SA negotiation protocol.</p>
+<h2 id="section-3">AH: authentication and integrity without privacy</h2>
+<p>AH is inserted after IP headers examined at each hop and before the protected upper-layer content. In IPv4, protocol value <code>51</code> signals AH. Its fields, in order, are <code>Next Header | Payload Length | Reserved | SPI | Sequence Number | Authentication Data</code>. Next Header identifies what follows AH; Payload Length describes the AH length in 32-bit words under the format used in the slides; SPI selects the SA; the sequence number supports replay protection; Authentication Data contains the check result. <strong>Field-label correction:</strong> the slide describes Length as the authentication-data length. RFC 4302 defines Payload Len as the AH header length in 32-bit words, with the first two words subtracted from the encoded value (<a href="https://www.rfc-editor.org/rfc/rfc4302.html#section-2.2">RFC 4302, AH format</a>).</p>
+<p>In <b>transport mode</b>, AH follows the original IP header. The receiver authenticates selected immutable IP fields and the following protected content; changeable fields are normalized or excluded. The data remains readable because AH does not encrypt it.</p>
+<p>In <b>tunnel mode</b>, a new outer IP header routes between the AH peers, then AH covers the original inner IP packet. This gives authentication/integrity for the inner packet, but AH tunnel mode as drawn in the lecture does not make it private. The outer route remains visible; mutable outer fields are handled according to AH rules.</p>
+<h2 id="section-4">ESP: privacy, with optional separate authentication data</h2>
+<p>ESP's lecture format is <code>SPI | Sequence Number | Payload Data | Padding | Pad Length | Next Header | optional Authentication Data</code>. In IPv4, protocol value <code>50</code> signals ESP. SPI selects the SA and sequence number supports anti-replay. The format encrypts from Payload Data through Next Header, so the padding, Pad Length, and encapsulated protocol type are hidden. SPI, sequence number, and the outer IP header remain visible.</p>
+<p>The slide makes the trailing Authentication Data optional. In this historical separate-ICV format, when it is selected, the check covers ESP from SPI through Next Header and excludes Authentication Data itself. That ESP check authenticates the ESP packet fields, including ciphertext when encryption is used; the outer IP header is outside that ESP span. Encryption alone does not prove integrity or sender authenticity. The format boundary is specified in <a href="https://www.rfc-editor.org/rfc/rfc2406.html">RFC 2406</a> and its successor <a href="https://www.rfc-editor.org/rfc/rfc4303.html">RFC 4303</a>.</p>
+<p>In <b>transport mode</b>, the original IP header stays outside ESP and remains visible; ESP protects the upper-layer content. In <b>tunnel mode</b>, ESP carries the whole original IP packet as encrypted content under a new visible outer IP header. The lecture also notes trusted routers may decrypt at a tunnel endpoint and route the recovered inner packet. AH and ESP may be combined, but AH is not a required precondition for ESP.</p>
+<h3>Compare the exact packet scope</h3>
+<p>These compact tables compare AH's authenticated-but-readable scope with ESP's optional authentication and encrypted span. The walkthrough just below shows exact packet order for each mode. “Authenticated” for ESP refers to the separate Authentication Data option shown in this slide-era format; it is conditional on selecting that service.</p>
+<h4>AH scope</h4>
+<table>
+<thead><tr><th>Mode</th><th>Authenticated</th><th>Not encrypted, so visible</th></tr></thead>
+<tbody>
+<tr><th>Transport</th><td>Selected immutable IP fields and the following protected content</td><td>IP header, AH, and upper-layer content</td></tr>
+<tr><th>Tunnel</th><td>Whole original inner packet and selected immutable fields from the new outer header</td><td>New outer header, AH, and original inner content</td></tr>
+</tbody>
+</table>
+<h4>ESP scope</h4>
+<table>
+<thead><tr><th>Mode</th><th>Protection and visibility</th></tr></thead>
+<tbody>
+<tr><th>Transport</th><td><b>Encrypted:</b> upper-layer payload through Next Header, including padding and Pad Length. <b>Authenticated when selected:</b> ESP from SPI through Next Header. <b>Visible:</b> original IP header, SPI, sequence number, and optional Authentication Data.</td></tr>
+<tr><th>Tunnel</th><td><b>Encrypted:</b> whole original IP packet through Next Header. <b>Authenticated when selected:</b> ESP from SPI through Next Header. <b>Visible:</b> new outer IP header, SPI, sequence number, and optional Authentication Data.</td></tr>
+</tbody>
+</table>
+<details class="worked"><summary>Teaching example: identify what a packet observer can read</summary><section class="walk" aria-label="Apply the four packet layouts to one request"><h3>Apply the four packet layouts to one request</h3><div class="example-input"><p><b>Input:</b> original packet <code>IP(A → B) | TCP | request</code>. For tunnel cases, IPsec peers are gateways G1 and G2. Assume ESP's separate Authentication Data option is enabled where its authentication span is discussed.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>AH transport: insert an integrity header</h4><p>Given an IPv4 packet <code>A → B | TCP | request</code>, place AH after the IP header: <code>IP(A → B) | AH | TCP | request</code>. AH protocol value is 51. The receiver checks the AH authentication data over the protected payload and selected immutable IP-header fields; mutable fields are normalized or excluded. Nothing is encrypted, so the addresses and request remain readable. Check: AH can reveal alteration, but it cannot hide the request.</p></section><section class="step"><h4>AH tunnel: authenticate an encapsulated packet</h4><p>Given the same original packet and gateways <code>G1</code> and <code>G2</code>, wrap it as <code>new IP(G1 → G2) | AH | original IP(A → B) | TCP | request</code>. The original packet is authenticated. Selected mutable outer-header fields are normalized or excluded. Neither the new outer header nor the inner packet is encrypted. Check: the observer sees both routing endpoints and inner addresses/content.</p></section><section class="step"><h4>ESP transport: protect upper-layer content</h4><p>Start with <code>IP(A → B) | TCP | request</code>. Add ESP after the original IP header. In the lecture's format the result is <code>IP(A → B) | ESP(SPI, sequence) | encrypted[TCP | request | padding | pad length | next header] | optional Authentication Data</code>. The outer IP header, SPI, and sequence number stay visible. The next-header value is inside the encrypted span. If separate Authentication Data is enabled, its check covers the ESP packet from SPI through Next Header, excluding itself. Check: the original endpoint addresses remain visible while the upper-layer protocol and content are concealed.</p></section><section class="step"><h4>ESP tunnel: protect the complete original packet</h4><p>Wrap the original packet as <code>new IP(G1 → G2) | ESP(SPI, sequence) | encrypted[IP(A → B) | TCP | request | padding | pad length | next header] | optional Authentication Data</code>. Internet routers see <code>G1 → G2</code> and the ESP header fields; they cannot read the inner <code>A → B</code> header or request. The receiving gateway verifies the selected protection, decrypts, recovers the original packet, and forwards it internally. Check: only the new outer IP header is needed for routing across the tunnel.</p></section></section></details>
+
+<h2 id="section-5">SSL/TLS above TCP: handshake state and protected records</h2>
+<p>The slides place TLS Record over TCP and IP, with Handshake, Change Cipher Spec, Alert, and application protocols such as HTTP carried above the Record layer. The stack applies beyond HTTP; the slides also name FTP, Telnet, e-commerce, and email. SSL was developed by Netscape; the deck describes SSL 3.0 as submitted to the IETF and TLS as standardized in RFC 2246 with “slight differences.” <strong>Correction and version boundary:</strong> RFC 2246 is specifically TLS 1.0 (1999), not a definition of all TLS versions. TLS 1.0 and TLS 1.1 were later formally deprecated by <a href="https://www.rfc-editor.org/rfc/rfc8996.html">RFC 8996</a>; use <a href="https://www.rfc-editor.org/rfc/rfc9325.html">RFC 9325</a> for secure-use recommendations. The historical details below describe the lecture's TLS 1.0-era model, not a TLS 1.3 lesson or current configuration advice.</p>
+<p>The <b>Handshake</b> negotiates a protocol version, encryption and key-generation choices, can authenticate peers with public-key mechanisms, and establishes shared secret state. The slide does not provide a message-by-message handshake transcript, so the sequence below shows the responsibilities in order, not exact TLS wire messages. Multiple secure connections may be associated with a session under the old resumable-session model.</p>
+<p>The lecture lists these TLS 1.0-era session fields: Session Identifier (server-selected byte sequence), peer certificate, compression method, cipher spec (encryption and MAC), 48-byte Master Secret, and a resumable flag. RFC 2246 confirms this parameter list and the master-secret size (<a href="https://www.rfc-editor.org/rfc/rfc2246.html#section-7">RFC 2246, session state</a>). These are version-specific fields and mechanisms; do not generalize them across TLS generations.</p>
+<p>The <b>Record Protocol</b> carries protected data over TCP. In the slide's older design, negotiated symmetric encryption provides privacy and a separate keyed MAC protects record integrity/authentication. The slide calls that MAC a “reliability service,” but that wording conflates two jobs: a MAC detects unauthorized modification under the negotiated key; TCP provides reliable ordered byte transport (<a href="https://www.rfc-editor.org/rfc/rfc793.html">RFC 793</a>). The slide says record data is handled without the hash only during session negotiation. The other named control protocols—Change Cipher Spec and Alert—are carried above Record in the stack; the lecture does not describe their wire transitions or message sequence. Modern TLS record protection differs, so the separate-MAC model is kept historical here.</p>
+<figure><div class="diagram-frame" style="--diagram-width:581.6px"><svg role="img" aria-label="TLS 1.0-era lecture stack: control protocols and application data are carried above the TLS Record layer." width="582pt" height="262pt"
+ viewBox="0.00 0.00 581.60 261.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="secure-protocols-tls-stack-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 250.8)">
+<title>G</title>
+<!-- ip -->
+<g id="secure-protocols-tls-stack-node1" class="node">
+<title>ip</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M306,-240C306,-240 276,-240 276,-240 270,-240 264,-234 264,-228 264,-228 264,-216 264,-216 264,-210 270,-204 276,-204 276,-204 306,-204 306,-204 312,-204 318,-210 318,-216 318,-216 318,-228 318,-228 318,-234 312,-240 306,-240"/>
+<text text-anchor="middle" x="291" y="-218.5" font-family="Georgia" font-size="15.00">IP</text>
+</g>
+<!-- tcp -->
+<g id="secure-protocols-tls-stack-node2" class="node">
+<title>tcp</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M306,-172C306,-172 276,-172 276,-172 270,-172 264,-166 264,-160 264,-160 264,-148 264,-148 264,-142 270,-136 276,-136 276,-136 306,-136 306,-136 312,-136 318,-142 318,-148 318,-148 318,-160 318,-160 318,-166 312,-172 306,-172"/>
+<text text-anchor="middle" x="291" y="-150.5" font-family="Georgia" font-size="15.00">TCP</text>
+</g>
+<!-- ip&#45;&gt;tcp -->
+<g id="secure-protocols-tls-stack-edge1" class="edge">
+<title>ip&#45;&gt;tcp</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M291,-203.66C291,-195.99 291,-186.85 291,-178.58"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="293.1,-178.45 291,-172.45 288.9,-178.45 293.1,-178.45"/>
+</g>
+<!-- record -->
+<g id="secure-protocols-tls-stack-node3" class="node">
+<title>record</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M335,-104C335,-104 247,-104 247,-104 241,-104 235,-98 235,-92 235,-92 235,-80 235,-80 235,-74 241,-68 247,-68 247,-68 335,-68 335,-68 341,-68 347,-74 347,-80 347,-80 347,-92 347,-92 347,-98 341,-104 335,-104"/>
+<text text-anchor="middle" x="291" y="-82.5" font-family="Georgia" font-size="15.00">TLS Record</text>
+</g>
+<!-- tcp&#45;&gt;record -->
+<g id="secure-protocols-tls-stack-edge2" class="edge">
+<title>tcp&#45;&gt;record</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M291,-135.66C291,-127.99 291,-118.85 291,-110.58"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="293.1,-110.45 291,-104.45 288.9,-110.45 293.1,-110.45"/>
+</g>
+<!-- handshake -->
+<g id="secure-protocols-tls-stack-node4" class="node">
+<title>handshake</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M96,-36C96,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 96,0 96,0 102,0 108,-6 108,-12 108,-12 108,-24 108,-24 108,-30 102,-36 96,-36"/>
+<text text-anchor="middle" x="54" y="-14.5" font-family="Georgia" font-size="15.00">Handshake</text>
+</g>
+<!-- record&#45;&gt;handshake -->
+<g id="secure-protocols-tls-stack-edge3" class="edge">
+<title>record&#45;&gt;handshake</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M234.83,-69.36C198.45,-59.23 151.11,-46.04 114,-35.71"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="114.47,-33.66 108.13,-34.07 113.35,-37.71 114.47,-33.66"/>
+</g>
+<!-- change -->
+<g id="secure-protocols-tls-stack-node5" class="node">
+<title>change</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M297.5,-36C297.5,-36 142.5,-36 142.5,-36 136.5,-36 130.5,-30 130.5,-24 130.5,-24 130.5,-12 130.5,-12 130.5,-6 136.5,0 142.5,0 142.5,0 297.5,0 297.5,0 303.5,0 309.5,-6 309.5,-12 309.5,-12 309.5,-24 309.5,-24 309.5,-30 303.5,-36 297.5,-36"/>
+<text text-anchor="middle" x="220" y="-14.5" font-family="Georgia" font-size="15.00">Change Cipher Spec</text>
+</g>
+<!-- record&#45;&gt;change -->
+<g id="secure-protocols-tls-stack-edge4" class="edge">
+<title>record&#45;&gt;change</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M272.35,-67.66C263.45,-59.39 252.71,-49.41 243.29,-40.65"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="244.6,-39 238.78,-36.45 241.74,-42.08 244.6,-39"/>
+</g>
+<!-- alert -->
+<g id="secure-protocols-tls-stack-node6" class="node">
+<title>alert</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M380,-36C380,-36 344,-36 344,-36 338,-36 332,-30 332,-24 332,-24 332,-12 332,-12 332,-6 338,0 344,0 344,0 380,0 380,0 386,0 392,-6 392,-12 392,-12 392,-24 392,-24 392,-30 386,-36 380,-36"/>
+<text text-anchor="middle" x="362" y="-14.5" font-family="Georgia" font-size="15.00">Alert</text>
+</g>
+<!-- record&#45;&gt;alert -->
+<g id="secure-protocols-tls-stack-edge5" class="edge">
+<title>record&#45;&gt;alert</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M309.65,-67.66C318.55,-59.39 329.29,-49.41 338.71,-40.65"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="340.26,-42.08 343.22,-36.45 337.4,-39 340.26,-42.08"/>
+</g>
+<!-- app -->
+<g id="secure-protocols-tls-stack-node7" class="node">
+<title>app</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M548,-36C548,-36 426,-36 426,-36 420,-36 414,-30 414,-24 414,-24 414,-12 414,-12 414,-6 420,0 426,0 426,0 548,0 548,0 554,0 560,-6 560,-12 560,-12 560,-24 560,-24 560,-30 554,-36 548,-36"/>
+<text text-anchor="middle" x="487" y="-14.5" font-family="Georgia" font-size="15.00">Application data</text>
+</g>
+<!-- record&#45;&gt;app -->
+<g id="secure-protocols-tls-stack-edge6" class="edge">
+<title>record&#45;&gt;app</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M341.73,-67.92C368.94,-58.75 402.55,-47.44 430.59,-38"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="431.47,-39.92 436.48,-36.01 430.13,-35.94 431.47,-39.92"/>
+</g>
+</g>
+</svg>
+</div><figcaption>TLS 1.0-era lecture stack: control protocols and application data are carried above the TLS Record layer.</figcaption></figure>
+<details class="worked"><summary>Teaching example: follow setup into a protected application record</summary><section class="walk" aria-label="Separate handshake work from record work"><h3>Separate handshake work from record work</h3><div class="example-input"><p>Version scope: lecture-era TLS 1.0 model based on RFC 2246. This is a conceptual procedure, not a full wire trace.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Start with transport</h4><p><b>Givens:</b> a client sends an application request to a server using the lecture's TLS-over-TCP stack. TCP connection setup is complete.</p>
+<p>TCP is below TLS Record and carries the TLS byte stream.</p></section><section class="step"><h4>Negotiate session parameters</h4><p>The client and server use Handshake to agree on protocol version, cipher spec, and key-generation method. The server presents its certificate; the client validates identity as required. The lecture says either peer may be authenticated when configured.</p></section><section class="step"><h4>Establish the shared secret</h4><p>The handshake establishes shared secret state. In the TLS 1.0-era model, the session records the 48-byte Master Secret and other listed parameters; connection-specific record keys are derived from the negotiated state.</p></section><section class="step"><h4>Protect the application bytes</h4><p>The client passes request bytes to TLS Record. Under the old slide model, the record is encrypted for privacy and protected by a keyed MAC for integrity/authentication, then carried by TCP. The peer checks the record protection before delivering the recovered bytes to its application.</p></section><section class="step"><h4>Check the division of labor</h4><p><b>Handshake:</b> agree, authenticate as required, and establish secrets. <b>Record:</b> protect and carry data. <b>TCP:</b> reliable ordered byte transport. The diagram's labels are conceptual roles, not a transcript of handshake messages.</p>
+<p><b>Independent check:</b> the keyed MAC does not retransmit lost bytes; TCP does.</p></section></section></details>
+
+<h2 id="section-6">Common confusions</h2>
+<ul>
+<li><strong>AH versus ESP:</strong> AH authenticates selected fields without encryption. ESP encrypts its defined content span and can add separate authentication data.</li>
+<li><strong>Transport versus tunnel:</strong> transport keeps the original IP header visible; tunnel adds a new outer IP header and places the original packet inside.</li>
+<li><strong>Visible outer header:</strong> even ESP tunnel traffic needs gateway addresses so routers can forward it.</li>
+<li><strong>SPI versus sequence number:</strong> SPI selects an SA; sequence state helps reject replays.</li>
+<li><strong>Integrity versus freshness:</strong> a valid check can belong to an old copied packet, so the replay window matters.</li>
+<li><strong>TLS Handshake versus Record:</strong> Handshake sets the negotiated state; Record protects carried data.</li>
+<li><strong>TLS MAC versus TCP reliability:</strong> the slide's MAC wording is inaccurate; TCP handles reliable ordered delivery.</li>
+<li><strong>Historical field lists:</strong> RFC 2246 details belong to TLS 1.0 and should not be treated as universal TLS behavior.</li>
+</ul>
+<h2 id="section-7">Quick review</h2>
+<p>For a protocol scenario, name the peer endpoints, identify the layer and mode, then mark (1) visible routing fields, (2) authenticated fields, and (3) encrypted fields. For a TLS question from these slides, state the TLS 1.0-era scope, separate Handshake responsibilities from Record protection, and keep TCP's delivery role distinct from a MAC.</p>
+<h2 id="section-8">Practice</h2>
+<p class="question">A valid packet with sequence number 41 arrives, but 41 was already accepted. What rejects it?</p>
+<details class="worked"><summary>Check your answer</summary><p>The receiver replay window marks 41 as already accepted. The packet can have a valid integrity check and still be stale.</p></details>
+<p class="question">How many SAs carry protected traffic in both directions between G1 and G2?</p>
+<details class="worked"><summary>Check your answer</summary><p>Two: one simplex SA for G1 → G2 and one for G2 → G1.</p></details>
+<p class="question">In ESP tunnel mode, which address pair remains visible across the Internet?</p>
+<details class="worked"><summary>Check your answer</summary><p>The new outer gateway addresses. The original host addresses are inside the encrypted original packet.</p></details>
+<p class="question">Does AH tunnel mode hide or encrypt the original packet?</p>
+<details class="worked"><summary>Check your answer</summary><p>No. AH authenticates the original inner packet but does not encrypt it; the inner header and content remain readable.</p></details>
+<p class="question">In the lecture ESP layout, which fields are encrypted and which help choose/check the SA?</p>
+<details class="worked"><summary>Check your answer</summary><p>Payload Data through Next Header is encrypted. SPI selects the SA and the sequence number supports anti-replay; both remain outside the encrypted span.</p></details>
+<p class="question">What does the lecture-era TLS Handshake establish, and what does Record do afterward?</p>
+<details class="worked"><summary>Check your answer</summary><p>Handshake negotiates parameters, authenticates peers as required, and establishes shared secrets. Record uses the negotiated protection to carry application data.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="pki.html"><small>Previous</small>Public key infrastructure <span aria-hidden="true">↗</span></a><a href="network-design.html"><small>Next</small>Network design <span aria-hidden="true">↗</span></a></nav><footer>Networks field notes <span>Follow the packet. Explain the decision.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  root.querySelectorAll('table').forEach(table => {
+    const region = document.createElement('div');
+    region.className = 'table-scroll' + (table.rows[0]?.cells.length > 5 ? ' wide' : '');
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    table.before(region); region.append(table);
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Network diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {osi:'layers encapsulation protocol service interface pdu',link:'framing crc parity arq flow control sliding window',ethernet:'mac switch arp csma token lab',wan:'man atm isdn frame relay x25',routing:'network forwarding distance vector link state dijkstra',ipv4:'ip subnet mask vlsm binary cidr lab',ipv6:'ip address compression transition lab',transport:'tcp udp handshake congestion window port',bluetooth:'wireless nfc zigbee wpan beacon quiz',security:'cia attacks cryptography encryption hash authentication',infrastructure:'pki certificate ca trust revocation signature',tls:'ssl ipsec ah esp tunnel sa',design:'requirements topology availability delay bandwidth'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('a').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('cns-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.CNS_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) expand.textContent = 'Expand examples';
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

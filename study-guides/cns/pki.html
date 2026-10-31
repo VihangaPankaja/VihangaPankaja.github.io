@@ -1,0 +1,585 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="PKI helps people decide whether a public key really belongs to the identity it names. Certificates, trusted issuers, registration checks, directories, and revocation information work together to support that decision."><title>Public key infrastructure · Networks field notes</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('cns-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{.table-hint{display:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#243740;--muted:#5e737d;--secondary:#edf2f3;--border:#d5e0e3;--primary:#1e647c;--accent:#dcecf0;--diagram-fill:#eff4f5;--diagram-border:#829da8;--diagram-edge:#65838f;--active-text:#174b61;--focus:#227b98}:root[data-theme=dark]{--background:#141d23;--foreground:#e1eaf0;--muted:#a8beca;--card:#1a2730;--secondary:#22333e;--border:#3b505c;--primary:#90d1e4;--accent:#254757;--diagram-fill:#22333e;--diagram-border:#93b2c1;--diagram-edge:#9bbac9;--topbar:#141d23f5;--active-text:#b6e5f1;--focus:#90d1e4} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> CNS <span class="subbrand">field notes</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Subnet, TCP, TLS…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a href="index.html">Computer networks and security</a></div><div class="nav-group"><p>Foundations</p><a href="osi.html">OSI model and encapsulation</a><a href="data-link.html">Data link framing, errors and flow control</a><a href="wan.html">WAN and MAN technologies</a><a href="lan.html">LAN, Ethernet and switching</a></div><div class="nav-group"><p>Internetworking</p><a href="routing.html">Network layer and routing</a><a href="ipv4.html">IPv4 addressing, subnetting and VLSM</a><a href="ip-delivery.html">IP packets, ARP, ICMP, DHCP and NAT</a><a href="ipv6.html">IPv6 addressing and transition</a></div><div class="nav-group"><p>Transport and wireless</p><a href="transport.html">Transport services and connections</a><a href="short-range.html">Bluetooth, NFC and ZigBee</a></div><div class="nav-group"><p>Security and design</p><a href="security.html">Security foundations and cryptography</a><a href="pki.html" aria-current="page">Public key infrastructure</a><a href="secure-protocols.html">IPsec and TLS</a><a href="network-design.html">Network design</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS3131<br>Computer Networks and Security</div></aside>
+<main id="main"><div class="eyebrow">Security and design <span>/</span> Lecture 10</div><h1>Public key infrastructure</h1><p class="lead">PKI helps people decide whether a public key really belongs to the identity it names. Certificates, trusted issuers, registration checks, directories, and revocation information work together to support that decision.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">The cryptography context</a><a href="#section-2">Why a public key needs an identity binding</a><a href="#section-3">PKI is a framework</a><a href="#section-4">Certificates bind a subject to a public key</a><a href="#section-5">Registration, issuance, and retrieval</a><a href="#section-6">Revocation, configured trust, and terminology</a><a href="#section-7">Quick revision</a><a href="#section-8">Practice</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Public-key encryption only helps if the sender has the right recipient's public key. If an attacker substitutes their own key, a sender can encrypt a secret for the attacker while believing it is protected for the intended person. Public Key Infrastructure (PKI) is the framework of certificates, organizations, directories, procedures, protocols, and policies used to distribute public keys with an identity binding that others can evaluate.</p>
+<p>The central credential is a <strong>digital certificate</strong>: it associates a subject's identity with a public key, and a Certificate Authority (CA) signs that certificate. A Registration Authority (RA) checks the applicant's identity and passes the request to a CA. A directory helps people retrieve certificate information. A CA can revoke a certificate, and records revoked certificates in a Certificate Revocation List (CRL). These pieces provide a basis for trust; a certificate by itself does not encrypt a session or make every application decision for you.</p>
+<h2 id="section-1">The cryptography context</h2>
+<p>The lecture opens by contrasting symmetric and asymmetric systems. These are only the background needed for the PKI problem; for how keys are used in encryption, signatures, hashes, and message authentication, follow the <a href="security.html">Security foundations and cryptography</a> page.</p>
+<table>
+<thead>
+<tr>
+<th>Lecture comparison</th>
+<th>Symmetric system</th>
+<th>Asymmetric system</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Keys</td>
+<td>The same shared secret is used at both ends.</td>
+<td>A public/private key pair is mathematically related; the public key may be distributed, while the owner controls the private key.</td>
+</tr>
+<tr>
+<td>Main trade-off in the slides</td>
+<td>Fast, but every communicating pair needs its own secret and secure key delivery/storage.</td>
+<td>Easier key distribution and scaling, but slower operation.</td>
+</tr>
+<tr>
+<td>Source's security claim</td>
+<td>Symmetric encryption is described as providing confidentiality, not authenticity or nonrepudiation. This statement is about encryption alone; a separate message authentication code can provide authentication.</td>
+<td>The slides say asymmetric systems can provide authentication and nonrepudiation, depending on how the keys are used.</td>
+</tr>
+</tbody>
+</table>
+<p>For suitable algorithms and parameters, deriving a private key from its public key is computationally infeasible. This is the precise form of the lecture's absolute wording; see the <a href="https://csrc.nist.gov/glossary/term/public_key_cryptography">NIST public-key cryptography definition</a>. If a private key is disclosed, the owner's security is compromised. The lecture names RSA, ECC, Diffie–Hellman, and ElGamal as asymmetric examples. This is a broad historical list, not a claim that each system supports the same encryption/decryption operation or is current deployment advice. It also names DES, 3DES, RC4, RC5, RC6, and AES as symmetric examples; the list is preserved as lecture context, not a recommendation.</p>
+<h2 id="section-2">Why a public key needs an identity binding</h2>
+<figure><div class="diagram-frame" style="--diagram-width:844.6px"><svg role="img" aria-label="Key-substitution risk: Alice receives a key controlled by Charles but believes it is Bob&#x27;s. The lecture names this Alice–Bob–Charles man-in-the-middle problem." width="845pt" height="70pt"
+ viewBox="0.00 0.00 844.60 69.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="pki-key-substitution-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 58.8)">
+<title>G</title>
+<!-- alice -->
+<g id="pki-key-substitution-node1" class="node">
+<title>alice</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M811,-48C811,-48 691,-48 691,-48 685,-48 679,-42 679,-36 679,-36 679,-12 679,-12 679,-6 685,0 691,0 691,0 811,0 811,0 817,0 823,-6 823,-12 823,-12 823,-36 823,-36 823,-42 817,-48 811,-48"/>
+<text text-anchor="middle" x="751" y="-29" font-family="Georgia" font-size="15.00">Alice</text>
+<text text-anchor="middle" x="751" y="-12" font-family="Georgia" font-size="15.00">wants Bob&#39;s key</text>
+</g>
+<!-- charles -->
+<g id="pki-key-substitution-node2" class="node">
+<title>charles</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M437,-48C437,-48 298,-48 298,-48 292,-48 286,-42 286,-36 286,-36 286,-12 286,-12 286,-6 292,0 298,0 298,0 437,0 437,0 443,0 449,-6 449,-12 449,-12 449,-36 449,-36 449,-42 443,-48 437,-48"/>
+<text text-anchor="middle" x="367.5" y="-29" font-family="Georgia" font-size="15.00">Charles</text>
+<text text-anchor="middle" x="367.5" y="-12" font-family="Georgia" font-size="15.00">substitutes his key</text>
+</g>
+<!-- charles&#45;&gt;alice -->
+<g id="pki-key-substitution-edge2" class="edge">
+<title>charles&#45;&gt;alice</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M449.41,-24C515.3,-24 607.73,-24 672.65,-24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="672.84,-26.1 678.84,-24 672.84,-21.9 672.84,-26.1"/>
+<text text-anchor="middle" x="564" y="-27.4" font-family="Georgia" font-size="12.00">Charles&#39;s key presented as Bob&#39;s</text>
+</g>
+<!-- bob -->
+<g id="pki-key-substitution-node3" class="node">
+<title>bob</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M88,-48C88,-48 12,-48 12,-48 6,-48 0,-42 0,-36 0,-36 0,-12 0,-12 0,-6 6,0 12,0 12,0 88,0 88,0 94,0 100,-6 100,-12 100,-12 100,-36 100,-36 100,-42 94,-48 88,-48"/>
+<text text-anchor="middle" x="50" y="-29" font-family="Georgia" font-size="15.00">Bob&#39;s real</text>
+<text text-anchor="middle" x="50" y="-12" font-family="Georgia" font-size="15.00">public key</text>
+</g>
+<!-- bob&#45;&gt;charles -->
+<g id="pki-key-substitution-edge1" class="edge">
+<title>bob&#45;&gt;charles</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M100.3,-24C148.2,-24 221.98,-24 279.72,-24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="279.97,-26.1 285.97,-24 279.97,-21.9 279.97,-26.1"/>
+<text text-anchor="middle" x="193" y="-27.4" font-family="Georgia" font-size="12.00">key exchange intercepted</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Key-substitution risk: Alice receives a key controlled by Charles but believes it is Bob&#x27;s. The lecture names this Alice–Bob–Charles man-in-the-middle problem.</figcaption></figure>
+<p>The lecture's Alice, Bob, and Charles example asks how Alice can check the authenticity of a public key she receives. If Alice encrypts a session key with a substituted key, Charles may be able to receive it. The cryptography can operate as designed while the identity assumption is wrong. PKI addresses the identity-to-key question by relying on certificates issued by a CA that the verifier trusts.</p>
+<p>The original slide names the attack but does not show each intercepted message. The diagram summarizes the risk rather than claiming a complete protocol trace. For the key-use and signature fundamentals behind this example, see <a href="security.html">Security foundations and cryptography</a>.</p>
+<h2 id="section-3">PKI is a framework</h2>
+<p>The lecture defines PKI as a system of programs, data formats, procedures, communication protocols, security policies, and public-key mechanisms working together. It lists confidentiality, access control, integrity, authentication, and nonrepudiation as services supported by the framework. Treat these as framework capabilities: a certificate alone does not enforce application authorization, encrypt all traffic, or guarantee nonrepudiation in every context. The surrounding cryptographic protocol and application determine what a particular exchange actually provides.</p>
+<p>For scale intuition, the lecture gives the symmetric-key count for one distinct shared secret per communicating pair:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>K</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>N</mi><mo stretchy="false">&#x00028;</mo><mi>N</mi><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>2</mn></mrow></mfrac></mrow></math></div>
+<details class="worked"><summary>Teaching example: count pairwise shared keys for five users</summary><section class="walk" aria-label="Count one key for each unordered pair"><h3>Count one key for each unordered pair</h3><div class="example-input"><strong>Given</strong><span>5 users</span><span>one unique shared key per unordered pair</span><span>no self-pairs</span></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Start from the assumption</h4><p>There are 5 users. Each distinct pair needs one shared secret, and a pair is counted once regardless of order. No user needs a separate key to communicate with themselves.</p></section><section class="step"><h4>Apply the lecture formula</h4><p>Substitute <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>N</mi><mo>&#x0003D;</mo><mn>5</mn></mrow></math>: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>K</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>5</mn><mo stretchy="false">&#x00028;</mo><mn>5</mn><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>2</mn></mrow></mfrac></mrow></math>. First compute <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>5</mn><mo>&#x02212;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>4</mn></mrow></math>, then <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>5</mn><mo>&#x000D7;</mo><mn>4</mn><mo>&#x0003D;</mo><mn>20</mn></mrow></math>, then divide by 2: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>K</mi><mo>&#x0003D;</mo><mn>10</mn></mrow></math>. The division removes the duplicate ordered counts (A–B and B–A).</p></section><section class="step"><h4>Check by listing pairs</h4><p>The ten pairs are AB, AC, AD, AE, BC, BD, BE, CD, CE, and DE. There are ten distinct shared keys, matching the formula. </p></section></section></details>
+<h2 id="section-4">Certificates bind a subject to a public key</h2>
+<p>A digital certificate is a credential containing a subject's public key and identifying information. The CA's signature endorses the certificate's binding. People who have not met can evaluate that binding through a CA they both accept as a trust source; this is indirect reliance on the CA, not personal knowledge of one another.</p>
+<p>The lecture's X.509 diagram names these fields. Read them by asking: which certificate is this, who issued it, who or what is its subject, what public key is bound to that subject, and during what validity interval does the certificate claim to apply?</p>
+<table>
+<thead>
+<tr>
+<th>X.509 field shown in the lecture</th>
+<th>What it tells the reader</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Version</td>
+<td>Which certificate format version is represented.</td>
+</tr>
+<tr>
+<td>Serial number</td>
+<td>The issuer-assigned identifier for this certificate.</td>
+</tr>
+<tr>
+<td>Signature</td>
+<td>The slide glosses this as the algorithm ID used to sign. It is signature metadata, not the signature bytes themselves.</td>
+</tr>
+<tr>
+<td>Issuer</td>
+<td>The name of the CA that issued the certificate.</td>
+</tr>
+<tr>
+<td>Validity</td>
+<td>The certificate's not-before and not-after dates.</td>
+</tr>
+<tr>
+<td>Subject</td>
+<td>The identity named by the certificate.</td>
+</tr>
+<tr>
+<td>Subject public-key information</td>
+<td>The subject's public key and its algorithm information.</td>
+</tr>
+<tr>
+<td>Issuer unique ID</td>
+<td>Optional identifier for the issuer.</td>
+</tr>
+<tr>
+<td>Subject unique ID</td>
+<td>Optional identifier for the subject.</td>
+</tr>
+<tr>
+<td>Extensions</td>
+<td>Optional additional certificate information.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Standards clarification:</strong> the lecture's field picture compresses the signature information. RFC 5280 represents a certificate with a <code>tbsCertificate</code>, a <code>signatureAlgorithm</code>, and a <code>signatureValue</code>; the signature is computed over the DER-encoded <code>tbsCertificate</code>.  See <a href="https://www.rfc-editor.org/rfc/rfc5280#section-4.1">RFC 5280 §4.1</a> and <a href="https://www.rfc-editor.org/rfc/rfc5280#section-4.1.1.3">§4.1.1.3</a>. For signature mechanics, use the Security Foundations material rather than treating this note as a signing tutorial.</p>
+<figure><div class="diagram-frame" style="--diagram-width:332.6px"><svg role="img" aria-label="The lecture&#x27;s trust example: Dave and Kevin each rely on the same CA&#x27;s certificate endorsement, creating an indirect basis for relying on each other&#x27;s identity-to-key binding." width="333pt" height="140pt"
+ viewBox="0.00 0.00 332.60 139.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="pki-certificate-trust-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 128.8)">
+<title>G</title>
+<!-- ca -->
+<g id="pki-certificate-trust-node1" class="node">
+<title>ca</title>
+<path fill="var(--accent,#d5e9d5)" stroke="var(--primary,#25633a)" stroke-width="2" d="M70,-83C70,-83 12,-83 12,-83 6,-83 0,-77 0,-71 0,-71 0,-47 0,-47 0,-41 6,-35 12,-35 12,-35 70,-35 70,-35 76,-35 82,-41 82,-47 82,-47 82,-71 82,-71 82,-77 76,-83 70,-83"/>
+<text text-anchor="middle" x="41" y="-64" font-family="Georgia" font-size="15.00">Trusted</text>
+<text text-anchor="middle" x="41" y="-47" font-family="Georgia" font-size="15.00">CA</text>
+</g>
+<!-- dave -->
+<g id="pki-certificate-trust-node2" class="node">
+<title>dave</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M299,-118C299,-118 223,-118 223,-118 217,-118 211,-112 211,-106 211,-106 211,-82 211,-82 211,-76 217,-70 223,-70 223,-70 299,-70 299,-70 305,-70 311,-76 311,-82 311,-82 311,-106 311,-106 311,-112 305,-118 299,-118"/>
+<text text-anchor="middle" x="261" y="-99" font-family="Georgia" font-size="15.00">Dave</text>
+<text text-anchor="middle" x="261" y="-82" font-family="Georgia" font-size="15.00">certificate</text>
+</g>
+<!-- ca&#45;&gt;dave -->
+<g id="pki-certificate-trust-edge1" class="edge">
+<title>ca&#45;&gt;dave</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M82.24,-65.46C116.69,-70.99 166.63,-79.01 204.81,-85.14"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="204.57,-87.23 210.83,-86.11 205.24,-83.08 204.57,-87.23"/>
+<text text-anchor="middle" x="146.5" y="-85.4" font-family="Georgia" font-size="12.00">issues and signs</text>
+</g>
+<!-- kevin -->
+<g id="pki-certificate-trust-node3" class="node">
+<title>kevin</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M299,-48C299,-48 223,-48 223,-48 217,-48 211,-42 211,-36 211,-36 211,-12 211,-12 211,-6 217,0 223,0 223,0 299,0 299,0 305,0 311,-6 311,-12 311,-12 311,-36 311,-36 311,-42 305,-48 299,-48"/>
+<text text-anchor="middle" x="261" y="-29" font-family="Georgia" font-size="15.00">Kevin</text>
+<text text-anchor="middle" x="261" y="-12" font-family="Georgia" font-size="15.00">certificate</text>
+</g>
+<!-- ca&#45;&gt;kevin -->
+<g id="pki-certificate-trust-edge2" class="edge">
+<title>ca&#45;&gt;kevin</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M82.07,-52.56C87.43,-51.7 92.85,-50.83 98,-50 133.46,-44.3 173.29,-37.91 204.59,-32.89"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="205.14,-34.93 210.73,-31.91 204.47,-30.78 205.14,-34.93"/>
+<text text-anchor="middle" x="146.5" y="-53.4" font-family="Georgia" font-size="12.00">issues and signs</text>
+</g>
+</g>
+</svg>
+</div><figcaption>The lecture&#x27;s trust example: Dave and Kevin each rely on the same CA&#x27;s certificate endorsement, creating an indirect basis for relying on each other&#x27;s identity-to-key binding.</figcaption></figure>
+<p>The CA is the trusted organization or server that maintains and issues certificates. It may be internal to an organization or a dedicated external service. The exact certificate fields and policies determine what identity claim is being endorsed; the general word “trusted” does not mean that every CA is accepted for every purpose.</p>
+<h2 id="section-5">Registration, issuance, and retrieval</h2>
+<p>The lecture separates identity registration from certificate issuance. The RA establishes and confirms an individual's identity, initiates the certification process with a CA on the end user's behalf, and performs certificate life-cycle management functions. It can broker between the user and CA, but <strong>cannot issue certificates</strong>. The CA constructs and signs the certificate, sends it to the requester, and maintains it over its lifetime. A directory provides a place from which a person can request certificate or public-key information.</p>
+<figure><div class="diagram-frame" style="--diagram-width:873.6px"><svg role="img" aria-label="Lecture-level PKI roles and information flow. The CRL records certificates the CA has revoked; the lecture does not specify a complete validation or status-check protocol." width="874pt" height="128pt"
+ viewBox="0.00 0.00 873.60 127.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="pki-issuance-and-status-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 116.8)">
+<title>G</title>
+<!-- user -->
+<g id="pki-issuance-and-status-node1" class="node">
+<title>user</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M83,-62C83,-62 12,-62 12,-62 6,-62 0,-56 0,-50 0,-50 0,-38 0,-38 0,-32 6,-26 12,-26 12,-26 83,-26 83,-26 89,-26 95,-32 95,-38 95,-38 95,-50 95,-50 95,-56 89,-62 83,-62"/>
+<text text-anchor="middle" x="47.5" y="-40.5" font-family="Georgia" font-size="15.00">Applicant</text>
+</g>
+<!-- ra -->
+<g id="pki-issuance-and-status-node2" class="node">
+<title>ra</title>
+<path fill="var(--accent,#d5e9d5)" stroke="var(--primary,#25633a)" stroke-width="2" d="M294.5,-96C294.5,-96 264.5,-96 264.5,-96 258.5,-96 252.5,-90 252.5,-84 252.5,-84 252.5,-72 252.5,-72 252.5,-66 258.5,-60 264.5,-60 264.5,-60 294.5,-60 294.5,-60 300.5,-60 306.5,-66 306.5,-72 306.5,-72 306.5,-84 306.5,-84 306.5,-90 300.5,-96 294.5,-96"/>
+<text text-anchor="middle" x="279.5" y="-74.5" font-family="Georgia" font-size="15.00">RA</text>
+</g>
+<!-- user&#45;&gt;ra -->
+<g id="pki-issuance-and-status-edge1" class="edge">
+<title>user&#45;&gt;ra</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M95.04,-50.88C140.02,-57.53 206.97,-67.43 246.33,-73.24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="246.16,-75.34 252.41,-74.14 246.78,-71.19 246.16,-75.34"/>
+<text text-anchor="middle" x="162" y="-71.4" font-family="Georgia" font-size="12.00">identity / request</text>
+</g>
+<!-- ca -->
+<g id="pki-issuance-and-status-node3" class="node">
+<title>ca</title>
+<path fill="var(--accent,#d5e9d5)" stroke="var(--primary,#25633a)" stroke-width="2" d="M454,-62C454,-62 424,-62 424,-62 418,-62 412,-56 412,-50 412,-50 412,-38 412,-38 412,-32 418,-26 424,-26 424,-26 454,-26 454,-26 460,-26 466,-32 466,-38 466,-38 466,-50 466,-50 466,-56 460,-62 454,-62"/>
+<text text-anchor="middle" x="439" y="-40.5" font-family="Georgia" font-size="15.00">CA</text>
+</g>
+<!-- ra&#45;&gt;ca -->
+<g id="pki-issuance-and-status-edge2" class="edge">
+<title>ra&#45;&gt;ca</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M306.51,-72.39C333.75,-66.5 376.58,-57.26 405.91,-50.93"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="406.53,-52.94 411.95,-49.62 405.65,-48.84 406.53,-52.94"/>
+<text text-anchor="middle" x="371" y="-67.4" font-family="Georgia" font-size="12.00">forward</text>
+</g>
+<!-- ca&#45;&gt;user -->
+<g id="pki-issuance-and-status-edge3" class="edge">
+<title>ca&#45;&gt;user</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M411.84,-41.52C389.99,-39.58 357.99,-37.04 330,-36 250.33,-33.05 157.95,-37.11 101.37,-40.44"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="101.19,-38.34 95.33,-40.8 101.44,-42.54 101.19,-38.34"/>
+<text text-anchor="middle" x="279.5" y="-39.4" font-family="Georgia" font-size="12.00">issue signed cert</text>
+</g>
+<!-- dir -->
+<g id="pki-issuance-and-status-node4" class="node">
+<title>dir</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M652.5,-106C652.5,-106 581.5,-106 581.5,-106 575.5,-106 569.5,-100 569.5,-94 569.5,-94 569.5,-82 569.5,-82 569.5,-76 575.5,-70 581.5,-70 581.5,-70 652.5,-70 652.5,-70 658.5,-70 664.5,-76 664.5,-82 664.5,-82 664.5,-94 664.5,-94 664.5,-100 658.5,-106 652.5,-106"/>
+<text text-anchor="middle" x="617" y="-84.5" font-family="Georgia" font-size="15.00">Directory</text>
+</g>
+<!-- ca&#45;&gt;dir -->
+<g id="pki-issuance-and-status-edge4" class="edge">
+<title>ca&#45;&gt;dir</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M466.35,-50.59C491.9,-56.97 531.38,-66.84 563.37,-74.84"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="562.92,-76.9 569.25,-76.31 563.94,-72.82 562.92,-76.9"/>
+<text text-anchor="middle" x="504" y="-68.4" font-family="Georgia" font-size="12.00">publish</text>
+</g>
+<!-- crl -->
+<g id="pki-issuance-and-status-node6" class="node">
+<title>crl</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M680,-48C680,-48 554,-48 554,-48 548,-48 542,-42 542,-36 542,-36 542,-12 542,-12 542,-6 548,0 554,0 554,0 680,0 680,0 686,0 692,-6 692,-12 692,-12 692,-36 692,-36 692,-42 686,-48 680,-48"/>
+<text text-anchor="middle" x="617" y="-29" font-family="Georgia" font-size="15.00">CRL</text>
+<text text-anchor="middle" x="617" y="-12" font-family="Georgia" font-size="15.00">periodic updates</text>
+</g>
+<!-- ca&#45;&gt;crl -->
+<g id="pki-issuance-and-status-edge6" class="edge">
+<title>ca&#45;&gt;crl</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M466.15,-38.61C471.38,-37.64 476.85,-36.72 482,-36 499.35,-33.58 518.04,-31.54 535.8,-29.88"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="536,-31.97 541.78,-29.33 535.61,-27.79 536,-31.97"/>
+<text text-anchor="middle" x="504" y="-39.4" font-family="Georgia" font-size="12.00">revoke</text>
+</g>
+<!-- verifier -->
+<g id="pki-issuance-and-status-node5" class="node">
+<title>verifier</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M840,-106C840,-106 784,-106 784,-106 778,-106 772,-100 772,-94 772,-94 772,-82 772,-82 772,-76 778,-70 784,-70 784,-70 840,-70 840,-70 846,-70 852,-76 852,-82 852,-82 852,-94 852,-94 852,-100 846,-106 840,-106"/>
+<text text-anchor="middle" x="812" y="-84.5" font-family="Georgia" font-size="15.00">Verifier</text>
+</g>
+<!-- dir&#45;&gt;verifier -->
+<g id="pki-issuance-and-status-edge5" class="edge">
+<title>dir&#45;&gt;verifier</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M664.72,-88C695.34,-88 735.17,-88 765.53,-88"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="765.86,-90.1 771.86,-88 765.86,-85.9 765.86,-90.1"/>
+<text text-anchor="middle" x="732" y="-91.4" font-family="Georgia" font-size="12.00">retrieve</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Lecture-level PKI roles and information flow. The CRL records certificates the CA has revoked; the lecture does not specify a complete validation or status-check protocol.</figcaption></figure>
+<p>For the lifecycle issues actually named, the CA may revoke a certificate when it was issued using false credentials or when the holder's private key has been compromised. It records revoked certificates in the CRL and updates the list periodically. An RA's listed life-cycle duties are not expanded into renewal, rekey, or detailed enrollment procedures in this lecture.</p>
+<h3>John's request for Diane's public key</h3>
+<p>The source drawing gives this four-step sequence. Keep its order visible: it does not show John validating Diane's public key before he encrypts a session key with it.</p>
+<details class="worked"><summary>Source sequence: John retrieves and uses Diane's key</summary><section class="walk" aria-label="Read the John–Diane diagram in its shown order"><h3>Read the John–Diane diagram in its shown order</h3><div class="example-input"><strong>Source order</strong><span>directory request → key returned → session key encrypted → Diane validates John</span></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · John asks the directory</h4><p>John requests Diane's public key from the directory. The drawing does not show a validation step here.</p></section><section class="step"><h4>2 · The directory sends Diane's key</h4><p>Diane's public key is sent to John. The figure does not establish in this step that the received key is genuinely Diane's.</p></section><section class="step"><h4>3 · John protects a session key</h4><p>John encrypts a session key with the received Diane public key and sends it toward Diane. If the received key had been substituted, the intended identity assumption could fail.</p></section><section class="step"><h4>4 · Diane validates John's public key</h4><p>The last shown action is Diane validating John's public key. This is the only validation explicitly pictured; the source sequence does not show the corresponding pre-use validation by John.</p></section></section></details>
+<p><strong>Gap to notice:</strong> the drawing has John use Diane's returned key before showing him validate it. It also does not show how Diane verifies that John controls the private key corresponding to the public key she checks. These omissions make the picture a simplified illustration, not a complete secure protocol. Do not silently insert steps and attribute them to the lecturer.</p>
+<h2 id="section-6">Revocation, configured trust, and terminology</h2>
+<p>The CA's CRL matters because an issued certificate may later cease to be trustworthy—for example, false credentials are discovered or the subject's private key is compromised. The source says the CA maintains and updates the list periodically. It does not describe how a verifier obtains a fresh list, handles an unavailable list, or checks revocation in a particular protocol.</p>
+<p>The browser slide illustrates a <strong>configured CA list</strong>: browsers accept certificates signed by CAs present in a configured list. Its Internet Explorer certificate-store screenshot is historical UI; the lasting concept is that trust begins from configured CA certificates, not that today's browsers use that same screen.</p>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning in the lecture</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Issuer</td>
+<td>The organization, server, or person that issued a certificate.</td>
+</tr>
+<tr>
+<td>Subject</td>
+<td>The person who obtained the certificate to prove identity.</td>
+</tr>
+<tr>
+<td>Target</td>
+<td>The person whose certificate another party seeks.</td>
+</tr>
+<tr>
+<td>Principal</td>
+<td>Anything or anyone that has a public key.</td>
+</tr>
+<tr>
+<td>Verifier</td>
+<td>The person evaluating a certificate chain.</td>
+</tr>
+</tbody>
+</table>
+<p>The “certificate chain” term signals that a verifier may evaluate a linked set of certificates, not only the target certificate. The lecture defines the role but does not teach chain-building or validation rules. For lower-level encryption, hashing, and signature distinctions, see <a href="security.html">Security foundations and cryptography</a>.</p>
+<h2 id="section-7">Quick revision</h2>
+<ul>
+<li>A certificate associates identifying information with a subject public key; a CA signs the certificate binding.</li>
+<li>The RA checks identity and forwards/initiates a request; the CA issues and maintains the certificate.</li>
+<li>A directory distributes certificate information. A CRL records revoked certificates and is periodically updated.</li>
+<li>PKI is a framework whose surrounding protocols and policies provide services; a certificate alone is not the whole service.</li>
+<li>In the John–Diane drawing, John uses Diane's key before the figure shows him validate it.</li>
+<li>The X.509 picture's “Signature” gloss is algorithm identification; the actual signature value is distinct in the RFC structure.</li>
+</ul>
+<h2 id="section-8">Practice</h2>
+<p class="question">Why can encrypting with a public key still fail to protect the intended recipient's secret?</p>
+<details class="worked"><summary>Check your answer</summary><p>Because a sender may have received an attacker's key while believing it belongs to the recipient. Encryption then protects the secret for the holder of the substituted private key, so identity binding must be checked.</p></details>
+<p class="question">Which role checks the applicant's identity, and which role issues the certificate?</p>
+<details class="worked"><summary>Check your answer</summary><p>The RA establishes/confirms identity and forwards or initiates the request. The CA constructs, signs, sends, and maintains the certificate; the RA cannot issue one.</p></details>
+<p class="question">Name the two revocation reasons given in the lecture and the record used for revoked certificates.</p>
+<details class="worked"><summary>Check your answer</summary><p>False credentials and compromise of the holder's private key are listed reasons. The CA records revoked certificates in a periodically updated Certificate Revocation List (CRL).</p></details>
+<p class="question">What authentication gap is visible in the John–Diane diagram?</p>
+<details class="worked"><summary>Check your answer</summary><p>John obtains Diane's public key and encrypts a session key with it before the figure shows him validating that key. Diane's validation of John's key is shown afterward.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="security.html"><small>Previous</small>Security foundations and cryptography <span aria-hidden="true">↗</span></a><a href="secure-protocols.html"><small>Next</small>IPsec and TLS <span aria-hidden="true">↗</span></a></nav><footer>Networks field notes <span>Follow the packet. Explain the decision.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  root.querySelectorAll('table').forEach(table => {
+    const region = document.createElement('div');
+    region.className = 'table-scroll' + (table.rows[0]?.cells.length > 5 ? ' wide' : '');
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    table.before(region); region.append(table);
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Network diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {osi:'layers encapsulation protocol service interface pdu',link:'framing crc parity arq flow control sliding window',ethernet:'mac switch arp csma token lab',wan:'man atm isdn frame relay x25',routing:'network forwarding distance vector link state dijkstra',ipv4:'ip subnet mask vlsm binary cidr lab',ipv6:'ip address compression transition lab',transport:'tcp udp handshake congestion window port',bluetooth:'wireless nfc zigbee wpan beacon quiz',security:'cia attacks cryptography encryption hash authentication',infrastructure:'pki certificate ca trust revocation signature',tls:'ssl ipsec ah esp tunnel sa',design:'requirements topology availability delay bandwidth'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('a').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('cns-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.CNS_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) expand.textContent = 'Expand examples';
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

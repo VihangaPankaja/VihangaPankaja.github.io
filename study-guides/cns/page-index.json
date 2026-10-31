@@ -1,0 +1,107 @@
+[
+  {
+    "slug": "index",
+    "title": "Computer networks and security",
+    "group": "Start here",
+    "lecture": "CS3131",
+    "lead": "Lecture explanations, worked lab problems and quiz practice, organized by the concept you need to study."
+  },
+  {
+    "slug": "osi",
+    "title": "OSI model and encapsulation",
+    "group": "Foundations",
+    "lecture": "Lecture 1",
+    "lead": "A clear map of the OSI layers, their peer relationships, service terms and the way data is wrapped as it moves through a network."
+  },
+  {
+    "slug": "data-link",
+    "title": "Data link framing, errors and flow control",
+    "group": "Foundations",
+    "lecture": "Lecture 2 · Quiz 1",
+    "lead": "How neighboring devices find frame boundaries, detect corruption, recover missing data, and keep transmissions within receiver capacity."
+  },
+  {
+    "slug": "wan",
+    "title": "WAN and MAN technologies",
+    "group": "Foundations",
+    "lecture": "Lecture 3",
+    "lead": "Follow the lecture’s historical path from dedicated lines to shared packet services, ATM cells, MPLS labels, and Ethernet First Mile access."
+  },
+  {
+    "slug": "lan",
+    "title": "LAN, Ethernet and switching",
+    "group": "Foundations",
+    "lecture": "Lectures 2 and 4 · Labs 1.1–1.2 · Quiz 1",
+    "lead": "From shared-medium access rules to Ethernet frames, switch learning, VLAN tags, and the two MAC-address labs."
+  },
+  {
+    "slug": "routing",
+    "title": "Network layer and routing",
+    "group": "Internetworking",
+    "lecture": "Lecture 5 · Lab 3.1",
+    "lead": "Routers move packets between networks. The central distinction is between choosing routes for traffic and forwarding each packet using the table that results."
+  },
+  {
+    "slug": "ipv4",
+    "title": "IPv4 addressing, subnetting and VLSM",
+    "group": "Internetworking",
+    "lecture": "Lecture 6 · Labs 2.1–2.2",
+    "lead": "A prefix divides each 32-bit IPv4 address into a network and host part. Once that boundary is clear, you can calculate subnet ranges, check local membership, aggregate routes and allocate mixed-size networks without overlap."
+  },
+  {
+    "slug": "ip-delivery",
+    "title": "IP packets, ARP, ICMP, DHCP and NAT",
+    "group": "Internetworking",
+    "lecture": "Lecture 6 · IP slides 1–5, 21–34",
+    "lead": "Follow an IPv4 datagram from its header to a local or routed link, then see how ARP finds the next-hop MAC address, ICMP reports network conditions, DHCP configures a joining host, and NAT tracks replies to translated traffic."
+  },
+  {
+    "slug": "ipv6",
+    "title": "IPv6 addressing and transition",
+    "group": "Internetworking",
+    "lecture": "Lecture 7 · Lab 3.2",
+    "lead": "IPv6 gives interfaces a 128-bit address and carries packets through a fixed base header that can point to optional extension headers. This page works from address notation and scope to packet handling, coexistence, DNS, and the two-subnet configuration lab."
+  },
+  {
+    "slug": "transport",
+    "title": "Transport services and connections",
+    "group": "Transport and wireless",
+    "lecture": "Lecture 8 · Transport",
+    "lead": "How end-to-end transport delivers data to the right process, distinguishes service choices, and handles generic connection and buffer problems."
+  },
+  {
+    "slug": "short-range",
+    "title": "Bluetooth, NFC and ZigBee",
+    "group": "Transport and wireless",
+    "lecture": "Lecture 8 · Other networks",
+    "lead": "Choose a short-range network by matching its topology, protocol support, energy use and application role to what devices actually need to exchange."
+  },
+  {
+    "slug": "security",
+    "title": "Security foundations and cryptography",
+    "group": "Security and design",
+    "lecture": "Lecture 9 · Foundations from Lecture 11",
+    "lead": "Security starts by deciding what must be protected, identifying who or what could threaten it, and matching each requirement to a control that actually provides it."
+  },
+  {
+    "slug": "pki",
+    "title": "Public key infrastructure",
+    "group": "Security and design",
+    "lecture": "Lecture 10",
+    "lead": "PKI helps people decide whether a public key really belongs to the identity it names. Certificates, trusted issuers, registration checks, directories, and revocation information work together to support that decision."
+  },
+  {
+    "slug": "secure-protocols",
+    "title": "IPsec and TLS",
+    "group": "Security and design",
+    "lecture": "Lecture 11 · pages 26–47",
+    "lead": "Trace who terminates IPsec or TLS protection, what each packet mode authenticates or encrypts, and how the lecture’s TLS 1.0-era handshake sets up protected records."
+  },
+  {
+    "slug": "network-design",
+    "title": "Network design",
+    "group": "Security and design",
+    "lecture": "Lecture 11 · Network design",
+    "lead": "Network design starts with the services an organization needs, then fits the network to its business goals, access rules, existing assets, growth, and traffic."
+  }
+]

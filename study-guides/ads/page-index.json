@@ -1,0 +1,240 @@
+[
+  {
+    "slug": "index",
+    "title": "Data structures, side by side.",
+    "group": "Start here",
+    "lecture": "CS4580 revision guide",
+    "lead": "Short explanations, honest complexity comparisons, and step-by-step graphics you can move through at your own pace."
+  },
+  {
+    "slug": "comparison",
+    "title": "Operation costs at a glance",
+    "group": "Start here",
+    "lecture": "Read the conditions",
+    "lead": "Compare the same operation under the same assumptions. A fast minimum lookup is not a fast arbitrary-key search."
+  },
+  {
+    "slug": "binary-heap",
+    "title": "Binary heap",
+    "group": "Priority queues",
+    "lecture": "Foundation · L3",
+    "lead": "A compact priority queue. The smallest value stays at the root, while the array stays complete."
+  },
+  {
+    "slug": "d-ary-heap",
+    "title": "d-ary heap",
+    "group": "Priority queues",
+    "lecture": "Lecture 3",
+    "lead": "Give each parent more children to shorten the tree. Removal then compares more children at each level."
+  },
+  {
+    "slug": "winner-tree",
+    "title": "Winner tree",
+    "group": "Tournament and coding trees",
+    "lecture": "Lecture 1",
+    "lead": "Treat records as players. Each internal match remembers its winner, so the root identifies the next record to output."
+  },
+  {
+    "slug": "loser-tree",
+    "title": "Loser tree",
+    "group": "Tournament and coding trees",
+    "lecture": "Lectures 1–2",
+    "lead": "Each match stores the loser. The overall winner is kept separately, ready to replay against remembered opponents."
+  },
+  {
+    "slug": "huffman-tree",
+    "title": "Huffman tree",
+    "group": "Tournament and coding trees",
+    "lecture": "Lecture 2 · Lab 2",
+    "lead": "Combine the two lightest trees repeatedly. Frequent symbols end up with short codes, and small runs get merged first."
+  },
+  {
+    "slug": "dual-heap",
+    "title": "Dual min/max heaps",
+    "group": "Priority queues",
+    "lecture": "Lecture 3",
+    "lead": "Keep every record twice: once in a min heap and once in a max heap. Cross-pointers keep the copies synchronized."
+  },
+  {
+    "slug": "correspondence-heaps",
+    "title": "Correspondence heaps",
+    "group": "Priority queues",
+    "lecture": "Lecture 3",
+    "lead": "Split records between a min queue and a max queue, with ordered pairs between them and one buffer for an odd item."
+  },
+  {
+    "slug": "interval-heap",
+    "title": "Interval heap",
+    "group": "Priority queues",
+    "lecture": "Lecture 3 · Lab 5",
+    "lead": "Store a small interval at every node. The low endpoints form a min heap and the high endpoints form a max heap."
+  },
+  {
+    "slug": "leftist-tree",
+    "title": "Leftist tree",
+    "group": "Meldable priority queues",
+    "lecture": "Lecture 4 · Lab 3",
+    "lead": "Keep the right spine short. Meld walks along right spines and repairs the leftist rule on the way back."
+  },
+  {
+    "slug": "binomial-heap",
+    "title": "Lazy binomial heap",
+    "group": "Meldable priority queues",
+    "lecture": "Lecture 6 · Lab 4",
+    "lead": "Add roots cheaply. During removeMin, combine equal-degree trees like carrying digits in binary addition."
+  },
+  {
+    "slug": "fibonacci-heap",
+    "title": "Fibonacci heap",
+    "group": "Meldable priority queues",
+    "lecture": "Lecture 7 · Lab 8",
+    "lead": "Use a loose forest and marks to make priority improvements cheap over a sequence. Consolidate when removing an extreme."
+  },
+  {
+    "slug": "pairing-heap",
+    "title": "Pairing heap",
+    "group": "Meldable priority queues",
+    "lecture": "Lecture 7",
+    "lead": "Keep one heap-ordered tree. Compare-link makes meld simple, while two-pass pairing makes removal efficient over a sequence."
+  },
+  {
+    "slug": "hash-table",
+    "title": "Hash table",
+    "group": "Dictionaries and search trees",
+    "lecture": "Lecture 8",
+    "lead": "Compute a bucket from the key. Fast exact lookup is the strength; sorted order is not maintained."
+  },
+  {
+    "slug": "binary-search-tree",
+    "title": "Binary search tree",
+    "group": "Dictionaries and search trees",
+    "lecture": "Lecture 8",
+    "lead": "Keys smaller than a node go left; larger keys go right. All ordered operations follow from that rule."
+  },
+  {
+    "slug": "indexed-bst",
+    "title": "Indexed BST",
+    "group": "Dictionaries and search trees",
+    "lecture": "Lecture 8 · Lab 6",
+    "lead": "Add leftSize to each node, so the tree can answer “which item is at rank k?” without traversing all earlier items."
+  },
+  {
+    "slug": "optimal-bst",
+    "title": "Optimal BST",
+    "group": "Dictionaries and search trees",
+    "lecture": "Lecture 8",
+    "lead": "For a fixed dictionary with known access frequencies, choose a shape that minimizes expected search comparisons."
+  },
+  {
+    "slug": "avl-tree",
+    "title": "AVL tree",
+    "group": "Dictionaries and search trees",
+    "lecture": "Lecture 9",
+    "lead": "Keep the two subtree heights within one at every node. Rotations restore that rule while preserving sorted order."
+  },
+  {
+    "slug": "red-black-tree",
+    "title": "Red-black tree",
+    "group": "Dictionaries and search trees",
+    "lecture": "Lecture 9 · Lab 7",
+    "lead": "Color constraints limit height while allowing more flexibility than AVL. Repairs use recoloring and rotations."
+  },
+  {
+    "slug": "b-tree",
+    "title": "B-tree",
+    "group": "Dictionaries and search trees",
+    "lecture": "Lecture 10",
+    "lead": "Store many ordered keys in one node to reduce disk or cache accesses. Split overfull nodes; repair underfull ones by borrowing or merging."
+  },
+  {
+    "slug": "two-three-tree",
+    "title": "2-3 tree",
+    "group": "Dictionaries and search trees",
+    "lecture": "Lecture 10",
+    "lead": "The smallest useful B-tree: every data node holds one or two keys, and all leaf levels agree."
+  },
+  {
+    "slug": "two-three-four-tree",
+    "title": "2-3-4 tree",
+    "group": "Dictionaries and search trees",
+    "lecture": "Lectures 9–10",
+    "lead": "Allow one more key per node. Red-black trees can represent the same degree-balanced idea using colored binary links."
+  },
+  {
+    "slug": "b-plus-tree",
+    "title": "B+ tree",
+    "group": "Dictionaries and search trees",
+    "lecture": "Lecture 10",
+    "lead": "Keep all records at the leaves, link those leaves, and use internal keys only to route searches."
+  },
+  {
+    "slug": "splay-tree",
+    "title": "Splay tree",
+    "group": "Dictionaries and search trees",
+    "lecture": "Lecture 11",
+    "lead": "After access, rotate the relevant node to the root. Frequently used regions tend to stay easy to reach."
+  },
+  {
+    "slug": "digital-search-tree",
+    "title": "Digital search tree",
+    "group": "Digital search and strings",
+    "lecture": "Lecture 12",
+    "lead": "Store a whole record at every node, but use successive key bits to choose branches."
+  },
+  {
+    "slug": "binary-trie",
+    "title": "Binary trie",
+    "group": "Digital search and strings",
+    "lecture": "Lecture 12",
+    "lead": "Branch nodes inspect bits; element nodes hold records. A lookup makes at most one full-key comparison at its candidate leaf."
+  },
+  {
+    "slug": "compressed-trie",
+    "title": "Compressed binary trie",
+    "group": "Digital search and strings",
+    "lecture": "Lecture 13",
+    "lead": "Skip bit positions where all remaining keys agree. Store the next meaningful bit number at each branch."
+  },
+  {
+    "slug": "higher-order-trie",
+    "title": "Higher-order trie",
+    "group": "Digital search and strings",
+    "lecture": "Lecture 13",
+    "lead": "Use a digit or a group of digits per branch. Larger fanout reduces height but leaves more pointer slots to store."
+  },
+  {
+    "slug": "multibit-trie",
+    "title": "Multibit trie and routing",
+    "group": "Digital search and strings",
+    "lecture": "Lecture 13",
+    "lead": "Consume several address bits per node, while remembering the most specific matching routing prefix."
+  },
+  {
+    "slug": "suffix-tree",
+    "title": "Suffix tree",
+    "group": "Digital search and strings",
+    "lecture": "Lecture 14",
+    "lead": "Index every suffix of a source string. A substring query becomes a prefix search through those suffixes."
+  },
+  {
+    "slug": "operation-glossary",
+    "title": "Operation names and exam traps",
+    "group": "Reference",
+    "lecture": "Across the lessons",
+    "lead": "Different names often describe the same repair. Similar names can also hide different assumptions."
+  },
+  {
+    "slug": "external-sorting",
+    "title": "External sorting",
+    "group": "Sorting on disk",
+    "lecture": "Lectures 1–2",
+    "lead": "Make sorted runs that fit in memory, then merge them. Count disk transfers before counting comparisons."
+  },
+  {
+    "slug": "amortized-analysis",
+    "title": "Amortized analysis",
+    "group": "Analysis",
+    "lecture": "Lecture 5; heap applications in Lectures 6–7",
+    "lead": "Bound total cost across a sequence, using earlier cheap operations to pay for later expensive ones without assuming random inputs."
+  }
+]

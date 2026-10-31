@@ -1,0 +1,477 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Keep every record twice: once in a min heap and once in a max heap. Cross-pointers keep the copies synchronized."><title>Dual min/max heaps · ADS field notes</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('ads-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{.table-hint{display:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> ADS <span class="subbrand">field notes</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Heap, delete, trie…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a href="index.html">Data structures, side by side.</a><a href="comparison.html">Operation costs at a glance</a></div><div class="nav-group"><p>Priority queues</p><a href="binary-heap.html">Binary heap</a><a href="d-ary-heap.html">d-ary heap</a><a href="dual-heap.html" aria-current="page">Dual min/max heaps</a><a href="correspondence-heaps.html">Correspondence heaps</a><a href="interval-heap.html">Interval heap</a></div><div class="nav-group"><p>Tournament and coding trees</p><a href="winner-tree.html">Winner tree</a><a href="loser-tree.html">Loser tree</a><a href="huffman-tree.html">Huffman tree</a></div><div class="nav-group"><p>Meldable priority queues</p><a href="leftist-tree.html">Leftist tree</a><a href="binomial-heap.html">Lazy binomial heap</a><a href="fibonacci-heap.html">Fibonacci heap</a><a href="pairing-heap.html">Pairing heap</a></div><div class="nav-group"><p>Dictionaries and search trees</p><a href="hash-table.html">Hash table</a><a href="binary-search-tree.html">Binary search tree</a><a href="indexed-bst.html">Indexed BST</a><a href="optimal-bst.html">Optimal BST</a><a href="avl-tree.html">AVL tree</a><a href="red-black-tree.html">Red-black tree</a><a href="b-tree.html">B-tree</a><a href="two-three-tree.html">2-3 tree</a><a href="two-three-four-tree.html">2-3-4 tree</a><a href="b-plus-tree.html">B+ tree</a><a href="splay-tree.html">Splay tree</a></div><div class="nav-group"><p>Digital search and strings</p><a href="digital-search-tree.html">Digital search tree</a><a href="binary-trie.html">Binary trie</a><a href="compressed-trie.html">Compressed binary trie</a><a href="higher-order-trie.html">Higher-order trie</a><a href="multibit-trie.html">Multibit trie and routing</a><a href="suffix-tree.html">Suffix tree</a></div><div class="nav-group"><p>Reference</p><a href="operation-glossary.html">Operation names and exam traps</a></div><div class="nav-group"><p>Sorting on disk</p><a href="external-sorting.html">External sorting</a></div><div class="nav-group"><p>Analysis</p><a href="amortized-analysis.html">Amortized analysis</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4580<br>Advanced Data Structures</div></aside>
+<main id="main"><div class="eyebrow">Priority queues <span>/</span> Lecture 3</div><h1>Dual min/max heaps</h1><p class="lead">Keep every record twice: once in a min heap and once in a max heap. Cross-pointers keep the copies synchronized.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Build from a fresh list</a><a href="#section-1">Operations</a><a href="#section-2">Caveats and exam focus</a><a href="#section-3">Dual queues: identity, positions, and cost</a><a href="#section-4">Fresh 9-record construction and remove-min trace</a><a href="#section-5">Insertion with duplicate keys, ties, and empty states</a><a href="#section-6">Arbitrary deletion: opposite repair directions</a><a href="#section-7">Edge cases and limits</a></nav><article><h2 id="section-0">Build from a fresh list</h2>
+<p>Give records identities, heapify both copies, and connect equal identities. This costs <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math>. A record's location in one heap usually differs from its location in the other.</p>
+<section aria-label="Build from [4, 1, 7]" class="walk"><h3>Build from [4, 1, 7]</h3><div class="example-input"><strong>Input list</strong><span>[4, 1, 7]</span></div><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Allocate records</h4><figure><div class="array"><span class="cell"><small>1</small>A:4</span><span class="cell"><small>2</small>B:1</span><span class="cell"><small>3</small>C:7</span></div><figcaption>Each identity needs one entry in each heap.</figcaption></figure><div class="step-reason"><p>Allocate three logical records A:4, B:1, and C:7, then create a distinct min-heap entry and max-heap entry for each identity. Values alone are not keys for correspondence: equal-valued records must still point to their own copies. The record set is complete, so this state stops before heap construction.</p></div></section><section class="step"><h4>2 · Heapify the min copy</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="Min array: [B:1,A:4,C:7]." height="126pt" role="img" viewbox="0.00 0.00 151.60 125.60" width="152pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="dual-min-graph0" transform="scale(1 1) rotate(0) translate(10.8 114.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="dual-min-node1">
+<title>r</title>
+<path d="M80,-104C80,-104 50,-104 50,-104 44,-104 38,-98 38,-92 38,-92 38,-80 38,-80 38,-74 44,-68 50,-68 50,-68 80,-68 80,-68 86,-68 92,-74 92,-80 92,-80 92,-92 92,-92 92,-98 86,-104 80,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="65" y="-82.5">B:1</text>
+</g>
+<!-- r0 -->
+<g class="node" id="dual-min-node2">
+<title>r0</title>
+<path d="M42,-36C42,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 42,0 42,0 48,0 54,-6 54,-12 54,-12 54,-24 54,-24 54,-30 48,-36 42,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-14.5">A:4</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="dual-min-edge1">
+<title>r-&gt;r0</title>
+<path d="M55.02,-67.66C50.51,-59.84 45.13,-50.49 40.29,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.86,-40.61 37.05,-36.45 38.22,-42.7 41.86,-40.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="dual-min-node3">
+<title>r1</title>
+<path d="M118,-36C118,-36 88,-36 88,-36 82,-36 76,-30 76,-24 76,-24 76,-12 76,-12 76,-6 82,0 88,0 88,0 118,0 118,0 124,0 130,-6 130,-12 130,-12 130,-24 130,-24 130,-30 124,-36 118,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-14.5">C:7</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="dual-min-edge2">
+<title>r-&gt;r1</title>
+<path d="M74.98,-67.66C79.49,-59.84 84.87,-50.49 89.71,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="91.78,-42.7 92.95,-36.45 88.14,-40.61 91.78,-42.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>Min array: [B:1,A:4,C:7].</figcaption></figure><div class="step-reason"><p>Bottom-up min-heap construction yields [B:1, A:4, C:7]. B:1 is no greater than either child, so the root condition is satisfied; A:4 and C:7 are leaves. Heapify stops with every parent key at most its children.</p></div></section><section class="step"><h4>3 · Heapify the max copy</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="Max array: [C:7,B:1,A:4]. Cross-link A↔A, B↔B and C↔C." height="126pt" role="img" viewbox="0.00 0.00 151.60 125.60" width="152pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="dual-max-graph0" transform="scale(1 1) rotate(0) translate(10.8 114.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="dual-max-node1">
+<title>r</title>
+<path d="M80,-104C80,-104 50,-104 50,-104 44,-104 38,-98 38,-92 38,-92 38,-80 38,-80 38,-74 44,-68 50,-68 50,-68 80,-68 80,-68 86,-68 92,-74 92,-80 92,-80 92,-92 92,-92 92,-98 86,-104 80,-104" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="65" y="-82.5">C:7</text>
+</g>
+<!-- r0 -->
+<g class="node" id="dual-max-node2">
+<title>r0</title>
+<path d="M42,-36C42,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 42,0 42,0 48,0 54,-6 54,-12 54,-12 54,-24 54,-24 54,-30 48,-36 42,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="27" y="-14.5">B:1</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="dual-max-edge1">
+<title>r-&gt;r0</title>
+<path d="M55.02,-67.66C50.51,-59.84 45.13,-50.49 40.29,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="41.86,-40.61 37.05,-36.45 38.22,-42.7 41.86,-40.61" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+<!-- r1 -->
+<g class="node" id="dual-max-node3">
+<title>r1</title>
+<path d="M118,-36C118,-36 88,-36 88,-36 82,-36 76,-30 76,-24 76,-24 76,-12 76,-12 76,-6 82,0 88,0 88,0 118,0 118,0 124,0 130,-6 130,-12 130,-12 130,-24 130,-24 130,-30 124,-36 118,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103" y="-14.5">A:4</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="dual-max-edge2">
+<title>r-&gt;r1</title>
+<path d="M74.98,-67.66C79.49,-59.84 84.87,-50.49 89.71,-42.09" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="91.78,-42.7 92.95,-36.45 88.14,-40.61 91.78,-42.7" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+</g>
+</g>
+</svg>
+</div><figcaption>Max array: [C:7,B:1,A:4]. Cross-link A↔A, B↔B and C↔C.</figcaption></figure><div class="step-reason"><p>Bottom-up max-heap construction yields [C:7, B:1, A:4]. C:7 is no smaller than either child and both leaves are unconstrained below; heapify stops. Pair pointers by identity (A↔A, B↔B, C↔C), not by array position, because the two heap orders differ.</p></div></section></section>
+<h2 id="section-1">Operations</h2>
+<p>Peek either end in <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math>. Insert into both heaps in <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math>. To remove the minimum, remove the min root and use its cross-pointer to delete its max-heap copy. Reverse this for removeMax. Arbitrary deletion uses a known record handle and repairs both heaps in <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math>. Search without a handle remains <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math>. Concatenating and rebuilding both heaps gives <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo>+</mo><mi>m</mi><mo stretchy="false">)</mo></mrow></math> meld.</p>
+<section aria-label="Remove minimum 1" class="walk"><h3>Remove minimum 1</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Find both copies of B</h4><figure><div class="array"><span class="cell"><small>1</small>min: B,A,C</span><span class="cell"><small>2</small>max: C,B,A</span></div><figcaption>The cross-pointer locates B inside the max heap.</figcaption></figure><div class="step-reason"><p>The min root identifies B:1 as the minimum. Follow B’s reciprocal cross-pointer to its max entry at position 2; that lookup is constant time once the min root is known. Equal minimum keys may be returned in either order, but the selected identity’s own counterpart must be removed.</p></div></section><section class="step"><h4>2 · Remove B from both</h4><figure><div class="array"><span class="cell"><small>1</small>min: C:7,A:4</span><span class="cell"><small>2</small>max: C:7,A:4</span></div><figcaption>Replace holes with their heaps’ last records.</figcaption></figure><div class="step-reason"><p>Remove B from the min root and from max position 2, filling each hole with that heap’s last entry. The temporary min array [C:7, A:4] violates min order at its root, while max [C:7, A:4] is already ordered. Update positions/cross-pointers as entries move; do not leave B in either heap.</p></div></section><section class="step"><h4>3 · Restore heap order</h4><figure><div class="array"><span class="cell"><small>1</small>min: A:4,C:7</span><span class="cell"><small>2</small>max: C:7,A:4</span></div><figcaption>Repair min order and refresh cross-pointers after swaps. Two logical records remain.</figcaption></figure><div class="step-reason"><p>In the min heap, compare replacement C:7 with child A:4 and swap because 7&gt;4; at the new leaf there is no child, so stop. In the max heap, A:4 is now a leaf under C:7 and is already no larger than its parent, so stop immediately. Final heaps are min [A:4,C:7] and max [C:7,A:4]; refresh exact positions A=(min 1,max 2), C=(min 2,max 1).</p></div></section></section>
+<h2 id="section-2">Caveats and exam focus</h2>
+<p>Space is about 2n entries plus links. Two equal keys may represent different records, so link identities, not values. Deleting only one copy leaves a stale record at the other end. Bubble up or trickle down according to the replacement's relation with its parent and children.</p>
+<p class="question">Why must the underlying heaps support arbitrary removal?</p>
+<details class="worked"><summary>Check your answer</summary><p>The minimum is normally an interior item in the max heap, so deleting its counterpart is not a root-only removal.</p></details>
+<h2 id="section-3">Dual queues: identity, positions, and cost</h2>
+<p>The lecture's dual single-ended structure stores each logical record twice: once in a min-priority queue and once in a max-priority queue. Every entry points to the other entry for that same record. Heap array positions are independent, so a swap in either heap must refresh the moved entries' positions and both directions of the correspondence. A key is not an identity: if two records have equal keys, retain distinct handles and pair their own copies.</p>
+<p>The underlying heaps need arbitrary removal, since removing one endpoint usually targets an interior position in the other heap. A known record handle gives both array positions immediately; searching by key without a handle scans up to n entries. The course's slide 6 shows a 9-record pair of heaps and only five of the nine two-way pointers to avoid clutter; all nine correspondences still exist. This structure is distinct from the lecture's correspondence heaps (which store records once and may use a buffer) and interval heaps (which store endpoint pairs in each node).</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Decision and stop condition</th>
+<th>Cost and edge cases</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Build from n records</td>
+<td>Make both copies, bottom-up heapify each, then connect by identity; stop when both heap orders and all links hold.</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math> worst case for two bottom-up heapifications plus <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math> linking; about 2n heap entries and links. Empty input gives two empty heaps.</td>
+</tr>
+<tr>
+<td>Peek min / max</td>
+<td>Read the corresponding root; do not mutate either heap.</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math>; empty heap reports empty/failure. Equal extrema may have multiple valid identities.</td>
+</tr>
+<tr>
+<td>Insert record</td>
+<td>Allocate both entries, append each to its heap, sift each upward while its parent violates order, and refresh links/positions at every swap.</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> worst case across two heaps. Equal parent key is a valid stop; insert a new identity even when its key duplicates another.</td>
+</tr>
+<tr>
+<td>Change key by handle</td>
+<td>Supplemental operation: write the new key to both copies, then independently sift up if the parent is violated, otherwise sift down toward the more extreme child. Keep the same identity link throughout.</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> worst case. Reject a missing handle before either value changes; equal parent/child keys are valid stops. The lecture names priority-queue operations but does not spell out key-update steps.</td>
+</tr>
+<tr>
+<td>Remove min / max</td>
+<td>Save root identity, remove that root and use its cross-pointer to remove the counterpart from the other heap; repair each hole and update moved entries' positions.</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> worst case. Empty: no-op/failure; one record: both arrays become empty. A counterpart of a unique minimum is a leaf in a max heap, and a counterpart of a unique maximum is a leaf in a min heap, so that side can sift up or stop; it cannot need a downward sift from that leaf. Ties can place the chosen extremum at a non-leaf only when equal keys occur, so handle tie policy explicitly.</td>
+</tr>
+<tr>
+<td>Delete arbitrary record by handle</td>
+<td>Read both positions from the handle, replace each removed entry with its own heap's last entry, then sift up if it violates its parent; otherwise sift down toward the more extreme child until ordered.</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> worst case. Missing/stale handle must be rejected before either heap changes. The two copies can require opposite repair directions.</td>
+</tr>
+<tr>
+<td>Find by key without handle</td>
+<td>Scan either heap for a matching key and return a matching record handle; value equality alone cannot identify which duplicate was intended.</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math> worst case. Stop at first match only if any equal record is acceptable; otherwise collect/filter all matches.</td>
+</tr>
+<tr>
+<td>Meld two queues</td>
+<td>Concatenate their logical records, allocate/reuse two copies per identity, heapify both arrays, and rebuild all cross-links.</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo>+</mo><mi>m</mi><mo stretchy="false">)</mo></mrow></math> worst case. Requires disjoint or explicitly deduplicated identities; do not concatenate old pointers unchanged.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="section-4">Fresh 9-record construction and remove-min trace</h2>
+<p>The input order below is deliberately different from both heap orders. Values are distinct here to make each comparison unambiguous; the later edge cases cover ties.</p>
+<pre><code class="language-text">Input records (identity:key): A:0, B:4, C:8, D:7, E:6, F:3, G:2, H:1, I:5
+</code></pre>
+<section aria-label="rev-dual-heap-build-9 · heapify both copies" class="walk"><h3>rev-dual-heap-build-9 · heapify both copies</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Allocate all identities</h4><figure><div class="array"><span class="cell"><small>1</small>A:0</span><span class="cell"><small>2</small>B:4</span><span class="cell"><small>3</small>C:8</span><span class="cell"><small>4</small>D:7</span><span class="cell"><small>5</small>E:6</span><span class="cell"><small>6</small>F:3</span><span class="cell"><small>7</small>G:2</span><span class="cell"><small>8</small>H:1</span><span class="cell"><small>9</small>I:5</span></div><figcaption>Every identity is allocated in both heaps; the input list has nine records and therefore eighteen heap entries.</figcaption></figure></section><section class="step"><h4>2 · Bottom-up min heap</h4><figure><div class="array"><span class="cell"><small>1</small>A:0</span><span class="cell"><small>2</small>H:1</span><span class="cell"><small>3</small>G:2</span><span class="cell"><small>4</small>B:4</span><span class="cell"><small>5</small>E:6</span><span class="cell"><small>6</small>F:3</span><span class="cell"><small>7</small>C:8</span><span class="cell"><small>8</small>D:7</span><span class="cell"><small>9</small>I:5</span></div><figcaption>Min-heap array, 1-based positions. Each parent is no greater than its children; in particular A:0 is the global minimum.</figcaption></figure></section><section class="step"><h4>3 · Bottom-up max heap</h4><figure><div class="array"><span class="cell"><small>1</small>C:8</span><span class="cell"><small>2</small>D:7</span><span class="cell"><small>3</small>F:3</span><span class="cell"><small>4</small>I:5</span><span class="cell"><small>5</small>E:6</span><span class="cell"><small>6</small>A:0</span><span class="cell"><small>7</small>G:2</span><span class="cell"><small>8</small>H:1</span><span class="cell"><small>9</small>B:4</span></div><figcaption>Max-heap array, 1-based positions. Each parent is no smaller than its children; C:8 is the global maximum.</figcaption></figure></section><section class="step"><h4>4 · Verify cross-indexes</h4><table>
+<thead>
+<tr>
+<th>Identity</th>
+<th style="text-align: right;">Key</th>
+<th style="text-align: right;">Min position</th>
+<th style="text-align: right;">Max position</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr>
+<td>B</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr>
+<td>C</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr>
+<td>D</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td>E</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr>
+<td>F</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr>
+<td>G</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr>
+<td>H</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">8</td>
+</tr>
+<tr>
+<td>I</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">4</td>
+</tr>
+</tbody>
+</table>
+<p>There are nine one-to-one identity links. Equal array positions happen for E by chance only; positions do not establish correspondence.</p></section></section>
+<p>A remove-min now demonstrates the less obvious repair. The selected A:0 is the min root, but its max copy is at position 6. Removing a min from a max heap targets a leaf for distinct keys; replacing that leaf by the last record can violate the parent relation upward. The exact comparison is B:4 against its max-heap parent F:3.</p>
+<section aria-label="rev-dual-heap-pop-min · counterpart sifts up" class="walk"><h3>rev-dual-heap-pop-min · counterpart sifts up</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Select min identity A</h4><figure><div class="array"><span class="cell"><small>1</small>min root A:0</span><span class="cell"><small>2</small>max root C:8</span><span class="cell"><small>3</small>A positions 1 / 6</span></div><figcaption>Read A from the min root, then follow A’s link to max position 6. The opposite heap is not searched.</figcaption></figure></section><section class="step"><h4>2 · Remove A from the min heap</h4><figure><div class="array"><span class="cell"><small>1</small>I:5</span><span class="cell"><small>2</small>H:1</span><span class="cell"><small>3</small>G:2</span><span class="cell"><small>4</small>B:4</span><span class="cell"><small>5</small>E:6</span><span class="cell"><small>6</small>F:3</span><span class="cell"><small>7</small>C:8</span><span class="cell"><small>8</small>D:7</span></div><figcaption>Move the last min entry I:5 from position 9 to the root, shrink to eight entries, then choose the smaller child H:1 over G:2. I:5&gt;H:1, so swap positions 1 and 2 (I↔H); then B:4 is smaller than I:5, so swap positions 2 and 4 (I↔B); at position 4, I:5≤its only child D:7 and stops. Final min array is [H:1,B:4,G:2,I:5,E:6,F:3,C:8,D:7].</figcaption></figure></section><section class="step"><h4>3 · Replace A in the max heap</h4><figure><div class="array"><span class="cell"><small>1</small>C:8</span><span class="cell"><small>2</small>D:7</span><span class="cell"><small>3</small>F:3</span><span class="cell"><small>4</small>I:5</span><span class="cell"><small>5</small>E:6</span><span class="cell"><small>6</small>B:4</span><span class="cell"><small>7</small>G:2</span><span class="cell"><small>8</small>H:1</span></div><figcaption>A occupied position 6; move last entry B:4 into that hole. Compare with parent F:3: 4&gt;3, so it must sift up one level.</figcaption></figure></section><section class="step"><h4>4 · Finish max repair and refresh links</h4><figure><div class="array"><span class="cell"><small>1</small>C:8</span><span class="cell"><small>2</small>D:7</span><span class="cell"><small>3</small>B:4</span><span class="cell"><small>4</small>I:5</span><span class="cell"><small>5</small>E:6</span><span class="cell"><small>6</small>F:3</span><span class="cell"><small>7</small>G:2</span><span class="cell"><small>8</small>H:1</span></div><figcaption>Swap B:4 from position 6 with F:3 at position 3. Its new parent D:7 is at least 4, so stop. Final max positions include B=3 and F=6; final min positions include H=1, B=2, I=4, and A is absent. Refresh both links for every moved identity; eight identities remain.</figcaption></figure></section></section>
+<h2 id="section-5">Insertion with duplicate keys, ties, and empty states</h2>
+<p>The heap order allows equality. Stop sifting when the parent key equals the inserted key; choose either equal child during downward repair as long as the selected child is at least as extreme as the other. Keep identities separate even when their values match. The following insertion starts from the 9-record heaps above and is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> worst case across both queues. Inserting into two empty heaps places the new identity at both roots with no parent test. Peeking/removing an empty queue must return an explicit empty result; deleting the sole record leaves both heaps empty together.</p>
+<section aria-label="rev-dual-heap-insert-J · sift both new entries" class="walk"><h3>rev-dual-heap-insert-J · sift both new entries</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Append J:9 to both arrays</h4><figure><div class="array"><span class="cell"><small>1</small>A:0</span><span class="cell"><small>2</small>H:1</span><span class="cell"><small>3</small>G:2</span><span class="cell"><small>4</small>B:4</span><span class="cell"><small>5</small>E:6</span><span class="cell"><small>6</small>F:3</span><span class="cell"><small>7</small>C:8</span><span class="cell"><small>8</small>D:7</span><span class="cell"><small>9</small>I:5</span><span class="cell"><small>10</small>J:9</span></div><figcaption>Min heap: J is appended at position 10. Parent E:6≤9, so this copy stops.</figcaption></figure>
+<figure><div class="array"><span class="cell"><small>1</small>C:8</span><span class="cell"><small>2</small>D:7</span><span class="cell"><small>3</small>F:3</span><span class="cell"><small>4</small>I:5</span><span class="cell"><small>5</small>E:6</span><span class="cell"><small>6</small>A:0</span><span class="cell"><small>7</small>G:2</span><span class="cell"><small>8</small>H:1</span><span class="cell"><small>9</small>B:4</span><span class="cell"><small>10</small>J:9</span></div><figcaption>Max heap: J is appended at position 10. Parent E:6&lt;9, so this copy must move upward.</figcaption></figure></section><section class="step"><h4>2 · Max copy crosses E</h4><figure><div class="array"><span class="cell"><small>1</small>C:8</span><span class="cell"><small>2</small>D:7</span><span class="cell"><small>3</small>F:3</span><span class="cell"><small>4</small>I:5</span><span class="cell"><small>5</small>J:9</span><span class="cell"><small>6</small>A:0</span><span class="cell"><small>7</small>G:2</span><span class="cell"><small>8</small>H:1</span><span class="cell"><small>9</small>B:4</span><span class="cell"><small>10</small>E:6</span></div><figcaption>Swap J:9 from position 10 with E:6 at position 5. J is now at max position 5 and E at 10; parent D:7 is still smaller, so continue.</figcaption></figure></section><section class="step"><h4>3 · Max copy crosses D</h4><figure><div class="array"><span class="cell"><small>1</small>C:8</span><span class="cell"><small>2</small>J:9</span><span class="cell"><small>3</small>F:3</span><span class="cell"><small>4</small>I:5</span><span class="cell"><small>5</small>D:7</span><span class="cell"><small>6</small>A:0</span><span class="cell"><small>7</small>G:2</span><span class="cell"><small>8</small>H:1</span><span class="cell"><small>9</small>B:4</span><span class="cell"><small>10</small>E:6</span></div><figcaption>Swap J:9 from position 5 with D:7 at position 2. Update max positions to J=2 and D=5. The root C:8 is still smaller, so continue.</figcaption></figure></section><section class="step"><h4>4 · Max copy reaches the root</h4><figure><div class="array"><span class="cell"><small>1</small>J:9</span><span class="cell"><small>2</small>C:8</span><span class="cell"><small>3</small>F:3</span><span class="cell"><small>4</small>I:5</span><span class="cell"><small>5</small>D:7</span><span class="cell"><small>6</small>A:0</span><span class="cell"><small>7</small>G:2</span><span class="cell"><small>8</small>H:1</span><span class="cell"><small>9</small>B:4</span><span class="cell"><small>10</small>E:6</span></div><figcaption>Swap J:9 with C:8 at the root. No parent remains, so stop. J’s max path was 10→5→2→1. Final positions: J is min 10 / max 1, E is min 5 / max 10, D is min 8 / max 5, and C is min 7 / max 2.</figcaption></figure></section></section>
+<section aria-label="rev-dual-heap-update-I · change one key in both copies" class="walk"><h3>rev-dual-heap-update-I · change one key in both copies</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Locate identity I</h4><figure><div class="array"><span class="cell"><small>1</small>min I:5 at 9</span><span class="cell"><small>2</small>max I:5 at 4</span></div><figcaption>Starting from the 9-record construction, the handle identifies I’s two copies at min position 9 and max position 4. The old value is 5 in both places.</figcaption></figure></section><section class="step"><h4>2 · Write the new key to both entries</h4><figure><div class="array"><span class="cell"><small>1</small>A:0</span><span class="cell"><small>2</small>H:1</span><span class="cell"><small>3</small>G:2</span><span class="cell"><small>4</small>B:4</span><span class="cell"><small>5</small>E:6</span><span class="cell"><small>6</small>F:3</span><span class="cell"><small>7</small>C:8</span><span class="cell"><small>8</small>D:7</span><span class="cell"><small>9</small>I:9</span></div><figcaption>Change I from 5 to 9 in the min copy. I is a leaf and parent B:4≤9, so its min sift stops.</figcaption></figure>
+<figure><div class="array"><span class="cell"><small>1</small>C:8</span><span class="cell"><small>2</small>D:7</span><span class="cell"><small>3</small>F:3</span><span class="cell"><small>4</small>I:9</span><span class="cell"><small>5</small>E:6</span><span class="cell"><small>6</small>A:0</span><span class="cell"><small>7</small>G:2</span><span class="cell"><small>8</small>H:1</span><span class="cell"><small>9</small>B:4</span></div><figcaption>The max copy also receives 9. Its parent D:7&lt;9, so max repair must move I upward.</figcaption></figure></section><section class="step"><h4>3 · Max update: move I above D</h4><figure><div class="array"><span class="cell"><small>1</small>C:8</span><span class="cell"><small>2</small>I:9</span><span class="cell"><small>3</small>F:3</span><span class="cell"><small>4</small>D:7</span><span class="cell"><small>5</small>E:6</span><span class="cell"><small>6</small>A:0</span><span class="cell"><small>7</small>G:2</span><span class="cell"><small>8</small>H:1</span><span class="cell"><small>9</small>B:4</span></div><figcaption>Swap I:9 at position 4 with D:7 at position 2; update their max positions to I=2, D=4. Root C:8 is still smaller than I:9, so continue upward.</figcaption></figure></section><section class="step"><h4>4 · Max update: promote I to root</h4><figure><div class="array"><span class="cell"><small>1</small>I:9</span><span class="cell"><small>2</small>C:8</span><span class="cell"><small>3</small>F:3</span><span class="cell"><small>4</small>D:7</span><span class="cell"><small>5</small>E:6</span><span class="cell"><small>6</small>A:0</span><span class="cell"><small>7</small>G:2</span><span class="cell"><small>8</small>H:1</span><span class="cell"><small>9</small>B:4</span></div><figcaption>Swap I:9 with C:8. I is now root with no parent, so stop. Its cross-index now records min position 9 and max position 1; all other identities remain linked to their own copies.</figcaption></figure></section></section>
+<h2 id="section-6">Arbitrary deletion: opposite repair directions</h2>
+<p>This second 8-record input is a contrasting handle deletion. The same identity C is at a deep position in the min heap and at the max root. The last entry H:3 makes the min-side hole sift upward, while D:2 makes the max-side root sift downward twice. Every intermediate heap below is a separate state so the direction decision is visible.</p>
+<pre><code class="language-text">Input: A:0, B:5, C:7, D:2, E:1, F:6, G:4, H:3
+Min heap: [A:0, E:1, G:4, D:2, B:5, F:6, C:7, H:3]
+Max heap: [C:7, B:5, F:6, H:3, E:1, A:0, G:4, D:2]
+Delete handle C (key 7)
+</code></pre>
+<section aria-label="rev-dual-heap-delete-C · repair each hole independently" class="walk"><h3>rev-dual-heap-delete-C · repair each hole independently</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Resolve C in both heaps</h4><figure><div class="array"><span class="cell"><small>1</small>min C:7 at 7</span><span class="cell"><small>2</small>max C:7 at 1</span><span class="cell"><small>3</small>last min H:3</span><span class="cell"><small>4</small>last max D:2</span></div><figcaption>A valid handle supplies both positions. Save the identity before removing either copy; key search is not needed.</figcaption></figure></section><section class="step"><h4>2 · Min hole: replace C with H</h4><figure><div class="array"><span class="cell"><small>1</small>A:0</span><span class="cell"><small>2</small>E:1</span><span class="cell"><small>3</small>G:4</span><span class="cell"><small>4</small>D:2</span><span class="cell"><small>5</small>B:5</span><span class="cell"><small>6</small>F:6</span><span class="cell"><small>7</small>H:3</span></div><figcaption>After removing C at position 7, move last entry H:3 from position 8 into the hole and shrink the array. Its parent G:4 is larger (3&lt;4), so the violation is upward and one parent swap is required.</figcaption></figure></section><section class="step"><h4>3 · Min hole: swap up and stop</h4><figure><div class="array"><span class="cell"><small>1</small>A:0</span><span class="cell"><small>2</small>E:1</span><span class="cell"><small>3</small>H:3</span><span class="cell"><small>4</small>D:2</span><span class="cell"><small>5</small>B:5</span><span class="cell"><small>6</small>F:6</span><span class="cell"><small>7</small>G:4</span></div><figcaption>Swap H:3 from position 7 with G:4 from position 3. At position 3, its parent A:0 is no greater than 3, so stop. The min heap is now [A:0,E:1,H:3,D:2,B:5,F:6,G:4].</figcaption></figure></section><section class="step"><h4>4 · Max hole: replace root C with D</h4><figure><div class="array"><span class="cell"><small>1</small>D:2</span><span class="cell"><small>2</small>B:5</span><span class="cell"><small>3</small>F:6</span><span class="cell"><small>4</small>H:3</span><span class="cell"><small>5</small>E:1</span><span class="cell"><small>6</small>A:0</span><span class="cell"><small>7</small>G:4</span></div><figcaption>After removing C at the max root, move last entry D:2 into the root and shrink to seven entries. Compare children B:5 and F:6; the larger child F:6 outranks 2, so downward repair continues through position 3.</figcaption></figure></section><section class="step"><h4>5 · Max hole: first downward swap</h4><figure><div class="array"><span class="cell"><small>1</small>F:6</span><span class="cell"><small>2</small>B:5</span><span class="cell"><small>3</small>D:2</span><span class="cell"><small>4</small>H:3</span><span class="cell"><small>5</small>E:1</span><span class="cell"><small>6</small>A:0</span><span class="cell"><small>7</small>G:4</span></div><figcaption>Swap root D:2 at position 1 with the larger child F:6 at position 3. At position 3, compare D:2 with children A:0 and G:4; G:4 is the larger child and exceeds 2, so another swap is required.</figcaption></figure></section><section class="step"><h4>6 · Max hole: second downward swap and stop</h4><figure><div class="array"><span class="cell"><small>1</small>F:6</span><span class="cell"><small>2</small>B:5</span><span class="cell"><small>3</small>G:4</span><span class="cell"><small>4</small>H:3</span><span class="cell"><small>5</small>E:1</span><span class="cell"><small>6</small>A:0</span><span class="cell"><small>7</small>D:2</span></div><figcaption>Swap D:2 at position 3 with G:4 at position 7. D is now a leaf, so stop. Final min positions are A1,E2,H3,D4,B5,F6,G7; max positions are F1,B2,G3,H4,E5,A6,D7. Thus A↔(1,6), B↔(5,2), D↔(4,7), E↔(2,5), F↔(6,1), G↔(7,3), H↔(3,4).</figcaption></figure></section></section>
+<h2 id="section-7">Edge cases and limits</h2>
+<p><strong>Duplicate keys:</strong> If A:5 and B:5 are distinct records, either can be the root minimum, but removing A must use A's handle and remove A from both arrays. Equality satisfies heap order, so no swap is required solely to break a tie.</p>
+<p><strong>Missing identity:</strong> Validate a handle before mutating either heap. A stale handle must not delete one copy and leave its partner behind. If searching by key, state whether the operation accepts any matching record or requires all matches; key equality is not enough to select an identity.</p>
+<p><strong>One child after a deletion:</strong> During sift-down, compare the replacement with the sole existing child. Swap only if heap order is violated; if no children remain, stop. Never read a nonexistent right child. For a valid complete binary heap, a node can have a left child without a right child only at the final occupied fringe.</p>
+<p><strong>Endpoint counterpart:</strong> With distinct keys, the minimum is a leaf in the max heap, and the maximum is a leaf in the min heap. Therefore pop-min's counterpart can only stop or sift upward in the max heap; pop-max's counterpart can only stop or sift upward in the min heap. A downward counterpart repair belongs to arbitrary deletion when the target is internal, as the C example shows. Equal-key tie layouts can require selecting a consistent tied root policy; the general arbitrary-hole rule remains correct.</p>
+<p>The slides state that dual queues support insert, remove-min, remove-max, and initialization; they do not provide a specific optimized meld procedure. Rebuilding both heaps is labeled here as the standard supplemental method. Costs in the table are worst-case unless marked otherwise; no expected or amortized bound is claimed. The two heap sifts add constants but retain the stated asymptotic bounds.</p></article><nav class="pager" aria-label="Study sequence"><a href="huffman-tree.html"><small>Previous</small>Huffman tree <span aria-hidden="true">↗</span></a><a href="correspondence-heaps.html"><small>Next</small>Correspondence heaps <span aria-hidden="true">↗</span></a></nav><footer>ADS field notes <span>Understand the rule. Trace the repair.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  root.querySelectorAll('table').forEach(table => {
+    const region = document.createElement('div');
+    region.className = 'table-scroll' + (table.rows[0]?.cells.length > 5 ? ' wide' : '');
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    table.before(region); region.append(table);
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Data structure diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect every node.'; frame.after(hint);
+    const update = () => { hint.hidden = frame.scrollWidth <= frame.clientWidth + 1 && frame.scrollHeight <= frame.clientHeight + 1; };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {heap:'priority queue insert delete meld minimum maximum trickle down bubble up build',tree:'insert delete search build rotate rotation',trie:'insert delete search build prefix',sorting:'run merge buffer freeze build',analysis:'potential aggregate accounting'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('a').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('ads-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.ADS_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) expand.textContent = 'Expand examples';
+    const section = new URLSearchParams(url.hash.slice(1)).get('section') || (url.hash.startsWith('#topic=') ? '' : url.hash.slice(1));
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = new URLSearchParams(location.hash.slice(1)).get('section') || location.hash.slice(1);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+})();
+</script></body></html>

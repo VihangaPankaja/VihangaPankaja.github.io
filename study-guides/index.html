@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Semester 7 study guides for Advanced Data Structures and Computer Networks and Security, with worked examples, diagrams, and revision questions.">
+  <title>Study guides · Semester 7</title>
+  <style>
+    :root { color-scheme: light dark; --paper:#faf9f5; --ink:#243741; --muted:#526570; --line:#cdd8db; --accent:#206b7b; --card:#fff; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:1.05rem/1.65 Georgia,serif; }
+    main { max-width:960px; margin:auto; padding:clamp(32px,7vw,80px) 24px; }
+    .eyebrow { margin:0 0 12px; color:var(--accent); font:600 .78rem/1.4 system-ui,sans-serif; letter-spacing:.13em; text-transform:uppercase; }
+    h1 { margin:0; font-size:clamp(2.5rem,7vw,4.5rem); line-height:1.1; font-weight:500; letter-spacing:-.035em; }
+    .intro { max-width:620px; margin:22px 0 44px; color:var(--muted); }
+    .guides { border-top:1px solid var(--line); }
+    .guide { display:grid; grid-template-columns:58px 1fr; gap:20px; padding:30px 0; border-bottom:1px solid var(--line); }
+    .number { padding-top:5px; color:var(--muted); font:.8rem/1.5 system-ui,sans-serif; }
+    h2 { margin:0 0 10px; font-size:clamp(1.45rem,3vw,1.9rem); line-height:1.3; font-weight:500; }
+    h2 a { color:var(--ink); text-decoration:none; }
+    h2 a:hover { color:var(--accent); text-decoration:underline; text-underline-offset:5px; }
+    .code { color:var(--accent); font:600 .75rem/1.5 system-ui,sans-serif; letter-spacing:.06em; }
+    .guide p { max-width:650px; margin:10px 0 16px; color:var(--muted); }
+    .open { display:inline-block; color:var(--accent); font:600 .9rem/1.5 system-ui,sans-serif; text-underline-offset:4px; padding:6px 0; }
+    a:focus-visible { outline:3px solid var(--accent); outline-offset:5px; border-radius:2px; }
+    footer { margin-top:28px; color:var(--muted); font:.82rem/1.6 system-ui,sans-serif; }
+    @media (max-width:480px) { main { padding:32px 20px; } .guide { grid-template-columns:28px 1fr; gap:12px; } .intro { margin-bottom:30px; } }
+    @media (prefers-color-scheme:dark) { :root { --paper:#121e24; --ink:#e0e8eb; --muted:#b0c0c8; --line:#344c58; --accent:#8bcbd9; --card:#17272f; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">Semester 7</p>
+      <h1>Study guides</h1>
+      <p class="intro">Lecture notes with diagrams, worked examples, and revision questions. Choose a subject to start reading.</p>
+    </header>
+    <section class="guides" aria-label="Available study guides">
+      <article class="guide">
+        <span class="number" aria-hidden="true">01</span>
+        <div>
+          <span class="code">CS4580</span>
+          <h2><a href="ads/">Advanced Data Structures</a></h2>
+          <p>Trees, heaps, tries, hashing, and external sorting, with step-by-step operations and worked traces.</p>
+          <a class="open" href="ads/">Open the ADS guide <span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+      <article class="guide">
+        <span class="number" aria-hidden="true">02</span>
+        <div>
+          <span class="code">CS3131</span>
+          <h2><a href="cns/">Computer Networks and Security</a></h2>
+          <p>Network layers, Ethernet, routing, IP addressing, wireless networks, and security, including lab procedures and quiz practice.</p>
+          <a class="open" href="cns/">Open the CNS guide <span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+    </section>
+    <footer>Use the topic menu inside each guide. Worked examples have step controls, and practice answers can be expanded.</footer>
+  </main>
+</body>
+</html>

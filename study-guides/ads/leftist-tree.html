@@ -1,0 +1,1110 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Keep the right spine short. Meld walks along right spines and repairs the leftist rule on the way back."><title>Leftist tree · ADS field notes</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('ads-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{.table-hint{display:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> ADS <span class="subbrand">field notes</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Heap, delete, trie…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a href="index.html">Data structures, side by side.</a><a href="comparison.html">Operation costs at a glance</a></div><div class="nav-group"><p>Priority queues</p><a href="binary-heap.html">Binary heap</a><a href="d-ary-heap.html">d-ary heap</a><a href="dual-heap.html">Dual min/max heaps</a><a href="correspondence-heaps.html">Correspondence heaps</a><a href="interval-heap.html">Interval heap</a></div><div class="nav-group"><p>Tournament and coding trees</p><a href="winner-tree.html">Winner tree</a><a href="loser-tree.html">Loser tree</a><a href="huffman-tree.html">Huffman tree</a></div><div class="nav-group"><p>Meldable priority queues</p><a href="leftist-tree.html" aria-current="page">Leftist tree</a><a href="binomial-heap.html">Lazy binomial heap</a><a href="fibonacci-heap.html">Fibonacci heap</a><a href="pairing-heap.html">Pairing heap</a></div><div class="nav-group"><p>Dictionaries and search trees</p><a href="hash-table.html">Hash table</a><a href="binary-search-tree.html">Binary search tree</a><a href="indexed-bst.html">Indexed BST</a><a href="optimal-bst.html">Optimal BST</a><a href="avl-tree.html">AVL tree</a><a href="red-black-tree.html">Red-black tree</a><a href="b-tree.html">B-tree</a><a href="two-three-tree.html">2-3 tree</a><a href="two-three-four-tree.html">2-3-4 tree</a><a href="b-plus-tree.html">B+ tree</a><a href="splay-tree.html">Splay tree</a></div><div class="nav-group"><p>Digital search and strings</p><a href="digital-search-tree.html">Digital search tree</a><a href="binary-trie.html">Binary trie</a><a href="compressed-trie.html">Compressed binary trie</a><a href="higher-order-trie.html">Higher-order trie</a><a href="multibit-trie.html">Multibit trie and routing</a><a href="suffix-tree.html">Suffix tree</a></div><div class="nav-group"><p>Reference</p><a href="operation-glossary.html">Operation names and exam traps</a></div><div class="nav-group"><p>Sorting on disk</p><a href="external-sorting.html">External sorting</a></div><div class="nav-group"><p>Analysis</p><a href="amortized-analysis.html">Amortized analysis</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4580<br>Advanced Data Structures</div></aside>
+<main id="main"><div class="eyebrow">Meldable priority queues <span>/</span> Lecture 4 · Lab 3</div><h1>Leftist tree</h1><p class="lead">Keep the right spine short. Meld walks along right spines and repairs the leftist rule on the way back.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Rule</a><a href="#section-1">Meld, insert and removal</a><a href="#section-2">Arbitrary removal and caveats</a><a href="#section-3">Decisions, stop conditions, and edge cases</a><a href="#section-4">Worked construction: ten keys with FIFO pairwise melding</a><a href="#section-5">Arbitrary deletion: the lecture's pointer case</a><a href="#section-6">Common mistakes</a><a href="#section-7">Exam focus</a><a href="#section-8">Practice</a><a href="#section-9">Supplemental implementation detail: either parent link</a></nav><article><h2 id="section-0">Rule</h2>
+<p>s(null)=0 and s(x)=1+min(s(left),s(right)). Every node obeys <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>s</mi><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">t</mi></mrow><mo stretchy="false">)</mo><mo>≥</mo><mi>s</mi><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">h</mi><mi mathvariant="normal">t</mi></mrow><mo stretchy="false">)</mo></mrow></math>, so s(x)=s(right)+1. Add min-heap order to obtain a min leftist priority queue. Only the rightmost path is guaranteed <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math>. The whole tree can have linear height.</p>
+<section aria-label="Fresh build from [7, 3, 9, 1] using a FIFO queue" class="walk"><h3>Fresh build from [7, 3, 9, 1] using a FIFO queue</h3><div class="example-input"><strong>Input list</strong><span>[7, 3, 9, 1]</span></div><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Make singleton trees</h4><figure><div class="array"><span class="cell"><small>1</small>7 / s=1</span><span class="cell"><small>2</small>3 / s=1</span><span class="cell"><small>3</small>9 / s=1</span><span class="cell"><small>4</small>1 / s=1</span></div><figcaption>FIFO queue starts with four roots.</figcaption></figure><div class="step-reason"><p>A singleton has no internal children, so both child s-values are 0 and its own s is 1. Put all four roots in input order; the FIFO contains one tree per key and the construction continues until exactly one root remains.</p></div></section><section class="step"><h4>Meld roots 7 and 3</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="Queue roots after enqueue: 9, 1, 3" height="139pt" role="img" viewbox="0.00 0.00 128.60 138.60" width="129pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="leftist-build-0-graph0" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="leftist-build-0-node1">
+<title>r</title>
+<path d="M95,-117C95,-117 43,-117 43,-117 37,-117 31,-111 31,-105 31,-105 31,-93 31,-93 31,-87 37,-81 43,-81 43,-81 95,-81 95,-81 101,-81 107,-87 107,-93 107,-93 107,-105 107,-105 107,-111 101,-117 95,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="69" y="-95.5">3 · s=1</text>
+</g>
+<!-- r0 -->
+<g class="node" id="leftist-build-0-node2">
+<title>r0</title>
+<path d="M64,-36C64,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 64,0 64,0 70,0 76,-6 76,-12 76,-12 76,-24 76,-24 76,-30 70,-36 64,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="38" y="-14.5">7 · s=1</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="leftist-build-0-edge1">
+<title>r-&gt;r0</title>
+<path d="M62.27,-80.86C57.8,-69.47 51.89,-54.39 47.01,-41.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="48.86,-40.93 44.71,-36.11 44.95,-42.46 48.86,-40.93" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="60.5" y="-55.4">L</text>
+</g>
+<!-- r1 -->
+<!-- r&#45;&gt;r1 -->
+</g>
+</svg>
+</div><figcaption>Queue roots after enqueue: 9, 1, 3</figcaption></figure><div class="step-reason"><p>Remove the two front roots 7 and 3, compare them, and keep 3 as the smaller root. Its right child is empty, so recursive meld returns the whole 7-tree immediately; on unwind, compare s(left)=0 with s(right)=1, swap, and recompute s(3)=1. Enqueue after the untouched roots 9 and 1.</p></div></section><section class="step"><h4>Meld roots 9 and 1</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="Queue roots after enqueue: 3, 1" height="139pt" role="img" viewbox="0.00 0.00 128.60 138.60" width="129pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="leftist-build-1-graph0" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="leftist-build-1-node1">
+<title>r</title>
+<path d="M95,-117C95,-117 43,-117 43,-117 37,-117 31,-111 31,-105 31,-105 31,-93 31,-93 31,-87 37,-81 43,-81 43,-81 95,-81 95,-81 101,-81 107,-87 107,-93 107,-93 107,-105 107,-105 107,-111 101,-117 95,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="69" y="-95.5">1 · s=1</text>
+</g>
+<!-- r0 -->
+<g class="node" id="leftist-build-1-node2">
+<title>r0</title>
+<path d="M64,-36C64,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 64,0 64,0 70,0 76,-6 76,-12 76,-12 76,-24 76,-24 76,-30 70,-36 64,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="38" y="-14.5">9 · s=1</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="leftist-build-1-edge1">
+<title>r-&gt;r0</title>
+<path d="M62.27,-80.86C57.8,-69.47 51.89,-54.39 47.01,-41.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="48.86,-40.93 44.71,-36.11 44.95,-42.46 48.86,-40.93" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="60.5" y="-55.4">L</text>
+</g>
+<!-- r1 -->
+<!-- r&#45;&gt;r1 -->
+</g>
+</svg>
+</div><figcaption>Queue roots after enqueue: 3, 1</figcaption></figure><div class="step-reason"><p>The queue front is now 9 then 1; root 1 wins and its empty right subtree returns 9. On unwind, swap because 0&lt;1, giving 1 a left child of rank 1 and right rank 0, so s(1)=1. Append this result behind the still-waiting 3-tree.</p></div></section><section class="step"><h4>Meld roots 3 and 1</h4><figure><div class="diagram-frame" style="--diagram-width:195.6px"><svg aria-label="Queue roots after enqueue: 1" height="220pt" role="img" viewbox="0.00 0.00 195.60 219.60" width="196pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="leftist-build-2-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="leftist-build-2-node1">
+<title>r</title>
+<path d="M82,-198C82,-198 30,-198 30,-198 24,-198 18,-192 18,-186 18,-186 18,-174 18,-174 18,-168 24,-162 30,-162 30,-162 82,-162 82,-162 88,-162 94,-168 94,-174 94,-174 94,-186 94,-186 94,-192 88,-198 82,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="56" y="-176.5">1 · s=2</text>
+</g>
+<!-- r0 -->
+<g class="node" id="leftist-build-2-node2">
+<title>r0</title>
+<path d="M64,-117C64,-117 12,-117 12,-117 6,-117 0,-111 0,-105 0,-105 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 64,-81 64,-81 70,-81 76,-87 76,-93 76,-93 76,-105 76,-105 76,-111 70,-117 64,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="38" y="-95.5">9 · s=1</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="leftist-build-2-edge1">
+<title>r-&gt;r0</title>
+<path d="M52.09,-161.86C49.5,-150.47 46.06,-135.39 43.23,-122.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="45.28,-122.49 41.9,-117.11 41.18,-123.42 45.28,-122.49" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="53.5" y="-136.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="leftist-build-2-node3">
+<title>r1</title>
+<path d="M162,-117C162,-117 110,-117 110,-117 104,-117 98,-111 98,-105 98,-105 98,-93 98,-93 98,-87 104,-81 110,-81 110,-81 162,-81 162,-81 168,-81 174,-87 174,-93 174,-93 174,-105 174,-105 174,-111 168,-117 162,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="136" y="-95.5">3 · s=1</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="leftist-build-2-edge2">
+<title>r-&gt;r1</title>
+<path d="M73.36,-161.86C85.31,-150.06 101.28,-134.28 114.11,-121.62" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="115.88,-122.82 118.68,-117.11 112.93,-119.83 115.88,-122.82" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="106" y="-136.4">R</text>
+</g>
+<!-- r10 -->
+<g class="node" id="leftist-build-2-node4">
+<title>r10</title>
+<path d="M131,-36C131,-36 79,-36 79,-36 73,-36 67,-30 67,-24 67,-24 67,-12 67,-12 67,-6 73,0 79,0 79,0 131,0 131,0 137,0 143,-6 143,-12 143,-12 143,-24 143,-24 143,-30 137,-36 131,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="105" y="-14.5">7 · s=1</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="leftist-build-2-edge3">
+<title>r1-&gt;r10</title>
+<path d="M129.27,-80.86C124.8,-69.47 118.89,-54.39 114.01,-41.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="115.86,-40.93 111.71,-36.11 111.95,-42.46 115.86,-40.93" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="127.5" y="-55.4">L</text>
+</g>
+<!-- r11 -->
+<!-- r1&#45;&gt;r11 -->
+</g>
+</svg>
+</div><figcaption>Queue roots after enqueue: 1</figcaption></figure><div class="step-reason"><p>Remove 3 and the merged 1-tree. Root 1 wins, and melding its empty right child with the 3-tree returns that tree; unwind at 1, whose old left child 9 and joined right tree rooted at 3 both have s=1, so equality means no swap. Recompute s(1)=2; one root remains, which is the exact stop condition for FIFO initialization.</p></div></section></section>
+<h2 id="section-1">Meld, insert and removal</h2>
+<p>Meld chooses the smaller root a, recursively melds a.right with the other tree, then swaps a's children if <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>s</mi><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">t</mi></mrow><mo stretchy="false">)</mo><mo>&lt;</mo><mi>s</mi><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">h</mi><mi mathvariant="normal">t</mi></mrow><mo stretchy="false">)</mo></mrow></math>. Recompute s after the swap. An empty argument returns the other tree.</p>
+<p>insert(x) = meld(heap, singleton(x)). removeMin deletes the root and melds its two children. Each costs <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math>, as does meld. Fresh FIFO pairwise construction costs <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math>. Repeated insertion costs <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math>. getMin is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math>, general search <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math>.</p>
+<section aria-label="Meld [2 with left child 7] and [3 with left child 5]" class="walk"><h3>Meld [2 with left child 7] and [3 with left child 5]</h3><div class="example-input"><strong>Input list</strong><span>[2 with left child 7] · [3 with left child 5]</span></div><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Compare roots</h4><figure><div class="diagram-frame" style="--diagram-width:256.9px"><svg aria-label="2 wins. Recurse on its empty right subtree and the entire 3-tree." height="220pt" role="img" viewbox="0.00 0.00 256.90 219.60" width="257pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="leftist-meld-0-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="leftist-meld-0-node1">
+<title>r</title>
+<path d="M191.5,-198C191.5,-198 71.5,-198 71.5,-198 65.5,-198 59.5,-192 59.5,-186 59.5,-186 59.5,-174 59.5,-174 59.5,-168 65.5,-162 71.5,-162 71.5,-162 191.5,-162 191.5,-162 197.5,-162 203.5,-168 203.5,-174 203.5,-174 203.5,-186 203.5,-186 203.5,-192 197.5,-198 191.5,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="131.5" y="-176.5">two input heaps</text>
+</g>
+<!-- r0 -->
+<g class="node" id="leftist-meld-0-node2">
+<title>r0</title>
+<path d="M109,-117C109,-117 56,-117 56,-117 50,-117 44,-111 44,-105 44,-105 44,-93 44,-93 44,-87 50,-81 56,-81 56,-81 109,-81 109,-81 115,-81 121,-87 121,-93 121,-93 121,-105 121,-105 121,-111 115,-117 109,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="82.5" y="-95.5">2 / s=1</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="leftist-meld-0-edge1">
+<title>r-&gt;r0</title>
+<path d="M120.87,-161.86C113.68,-150.26 104.11,-134.84 96.33,-122.29" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="98.06,-121.1 93.11,-117.11 94.49,-123.31 98.06,-121.1" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="115" y="-136.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="leftist-meld-0-node5">
+<title>r1</title>
+<path d="M208,-117C208,-117 155,-117 155,-117 149,-117 143,-111 143,-105 143,-105 143,-93 143,-93 143,-87 149,-81 155,-81 155,-81 208,-81 208,-81 214,-81 220,-87 220,-93 220,-93 220,-105 220,-105 220,-111 214,-117 208,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="181.5" y="-95.5">3 / s=1</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="leftist-meld-0-edge4">
+<title>r-&gt;r1</title>
+<path d="M142.35,-161.86C149.69,-150.26 159.45,-134.84 167.39,-122.29" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="169.24,-123.3 170.67,-117.11 165.69,-121.06 169.24,-123.3" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="163.5" y="-136.4">R</text>
+</g>
+<!-- r00 -->
+<g class="node" id="leftist-meld-0-node3">
+<title>r00</title>
+<path d="M65,-36C65,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 65,0 65,0 71,0 77,-6 77,-12 77,-12 77,-24 77,-24 77,-30 71,-36 65,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="38.5" y="-14.5">7 / s=1</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="leftist-meld-0-edge2">
+<title>r0-&gt;r00</title>
+<path d="M72.95,-80.86C66.55,-69.37 58.06,-54.11 51.1,-41.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="52.78,-40.33 48.03,-36.11 49.11,-42.37 52.78,-40.33" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="68" y="-55.4">L</text>
+</g>
+<!-- r01 -->
+<!-- r0&#45;&gt;r01 -->
+<!-- r10 -->
+<g class="node" id="leftist-meld-0-node6">
+<title>r10</title>
+<path d="M198,-36C198,-36 145,-36 145,-36 139,-36 133,-30 133,-24 133,-24 133,-12 133,-12 133,-6 139,0 145,0 145,0 198,0 198,0 204,0 210,-6 210,-12 210,-12 210,-24 210,-24 210,-30 204,-36 198,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="171.5" y="-14.5">5 / s=1</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="leftist-meld-0-edge5">
+<title>r1-&gt;r10</title>
+<path d="M179.33,-80.86C177.9,-69.57 176.01,-54.66 174.45,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="176.5,-41.8 173.67,-36.11 172.34,-42.32 176.5,-41.8" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="181" y="-55.4">L</text>
+</g>
+<!-- r11 -->
+<!-- r1&#45;&gt;r11 -->
+</g>
+</svg>
+</div><figcaption>2 wins. Recurse on its empty right subtree and the entire 3-tree.</figcaption></figure><div class="step-reason"><p>Compare 2 and 3; 2 wins and its empty right subtree is the next recursive argument. Meld therefore returns the entire 3-tree unchanged, preserving its internal heap and leftist invariants; unwind at 2 by attaching this result on the right.</p></div></section><section class="step"><h4>2 · Attach returned tree on the right</h4><figure><div class="diagram-frame" style="--diagram-width:197.6px"><svg aria-label="Both child s-values are 1, so no swap is needed." height="220pt" role="img" viewbox="0.00 0.00 197.60 219.60" width="198pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="leftist-meld-1-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="leftist-meld-1-node1">
+<title>r</title>
+<path d="M98,-198C98,-198 45,-198 45,-198 39,-198 33,-192 33,-186 33,-186 33,-174 33,-174 33,-168 39,-162 45,-162 45,-162 98,-162 98,-162 104,-162 110,-168 110,-174 110,-174 110,-186 110,-186 110,-192 104,-198 98,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="71.5" y="-176.5">2 / s=2</text>
+</g>
+<!-- r0 -->
+<g class="node" id="leftist-meld-1-node2">
+<title>r0</title>
+<path d="M65,-117C65,-117 12,-117 12,-117 6,-117 0,-111 0,-105 0,-105 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 65,-81 65,-81 71,-81 77,-87 77,-93 77,-93 77,-105 77,-105 77,-111 71,-117 65,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="38.5" y="-95.5">7 / s=1</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="leftist-meld-1-edge1">
+<title>r-&gt;r0</title>
+<path d="M64.34,-161.86C59.58,-150.47 53.28,-135.39 48.09,-122.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="49.9,-121.84 45.65,-117.11 46.02,-123.45 49.9,-121.84" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="62" y="-136.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="leftist-meld-1-node3">
+<title>r1</title>
+<path d="M164,-117C164,-117 111,-117 111,-117 105,-117 99,-111 99,-105 99,-105 99,-93 99,-93 99,-87 105,-81 111,-81 111,-81 164,-81 164,-81 170,-81 176,-87 176,-93 176,-93 176,-105 176,-105 176,-111 170,-117 164,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="137.5" y="-95.5">3 / s=1</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="leftist-meld-1-edge2">
+<title>r-&gt;r1</title>
+<path d="M85.82,-161.86C95.59,-150.16 108.63,-134.56 119.16,-121.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="120.97,-123.06 123.21,-117.11 117.75,-120.37 120.97,-123.06" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="112.5" y="-136.4">R</text>
+</g>
+<!-- r10 -->
+<g class="node" id="leftist-meld-1-node4">
+<title>r10</title>
+<path d="M133,-36C133,-36 80,-36 80,-36 74,-36 68,-30 68,-24 68,-24 68,-12 68,-12 68,-6 74,0 80,0 80,0 133,0 133,0 139,0 145,-6 145,-12 145,-12 145,-24 145,-24 145,-30 139,-36 133,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="106.5" y="-14.5">5 / s=1</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="leftist-meld-1-edge3">
+<title>r1-&gt;r10</title>
+<path d="M130.77,-80.86C126.3,-69.47 120.39,-54.39 115.51,-41.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="117.36,-40.93 113.21,-36.11 113.45,-42.46 117.36,-40.93" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="128" y="-55.4">L</text>
+</g>
+<!-- r11 -->
+<!-- r1&#45;&gt;r11 -->
+</g>
+</svg>
+</div><figcaption>Both child s-values are 1, so no swap is needed.</figcaption></figure><div class="step-reason"><p>After attachment, the left subtree 7 and the joined right subtree rooted at 3 both have s=1. Since s(left) is not less than s(right), keep the child order and set s(2)=1+min(1,1)=2. Equality is a valid no-swap case.</p></div></section><section class="step"><h4>3 · Remove minimum 2</h4><figure><div class="diagram-frame" style="--diagram-width:197.6px"><svg aria-label="Meld its subtrees. Root 3 wins and attaches 7 on the right." height="139pt" role="img" viewbox="0.00 0.00 197.60 138.60" width="198pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="leftist-meld-2-graph0" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="leftist-meld-2-node1">
+<title>r</title>
+<path d="M114,-117C114,-117 61,-117 61,-117 55,-117 49,-111 49,-105 49,-105 49,-93 49,-93 49,-87 55,-81 61,-81 61,-81 114,-81 114,-81 120,-81 126,-87 126,-93 126,-93 126,-105 126,-105 126,-111 120,-117 114,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="87.5" y="-95.5">3 / s=2</text>
+</g>
+<!-- r0 -->
+<g class="node" id="leftist-meld-2-node2">
+<title>r0</title>
+<path d="M65,-36C65,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 65,0 65,0 71,0 77,-6 77,-12 77,-12 77,-24 77,-24 77,-30 71,-36 65,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="38.5" y="-14.5">5 / s=1</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="leftist-meld-2-edge1">
+<title>r-&gt;r0</title>
+<path d="M76.87,-80.86C69.68,-69.26 60.11,-53.84 52.33,-41.29" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="54.06,-40.1 49.11,-36.11 50.49,-42.31 54.06,-40.1" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="71" y="-55.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="leftist-meld-2-node3">
+<title>r1</title>
+<path d="M164,-36C164,-36 111,-36 111,-36 105,-36 99,-30 99,-24 99,-24 99,-12 99,-12 99,-6 105,0 111,0 111,0 164,0 164,0 170,0 176,-6 176,-12 176,-12 176,-24 176,-24 176,-30 170,-36 164,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="137.5" y="-14.5">7 / s=1</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="leftist-meld-2-edge2">
+<title>r-&gt;r1</title>
+<path d="M98.35,-80.86C105.69,-69.26 115.45,-53.84 123.39,-41.29" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="125.24,-42.3 126.67,-36.11 121.69,-40.06 125.24,-42.3" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="119.5" y="-55.4">R</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Meld its subtrees. Root 3 wins and attaches 7 on the right.</figcaption></figure><div class="step-reason"><p>Removing minimum 2 exposes its two child heaps, rooted at 7 and 3. Meld chooses 3 as the new root and recursively joins its empty right child with 7; the returned tree becomes its right child. Its left child 5 has s=1 and its right child 7 has s=1, so no swap is needed and the removal stops with a valid heap.</p></div></section></section>
+<h2 id="section-2">Arbitrary removal and caveats</h2>
+<p>Given node x, the lecture detaches x, reconnects its left subtree into the remaining tree, repairs s-values and leftist order toward the root, then melds the remainder with x's right subtree. The lecture prescribes repairing s and leftist order from p to the root but gives no separate runtime bound. Parent links make that path accessible; a naive walk to the root can take <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math>, because total height is not bounded. Any logarithmic early-stop bound needs an additional implementation argument.</p>
+<p>The empty build returns empty. A singleton has s=1. Do not use “left subtree has more nodes” as the invariant. After a destructive meld, the donor heap must relinquish ownership of its nodes.</p>
+<p class="question">Can a valid leftist tree be a long chain?</p>
+<details class="worked"><summary>Check your answer</summary><p>Yes, a left-only chain. Each node then has an empty right child, s=1, and the right spine is still short.</p></details>
+<h2 id="section-3">Decisions, stop conditions, and edge cases</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Decision and stop condition</th>
+<th>Edge cases and cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>getMin</code></td>
+<td>Read the root; stop immediately.</td>
+<td>Empty heap has no minimum. Nonempty lookup is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>Θ</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math>.</td>
+</tr>
+<tr>
+<td>Search for an arbitrary key</td>
+<td>Traverse nodes until the key is found or every reachable node has been checked. Heap order only rules out descendants of a node whose key is already greater than the target; it does not give BST-style routing.</td>
+<td>Missing key requires checking the whole heap in the worst case: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>Θ</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math>. This is a scan, not a handle operation.</td>
+</tr>
+<tr>
+<td><code>meld(A,B)</code></td>
+<td>Return the other tree if either input is empty. Otherwise keep the smaller root, recursively meld its right subtree with the other heap, attach the result on the right, swap children exactly when <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>s</mi><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">t</mi></mrow><mo stretchy="false">)</mo><mo>&lt;</mo><mi>s</mi><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">h</mi><mi mathvariant="normal">t</mi></mrow><mo stretchy="false">)</mo></mrow></math>, then recompute <code>s</code>. Stop when one recursive input is empty.</td>
+<td>Equal roots may choose either root if ties are handled consistently. Inputs must use the same min/max order and compatible ownership; a destructive meld consumes both inputs. Worst-case <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>Θ</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math>, because recursion follows right spines.</td>
+</tr>
+<tr>
+<td><code>insert(x)</code> / <code>put(x)</code></td>
+<td>Make a singleton of rank 1 and meld it with the heap. Stop at meld's empty-input base case and unwind repairs.</td>
+<td>Empty heap becomes that singleton. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>Θ</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> worst case.</td>
+</tr>
+<tr>
+<td><code>removeMin</code></td>
+<td>Save/remove the root and meld its left and right subtrees.</td>
+<td>Empty heap has nothing to remove; one node returns empty. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>Θ</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> worst case.</td>
+</tr>
+<tr>
+<td><code>initialize</code> from n keys</td>
+<td>Make n singleton heaps in input order; repeatedly dequeue the first two, meld, enqueue the result; stop at one queued tree.</td>
+<td>n=0 returns empty; n=1 returns the singleton. FIFO pairwise initialization is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>Θ</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math> overall per the lecture; repeated individual insertions instead cost <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>Θ</mi><mo stretchy="false">(</mo><mi>n</mi><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math>.</td>
+</tr>
+<tr>
+<td>Arbitrary remove by node handle</td>
+<td>If the handle is the root, use <code>removeMin</code>. For a nonroot target x with parent p, the lecture's pictured case makes x's left subtree L the right child of p, repairs s and leftist order from p toward the root, then melds that remainder with x's right subtree R.</td>
+<td>Missing/stale handle is outside the lecture procedure and must be rejected by the caller. Lecture slide 34 draws x on p's right link; it does not spell out the left-child-link case, the supplemental implementation detail below handles either parent link explicitly. Parent pointers are required. Cost is path-dependent; the slide gives no standalone bound.</td>
+</tr>
+</tbody>
+</table>
+<p>For every nonempty node, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>s</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><mo>min</mo><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">t</mi></mrow><mo stretchy="false">)</mo><mo>,</mo><mi>s</mi><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">h</mi><mi mathvariant="normal">t</mi></mrow><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow></math>; leftist order requires <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>s</mi><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">t</mi></mrow><mo stretchy="false">)</mo><mo>≥</mo><mi>s</mi><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">h</mi><mi mathvariant="normal">t</mi></mrow><mo stretchy="false">)</mo></mrow></math>, which makes <code>s(x)=s(right)+1</code>. Thus the rightmost path is shortest and logarithmic, while a left-only chain may have linear total height. Meld and insert/remove-min have logarithmic worst-case bounds from that right-spine guarantee; the whole-tree height is not a valid bound for them. The course gives no separate asymptotic bound for arbitrary removal's upward repair, so do not transfer the meld bound to a parent walk without the implementation's early-stop argument.</p>
+<p>The examples use min order. The lecture also defines max-leftist priority queues: reverse the root-priority comparison while keeping the same s-value recurrence and leftist shape invariant.</p>
+<h2 id="section-4">Worked construction: ten keys with FIFO pairwise melding</h2>
+<p>The diagrams below are exact states produced from the FIFO queue <code>[8, 3, 11, 1, 7, 14, 2, 9, 5, 12]</code>. Labels show each node's key and s-value; each state also records the full queue before and after the two front trees are melded. The trace names the root comparison and each unwind swap, so you can follow the right spine rather than assume the procedure builds by insertion.</p>
+<section aria-label="Fresh FIFO pairwise build from [8, 3, 11, 1, 7, 14, 2, 9, 5, 12]" class="walk"><h3>Fresh FIFO pairwise build from [8, 3, 11, 1, 7, 14, 2, 9, 5, 12]</h3><div class="example-input"><strong>Input list</strong><span>[8, 3, 11, 1, 7, 14, 2, 9, 5, 12]</span></div><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Meld FIFO roots 8 and 3</h4><p>Queue before removal: <code>[8, 3, 11, 1, 7, 14, 2, 9, 5, 12]</code>. The root comparison follows the right spine recursively; the trace below records every comparison, empty-subtree return, and unwind repair.</p>
+<ol><li>root 3 wins over root 8; recurse on 3 right child and tree rooted at 8</li><li>left input empty; return the right input unchanged</li><li>return to root 3: child s values before repair are 0 and 1; swap; after repair s(left)=1, s(right)=0, s(3)=1</li></ol>
+<figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="FIFO meld 1: roots 8 and 3; resulting tree with exact s values" height="139pt" role="img" viewbox="0.00 0.00 129.60 138.60" width="130pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-leftist-tree-build-01-graph0" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-leftist-tree-build-01-node1">
+<title>r</title>
+<path d="M96,-117C96,-117 43,-117 43,-117 37,-117 31,-111 31,-105 31,-105 31,-93 31,-93 31,-87 37,-81 43,-81 43,-81 96,-81 96,-81 102,-81 108,-87 108,-93 108,-93 108,-105 108,-105 108,-111 102,-117 96,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="69.5" y="-95.5">3 / s=1</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-leftist-tree-build-01-node2">
+<title>r0</title>
+<path d="M65,-36C65,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 65,0 65,0 71,0 77,-6 77,-12 77,-12 77,-24 77,-24 77,-30 71,-36 65,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="38.5" y="-14.5">8 / s=1</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-leftist-tree-build-01-edge1">
+<title>r-&gt;r0</title>
+<path d="M62.77,-80.86C58.3,-69.47 52.39,-54.39 47.51,-41.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="49.36,-40.93 45.21,-36.11 45.45,-42.46 49.36,-40.93" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="61" y="-55.4">L</text>
+</g>
+<!-- r1 -->
+<!-- r&#45;&gt;r1 -->
+</g>
+</svg>
+</div><figcaption>FIFO meld 1: roots 8 and 3; resulting tree with exact s values</figcaption></figure>
+<p>Enqueue the result at the rear. Queue after meld: <code>[11, 1, 7, 14, 2, 9, 5, 12, 3]</code>. Node count remains 2, and its root rank is 1.</p></section><section class="step"><h4>2 · Meld FIFO roots 11 and 1</h4><p>Queue before removal: <code>[11, 1, 7, 14, 2, 9, 5, 12, 3]</code>. The root comparison follows the right spine recursively; the trace below records every comparison, empty-subtree return, and unwind repair.</p>
+<ol><li>root 1 wins over root 11; recurse on 1 right child and tree rooted at 11</li><li>left input empty; return the right input unchanged</li><li>return to root 1: child s values before repair are 0 and 1; swap; after repair s(left)=1, s(right)=0, s(1)=1</li></ol>
+<figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="FIFO meld 2: roots 11 and 1; resulting tree with exact s values" height="139pt" role="img" viewbox="0.00 0.00 136.10 138.60" width="136pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-leftist-tree-build-02-graph0" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-leftist-tree-build-02-node1">
+<title>r</title>
+<path d="M102.5,-117C102.5,-117 49.5,-117 49.5,-117 43.5,-117 37.5,-111 37.5,-105 37.5,-105 37.5,-93 37.5,-93 37.5,-87 43.5,-81 49.5,-81 49.5,-81 102.5,-81 102.5,-81 108.5,-81 114.5,-87 114.5,-93 114.5,-93 114.5,-105 114.5,-105 114.5,-111 108.5,-117 102.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="76" y="-95.5">1 / s=1</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-leftist-tree-build-02-node2">
+<title>r0</title>
+<path d="M74,-36C74,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 74,0 74,0 80,0 86,-6 86,-12 86,-12 86,-24 86,-24 86,-30 80,-36 74,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="43" y="-14.5">11 / s=1</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-leftist-tree-build-02-edge1">
+<title>r-&gt;r0</title>
+<path d="M68.84,-80.86C64.08,-69.47 57.78,-54.39 52.59,-41.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="54.4,-40.84 50.15,-36.11 50.52,-42.45 54.4,-40.84" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="66.5" y="-55.4">L</text>
+</g>
+<!-- r1 -->
+<!-- r&#45;&gt;r1 -->
+</g>
+</svg>
+</div><figcaption>FIFO meld 2: roots 11 and 1; resulting tree with exact s values</figcaption></figure>
+<p>Enqueue the result at the rear. Queue after meld: <code>[7, 14, 2, 9, 5, 12, 3, 1]</code>. Node count remains 2, and its root rank is 1.</p></section><section class="step"><h4>3 · Meld FIFO roots 7 and 14</h4><p>Queue before removal: <code>[7, 14, 2, 9, 5, 12, 3, 1]</code>. The root comparison follows the right spine recursively; the trace below records every comparison, empty-subtree return, and unwind repair.</p>
+<ol><li>root 7 wins over root 14; recurse on 7 right child and tree rooted at 14</li><li>left input empty; return the right input unchanged</li><li>return to root 7: child s values before repair are 0 and 1; swap; after repair s(left)=1, s(right)=0, s(7)=1</li></ol>
+<figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="FIFO meld 3: roots 7 and 14; resulting tree with exact s values" height="139pt" role="img" viewbox="0.00 0.00 136.10 138.60" width="136pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-leftist-tree-build-03-graph0" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-leftist-tree-build-03-node1">
+<title>r</title>
+<path d="M102.5,-117C102.5,-117 49.5,-117 49.5,-117 43.5,-117 37.5,-111 37.5,-105 37.5,-105 37.5,-93 37.5,-93 37.5,-87 43.5,-81 49.5,-81 49.5,-81 102.5,-81 102.5,-81 108.5,-81 114.5,-87 114.5,-93 114.5,-93 114.5,-105 114.5,-105 114.5,-111 108.5,-117 102.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="76" y="-95.5">7 / s=1</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-leftist-tree-build-03-node2">
+<title>r0</title>
+<path d="M74,-36C74,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 74,0 74,0 80,0 86,-6 86,-12 86,-12 86,-24 86,-24 86,-30 80,-36 74,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="43" y="-14.5">14 / s=1</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-leftist-tree-build-03-edge1">
+<title>r-&gt;r0</title>
+<path d="M68.84,-80.86C64.08,-69.47 57.78,-54.39 52.59,-41.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="54.4,-40.84 50.15,-36.11 50.52,-42.45 54.4,-40.84" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="66.5" y="-55.4">L</text>
+</g>
+<!-- r1 -->
+<!-- r&#45;&gt;r1 -->
+</g>
+</svg>
+</div><figcaption>FIFO meld 3: roots 7 and 14; resulting tree with exact s values</figcaption></figure>
+<p>Enqueue the result at the rear. Queue after meld: <code>[2, 9, 5, 12, 3, 1, 7]</code>. Node count remains 2, and its root rank is 1.</p></section><section class="step"><h4>4 · Meld FIFO roots 2 and 9</h4><p>Queue before removal: <code>[2, 9, 5, 12, 3, 1, 7]</code>. The root comparison follows the right spine recursively; the trace below records every comparison, empty-subtree return, and unwind repair.</p>
+<ol><li>root 2 wins over root 9; recurse on 2 right child and tree rooted at 9</li><li>left input empty; return the right input unchanged</li><li>return to root 2: child s values before repair are 0 and 1; swap; after repair s(left)=1, s(right)=0, s(2)=1</li></ol>
+<figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="FIFO meld 4: roots 2 and 9; resulting tree with exact s values" height="139pt" role="img" viewbox="0.00 0.00 129.60 138.60" width="130pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-leftist-tree-build-04-graph0" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-leftist-tree-build-04-node1">
+<title>r</title>
+<path d="M96,-117C96,-117 43,-117 43,-117 37,-117 31,-111 31,-105 31,-105 31,-93 31,-93 31,-87 37,-81 43,-81 43,-81 96,-81 96,-81 102,-81 108,-87 108,-93 108,-93 108,-105 108,-105 108,-111 102,-117 96,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="69.5" y="-95.5">2 / s=1</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-leftist-tree-build-04-node2">
+<title>r0</title>
+<path d="M65,-36C65,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 65,0 65,0 71,0 77,-6 77,-12 77,-12 77,-24 77,-24 77,-30 71,-36 65,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="38.5" y="-14.5">9 / s=1</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-leftist-tree-build-04-edge1">
+<title>r-&gt;r0</title>
+<path d="M62.77,-80.86C58.3,-69.47 52.39,-54.39 47.51,-41.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="49.36,-40.93 45.21,-36.11 45.45,-42.46 49.36,-40.93" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="61" y="-55.4">L</text>
+</g>
+<!-- r1 -->
+<!-- r&#45;&gt;r1 -->
+</g>
+</svg>
+</div><figcaption>FIFO meld 4: roots 2 and 9; resulting tree with exact s values</figcaption></figure>
+<p>Enqueue the result at the rear. Queue after meld: <code>[5, 12, 3, 1, 7, 2]</code>. Node count remains 2, and its root rank is 1.</p></section><section class="step"><h4>5 · Meld FIFO roots 5 and 12</h4><p>Queue before removal: <code>[5, 12, 3, 1, 7, 2]</code>. The root comparison follows the right spine recursively; the trace below records every comparison, empty-subtree return, and unwind repair.</p>
+<ol><li>root 5 wins over root 12; recurse on 5 right child and tree rooted at 12</li><li>left input empty; return the right input unchanged</li><li>return to root 5: child s values before repair are 0 and 1; swap; after repair s(left)=1, s(right)=0, s(5)=1</li></ol>
+<figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="FIFO meld 5: roots 5 and 12; resulting tree with exact s values" height="139pt" role="img" viewbox="0.00 0.00 136.10 138.60" width="136pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-leftist-tree-build-05-graph0" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-leftist-tree-build-05-node1">
+<title>r</title>
+<path d="M102.5,-117C102.5,-117 49.5,-117 49.5,-117 43.5,-117 37.5,-111 37.5,-105 37.5,-105 37.5,-93 37.5,-93 37.5,-87 43.5,-81 49.5,-81 49.5,-81 102.5,-81 102.5,-81 108.5,-81 114.5,-87 114.5,-93 114.5,-93 114.5,-105 114.5,-105 114.5,-111 108.5,-117 102.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="76" y="-95.5">5 / s=1</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-leftist-tree-build-05-node2">
+<title>r0</title>
+<path d="M74,-36C74,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 74,0 74,0 80,0 86,-6 86,-12 86,-12 86,-24 86,-24 86,-30 80,-36 74,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="43" y="-14.5">12 / s=1</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-leftist-tree-build-05-edge1">
+<title>r-&gt;r0</title>
+<path d="M68.84,-80.86C64.08,-69.47 57.78,-54.39 52.59,-41.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="54.4,-40.84 50.15,-36.11 50.52,-42.45 54.4,-40.84" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="66.5" y="-55.4">L</text>
+</g>
+<!-- r1 -->
+<!-- r&#45;&gt;r1 -->
+</g>
+</svg>
+</div><figcaption>FIFO meld 5: roots 5 and 12; resulting tree with exact s values</figcaption></figure>
+<p>Enqueue the result at the rear. Queue after meld: <code>[3, 1, 7, 2, 5]</code>. Node count remains 2, and its root rank is 1.</p></section><section class="step"><h4>6 · Meld FIFO roots 3 and 1</h4><p>Queue before removal: <code>[3, 1, 7, 2, 5]</code>. The root comparison follows the right spine recursively; the trace below records every comparison, empty-subtree return, and unwind repair.</p>
+<ol><li>root 1 wins over root 3; recurse on 1 right child and tree rooted at 3</li><li>left input empty; return the right input unchanged</li><li>return to root 1: child s values before repair are 1 and 1; keep order; after repair s(left)=1, s(right)=1, s(1)=2</li></ol>
+<figure><div class="diagram-frame" style="--diagram-width:207.1px"><svg aria-label="FIFO meld 6: roots 3 and 1; resulting tree with exact s values" height="220pt" role="img" viewbox="0.00 0.00 207.10 219.60" width="207pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-leftist-tree-build-06-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-leftist-tree-build-06-node1">
+<title>r</title>
+<path d="M87.5,-198C87.5,-198 34.5,-198 34.5,-198 28.5,-198 22.5,-192 22.5,-186 22.5,-186 22.5,-174 22.5,-174 22.5,-168 28.5,-162 34.5,-162 34.5,-162 87.5,-162 87.5,-162 93.5,-162 99.5,-168 99.5,-174 99.5,-174 99.5,-186 99.5,-186 99.5,-192 93.5,-198 87.5,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="61" y="-176.5">1 / s=2</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-leftist-tree-build-06-node2">
+<title>r0</title>
+<path d="M74,-117C74,-117 12,-117 12,-117 6,-117 0,-111 0,-105 0,-105 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 74,-81 74,-81 80,-81 86,-87 86,-93 86,-93 86,-105 86,-105 86,-111 80,-117 74,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="43" y="-95.5">11 / s=1</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-leftist-tree-build-06-edge1">
+<title>r-&gt;r0</title>
+<path d="M57.09,-161.86C54.5,-150.47 51.06,-135.39 48.23,-122.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="50.28,-122.49 46.9,-117.11 46.18,-123.42 50.28,-122.49" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="58.5" y="-136.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-leftist-tree-build-06-node3">
+<title>r1</title>
+<path d="M173.5,-117C173.5,-117 120.5,-117 120.5,-117 114.5,-117 108.5,-111 108.5,-105 108.5,-105 108.5,-93 108.5,-93 108.5,-87 114.5,-81 120.5,-81 120.5,-81 173.5,-81 173.5,-81 179.5,-81 185.5,-87 185.5,-93 185.5,-93 185.5,-105 185.5,-105 185.5,-111 179.5,-117 173.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="147" y="-95.5">3 / s=1</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-leftist-tree-build-06-edge2">
+<title>r-&gt;r1</title>
+<path d="M79.66,-161.86C92.62,-149.95 109.98,-134.01 123.83,-121.29" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="125.38,-122.71 128.38,-117.11 122.54,-119.62 125.38,-122.71" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="115" y="-136.4">R</text>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-leftist-tree-build-06-node4">
+<title>r10</title>
+<path d="M142.5,-36C142.5,-36 89.5,-36 89.5,-36 83.5,-36 77.5,-30 77.5,-24 77.5,-24 77.5,-12 77.5,-12 77.5,-6 83.5,0 89.5,0 89.5,0 142.5,0 142.5,0 148.5,0 154.5,-6 154.5,-12 154.5,-12 154.5,-24 154.5,-24 154.5,-30 148.5,-36 142.5,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="116" y="-14.5">8 / s=1</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-leftist-tree-build-06-edge3">
+<title>r1-&gt;r10</title>
+<path d="M140.27,-80.86C135.8,-69.47 129.89,-54.39 125.01,-41.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="126.86,-40.93 122.71,-36.11 122.95,-42.46 126.86,-40.93" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="138.5" y="-55.4">L</text>
+</g>
+<!-- r11 -->
+<!-- r1&#45;&gt;r11 -->
+</g>
+</svg>
+</div><figcaption>FIFO meld 6: roots 3 and 1; resulting tree with exact s values</figcaption></figure>
+<p>Enqueue the result at the rear. Queue after meld: <code>[7, 2, 5, 1]</code>. Node count remains 4, and its root rank is 2.</p></section><section class="step"><h4>7 · Meld FIFO roots 7 and 2</h4><p>Queue before removal: <code>[7, 2, 5, 1]</code>. The root comparison follows the right spine recursively; the trace below records every comparison, empty-subtree return, and unwind repair.</p>
+<ol><li>root 2 wins over root 7; recurse on 2 right child and tree rooted at 7</li><li>left input empty; return the right input unchanged</li><li>return to root 2: child s values before repair are 1 and 1; keep order; after repair s(left)=1, s(right)=1, s(2)=2</li></ol>
+<figure><div class="diagram-frame" style="--diagram-width:197.6px"><svg aria-label="FIFO meld 7: roots 7 and 2; resulting tree with exact s values" height="220pt" role="img" viewbox="0.00 0.00 197.60 219.60" width="198pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-leftist-tree-build-07-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-leftist-tree-build-07-node1">
+<title>r</title>
+<path d="M83,-198C83,-198 30,-198 30,-198 24,-198 18,-192 18,-186 18,-186 18,-174 18,-174 18,-168 24,-162 30,-162 30,-162 83,-162 83,-162 89,-162 95,-168 95,-174 95,-174 95,-186 95,-186 95,-192 89,-198 83,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="56.5" y="-176.5">2 / s=2</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-leftist-tree-build-07-node2">
+<title>r0</title>
+<path d="M65,-117C65,-117 12,-117 12,-117 6,-117 0,-111 0,-105 0,-105 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 65,-81 65,-81 71,-81 77,-87 77,-93 77,-93 77,-105 77,-105 77,-111 71,-117 65,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="38.5" y="-95.5">9 / s=1</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-leftist-tree-build-07-edge1">
+<title>r-&gt;r0</title>
+<path d="M52.59,-161.86C50,-150.47 46.56,-135.39 43.73,-122.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="45.78,-122.49 42.4,-117.11 41.68,-123.42 45.78,-122.49" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="54" y="-136.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-leftist-tree-build-07-node3">
+<title>r1</title>
+<path d="M164,-117C164,-117 111,-117 111,-117 105,-117 99,-111 99,-105 99,-105 99,-93 99,-93 99,-87 105,-81 111,-81 111,-81 164,-81 164,-81 170,-81 176,-87 176,-93 176,-93 176,-105 176,-105 176,-111 170,-117 164,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="137.5" y="-95.5">7 / s=1</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-leftist-tree-build-07-edge2">
+<title>r-&gt;r1</title>
+<path d="M74.08,-161.86C86.18,-150.06 102.35,-134.28 115.33,-121.62" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="117.13,-122.8 119.96,-117.11 114.2,-119.79 117.13,-122.8" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="107.5" y="-136.4">R</text>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-leftist-tree-build-07-node4">
+<title>r10</title>
+<path d="M134.5,-36C134.5,-36 72.5,-36 72.5,-36 66.5,-36 60.5,-30 60.5,-24 60.5,-24 60.5,-12 60.5,-12 60.5,-6 66.5,0 72.5,0 72.5,0 134.5,0 134.5,0 140.5,0 146.5,-6 146.5,-12 146.5,-12 146.5,-24 146.5,-24 146.5,-30 140.5,-36 134.5,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="103.5" y="-14.5">14 / s=1</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-leftist-tree-build-07-edge3">
+<title>r1-&gt;r10</title>
+<path d="M130.12,-80.86C125.18,-69.37 118.61,-54.11 113.24,-41.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="115.16,-40.79 110.86,-36.11 111.31,-42.45 115.16,-40.79" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="128" y="-55.4">L</text>
+</g>
+<!-- r11 -->
+<!-- r1&#45;&gt;r11 -->
+</g>
+</svg>
+</div><figcaption>FIFO meld 7: roots 7 and 2; resulting tree with exact s values</figcaption></figure>
+<p>Enqueue the result at the rear. Queue after meld: <code>[5, 1, 2]</code>. Node count remains 4, and its root rank is 2.</p></section><section class="step"><h4>8 · Meld FIFO roots 5 and 1</h4><p>Queue before removal: <code>[5, 1, 2]</code>. The root comparison follows the right spine recursively; the trace below records every comparison, empty-subtree return, and unwind repair.</p>
+<ol><li>root 1 wins over root 5; recurse on 1 right child and tree rooted at 5</li><li>root 3 wins over root 5; recurse on 3 right child and tree rooted at 5</li><li>left input empty; return the right input unchanged</li><li>return to root 3: child s values before repair are 1 and 1; keep order; after repair s(left)=1, s(right)=1, s(3)=2</li><li>return to root 1: child s values before repair are 1 and 2; swap; after repair s(left)=2, s(right)=1, s(1)=2</li></ol>
+<figure><div class="diagram-frame" style="--diagram-width:225.1px"><svg aria-label="FIFO meld 8: roots 5 and 1; resulting tree with exact s values" height="301pt" role="img" viewbox="0.00 0.00 225.10 300.60" width="225pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-leftist-tree-build-08-graph0" transform="scale(1 1) rotate(0) translate(10.8 289.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-leftist-tree-build-08-node1">
+<title>r</title>
+<path d="M135,-279C135,-279 82,-279 82,-279 76,-279 70,-273 70,-267 70,-267 70,-255 70,-255 70,-249 76,-243 82,-243 82,-243 135,-243 135,-243 141,-243 147,-249 147,-255 147,-255 147,-267 147,-267 147,-273 141,-279 135,-279" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="108.5" y="-257.5">1 / s=2</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-leftist-tree-build-08-node2">
+<title>r0</title>
+<path d="M83,-198C83,-198 30,-198 30,-198 24,-198 18,-192 18,-186 18,-186 18,-174 18,-174 18,-168 24,-162 30,-162 30,-162 83,-162 83,-162 89,-162 95,-168 95,-174 95,-174 95,-186 95,-186 95,-192 89,-198 83,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="56.5" y="-176.5">3 / s=2</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-leftist-tree-build-08-edge1">
+<title>r-&gt;r0</title>
+<path d="M97.22,-242.86C89.58,-231.26 79.43,-215.84 71.17,-203.29" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="72.81,-201.97 67.76,-198.11 69.31,-204.27 72.81,-201.97" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="91" y="-217.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-leftist-tree-build-08-node7">
+<title>r1</title>
+<path d="M191.5,-198C191.5,-198 129.5,-198 129.5,-198 123.5,-198 117.5,-192 117.5,-186 117.5,-186 117.5,-174 117.5,-174 117.5,-168 123.5,-162 129.5,-162 129.5,-162 191.5,-162 191.5,-162 197.5,-162 203.5,-168 203.5,-174 203.5,-174 203.5,-186 203.5,-186 203.5,-192 197.5,-198 191.5,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="160.5" y="-176.5">11 / s=1</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-leftist-tree-build-08-edge6">
+<title>r-&gt;r1</title>
+<path d="M119.78,-242.86C127.42,-231.26 137.57,-215.84 145.83,-203.29" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="147.69,-204.27 149.24,-198.11 144.19,-201.97 147.69,-204.27" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="143.5" y="-217.4">R</text>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-leftist-tree-build-08-node3">
+<title>r00</title>
+<path d="M65,-117C65,-117 12,-117 12,-117 6,-117 0,-111 0,-105 0,-105 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 65,-81 65,-81 71,-81 77,-87 77,-93 77,-93 77,-105 77,-105 77,-111 71,-117 65,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="38.5" y="-95.5">8 / s=1</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-leftist-tree-build-08-edge2">
+<title>r0-&gt;r00</title>
+<path d="M52.59,-161.86C50,-150.47 46.56,-135.39 43.73,-122.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="45.78,-122.49 42.4,-117.11 41.68,-123.42 45.78,-122.49" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="54" y="-136.4">L</text>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-leftist-tree-build-08-node4">
+<title>r01</title>
+<path d="M164,-117C164,-117 111,-117 111,-117 105,-117 99,-111 99,-105 99,-105 99,-93 99,-93 99,-87 105,-81 111,-81 111,-81 164,-81 164,-81 170,-81 176,-87 176,-93 176,-93 176,-105 176,-105 176,-111 170,-117 164,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="137.5" y="-95.5">5 / s=1</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-leftist-tree-build-08-edge3">
+<title>r0-&gt;r01</title>
+<path d="M74.08,-161.86C86.18,-150.06 102.35,-134.28 115.33,-121.62" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="117.13,-122.8 119.96,-117.11 114.2,-119.79 117.13,-122.8" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="107.5" y="-136.4">R</text>
+</g>
+<!-- r010 -->
+<g class="node" id="rev-leftist-tree-build-08-node5">
+<title>r010</title>
+<path d="M135.5,-36C135.5,-36 73.5,-36 73.5,-36 67.5,-36 61.5,-30 61.5,-24 61.5,-24 61.5,-12 61.5,-12 61.5,-6 67.5,0 73.5,0 73.5,0 135.5,0 135.5,0 141.5,0 147.5,-6 147.5,-12 147.5,-12 147.5,-24 147.5,-24 147.5,-30 141.5,-36 135.5,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="104.5" y="-14.5">12 / s=1</text>
+</g>
+<!-- r01&#45;&gt;r010 -->
+<g class="edge" id="rev-leftist-tree-build-08-edge4">
+<title>r01-&gt;r010</title>
+<path d="M130.34,-80.86C125.58,-69.47 119.28,-54.39 114.09,-41.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="115.9,-40.84 111.65,-36.11 112.02,-42.45 115.9,-40.84" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="128" y="-55.4">L</text>
+</g>
+<!-- r011 -->
+<!-- r01&#45;&gt;r011 -->
+</g>
+</svg>
+</div><figcaption>FIFO meld 8: roots 5 and 1; resulting tree with exact s values</figcaption></figure>
+<p>Enqueue the result at the rear. Queue after meld: <code>[2, 1]</code>. Node count remains 6, and its root rank is 2.</p></section><section class="step"><h4>9 · Meld FIFO roots 2 and 1</h4><p>Queue before removal: <code>[2, 1]</code>. The root comparison follows the right spine recursively; the trace below records every comparison, empty-subtree return, and unwind repair.</p>
+<ol><li>root 1 wins over root 2; recurse on 1 right child and tree rooted at 2</li><li>root 2 wins over root 11; recurse on 2 right child and tree rooted at 11</li><li>root 7 wins over root 11; recurse on 7 right child and tree rooted at 11</li><li>left input empty; return the right input unchanged</li><li>return to root 7: child s values before repair are 1 and 1; keep order; after repair s(left)=1, s(right)=1, s(7)=2</li><li>return to root 2: child s values before repair are 1 and 2; swap; after repair s(left)=2, s(right)=1, s(2)=2</li><li>return to root 1: child s values before repair are 2 and 2; keep order; after repair s(left)=2, s(right)=2, s(1)=3</li></ol>
+<figure><div class="diagram-frame" style="--diagram-width:401.1px"><svg aria-label="FIFO meld 9: roots 2 and 1; resulting tree with exact s values" height="301pt" role="img" viewbox="0.00 0.00 401.10 300.60" width="401pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-leftist-tree-build-09-graph0" transform="scale(1 1) rotate(0) translate(10.8 289.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-leftist-tree-build-09-node1">
+<title>r</title>
+<path d="M213,-279C213,-279 160,-279 160,-279 154,-279 148,-273 148,-267 148,-267 148,-255 148,-255 148,-249 154,-243 160,-243 160,-243 213,-243 213,-243 219,-243 225,-249 225,-255 225,-255 225,-267 225,-267 225,-273 219,-279 213,-279" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="186.5" y="-257.5">1 / s=3</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-leftist-tree-build-09-node2">
+<title>r0</title>
+<path d="M164,-198C164,-198 111,-198 111,-198 105,-198 99,-192 99,-186 99,-186 99,-174 99,-174 99,-168 105,-162 111,-162 111,-162 164,-162 164,-162 170,-162 176,-168 176,-174 176,-174 176,-186 176,-186 176,-192 170,-198 164,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="137.5" y="-176.5">3 / s=2</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-leftist-tree-build-09-edge1">
+<title>r-&gt;r0</title>
+<path d="M175.87,-242.86C168.68,-231.26 159.11,-215.84 151.33,-203.29" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="153.06,-202.1 148.11,-198.11 149.49,-204.31 153.06,-202.1" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="170" y="-217.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-leftist-tree-build-09-node7">
+<title>r1</title>
+<path d="M263,-198C263,-198 210,-198 210,-198 204,-198 198,-192 198,-186 198,-186 198,-174 198,-174 198,-168 204,-162 210,-162 210,-162 263,-162 263,-162 269,-162 275,-168 275,-174 275,-174 275,-186 275,-186 275,-192 269,-198 263,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="236.5" y="-176.5">2 / s=2</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-leftist-tree-build-09-edge6">
+<title>r-&gt;r1</title>
+<path d="M197.35,-242.86C204.69,-231.26 214.45,-215.84 222.39,-203.29" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="224.24,-204.3 225.67,-198.11 220.69,-202.06 224.24,-204.3" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="219.5" y="-217.4">R</text>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-leftist-tree-build-09-node3">
+<title>r00</title>
+<path d="M65,-117C65,-117 12,-117 12,-117 6,-117 0,-111 0,-105 0,-105 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 65,-81 65,-81 71,-81 77,-87 77,-93 77,-93 77,-105 77,-105 77,-111 71,-117 65,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="38.5" y="-95.5">8 / s=1</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-leftist-tree-build-09-edge2">
+<title>r0-&gt;r00</title>
+<path d="M116.02,-161.86C100.97,-149.85 80.77,-133.73 64.76,-120.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="65.94,-119.21 59.94,-117.11 63.32,-122.49 65.94,-119.21" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="99" y="-136.4">L</text>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-leftist-tree-build-09-node4">
+<title>r01</title>
+<path d="M164,-117C164,-117 111,-117 111,-117 105,-117 99,-111 99,-105 99,-105 99,-93 99,-93 99,-87 105,-81 111,-81 111,-81 164,-81 164,-81 170,-81 176,-87 176,-93 176,-93 176,-105 176,-105 176,-111 170,-117 164,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="137.5" y="-95.5">5 / s=1</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-leftist-tree-build-09-edge3">
+<title>r0-&gt;r01</title>
+<path d="M137.5,-161.86C137.5,-150.57 137.5,-135.66 137.5,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="139.6,-123.11 137.5,-117.11 135.4,-123.11 139.6,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="142.5" y="-136.4">R</text>
+</g>
+<!-- r010 -->
+<g class="node" id="rev-leftist-tree-build-09-node5">
+<title>r010</title>
+<path d="M109.5,-36C109.5,-36 47.5,-36 47.5,-36 41.5,-36 35.5,-30 35.5,-24 35.5,-24 35.5,-12 35.5,-12 35.5,-6 41.5,0 47.5,0 47.5,0 109.5,0 109.5,0 115.5,0 121.5,-6 121.5,-12 121.5,-12 121.5,-24 121.5,-24 121.5,-30 115.5,-36 109.5,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="78.5" y="-14.5">12 / s=1</text>
+</g>
+<!-- r01&#45;&gt;r010 -->
+<g class="edge" id="rev-leftist-tree-build-09-edge4">
+<title>r01-&gt;r010</title>
+<path d="M124.7,-80.86C115.96,-69.16 104.31,-53.56 94.9,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="96.55,-39.66 91.28,-36.11 93.18,-42.17 96.55,-39.66" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="117" y="-55.4">L</text>
+</g>
+<!-- r011 -->
+<!-- r01&#45;&gt;r011 -->
+<!-- r10 -->
+<g class="node" id="rev-leftist-tree-build-09-node8">
+<title>r10</title>
+<path d="M263,-117C263,-117 210,-117 210,-117 204,-117 198,-111 198,-105 198,-105 198,-93 198,-93 198,-87 204,-81 210,-81 210,-81 263,-81 263,-81 269,-81 275,-87 275,-93 275,-93 275,-105 275,-105 275,-111 269,-117 263,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="236.5" y="-95.5">7 / s=2</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-leftist-tree-build-09-edge7">
+<title>r1-&gt;r10</title>
+<path d="M236.5,-161.86C236.5,-150.57 236.5,-135.66 236.5,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="238.6,-123.11 236.5,-117.11 234.4,-123.11 238.6,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="241" y="-136.4">L</text>
+</g>
+<!-- r11 -->
+<g class="node" id="rev-leftist-tree-build-09-node11">
+<title>r11</title>
+<path d="M362,-117C362,-117 309,-117 309,-117 303,-117 297,-111 297,-105 297,-105 297,-93 297,-93 297,-87 303,-81 309,-81 309,-81 362,-81 362,-81 368,-81 374,-87 374,-93 374,-93 374,-105 374,-105 374,-111 368,-117 362,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="335.5" y="-95.5">9 / s=1</text>
+</g>
+<!-- r1&#45;&gt;r11 -->
+<g class="edge" id="rev-leftist-tree-build-09-edge10">
+<title>r1-&gt;r11</title>
+<path d="M257.98,-161.86C273.03,-149.85 293.23,-133.73 309.24,-120.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="310.68,-122.49 314.06,-117.11 308.06,-119.21 310.68,-122.49" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="297.5" y="-136.4">R</text>
+</g>
+<!-- r100 -->
+<g class="node" id="rev-leftist-tree-build-09-node9">
+<title>r100</title>
+<path d="M259.5,-36C259.5,-36 197.5,-36 197.5,-36 191.5,-36 185.5,-30 185.5,-24 185.5,-24 185.5,-12 185.5,-12 185.5,-6 191.5,0 197.5,0 197.5,0 259.5,0 259.5,0 265.5,0 271.5,-6 271.5,-12 271.5,-12 271.5,-24 271.5,-24 271.5,-30 265.5,-36 259.5,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="228.5" y="-14.5">14 / s=1</text>
+</g>
+<!-- r10&#45;&gt;r100 -->
+<g class="edge" id="rev-leftist-tree-build-09-edge8">
+<title>r10-&gt;r100</title>
+<path d="M234.76,-80.86C233.62,-69.57 232.11,-54.66 230.86,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="232.93,-41.87 230.23,-36.11 228.75,-42.29 232.93,-41.87" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="238" y="-55.4">L</text>
+</g>
+<!-- r101 -->
+<g class="node" id="rev-leftist-tree-build-09-node10">
+<title>r101</title>
+<path d="M367.5,-36C367.5,-36 305.5,-36 305.5,-36 299.5,-36 293.5,-30 293.5,-24 293.5,-24 293.5,-12 293.5,-12 293.5,-6 299.5,0 305.5,0 305.5,0 367.5,0 367.5,0 373.5,0 379.5,-6 379.5,-12 379.5,-12 379.5,-24 379.5,-24 379.5,-30 373.5,-36 367.5,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="336.5" y="-14.5">11 / s=1</text>
+</g>
+<!-- r10&#45;&gt;r101 -->
+<g class="edge" id="rev-leftist-tree-build-09-edge9">
+<title>r10-&gt;r101</title>
+<path d="M258.2,-80.86C273.4,-68.85 293.8,-52.73 309.97,-39.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="311.44,-41.48 314.84,-36.11 308.83,-38.18 311.44,-41.48" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="297.5" y="-55.4">R</text>
+</g>
+</g>
+</svg>
+</div><figcaption>FIFO meld 9: roots 2 and 1; resulting tree with exact s values</figcaption></figure>
+<p>Enqueue the result at the rear. Queue after meld: <code>[1]</code>. Node count remains 10, and its root rank is 3.</p></section></section>
+<p>The numerical assertions in this extension check that each of the nine melds retains all records, preserves min-heap order and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>s</mi><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">t</mi></mrow><mo stretchy="false">)</mo><mo>≥</mo><mi>s</mi><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">h</mi><mi mathvariant="normal">t</mi></mrow><mo stretchy="false">)</mo></mrow></math>, and stores the recurrence value at every node. The final queue has one tree containing all ten keys. Its computed rank is bounded by the node count and is exactly the length measure controlled by the right spine.</p>
+<h2 id="section-5">Arbitrary deletion: the lecture's pointer case</h2>
+<p>The arbitrary-remove slides distinguish <code>x=root</code> from <code>x≠root</code>. In the latter pictured case, x is p's right child. Let p's other child be B and x's children be L and R. Reconnect L at p's right link first, repair ranks and child order up the ancestor path, then meld the repaired remainder with R. That order matters: it restores the existing tree before adding the detached right subtree.</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Parent p</th>
+<th>Target x</th>
+<th>Remaining root-side tree</th>
+<th>Detached piece</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Before</td>
+<td><code>p(B, x)</code></td>
+<td><code>x(L, R)</code></td>
+<td><code>... → p</code></td>
+<td><code>L</code>, <code>R</code></td>
+</tr>
+<tr>
+<td>Reconnect L</td>
+<td><code>p(B, L)</code></td>
+<td>detached</td>
+<td>same ancestors</td>
+<td><code>R</code></td>
+</tr>
+<tr>
+<td>Repair</td>
+<td>recompute s and swap at each affected ancestor if left s &lt; right s</td>
+<td>—</td>
+<td>stop when the repair has no further effect or reaches the root</td>
+<td><code>R</code></td>
+</tr>
+<tr>
+<td>Finish</td>
+<td>—</td>
+<td>removed</td>
+<td><code>meld(repaired remainder, R)</code></td>
+<td>consumed by meld</td>
+</tr>
+</tbody>
+</table>
+<p>This handle-based operation assumes x is a live node in this heap and has a parent pointer. A key-only request first needs a search, which can cost <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>Θ</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math>. The supplemental rule is to replace whichever parent pointer currently refers to x: p.left when x is a left child, otherwise p.right. This extends the pictured case without changing the meld algorithm. For x at the root, remove-min is the source-supported special case. For a one-child target, the absent child is simply the empty tree with s=0, but the parent-link reconnection still follows the implementation's child-side rule.</p>
+<h2 id="section-6">Common mistakes</h2>
+<ul>
+<li>The invariant compares shortest-path ranks, not subtree sizes. A left subtree may have fewer nodes and still be the correct left child if its s-value is at least the right one's.</li>
+<li>Meld recurses through the right child of the smaller root. It does not recursively merge both children.</li>
+<li>The swap test is strict: equal child ranks do not require a swap. Recompute s after the resulting child order is known.</li>
+<li>The entire tree may be tall. Only the rightmost path has the logarithmic guarantee used in the meld analysis.</li>
+<li>In FIFO initialization, enqueue each melded result at the back and stop at one queued heap. This is not the same schedule as repeated insertion.</li>
+<li>A destructive meld transfers ownership. Keeping both input roots as independently mutable heaps would allow shared nodes to be modified twice.</li>
+</ul>
+<h2 id="section-7">Exam focus</h2>
+<p>Remember the base cases, smaller-root decision, right-subtree recursion, strict rank comparison, child swap, and rank recomputation in that order. For complexity questions, state the operation and cost model: <code>getMin</code> <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>Θ</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math>; search <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>Θ</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math> worst case; meld, insert, and remove-min <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>Θ</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> worst case; FIFO build <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>Θ</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math>; repeated insertion <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>Θ</mi><mo stretchy="false">(</mo><mi>n</mi><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math>. Explain why the right spine is logarithmic from <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>n</mi><mo>≥</mo><msup><mn>2</mn><mrow><mi>s</mi><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">t</mi></mrow><mo stretchy="false">)</mo></mrow></msup><mo>−</mo><mn>1</mn></mrow></math>. Do not claim a whole-tree logarithmic height.</p>
+<h2 id="section-8">Practice</h2>
+<p><strong>If a node has <code>s(left)=2</code> and <code>s(right)=3</code> after melding, what changes on unwind?</strong></p>
+<details><summary>Answer</summary><p>Swap the children because 2&lt;3. The new left rank is 3 and right rank is 2, so the node's rank becomes 1+2=3. Heap order remains valid because the melded subtree was attached beneath the smaller root.</p></details>
+<p><strong>When does the FIFO initializer stop, and what is its queue for an empty input?</strong></p>
+<details><summary>Answer</summary><p>It stops when one tree remains. For empty input the queue begins empty, so initialization returns empty without attempting to dequeue a pair.</p></details>
+<p><strong>Why can arbitrary key search not use the same logarithmic bound as meld?</strong></p>
+<details><summary>Answer</summary><p>Heap order exposes a global minimum but does not order keys left-to-right. The target may be in either subtree, so a missing-key search may visit all n nodes.</p></details>
+<h2 id="section-9">Supplemental implementation detail: either parent link</h2>
+<p>For a live nonroot handle x, remember its parent p and its children L and R. Replace <strong>the same parent link that pointed to x</strong> by L: use p.left if x was the left child, otherwise p.right. Set L.parent=p when L exists, detach R as a separate heap, and invalidate x's handle. The remaining parent edge is heap-ordered because p ≤ x ≤ every key in L.</p>
+<p>Walk upward from p. At each node, swap children if s(left)&lt;s(right), repair their parent pointers, and recompute s. Stop when that node's s does not change, because its parent observes only that rank; otherwise continue to its parent. Finally meld the repaired root-side heap with R. If x is the root, simply meld its two children. Empty children use rank zero; a stale or foreign handle must be rejected before touching links.</p>
+<p>This is an implementation explanation beyond the single pointer case drawn in the lecture. With early stopping, every ancestor whose rank changes had old rank strictly greater than the old rank of the changed child along the propagation path. Such a chain has <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> ranks because a rank-s subtree has at least <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mn>2</mn><mi>s</mi></msup><mo>−</mo><mn>1</mn></mrow></math> nodes. Therefore the rank repair plus final meld takes <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mi>n</mi><mo stretchy="false">)</mo></mrow></math> with a known valid handle. A routine that walks all the way to the root regardless of rank changes may still take <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math>, since total height can be linear.</p></article><nav class="pager" aria-label="Study sequence"><a href="interval-heap.html"><small>Previous</small>Interval heap <span aria-hidden="true">↗</span></a><a href="binomial-heap.html"><small>Next</small>Lazy binomial heap <span aria-hidden="true">↗</span></a></nav><footer>ADS field notes <span>Understand the rule. Trace the repair.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  root.querySelectorAll('table').forEach(table => {
+    const region = document.createElement('div');
+    region.className = 'table-scroll' + (table.rows[0]?.cells.length > 5 ? ' wide' : '');
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    table.before(region); region.append(table);
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Data structure diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect every node.'; frame.after(hint);
+    const update = () => { hint.hidden = frame.scrollWidth <= frame.clientWidth + 1 && frame.scrollHeight <= frame.clientHeight + 1; };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {heap:'priority queue insert delete meld minimum maximum trickle down bubble up build',tree:'insert delete search build rotate rotation',trie:'insert delete search build prefix',sorting:'run merge buffer freeze build',analysis:'potential aggregate accounting'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('a').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('ads-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.ADS_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) expand.textContent = 'Expand examples';
+    const section = new URLSearchParams(url.hash.slice(1)).get('section') || (url.hash.startsWith('#topic=') ? '' : url.hash.slice(1));
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = new URLSearchParams(location.hash.slice(1)).get('section') || location.hash.slice(1);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+})();
+</script></body></html>

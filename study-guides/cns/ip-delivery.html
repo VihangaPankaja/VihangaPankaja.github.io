@@ -1,0 +1,559 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Follow an IPv4 datagram from its header to a local or routed link, then see how ARP finds the next-hop MAC address, ICMP reports network conditions, DHCP configures a joining host, and NAT tracks replies to translated traffic."><title>IP packets, ARP, ICMP, DHCP and NAT · Networks field notes</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('cns-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{.table-hint{display:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#243740;--muted:#5e737d;--secondary:#edf2f3;--border:#d5e0e3;--primary:#1e647c;--accent:#dcecf0;--diagram-fill:#eff4f5;--diagram-border:#829da8;--diagram-edge:#65838f;--active-text:#174b61;--focus:#227b98}:root[data-theme=dark]{--background:#141d23;--foreground:#e1eaf0;--muted:#a8beca;--card:#1a2730;--secondary:#22333e;--border:#3b505c;--primary:#90d1e4;--accent:#254757;--diagram-fill:#22333e;--diagram-border:#93b2c1;--diagram-edge:#9bbac9;--topbar:#141d23f5;--active-text:#b6e5f1;--focus:#90d1e4} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> CNS <span class="subbrand">field notes</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Subnet, TCP, TLS…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a href="index.html">Computer networks and security</a></div><div class="nav-group"><p>Foundations</p><a href="osi.html">OSI model and encapsulation</a><a href="data-link.html">Data link framing, errors and flow control</a><a href="wan.html">WAN and MAN technologies</a><a href="lan.html">LAN, Ethernet and switching</a></div><div class="nav-group"><p>Internetworking</p><a href="routing.html">Network layer and routing</a><a href="ipv4.html">IPv4 addressing, subnetting and VLSM</a><a href="ip-delivery.html" aria-current="page">IP packets, ARP, ICMP, DHCP and NAT</a><a href="ipv6.html">IPv6 addressing and transition</a></div><div class="nav-group"><p>Transport and wireless</p><a href="transport.html">Transport services and connections</a><a href="short-range.html">Bluetooth, NFC and ZigBee</a></div><div class="nav-group"><p>Security and design</p><a href="security.html">Security foundations and cryptography</a><a href="pki.html">Public key infrastructure</a><a href="secure-protocols.html">IPsec and TLS</a><a href="network-design.html">Network design</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS3131<br>Computer Networks and Security</div></aside>
+<main id="main"><div class="eyebrow">Internetworking <span>/</span> Lecture 6 · IP slides 1–5, 21–34</div><h1>IP packets, ARP, ICMP, DHCP and NAT</h1><p class="lead">Follow an IPv4 datagram from its header to a local or routed link, then see how ARP finds the next-hop MAC address, ICMP reports network conditions, DHCP configures a joining host, and NAT tracks replies to translated traffic.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Read the IPv4 datagram header</a><a href="#section-2">Choose direct delivery or a router</a><a href="#section-3">Resolve the link-layer next hop with ARP</a><a href="#section-4">ICMP reports network conditions</a><a href="#section-5">Obtain initial configuration with DHCP</a><a href="#section-6">Translate an endpoint with NAT/PAT</a><a href="#section-7">Common mistakes</a><a href="#section-8">Exam focus</a><a href="#section-9">Practice</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>IP identifies the source and final destination of a datagram across networks. A link frame carries that datagram only to the next device on the current link. Routers use the destination network to choose an outgoing interface; ARP finds that link's next-hop MAC address. ICMP reports network-layer errors and queries, DHCP supplies initial configuration, and NAT keeps a translation record so replies to a shared public address reach the correct private endpoint.</p>
+<figure><div class="diagram-frame" style="--diagram-width:1282.6px"><svg role="img" aria-label="Transport data is carried inside an IPv4 datagram, which is carried in a link-layer frame for one link." width="1283pt" height="70pt"
+ viewBox="0.00 0.00 1282.60 69.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="ip-delivery-encapsulation-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 58.8)">
+<title>G</title>
+<!-- segment -->
+<g id="ip-delivery-encapsulation-node1" class="node">
+<title>segment</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M171,-48C171,-48 12,-48 12,-48 6,-48 0,-42 0,-36 0,-36 0,-12 0,-12 0,-6 6,0 12,0 12,0 171,0 171,0 177,0 183,-6 183,-12 183,-12 183,-36 183,-36 183,-42 177,-48 171,-48"/>
+<text text-anchor="middle" x="91.5" y="-29" font-family="Georgia" font-size="15.00">Transport data</text>
+<text text-anchor="middle" x="91.5" y="-12" font-family="Georgia" font-size="15.00">TCP or UDP segment</text>
+</g>
+<!-- datagram -->
+<g id="ip-delivery-encapsulation-node2" class="node">
+<title>datagram</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M558,-48C558,-48 404,-48 404,-48 398,-48 392,-42 392,-36 392,-36 392,-12 392,-12 392,-6 398,0 404,0 404,0 558,0 558,0 564,0 570,-6 570,-12 570,-12 570,-36 570,-36 570,-42 564,-48 558,-48"/>
+<text text-anchor="middle" x="481" y="-29" font-family="Georgia" font-size="15.00">IPv4 datagram</text>
+<text text-anchor="middle" x="481" y="-12" font-family="Georgia" font-size="15.00">IP header + payload</text>
+</g>
+<!-- segment&#45;&gt;datagram -->
+<g id="ip-delivery-encapsulation-edge1" class="edge">
+<title>segment&#45;&gt;datagram</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M183.35,-24C244.12,-24 323.92,-24 385.45,-24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="385.72,-26.1 391.72,-24 385.72,-21.9 385.72,-26.1"/>
+<text text-anchor="middle" x="287.5" y="-27.4" font-family="Georgia" font-size="12.00">IP adds source/destination IP</text>
+</g>
+<!-- frame -->
+<g id="ip-delivery-encapsulation-node3" class="node">
+<title>frame</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M921,-48C921,-48 765,-48 765,-48 759,-48 753,-42 753,-36 753,-36 753,-12 753,-12 753,-6 759,0 765,0 765,0 921,0 921,0 927,0 933,-6 933,-12 933,-12 933,-36 933,-36 933,-42 927,-48 921,-48"/>
+<text text-anchor="middle" x="843" y="-29" font-family="Georgia" font-size="15.00">Link frame</text>
+<text text-anchor="middle" x="843" y="-12" font-family="Georgia" font-size="15.00">local MAC addresses</text>
+</g>
+<!-- datagram&#45;&gt;frame -->
+<g id="ip-delivery-encapsulation-edge2" class="edge">
+<title>datagram&#45;&gt;frame</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M570.07,-24C623.58,-24 691.92,-24 746.7,-24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="746.97,-26.1 752.97,-24 746.97,-21.9 746.97,-26.1"/>
+<text text-anchor="middle" x="661.5" y="-27.4" font-family="Georgia" font-size="12.00">link adds next&#45;hop MACs</text>
+</g>
+<!-- link -->
+<g id="ip-delivery-encapsulation-node4" class="node">
+<title>link</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M1249,-48C1249,-48 1083,-48 1083,-48 1077,-48 1071,-42 1071,-36 1071,-36 1071,-12 1071,-12 1071,-6 1077,0 1083,0 1083,0 1249,0 1249,0 1255,0 1261,-6 1261,-12 1261,-12 1261,-36 1261,-36 1261,-42 1255,-48 1249,-48"/>
+<text text-anchor="middle" x="1166" y="-29" font-family="Georgia" font-size="15.00">Local medium</text>
+<text text-anchor="middle" x="1166" y="-12" font-family="Georgia" font-size="15.00">Ethernet or other link</text>
+</g>
+<!-- frame&#45;&gt;link -->
+<g id="ip-delivery-encapsulation-edge3" class="edge">
+<title>frame&#45;&gt;link</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M933.42,-24C974.17,-24 1022.59,-24 1064.59,-24"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="1064.74,-26.1 1070.74,-24 1064.74,-21.9 1064.74,-26.1"/>
+<text text-anchor="middle" x="1002" y="-27.4" font-family="Georgia" font-size="12.00">one link at a time</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Transport data is carried inside an IPv4 datagram, which is carried in a link-layer frame for one link.</figcaption></figure>
+
+<h2 id="section-1">Read the IPv4 datagram header</h2>
+<p>The header tells routers and destinations how to handle a datagram. It includes addressing, lifetime, payload selection, optional fragmentation information, and an error check for the header. The lecture calls the 8-bit service field “Type of Service” (ToS); modern IPv4 uses the DS field, with DSCP and ECN bits. The picture below preserves the source's field layout while correcting the IHL unit.</p>
+<figure class="table-wrap"><table>
+<caption>IPv4 header layout. Each row is 32 bits wide; field widths are shown explicitly.</caption>
+<thead><tr><th>32-bit row</th><th>Fields</th><th>What to remember</th></tr></thead><tbody>
+<tr><th>1</th><td>Version 4 · IHL 4 · DS/ToS 8 · Total Length 16</td><td>IHL counts 32-bit words. Total Length counts the header and data together.</td></tr>
+<tr><th>2</th><td>Identification 16 · Flags 3 · Fragment Offset 13</td><td>Identification groups fragments; flags are reserved, DF and MF. Offset is in 8-byte units.</td></tr>
+<tr><th>3</th><td>TTL 8 · Protocol 8 · Header Checksum 16</td><td>TTL limits forwarding; Protocol identifies the payload; checksum covers only this IPv4 header.</td></tr>
+<tr><th>4</th><td colspan="3">Source IPv4 address · 32 bits</td></tr>
+<tr><th>5</th><td colspan="3">Destination IPv4 address · 32 bits</td></tr>
+<tr><th>Variable</th><td>Options and padding, if present · then data</td><td>Options can hold items such as timestamp or record route. Minimum header is 20 bytes; maximum is 60 bytes.</td></tr>
+</tbody></table></figure>
+
+<p>IHL is measured in 32-bit words: the minimum value 5 means 20 bytes, and the 4-bit field permits at most 15 words (60 bytes). Options, when present, are padded to a 32-bit boundary. Total Length is the number of octets in the whole datagram, header plus data. The three flag bits are reserved, Don't Fragment (DF) and More Fragments (MF); the 13-bit offset locates a fragment's data in 8-byte units. These fields support fragmentation and reassembly, but the lecture gives no fragmentation algorithm or worked fragment calculation, so none is inferred here. See <a href="https://www.rfc-editor.org/rfc/rfc791.html#section-3.1">RFC 791 §3.1</a>. The historical ToS byte was redefined as the DS field by <a href="https://www.rfc-editor.org/rfc/rfc2474.html">RFC 2474</a>; ECN uses bits in this field as specified by <a href="https://www.rfc-editor.org/rfc/rfc3168.html">RFC 3168</a>.</p>
+<p>The Protocol field identifies what receives the data next, such as TCP, UDP or ICMP. TTL limits how far a datagram can travel; in ordinary forwarding a router reduces it and recomputes the IPv4 header checksum. That checksum covers only the IPv4 header, not transport data. For the complete IPv4 addressing, subnet and VLSM calculations, see <a href="ipv4.html">IPv4 addressing, subnetting and VLSM</a>.</p>
+<h2 id="section-2">Choose direct delivery or a router</h2>
+<p>A sender compares the destination with its configured local prefix. If it is local, the destination host is the next hop. Otherwise, the forwarding table supplies a router next hop. Prefix arithmetic is covered in <a href="ipv4.html">IPv4 addressing</a>; path selection and routing methods are covered in <a href="routing.html">Network layer and routing</a>.</p>
+<section class="walk" aria-label="Direct delivery and the routed next hop"><h3>Direct delivery and the routed next hop</h3><div class="example-input"><p><strong>Source topology:</strong> A <code>223.1.1.1</code>, B <code>223.1.1.3</code>, E <code>223.1.2.2</code>; router interfaces <code>223.1.1.4</code> and <code>223.1.2.9</code>. Link-layer MAC values are deliberately left unspecified.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>A sends to B on the same network</h4><p>Givens: A is <code>223.1.1.1</code>; B is <code>223.1.1.3</code>. A's forwarding information says <code>223.1.1.x</code> is directly connected, so A selects B itself as the next hop. If B's MAC is not cached, A resolves <code>223.1.1.3</code> with ARP. The Ethernet frame goes to B's MAC. The IPv4 source and destination remain <code>223.1.1.1</code> and <code>223.1.1.3</code>; no router hop is taken.</p></section><section class="step"><h4>A sends to E on another network</h4><p>Change the destination to E, <code>223.1.2.2</code>. A looks up the destination network and selects next hop/router interface <code>223.1.1.4</code>. A resolves that local gateway IP to a MAC address, then sends a frame to the router's MAC. The packet still has source <code>223.1.1.1</code> and destination <code>223.1.2.2</code>: the remote host's MAC is not needed on A's link.</p></section><section class="step"><h4>The router forwards from interface 223.1.2.9</h4><p>Router interface <code>223.1.1.4</code> receives the frame and checks its forwarding table. Network <code>223.1.2.x</code> is directly attached through interface <code>223.1.2.9</code>, so the router sends a new frame toward E, resolving E's MAC on that link if needed. It decreases TTL and updates the IPv4 header checksum. The IP source and destination normally remain A and E while the link frame and its MAC addresses change.</p></section><section class="step"><h4>Check the endpoint and hop fields</h4><p>At E (<code>223.1.2.2</code>), the destination IP is still E. The source IP is still A in ordinary routing. The outgoing Ethernet destination on the last link is E's MAC; the first link's destination was the router's MAC. A router also decreases TTL and recomputes the IPv4 header checksum. Fragmentation, if required and permitted, can change additional header fields; this example does not calculate or prescribe a fragmentation procedure.</p></section></section>
+
+<figure><div class="diagram-frame" style="--diagram-width:952.6px"><svg role="img" aria-label="The source and destination retain their IP identities across the route; each local link uses its own frame addresses." width="953pt" height="140pt"
+ viewBox="0.00 0.00 952.60 139.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="ip-delivery-three-network-topology-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 128.8)">
+<title>G</title>
+<!-- a -->
+<g id="ip-delivery-three-network-topology-node1" class="node">
+<title>a</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M83,-118C83,-118 12,-118 12,-118 6,-118 0,-112 0,-106 0,-106 0,-82 0,-82 0,-76 6,-70 12,-70 12,-70 83,-70 83,-70 89,-70 95,-76 95,-82 95,-82 95,-106 95,-106 95,-112 89,-118 83,-118"/>
+<text text-anchor="middle" x="47.5" y="-99" font-family="Georgia" font-size="15.00">A</text>
+<text text-anchor="middle" x="47.5" y="-82" font-family="Georgia" font-size="15.00">223.1.1.1</text>
+</g>
+<!-- local -->
+<g id="ip-delivery-three-network-topology-node3" class="node">
+<title>local</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M208,-83C208,-83 139,-83 139,-83 133,-83 127,-77 127,-71 127,-71 127,-47 127,-47 127,-41 133,-35 139,-35 139,-35 208,-35 208,-35 214,-35 220,-41 220,-47 220,-47 220,-71 220,-71 220,-77 214,-83 208,-83"/>
+<text text-anchor="middle" x="173.5" y="-64" font-family="Georgia" font-size="15.00">223.1.1.x</text>
+<text text-anchor="middle" x="173.5" y="-47" font-family="Georgia" font-size="15.00">local link</text>
+</g>
+<!-- a&#45;&gt;local -->
+<g id="ip-delivery-three-network-topology-edge1" class="edge">
+<title>a&#45;&gt;local</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M95.03,-80.87C105.47,-77.92 116.54,-74.79 126.95,-71.86"/>
+</g>
+<!-- b -->
+<g id="ip-delivery-three-network-topology-node2" class="node">
+<title>b</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M83,-48C83,-48 12,-48 12,-48 6,-48 0,-42 0,-36 0,-36 0,-12 0,-12 0,-6 6,0 12,0 12,0 83,0 83,0 89,0 95,-6 95,-12 95,-12 95,-36 95,-36 95,-42 89,-48 83,-48"/>
+<text text-anchor="middle" x="47.5" y="-29" font-family="Georgia" font-size="15.00">B</text>
+<text text-anchor="middle" x="47.5" y="-12" font-family="Georgia" font-size="15.00">223.1.1.3</text>
+</g>
+<!-- b&#45;&gt;local -->
+<g id="ip-delivery-three-network-topology-edge2" class="edge">
+<title>b&#45;&gt;local</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M95.03,-37.13C105.47,-40.08 116.54,-43.21 126.95,-46.14"/>
+</g>
+<!-- left -->
+<g id="ip-delivery-three-network-topology-node4" class="node">
+<title>left</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M384,-83C384,-83 264,-83 264,-83 258,-83 252,-77 252,-71 252,-71 252,-47 252,-47 252,-41 258,-35 264,-35 264,-35 384,-35 384,-35 390,-35 396,-41 396,-47 396,-47 396,-71 396,-71 396,-77 390,-83 384,-83"/>
+<text text-anchor="middle" x="324" y="-64" font-family="Georgia" font-size="15.00">router interface</text>
+<text text-anchor="middle" x="324" y="-47" font-family="Georgia" font-size="15.00">223.1.1.4</text>
+</g>
+<!-- local&#45;&gt;left -->
+<g id="ip-delivery-three-network-topology-edge3" class="edge">
+<title>local&#45;&gt;left</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M220.27,-59C230.32,-59 241.2,-59 251.99,-59"/>
+</g>
+<!-- router -->
+<g id="ip-delivery-three-network-topology-node5" class="node">
+<title>router</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M491,-77C491,-77 440,-77 440,-77 434,-77 428,-71 428,-65 428,-65 428,-53 428,-53 428,-47 434,-41 440,-41 440,-41 491,-41 491,-41 497,-41 503,-47 503,-53 503,-53 503,-65 503,-65 503,-71 497,-77 491,-77"/>
+<text text-anchor="middle" x="465.5" y="-55.5" font-family="Georgia" font-size="15.00">Router</text>
+</g>
+<!-- left&#45;&gt;router -->
+<g id="ip-delivery-three-network-topology-edge4" class="edge">
+<title>left&#45;&gt;router</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M396.38,-59C407.24,-59 418.05,-59 427.75,-59"/>
+</g>
+<!-- right -->
+<g id="ip-delivery-three-network-topology-node6" class="node">
+<title>right</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M667,-83C667,-83 547,-83 547,-83 541,-83 535,-77 535,-71 535,-71 535,-47 535,-47 535,-41 541,-35 547,-35 547,-35 667,-35 667,-35 673,-35 679,-41 679,-47 679,-47 679,-71 679,-71 679,-77 673,-83 667,-83"/>
+<text text-anchor="middle" x="607" y="-64" font-family="Georgia" font-size="15.00">router interface</text>
+<text text-anchor="middle" x="607" y="-47" font-family="Georgia" font-size="15.00">223.1.2.9</text>
+</g>
+<!-- router&#45;&gt;right -->
+<g id="ip-delivery-three-network-topology-edge5" class="edge">
+<title>router&#45;&gt;right</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M503.15,-59C512.92,-59 523.81,-59 534.76,-59"/>
+</g>
+<!-- remote -->
+<g id="ip-delivery-three-network-topology-node7" class="node">
+<title>remote</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M792,-83C792,-83 723,-83 723,-83 717,-83 711,-77 711,-71 711,-71 711,-47 711,-47 711,-41 717,-35 723,-35 723,-35 792,-35 792,-35 798,-35 804,-41 804,-47 804,-47 804,-71 804,-71 804,-77 798,-83 792,-83"/>
+<text text-anchor="middle" x="757.5" y="-64" font-family="Georgia" font-size="15.00">223.1.2.x</text>
+<text text-anchor="middle" x="757.5" y="-47" font-family="Georgia" font-size="15.00">local link</text>
+</g>
+<!-- right&#45;&gt;remote -->
+<g id="ip-delivery-three-network-topology-edge6" class="edge">
+<title>right&#45;&gt;remote</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M679.21,-59C689.92,-59 700.73,-59 710.72,-59"/>
+</g>
+<!-- e -->
+<g id="ip-delivery-three-network-topology-node8" class="node">
+<title>e</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M919,-83C919,-83 848,-83 848,-83 842,-83 836,-77 836,-71 836,-71 836,-47 836,-47 836,-41 842,-35 848,-35 848,-35 919,-35 919,-35 925,-35 931,-41 931,-47 931,-47 931,-71 931,-71 931,-77 925,-83 919,-83"/>
+<text text-anchor="middle" x="883.5" y="-64" font-family="Georgia" font-size="15.00">E</text>
+<text text-anchor="middle" x="883.5" y="-47" font-family="Georgia" font-size="15.00">223.1.2.2</text>
+</g>
+<!-- remote&#45;&gt;e -->
+<g id="ip-delivery-three-network-topology-edge7" class="edge">
+<title>remote&#45;&gt;e</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M804.32,-59C814.53,-59 825.37,-59 835.62,-59"/>
+</g>
+</g>
+</svg>
+</div><figcaption>The source and destination retain their IP identities across the route; each local link uses its own frame addresses.</figcaption></figure>
+
+<p>The slide says the datagram “remains unchanged.” Interpret this narrowly: ordinary forwarding normally preserves the source and destination IP addresses, while link-layer framing changes at each link. TTL and the header checksum change at a router; fragmentation can change additional header fields. NAT is another case in which addresses and transport identifiers are deliberately translated. See <a href="https://www.rfc-editor.org/rfc/rfc791.html">RFC 791</a> and <a href="https://www.rfc-editor.org/rfc/rfc1812.html#section-5.3.1">RFC 1812 §5.3.1</a>.</p>
+<h2 id="section-3">Resolve the link-layer next hop with ARP</h2>
+<p>Knowing an IP destination is not enough to construct an Ethernet frame. ARP asks the local link which MAC address owns an IPv4 address. The address being resolved is the next hop selected by forwarding: a local destination's IP, or the gateway's IP for a remote destination.</p>
+<section class="walk" aria-label="ARP: resolve the selected next hop"><h3>ARP: resolve the selected next hop</h3><div class="example-input"><p><strong>Remote example:</strong> A <code>223.1.1.1</code> sends toward E <code>223.1.2.2</code>. A's next hop is router <code>223.1.1.4</code>. ARP target: <code>223.1.1.4</code>.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Decide which IP needs resolution</h4><p>For A → B on the same network, resolve B's IP (<code>223.1.1.3</code>). For A → remote E (<code>223.1.2.2</code>), the route selects gateway <code>223.1.1.4</code>, so resolve the gateway IP instead. ARP answers the local-link question; it does not find a remote host across routers.</p></section><section class="step"><h4>Broadcast the request on this link</h4><p>A sends an ARP request in a link-layer broadcast asking who owns the selected next-hop IPv4 address. Devices on that local broadcast domain can receive it. Routers do not forward this Ethernet broadcast onto other routed links.</p></section><section class="step"><h4>The owner replies; A can send the frame</h4><p>The device that owns the requested IP replies with its MAC address. A can now put that MAC in the destination field of the outgoing link frame and cache the mapping for later use. The IPv4 destination remains the final host's IP, even when the frame is addressed to a router.</p></section><section class="step"><h4>Check the mapping and keep the tables separate</h4><p>Before sending, confirm the ARP cache gives a MAC for the selected next-hop IP; that MAC becomes the frame destination. For remote E, the selected next hop is gateway <code>223.1.1.4</code>, while the packet's final IP destination stays <code>223.1.2.2</code>. In Lab 1.1's sample, <code>show arp</code> pairs IP <code>192.168.1.3</code> with MAC <code>5c26.0a24.2a60</code>; the switch MAC table separately learns that MAC on <code>Fa0/6</code>. The first is an IP-to-MAC cache; the second is a MAC-to-switch-port table. These are sample identifiers, not universal device values.</p></section></section>
+
+<p>ARP resolves a protocol address to a local hardware address so a frame can be sent on the connected link (<a href="https://www.rfc-editor.org/rfc/rfc826.html">RFC 826</a>).</p>
+<p>Lab 1.2 reinforces the distinction by clearing dynamic switch MAC entries, waiting, then generating traffic and comparing <code>arp -a</code> with <code>show mac address-table</code>. ARP caches map IP to MAC; switches learn source MAC to local switch port. The broader MAC-learning labs and their switch behavior belong in <a href="lan.html">LAN, Ethernet and switching</a>. The routed host-to-host lab likewise uses a gateway between different <code>/24</code> networks; its full configuration stays with <a href="routing.html">routing</a>.</p>
+<h2 id="section-4">ICMP reports network conditions</h2>
+<p>ICMP is carried as an IPv4 payload (IPv4 Protocol value 1). It is often described as “above IP” because it reports on IP delivery, but it is not a transport protocol like TCP or UDP. An ICMP message has a type and code: the type identifies a broad message, while the code gives a more specific reason.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Type</th>
+<th style="text-align: right;">Code</th>
+<th>Example meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">0</td>
+<td>Echo Request (<code>ping</code>)</td>
+</tr>
+<tr>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td>Echo Reply (<code>ping</code>)</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td>Destination network unreachable</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td>Destination host unreachable</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td>Destination protocol unreachable</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td>Destination port unreachable</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td>Fragmentation needed and DF set; relevant to path MTU discovery</td>
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">0</td>
+<td>TTL exceeded in transit</td>
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">0</td>
+<td>Parameter problem / bad IP header</td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">0</td>
+<td>Router Advertisement (historical router discovery message)</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0</td>
+<td>Router Solicitation (historical router discovery message)</td>
+</tr>
+</tbody>
+</table>
+
+<p>The slide's type 9/10 labels use “route advertisement” and “router discovery”; RFC 1256 names them Router Advertisement and Router Solicitation. In a classic ICMP error, the quoted packet includes its original IPv4 header plus at least the first 8 bytes of its data, not merely the first 8 bytes of the whole datagram. Current router guidance recommends quoting as much as possible without making the ICMP datagram exceed 576 bytes. See <a href="https://www.rfc-editor.org/rfc/rfc792.html">RFC 792</a>, <a href="https://www.rfc-editor.org/rfc/rfc1812.html#section-4.3.2.3">RFC 1812 §4.3.2.3</a>, and <a href="https://www.rfc-editor.org/rfc/rfc1256.html">RFC 1256</a>.</p>
+<p>The lecture's selected table also lists Destination Unreachable codes 6 (network unknown) and 7 (host unknown), plus Source Quench type 4/code 0. Treat these as historical entries, not the normal current examples: RFC 1812 says routers should not generate code 6 and narrows code 7's use; Source Quench is deprecated and must not be used as congestion control (<a href="https://www.rfc-editor.org/rfc/rfc6633.html">RFC 6633</a>). Code 4, fragmentation needed with DF set, is useful to recognize even though it was omitted from the lecture table.</p>
+<h2 id="section-5">Obtain initial configuration with DHCP</h2>
+<p>DHCP lets a joining host lease an address and receive other network parameters. The address can later be renewed or reused after a lease ends or is released. The four messages below describe the initial selection exchange only.</p>
+<section class="walk" aria-label="DHCP first lease: Discover, Offer, Request, Acknowledge"><h3>DHCP first lease: Discover, Offer, Request, Acknowledge</h3><div class="example-input"><p><strong>Starting state:</strong> a host has joined a network and needs an IPv4 configuration. The walkthrough shows the initial lease exchange; no specific offered address or lease duration is assumed.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Discover · find a server</h4><p>A joining client does not yet have the configured address it is trying to obtain, so it broadcasts <code>DHCPDISCOVER</code> on its local subnet. This begins server discovery. A relay agent can carry the request to a server elsewhere.</p></section><section class="step"><h4>Offer · propose configuration</h4><p>A server returns <code>DHCPOFFER</code> with a proposed address and configuration parameters, including lease information. More than one server may offer; the client has not committed to an offer yet.</p></section><section class="step"><h4>Request · select an offer</h4><p>The client broadcasts <code>DHCPREQUEST</code> to identify the offer/server it selects and request that configuration. In the initial selection exchange, this lets other offering servers know their offers were not selected.</p></section><section class="step"><h4>Acknowledge · confirm the lease</h4><p>The selected server sends <code>DHCPACK</code> with the committed address and configuration parameters. The client can configure itself using the acknowledged values. Lease renewal and rebinding are later states with different addressing behavior, not repetitions of this initial four-message broadcast sequence.</p></section><section class="step"><h4>Independent check</h4><p>Read the message names in order: <code>DISCOVER → OFFER → REQUEST → ACK</code>. The client initiates discovery, chooses an offer, and receives the server's confirmation. DHCP can supply more than an IP address; lease expiry/release makes address reuse possible.</p></section></section>
+
+<p>The selected server may be reached through a DHCP relay; it need not share the client's Ethernet segment. Renewal and rebinding use different message behavior from initial DORA. See <a href="https://www.rfc-editor.org/rfc/rfc2131.html#section-4.1">RFC 2131 §4.1</a>.</p>
+<h2 id="section-6">Translate an endpoint with NAT/PAT</h2>
+<p>The lecture motivates NAT by the limited IPv4 address supply. In its example, inside devices use <code>10.0.0.1</code> through <code>10.0.0.3</code>; the router's inside interface is <code>10.0.0.4</code>, and its public address is <code>138.76.29.7</code>. The source's <code>10.0.0/24</code> label is shorthand; the canonical prefix is <code>10.0.0.0/24</code>. For TCP/UDP traffic, Network Address and Port Translation (NAPT, commonly called PAT) rewrites the private source address and port to a public address and port, then uses a table to reverse the mapping for replies.</p>
+<section class="walk" aria-label="NAT/PAT: follow the request and matching reply"><h3>NAT/PAT: follow the request and matching reply</h3><div class="example-input"><p><strong>Exact lecture values:</strong> inside host <code>10.0.0.1</code>; public NAT address <code>138.76.29.7</code>; server <code>128.119.40.186:80</code>; inside source port <code>3345</code>; translated port <code>5001</code>.</p><p><strong>Translation table row:</strong> WAN <code>138.76.29.7:5001</code> ↔ LAN <code>10.0.0.1:3345</code>.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Inside host sends the original packet</h4><p>Host <code>10.0.0.1</code> sends to server <code>128.119.40.186:80</code>. The packet is <code>10.0.0.1:3345 → 128.119.40.186:80</code>. The source endpoint is private; the destination is the server.</p></section><section class="step"><h4>NAT creates a mapping and forwards</h4><p>The NAT router replaces the source endpoint with its public endpoint <code>138.76.29.7:5001</code> and records the mapping <code>138.76.29.7:5001 ↔ 10.0.0.1:3345</code>. The forwarded packet is <code>138.76.29.7:5001 → 128.119.40.186:80</code>. The destination stays <code>128.119.40.186:80</code>.</p></section><section class="step"><h4>Server reply arrives at the public mapping</h4><p>The server replies to the endpoint it observed: <code>128.119.40.186:80 → 138.76.29.7:5001</code>. The public address and translated port identify the NAT mapping that should receive this return packet.</p></section><section class="step"><h4>NAT restores the inside destination</h4><p>The NAT router looks up <code>138.76.29.7:5001</code> in its translation table, replaces the packet's destination with <code>10.0.0.1:3345</code>, and forwards it inside. The resulting packet is <code>128.119.40.186:80 → 10.0.0.1:3345</code>. The peer source remains the server.</p></section><section class="step"><h4>Verify both directions and the checksums</h4><p>The outbound source <code>10.0.0.1:3345</code> became public source <code>138.76.29.7:5001</code>; the inbound destination was translated back to the original inside endpoint. Address changes require the IPv4 header checksum to be adjusted; TCP/UDP checksums are adjusted when present because their pseudo-header includes IP addresses and the translated port is covered (the IPv4 UDP zero-checksum case remains zero). The map row is the inverse pair used by these four packets.</p></section></section>
+
+<p>The lecture's red annotation abbreviates the peer as <code>128.119.40, 80</code>; the packet labels show the complete server endpoint <code>128.119.40.186:80</code>, which is used consistently above. A translation requires checksum adjustments: IPv4 header checksum, and TCP/UDP checksum when present because its pseudo-header includes IP addresses. The IPv4 UDP zero-checksum case remains zero. The table is state that enables return delivery, not a record of every network relationship.</p>
+<p>NAT can conserve public IPv4 addresses and lets internal addresses change without informing each external peer. Its effect on unsolicited inbound reachability is not a security guarantee: NAT alone is not a firewall or security policy, and explicit mappings can allow inbound traffic. The slide's “security plus?” is an open question, not a conclusion. Its “60,000 simultaneous connections” is a rough lecture estimate based on a 16-bit port field, not guaranteed capacity: usable mappings depend on port allocation, protocol, tuple uniqueness, timeouts and device resources. See <a href="https://www.rfc-editor.org/rfc/rfc3022.html">RFC 3022</a> for NAPT bindings and translation/checksum behavior.</p>
+<p>NAT also lets an organization change ISP without renumbering its internal devices. The lecture presents a tradeoff: a router that rewrites transport ports goes beyond simple Layer 3 forwarding, and translation weakens end-to-end address transparency. Applications that expect directly reachable peers, such as P2P applications, must account for NAT. IPv6 provides the address-space alternative to sharing scarce public IPv4 addresses this way. The lecture describes NAT as widely used despite these design objections; that is its deployment context, rather than a claim that translation is always the right design.</p>
+<h2 id="section-7">Common mistakes</h2>
+<ul>
+<li>Sending a remote datagram to the remote host's MAC. Resolve and use the local router's outgoing-interface MAC instead.</li>
+<li>Saying an IP datagram never changes. Ordinary routers preserve its endpoint IPs, but decrement TTL and update the header checksum; fragmentation or NAT can alter more.</li>
+<li>Saying the IPv4 checksum protects the whole packet. It checks only the IPv4 header and detects errors; it does not authenticate the header or prevent deliberate alteration. TCP/UDP checksums cover their own data and a pseudo-header; they are not cryptographic security guarantees.</li>
+<li>Treating ARP as a routed protocol. Its broadcast resolution operates on the local link; it does not cross a router.</li>
+<li>Mixing ARP cache entries with a switch's MAC-to-port table.</li>
+<li>Calling the DHCP first-lease DORA sequence the pattern for renewal and rebinding.</li>
+<li>Treating hidden private addresses behind NAT as proof of security or treating 60,000 as a universal connection limit.</li>
+</ul>
+<h2 id="section-8">Exam focus</h2>
+<ul>
+<li>Read the header by purpose: version/IHL/length; identification/flags/offset; TTL/protocol/checksum; source/destination; optional options; data.</li>
+<li>IHL counts 32-bit words; minimum header 20 bytes. Total Length includes both header and data.</li>
+<li>On a direct link, frame to the destination's MAC. For a remote network, frame to the selected gateway's MAC while retaining the final destination IP.</li>
+<li>For ARP, resolve the next hop on the local link.</li>
+<li>Distinguish ICMP type from code; recognize echo, unreachable, TTL exceeded, parameter problem, and the historical Router Advertisement/Solicitation pair.</li>
+<li>DHCP initial exchange: Discover → Offer → Request → ACK.</li>
+<li>NAT table row: WAN <code>138.76.29.7:5001</code> ↔ LAN <code>10.0.0.1:3345</code>; replies reverse the destination mapping.</li>
+</ul>
+<h2 id="section-9">Practice</h2>
+<p class="question">A host sends to a destination outside its local network. Which MAC address does it need for the first frame?</p>
+<details class="worked"><summary>Check your answer</summary><p>The MAC address of the selected next-hop router interface on the local link. The IP destination remains the remote host.</p></details>
+
+<p class="question">What does IPv4 IHL count, and what is the minimum IPv4 header size?</p>
+<details class="worked"><summary>Check your answer</summary><p>IHL counts 32-bit words. The minimum IHL is 5, so the minimum header is 5 × 4 = 20 bytes.</p></details>
+
+<p class="question">In NAT state 2, what changes and what stays the same?</p>
+<details class="worked"><summary>Check your answer</summary><p>The source changes from <code>10.0.0.1:3345</code> to <code>138.76.29.7:5001</code>. The destination stays <code>128.119.40.186:80</code>; the NAT records the inverse mapping for the reply.</p></details>
+
+<p class="question">Why is ARP not sent for the remote destination E in the routed example?</p>
+<details class="worked"><summary>Check your answer</summary><p>A sends the first frame to its directly reachable next hop, router <code>223.1.1.4</code>. ARP resolves the gateway MAC on A's link; router <code>223.1.1.4</code> handles resolution on E's attached link.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="ipv4.html"><small>Previous</small>IPv4 addressing, subnetting and VLSM <span aria-hidden="true">↗</span></a><a href="ipv6.html"><small>Next</small>IPv6 addressing and transition <span aria-hidden="true">↗</span></a></nav><footer>Networks field notes <span>Follow the packet. Explain the decision.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  root.querySelectorAll('table').forEach(table => {
+    const region = document.createElement('div');
+    region.className = 'table-scroll' + (table.rows[0]?.cells.length > 5 ? ' wide' : '');
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    table.before(region); region.append(table);
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Network diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {osi:'layers encapsulation protocol service interface pdu',link:'framing crc parity arq flow control sliding window',ethernet:'mac switch arp csma token lab',wan:'man atm isdn frame relay x25',routing:'network forwarding distance vector link state dijkstra',ipv4:'ip subnet mask vlsm binary cidr lab',ipv6:'ip address compression transition lab',transport:'tcp udp handshake congestion window port',bluetooth:'wireless nfc zigbee wpan beacon quiz',security:'cia attacks cryptography encryption hash authentication',infrastructure:'pki certificate ca trust revocation signature',tls:'ssl ipsec ah esp tunnel sa',design:'requirements topology availability delay bandwidth'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('a').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('cns-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.CNS_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) expand.textContent = 'Expand examples';
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

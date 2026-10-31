@@ -1,0 +1,1725 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Store a whole record at every node, but use successive key bits to choose branches."><title>Digital search tree · ADS field notes</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('ads-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{.table-hint{display:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> ADS <span class="subbrand">field notes</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Heap, delete, trie…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a href="index.html">Data structures, side by side.</a><a href="comparison.html">Operation costs at a glance</a></div><div class="nav-group"><p>Priority queues</p><a href="binary-heap.html">Binary heap</a><a href="d-ary-heap.html">d-ary heap</a><a href="dual-heap.html">Dual min/max heaps</a><a href="correspondence-heaps.html">Correspondence heaps</a><a href="interval-heap.html">Interval heap</a></div><div class="nav-group"><p>Tournament and coding trees</p><a href="winner-tree.html">Winner tree</a><a href="loser-tree.html">Loser tree</a><a href="huffman-tree.html">Huffman tree</a></div><div class="nav-group"><p>Meldable priority queues</p><a href="leftist-tree.html">Leftist tree</a><a href="binomial-heap.html">Lazy binomial heap</a><a href="fibonacci-heap.html">Fibonacci heap</a><a href="pairing-heap.html">Pairing heap</a></div><div class="nav-group"><p>Dictionaries and search trees</p><a href="hash-table.html">Hash table</a><a href="binary-search-tree.html">Binary search tree</a><a href="indexed-bst.html">Indexed BST</a><a href="optimal-bst.html">Optimal BST</a><a href="avl-tree.html">AVL tree</a><a href="red-black-tree.html">Red-black tree</a><a href="b-tree.html">B-tree</a><a href="two-three-tree.html">2-3 tree</a><a href="two-three-four-tree.html">2-3-4 tree</a><a href="b-plus-tree.html">B+ tree</a><a href="splay-tree.html">Splay tree</a></div><div class="nav-group"><p>Digital search and strings</p><a href="digital-search-tree.html" aria-current="page">Digital search tree</a><a href="binary-trie.html">Binary trie</a><a href="compressed-trie.html">Compressed binary trie</a><a href="higher-order-trie.html">Higher-order trie</a><a href="multibit-trie.html">Multibit trie and routing</a><a href="suffix-tree.html">Suffix tree</a></div><div class="nav-group"><p>Reference</p><a href="operation-glossary.html">Operation names and exam traps</a></div><div class="nav-group"><p>Sorting on disk</p><a href="external-sorting.html">External sorting</a></div><div class="nav-group"><p>Analysis</p><a href="amortized-analysis.html">Amortized analysis</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4580<br>Advanced Data Structures</div></aside>
+<main id="main"><div class="eyebrow">Digital search and strings <span>/</span> Lecture 12</div><h1>Digital search tree</h1><p class="lead">Store a whole record at every node, but use successive key bits to choose branches.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Rule</a><a href="#section-1">Operations and costs</a><a href="#section-2">Caveats and exam focus</a><a href="#section-3">Fixed-width keys: keep the representation and the bit index</a></nav><article><h2 id="section-0">Rule</h2>
+<p>For fixed-length binary keys, the root can hold any key. Remaining keys use their first bit to choose left 0 or right 1. At the next depth, branch on the second bit, and so on. This is bitwise routing, not numeric BST ordering. Test equality with the current whole key before descending.</p>
+<section aria-label="Fresh build from [0110, 0010, 1001, 1011, 0000]" class="walk"><h3>Fresh build from [0110, 0010, 1001, 1011, 0000]</h3><div class="example-input"><strong>Input list</strong><span>[0110, 0010, 1001, 1011, 0000]</span></div><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Insert 0110 into empty tree</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="The first record occupies the root." height="58pt" role="img" viewbox="0.00 0.00 83.60 57.60" width="84pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="dst-build-1-graph0" transform="scale(1 1) rotate(0) translate(10.8 46.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="dst-build-1-node1">
+<title>r</title>
+<path d="M50,-36C50,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 50,0 50,0 56,0 62,-6 62,-12 62,-12 62,-24 62,-24 62,-30 56,-36 50,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="31" y="-14.5">0110</text>
+</g>
+</g>
+</svg>
+</div><figcaption>The first record occupies the root.</figcaption></figure><div class="step-reason"><p>The tree is empty, so 0110 becomes the root without inspecting a routing bit. The root choice is arbitrary in the lecture; once chosen, every later decision uses the bit at the current depth. Stop this insertion as soon as the empty root slot is filled.</p></div></section><section class="step"><h4>2 · Insert 0010</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="It differs from the root. Its first bit is 0, so take the left slot." height="139pt" role="img" viewbox="0.00 0.00 110.60 138.60" width="111pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="dst-build-2-graph0" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="dst-build-2-node1">
+<title>r</title>
+<path d="M77,-117C77,-117 39,-117 39,-117 33,-117 27,-111 27,-105 27,-105 27,-93 27,-93 27,-87 33,-81 39,-81 39,-81 77,-81 77,-81 83,-81 89,-87 89,-93 89,-93 89,-105 89,-105 89,-111 83,-117 77,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="58" y="-95.5">0110</text>
+</g>
+<!-- r0 -->
+<g class="node" id="dst-build-2-node2">
+<title>r0</title>
+<path d="M50,-36C50,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 50,0 50,0 56,0 62,-6 62,-12 62,-12 62,-24 62,-24 62,-30 56,-36 50,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="31" y="-14.5">0010</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="dst-build-2-edge1">
+<title>r-&gt;r0</title>
+<path d="M52.14,-80.86C48.25,-69.47 43.09,-54.39 38.85,-41.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="40.77,-41.11 36.85,-36.11 36.8,-42.47 40.77,-41.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="51.5" y="-55.4">L</text>
+</g>
+<!-- r1 -->
+<!-- r&#45;&gt;r1 -->
+</g>
+</svg>
+</div><figcaption>It differs from the root. Its first bit is 0, so take the left slot.</figcaption></figure><div class="step-reason"><p>Compare the whole key 0010 with root key 0110 first; they differ, so route by bit 1. Since 0010 begins with 0, follow the left pointer, which is empty, and store it there. Do not use numeric key order to choose this branch.</p></div></section><section class="step"><h4>3 · Insert 1001</h4><figure><div class="diagram-frame" style="--diagram-width:167.6px"><svg aria-label="First bit 1 chooses the right slot." height="139pt" role="img" viewbox="0.00 0.00 167.60 138.60" width="168pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="dst-build-3-graph0" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="dst-build-3-node1">
+<title>r</title>
+<path d="M92,-117C92,-117 54,-117 54,-117 48,-117 42,-111 42,-105 42,-105 42,-93 42,-93 42,-87 48,-81 54,-81 54,-81 92,-81 92,-81 98,-81 104,-87 104,-93 104,-93 104,-105 104,-105 104,-111 98,-117 92,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="73" y="-95.5">0110</text>
+</g>
+<!-- r0 -->
+<g class="node" id="dst-build-3-node2">
+<title>r0</title>
+<path d="M50,-36C50,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 50,0 50,0 56,0 62,-6 62,-12 62,-12 62,-24 62,-24 62,-30 56,-36 50,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="31" y="-14.5">0010</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="dst-build-3-edge1">
+<title>r-&gt;r0</title>
+<path d="M63.89,-80.86C57.78,-69.37 49.67,-54.11 43.03,-41.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="44.77,-40.42 40.1,-36.11 41.06,-42.39 44.77,-40.42" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="59.5" y="-55.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="dst-build-3-node3">
+<title>r1</title>
+<path d="M134,-36C134,-36 96,-36 96,-36 90,-36 84,-30 84,-24 84,-24 84,-12 84,-12 84,-6 90,0 96,0 96,0 134,0 134,0 140,0 146,-6 146,-12 146,-12 146,-24 146,-24 146,-30 140,-36 134,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="115" y="-14.5">1001</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="dst-build-3-edge2">
+<title>r-&gt;r1</title>
+<path d="M82.11,-80.86C88.22,-69.37 96.33,-54.11 102.97,-41.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="104.94,-42.39 105.9,-36.11 101.23,-40.42 104.94,-42.39" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="101" y="-55.4">R</text>
+</g>
+</g>
+</svg>
+</div><figcaption>First bit 1 chooses the right slot.</figcaption></figure><div class="step-reason"><p>The full key 1001 is unequal to 0110, so inspect its bit 1. That bit is 1, selecting the root's right pointer; because it is empty, the key becomes that child. The equality check happens before branch selection at each occupied node.</p></div></section><section class="step"><h4>4 · Insert 1011</h4><figure><div class="diagram-frame" style="--diagram-width:167.6px"><svg aria-label="First bit 1, then second bit 0. It goes left under 1001." height="220pt" role="img" viewbox="0.00 0.00 167.60 219.60" width="168pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="dst-build-4-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="dst-build-4-node1">
+<title>r</title>
+<path d="M68,-198C68,-198 30,-198 30,-198 24,-198 18,-192 18,-186 18,-186 18,-174 18,-174 18,-168 24,-162 30,-162 30,-162 68,-162 68,-162 74,-162 80,-168 80,-174 80,-174 80,-186 80,-186 80,-192 74,-198 68,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="49" y="-176.5">0110</text>
+</g>
+<!-- r0 -->
+<g class="node" id="dst-build-4-node2">
+<title>r0</title>
+<path d="M50,-117C50,-117 12,-117 12,-117 6,-117 0,-111 0,-105 0,-105 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 50,-81 50,-81 56,-81 62,-87 62,-93 62,-93 62,-105 62,-105 62,-111 56,-117 50,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="31" y="-95.5">0010</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="dst-build-4-edge1">
+<title>r-&gt;r0</title>
+<path d="M45.09,-161.86C42.5,-150.47 39.06,-135.39 36.23,-122.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="38.28,-122.49 34.9,-117.11 34.18,-123.42 38.28,-122.49" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="46.5" y="-136.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="dst-build-4-node3">
+<title>r1</title>
+<path d="M134,-117C134,-117 96,-117 96,-117 90,-117 84,-111 84,-105 84,-105 84,-93 84,-93 84,-87 90,-81 96,-81 96,-81 134,-81 134,-81 140,-81 146,-87 146,-93 146,-93 146,-105 146,-105 146,-111 140,-117 134,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="115" y="-95.5">1001</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="dst-build-4-edge2">
+<title>r-&gt;r1</title>
+<path d="M63.32,-161.86C73.09,-150.16 86.13,-134.56 96.66,-121.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="98.47,-123.06 100.71,-117.11 95.25,-120.37 98.47,-123.06" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="91" y="-136.4">R</text>
+</g>
+<!-- r10 -->
+<g class="node" id="dst-build-4-node4">
+<title>r10</title>
+<path d="M106,-36C106,-36 68,-36 68,-36 62,-36 56,-30 56,-24 56,-24 56,-12 56,-12 56,-6 62,0 68,0 68,0 106,0 106,0 112,0 118,-6 118,-12 118,-12 118,-24 118,-24 118,-30 112,-36 106,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="87" y="-14.5">1011</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="dst-build-4-edge3">
+<title>r1-&gt;r10</title>
+<path d="M108.92,-80.86C104.89,-69.47 99.54,-54.39 95.14,-41.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="97.05,-41.06 93.06,-36.11 93.09,-42.47 97.05,-41.06" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="107.5" y="-55.4">L</text>
+</g>
+<!-- r11 -->
+<!-- r1&#45;&gt;r11 -->
+</g>
+</svg>
+</div><figcaption>First bit 1, then second bit 0. It goes left under 1001.</figcaption></figure><div class="step-reason"><p>At root 0110, 1011 is unequal and bit 1 is 1, so visit 1001. The full-key comparison there also fails; at depth 1 inspect bit 2, which is 0, and fill 1001's left pointer. This is a depth-based bit decision, not a comparison of 1011 and 1001 as integers.</p></div></section><section class="step"><h4>5 · Insert 0000</h4><figure><div class="diagram-frame" style="--diagram-width:226.4px"><svg aria-label="First bit 0, then second bit 0. No rotations are needed." height="220pt" role="img" viewbox="0.00 0.00 226.40 219.60" width="226pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="dst-build-5-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="dst-build-5-node1">
+<title>r</title>
+<path d="M139,-198C139,-198 101,-198 101,-198 95,-198 89,-192 89,-186 89,-186 89,-174 89,-174 89,-168 95,-162 101,-162 101,-162 139,-162 139,-162 145,-162 151,-168 151,-174 151,-174 151,-186 151,-186 151,-192 145,-198 139,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="120" y="-176.5">0110</text>
+</g>
+<!-- r0 -->
+<g class="node" id="dst-build-5-node2">
+<title>r0</title>
+<path d="M97,-117C97,-117 59,-117 59,-117 53,-117 47,-111 47,-105 47,-105 47,-93 47,-93 47,-87 53,-81 59,-81 59,-81 97,-81 97,-81 103,-81 109,-87 109,-93 109,-93 109,-105 109,-105 109,-111 103,-117 97,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="78" y="-95.5">0010</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="dst-build-5-edge1">
+<title>r-&gt;r0</title>
+<path d="M110.89,-161.86C104.78,-150.37 96.67,-135.11 90.03,-122.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="91.77,-121.42 87.1,-117.11 88.06,-123.39 91.77,-121.42" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="106.5" y="-136.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="dst-build-5-node5">
+<title>r1</title>
+<path d="M181,-117C181,-117 143,-117 143,-117 137,-117 131,-111 131,-105 131,-105 131,-93 131,-93 131,-87 137,-81 143,-81 143,-81 181,-81 181,-81 187,-81 193,-87 193,-93 193,-93 193,-105 193,-105 193,-111 187,-117 181,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="162" y="-95.5">1001</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="dst-build-5-edge4">
+<title>r-&gt;r1</title>
+<path d="M129.11,-161.86C135.22,-150.37 143.33,-135.11 149.97,-122.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="151.94,-123.39 152.9,-117.11 148.23,-121.42 151.94,-123.39" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="149" y="-136.4">R</text>
+</g>
+<!-- r00 -->
+<g class="node" id="dst-build-5-node3">
+<title>r00</title>
+<path d="M50,-36C50,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 50,0 50,0 56,0 62,-6 62,-12 62,-12 62,-24 62,-24 62,-30 56,-36 50,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="31" y="-14.5">0000</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="dst-build-5-edge2">
+<title>r0-&gt;r00</title>
+<path d="M67.8,-80.86C60.9,-69.26 51.73,-53.84 44.26,-41.29" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="46.05,-40.19 41.18,-36.11 42.44,-42.34 46.05,-40.19" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="62.5" y="-55.4">L</text>
+</g>
+<!-- r01 -->
+<!-- r0&#45;&gt;r01 -->
+<!-- r10 -->
+<g class="node" id="dst-build-5-node6">
+<title>r10</title>
+<path d="M167,-36C167,-36 129,-36 129,-36 123,-36 117,-30 117,-24 117,-24 117,-12 117,-12 117,-6 123,0 129,0 129,0 167,0 167,0 173,0 179,-6 179,-12 179,-12 179,-24 179,-24 179,-30 173,-36 167,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="148" y="-14.5">1011</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="dst-build-5-edge5">
+<title>r1-&gt;r10</title>
+<path d="M158.96,-80.86C156.96,-69.57 154.32,-54.66 152.13,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="154.15,-41.65 151.03,-36.11 150.01,-42.38 154.15,-41.65" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="160.5" y="-55.4">L</text>
+</g>
+<!-- r11 -->
+<!-- r1&#45;&gt;r11 -->
+</g>
+</svg>
+</div><figcaption>First bit 0, then second bit 0. No rotations are needed.</figcaption></figure><div class="step-reason"><p>The key 0000 fails equality at 0110, then bit 1 = 0 selects 0010. It is still unequal there; bit 2 = 0 selects the empty left child, so insert and stop. The resulting paths encode the first differing routing decisions and require no balancing rotations.</p></div></section></section>
+<h2 id="section-1">Operations and costs</h2>
+<p>Search, insert and delete use <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>W</mi><mo stretchy="false">)</mo></mrow></math> bit-routing levels for W-bit keys. The lecture treats full-key comparison as a primitive; long strings can make each comparison costly. Build by inserting n keys costs <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>W</mi><mo stretchy="false">)</mo></mrow></math> in that model. General meld inserts donor records, rather than splicing roots. No native constant-time min/max or rank operation is provided.</p>
+<section aria-label="Search 1011, then delete internal key 1001" class="walk"><h3>Search 1011, then delete internal key 1001</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Compare with 0110</h4><figure><div class="array"><span class="cell"><small>1</small>1011 ≠ 0110</span><span class="cell"><small>2</small>first bit 1 → right</span></div><figcaption>A full key comparison happens at each visited data node.</figcaption></figure><div class="step-reason"><p>Compare all four bits of query 1011 with root 0110; inequality does not itself determine direction. Its bit 1 is 1, so move right to 1001. A missing right pointer would stop here with an unsuccessful search; this branch exists.</p></div></section><section class="step"><h4>2 · Compare with 1001, then 1011</h4><figure><div class="array"><span class="cell"><small>1</small>1011 ≠ 1001</span><span class="cell"><small>2</small>second bit 0 → left</span><span class="cell"><small>3</small>1011 = 1011</span></div><figcaption>The search succeeds at depth 2 below the root.</figcaption></figure><div class="step-reason"><p>Compare the entire query 1011 with node 1001 and find inequality. The query's bit 2 is 0, so follow the left pointer, then compare the whole key again with 1011. Equality at that node confirms membership; stop without examining later bits.</p></div></section><section class="step"><h4>3 · Delete 1001 using a descendant leaf</h4><figure><div class="diagram-frame" style="--diagram-width:194.6px"><svg aria-label="Supplemental deletion explanation: copy descendant leaf 1011 into 1001’s slot and remove the old leaf. It shares every prefix bit required at the replacement depth." height="220pt" role="img" viewbox="0.00 0.00 194.60 219.60" width="195pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="dst-delete-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="dst-delete-node1">
+<title>r</title>
+<path d="M119,-198C119,-198 81,-198 81,-198 75,-198 69,-192 69,-186 69,-186 69,-174 69,-174 69,-168 75,-162 81,-162 81,-162 119,-162 119,-162 125,-162 131,-168 131,-174 131,-174 131,-186 131,-186 131,-192 125,-198 119,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="100" y="-176.5">0110</text>
+</g>
+<!-- r0 -->
+<g class="node" id="dst-delete-node2">
+<title>r0</title>
+<path d="M77,-117C77,-117 39,-117 39,-117 33,-117 27,-111 27,-105 27,-105 27,-93 27,-93 27,-87 33,-81 39,-81 39,-81 77,-81 77,-81 83,-81 89,-87 89,-93 89,-93 89,-105 89,-105 89,-111 83,-117 77,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="58" y="-95.5">0010</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="dst-delete-edge1">
+<title>r-&gt;r0</title>
+<path d="M90.89,-161.86C84.78,-150.37 76.67,-135.11 70.03,-122.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="71.77,-121.42 67.1,-117.11 68.06,-123.39 71.77,-121.42" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="86.5" y="-136.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="dst-delete-node5">
+<title>r1</title>
+<path d="M161,-117C161,-117 123,-117 123,-117 117,-117 111,-111 111,-105 111,-105 111,-93 111,-93 111,-87 117,-81 123,-81 123,-81 161,-81 161,-81 167,-81 173,-87 173,-93 173,-93 173,-105 173,-105 173,-111 167,-117 161,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="142" y="-95.5">1011</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="dst-delete-edge4">
+<title>r-&gt;r1</title>
+<path d="M109.11,-161.86C115.22,-150.37 123.33,-135.11 129.97,-122.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="131.94,-123.39 132.9,-117.11 128.23,-121.42 131.94,-123.39" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="129" y="-136.4">R</text>
+</g>
+<!-- r00 -->
+<g class="node" id="dst-delete-node3">
+<title>r00</title>
+<path d="M50,-36C50,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 50,0 50,0 56,0 62,-6 62,-12 62,-12 62,-24 62,-24 62,-30 56,-36 50,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="31" y="-14.5">0000</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="dst-delete-edge2">
+<title>r0-&gt;r00</title>
+<path d="M52.14,-80.86C48.25,-69.47 43.09,-54.39 38.85,-41.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="40.77,-41.11 36.85,-36.11 36.8,-42.47 40.77,-41.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="51.5" y="-55.4">L</text>
+</g>
+<!-- r01 -->
+<!-- r0&#45;&gt;r01 -->
+</g>
+</svg>
+</div><figcaption>Supplemental deletion explanation: copy descendant leaf 1011 into 1001’s slot and remove the old leaf. It shares every prefix bit required at the replacement depth.</figcaption></figure><div class="step-reason"><p>For deletion, first locate 1001 by full-key comparison at each visited node, then detach its record while preserving the depth-1 routing slot. The shown replacement copies descendant leaf 1011 into that slot and removes its old leaf pointer; its prefix fits the slot, and any other child subtrees retain their bit-2 decisions. In this example, 1011 occupied the left slot, now empty. This is a supplemental internal-node method, not an algorithm detailed in Lecture 12.</p></div></section></section>
+<h2 id="section-2">Caveats and exam focus</h2>
+<p>The ordering of full keys at parent and child does not determine direction. Use the query's bit at the current depth. Supplemental map convention: when insertion reaches a node with the same whole key, replace its associated record in place; do not add another node. A missing branch means unsuccessful search. For variable-length keys, add an explicit end-of-key convention or use a suitable trie. The internal-node deletion walkthrough explains the procedure beyond the lecture's stated complexity.</p>
+<p class="question">Why is 1011 a left child of 1001 in the example?</p>
+<details class="worked"><summary>Check your answer</summary><p>At that level branching uses the second bit. 1011 has second bit 0, even though its numeric value is greater than 1001.</p></details>
+<h2 id="section-3">Fixed-width keys: keep the representation and the bit index</h2>
+<p>In a digital search tree (DST), every occupied node stores a complete dictionary record. The root may contain any key. For an occupied node at depth <code>d</code> (root depth 0), first compare the query's <strong>whole key</strong> with that node's whole key. If unequal, inspect the query's <code>(d+1)</code>th bit (one-based): <code>0</code> takes the left pointer and <code>1</code> takes the right pointer. An empty selected pointer proves absence during search and is the insertion slot during insertion. Leading zeros are data: <code>00000101</code> is an eight-bit key and must not become <code>101</code> or integer 5.</p>
+<p>The lecture calls the branch decision the first bit at the root, the second bit one level below, and so on. In zero-based code, branch on <code>key[d]</code>.</p>
+<h3>Fresh 8-bit build: every insertion and resulting state</h3>
+<p>Input order is <code>[00000000, 00000101, 00110010, 01100111, 10000000, 10000001, 10101100, 11110000]</code>. All keys have width 8 and remain zero-padded. Edge labels L and R show the pointer chosen from the parent; each state includes the complete tree after one insertion.</p>
+<section aria-label="Fresh 8-bit build from [00000000, 00000101, 00110010, 01100111, 10000000, 10000001, 10101100, 11110000]" class="walk"><h3>Fresh 8-bit build from [00000000, 00000101, 00110010, 01100111, 10000000, 10000001, 10101100, 11110000]</h3><div class="example-input"><strong>Input list</strong><span>[00000000, 00000101, 00110010, 01100111, 10000000, 10000001, 10101100, 11110000]</span></div><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Insert 00000000 as the root</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="An empty tree accepts its first full-width key at the root; no bit or key comparison is needed." height="58pt" role="img" viewbox="0.00 0.00 122.60 57.60" width="123pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-digital-search-tree-build-01-graph0" transform="scale(1 1) rotate(0) translate(10.8 46.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-digital-search-tree-build-01-node1">
+<title>r</title>
+<path d="M89,-36C89,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 89,0 89,0 95,0 101,-6 101,-12 101,-12 101,-24 101,-24 101,-30 95,-36 89,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="50.5" y="-14.5">00000000</text>
+</g>
+</g>
+</svg>
+</div><figcaption>An empty tree accepts its first full-width key at the root; no bit or key comparison is needed.</figcaption></figure></section><section class="step"><h4>2 · Insert 00000101</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="Compare the whole keys, then bit 1 is 0; the left slot is empty." height="139pt" role="img" viewbox="0.00 0.00 159.60 138.60" width="160pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-digital-search-tree-build-02-graph0" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-digital-search-tree-build-02-node1">
+<title>r</title>
+<path d="M126,-117C126,-117 49,-117 49,-117 43,-117 37,-111 37,-105 37,-105 37,-93 37,-93 37,-87 43,-81 49,-81 49,-81 126,-81 126,-81 132,-81 138,-87 138,-93 138,-93 138,-105 138,-105 138,-111 132,-117 126,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="87.5" y="-95.5">00000000</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-digital-search-tree-build-02-node2">
+<title>r0</title>
+<path d="M89,-36C89,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 89,0 89,0 95,0 101,-6 101,-12 101,-12 101,-24 101,-24 101,-30 95,-36 89,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="50.5" y="-14.5">00000101</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-digital-search-tree-build-02-edge1">
+<title>r-&gt;r0</title>
+<path d="M79.47,-80.86C74.09,-69.37 66.94,-54.11 61.1,-41.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="62.96,-40.65 58.51,-36.11 59.16,-42.43 62.96,-40.65" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="76" y="-55.4">L</text>
+</g>
+<!-- r1 -->
+<!-- r&#45;&gt;r1 -->
+</g>
+</svg>
+</div><figcaption>Compare the whole keys, then bit 1 is 0; the left slot is empty.</figcaption></figure></section><section class="step"><h4>3 · Insert 00110010</h4><figure><div class="diagram-frame" style="--diagram-width:214.6px"><svg aria-label="At the root bit 1 is 0; at 00000101 bit 2 is 0, so the second left slot is filled." height="220pt" role="img" viewbox="0.00 0.00 214.60 219.60" width="215pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-digital-search-tree-build-03-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-digital-search-tree-build-03-node1">
+<title>r</title>
+<path d="M181,-198C181,-198 104,-198 104,-198 98,-198 92,-192 92,-186 92,-186 92,-174 92,-174 92,-168 98,-162 104,-162 104,-162 181,-162 181,-162 187,-162 193,-168 193,-174 193,-174 193,-186 193,-186 193,-192 187,-198 181,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="142.5" y="-176.5">00000000</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-digital-search-tree-build-03-node2">
+<title>r0</title>
+<path d="M126,-117C126,-117 49,-117 49,-117 43,-117 37,-111 37,-105 37,-105 37,-93 37,-93 37,-87 43,-81 49,-81 49,-81 126,-81 126,-81 132,-81 138,-87 138,-93 138,-93 138,-105 138,-105 138,-111 132,-117 126,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="87.5" y="-95.5">00000101</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-digital-search-tree-build-03-edge1">
+<title>r-&gt;r0</title>
+<path d="M130.57,-161.86C122.49,-150.26 111.75,-134.84 103.02,-122.29" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="104.56,-120.83 99.41,-117.11 101.12,-123.23 104.56,-120.83" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="123" y="-136.4">L</text>
+</g>
+<!-- r1 -->
+<!-- r&#45;&gt;r1 -->
+<!-- r00 -->
+<g class="node" id="rev-digital-search-tree-build-03-node3">
+<title>r00</title>
+<path d="M89,-36C89,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 89,0 89,0 95,0 101,-6 101,-12 101,-12 101,-24 101,-24 101,-30 95,-36 89,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="50.5" y="-14.5">00110010</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-digital-search-tree-build-03-edge2">
+<title>r0-&gt;r00</title>
+<path d="M79.47,-80.86C74.09,-69.37 66.94,-54.11 61.1,-41.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="62.96,-40.65 58.51,-36.11 59.16,-42.43 62.96,-40.65" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="76" y="-55.4">L</text>
+</g>
+<!-- r01 -->
+<!-- r0&#45;&gt;r01 -->
+</g>
+</svg>
+</div><figcaption>At the root bit 1 is 0; at 00000101 bit 2 is 0, so the second left slot is filled.</figcaption></figure></section><section class="step"><h4>4 · Insert 01100111</h4><figure><div class="diagram-frame" style="--diagram-width:245.6px"><svg aria-label="At depth 1, bit 2 is 1, taking the right pointer of 00000101." height="220pt" role="img" viewbox="0.00 0.00 245.60 219.60" width="246pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-digital-search-tree-build-04-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-digital-search-tree-build-04-node1">
+<title>r</title>
+<path d="M205,-198C205,-198 128,-198 128,-198 122,-198 116,-192 116,-186 116,-186 116,-174 116,-174 116,-168 122,-162 128,-162 128,-162 205,-162 205,-162 211,-162 217,-168 217,-174 217,-174 217,-186 217,-186 217,-192 211,-198 205,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="166.5" y="-176.5">00000000</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-digital-search-tree-build-04-node2">
+<title>r0</title>
+<path d="M150,-117C150,-117 73,-117 73,-117 67,-117 61,-111 61,-105 61,-105 61,-93 61,-93 61,-87 67,-81 73,-81 73,-81 150,-81 150,-81 156,-81 162,-87 162,-93 162,-93 162,-105 162,-105 162,-111 156,-117 150,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="111.5" y="-95.5">00000101</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-digital-search-tree-build-04-edge1">
+<title>r-&gt;r0</title>
+<path d="M154.57,-161.86C146.49,-150.26 135.75,-134.84 127.02,-122.29" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="128.56,-120.83 123.41,-117.11 125.12,-123.23 128.56,-120.83" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="147" y="-136.4">L</text>
+</g>
+<!-- r1 -->
+<!-- r&#45;&gt;r1 -->
+<!-- r00 -->
+<g class="node" id="rev-digital-search-tree-build-04-node3">
+<title>r00</title>
+<path d="M89,-36C89,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 89,0 89,0 95,0 101,-6 101,-12 101,-12 101,-24 101,-24 101,-30 95,-36 89,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="50.5" y="-14.5">00110010</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-digital-search-tree-build-04-edge2">
+<title>r0-&gt;r00</title>
+<path d="M98.26,-80.86C89.23,-69.16 77.19,-53.56 67.45,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="69.04,-39.57 63.71,-36.11 65.72,-42.14 69.04,-39.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="90" y="-55.4">L</text>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-digital-search-tree-build-04-node4">
+<title>r01</title>
+<path d="M212,-36C212,-36 135,-36 135,-36 129,-36 123,-30 123,-24 123,-24 123,-12 123,-12 123,-6 129,0 135,0 135,0 212,0 212,0 218,0 224,-6 224,-12 224,-12 224,-24 224,-24 224,-30 218,-36 212,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-14.5">01100111</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-digital-search-tree-build-04-edge3">
+<title>r0-&gt;r01</title>
+<path d="M124.95,-80.86C134.13,-69.16 146.38,-53.56 156.27,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="158.02,-42.12 160.07,-36.11 154.72,-39.53 158.02,-42.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="151.5" y="-55.4">R</text>
+</g>
+</g>
+</svg>
+</div><figcaption>At depth 1, bit 2 is 1, taking the right pointer of 00000101.</figcaption></figure></section><section class="step"><h4>5 · Insert 10000000</h4><figure><div class="diagram-frame" style="--diagram-width:306.6px"><svg aria-label="Its root bit 1 is 1, so this key fills the empty right slot below the root." height="220pt" role="img" viewbox="0.00 0.00 306.60 219.60" width="307pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-digital-search-tree-build-05-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-digital-search-tree-build-05-node1">
+<title>r</title>
+<path d="M242,-198C242,-198 165,-198 165,-198 159,-198 153,-192 153,-186 153,-186 153,-174 153,-174 153,-168 159,-162 165,-162 165,-162 242,-162 242,-162 248,-162 254,-168 254,-174 254,-174 254,-186 254,-186 254,-192 248,-198 242,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="203.5" y="-176.5">00000000</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-digital-search-tree-build-05-node2">
+<title>r0</title>
+<path d="M150,-117C150,-117 73,-117 73,-117 67,-117 61,-111 61,-105 61,-105 61,-93 61,-93 61,-87 67,-81 73,-81 73,-81 150,-81 150,-81 156,-81 162,-87 162,-93 162,-93 162,-105 162,-105 162,-111 156,-117 150,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="111.5" y="-95.5">00000101</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-digital-search-tree-build-05-edge1">
+<title>r-&gt;r0</title>
+<path d="M183.54,-161.86C169.67,-149.95 151.1,-134.01 136.29,-121.29" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="137.34,-119.42 131.42,-117.11 134.61,-122.61 137.34,-119.42" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="168" y="-136.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-digital-search-tree-build-05-node5">
+<title>r1</title>
+<path d="M273,-117C273,-117 196,-117 196,-117 190,-117 184,-111 184,-105 184,-105 184,-93 184,-93 184,-87 190,-81 196,-81 196,-81 273,-81 273,-81 279,-81 285,-87 285,-93 285,-93 285,-105 285,-105 285,-111 279,-117 273,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="234.5" y="-95.5">10000000</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-digital-search-tree-build-05-edge4">
+<title>r-&gt;r1</title>
+<path d="M210.23,-161.86C214.7,-150.47 220.61,-135.39 225.49,-122.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="227.55,-123.46 227.79,-117.11 223.64,-121.93 227.55,-123.46" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="225.5" y="-136.4">R</text>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-digital-search-tree-build-05-node3">
+<title>r00</title>
+<path d="M89,-36C89,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 89,0 89,0 95,0 101,-6 101,-12 101,-12 101,-24 101,-24 101,-30 95,-36 89,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="50.5" y="-14.5">00110010</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-digital-search-tree-build-05-edge2">
+<title>r0-&gt;r00</title>
+<path d="M98.26,-80.86C89.23,-69.16 77.19,-53.56 67.45,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="69.04,-39.57 63.71,-36.11 65.72,-42.14 69.04,-39.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="90" y="-55.4">L</text>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-digital-search-tree-build-05-node4">
+<title>r01</title>
+<path d="M212,-36C212,-36 135,-36 135,-36 129,-36 123,-30 123,-24 123,-24 123,-12 123,-12 123,-6 129,0 135,0 135,0 212,0 212,0 218,0 224,-6 224,-12 224,-12 224,-24 224,-24 224,-30 218,-36 212,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-14.5">01100111</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-digital-search-tree-build-05-edge3">
+<title>r0-&gt;r01</title>
+<path d="M124.95,-80.86C134.13,-69.16 146.38,-53.56 156.27,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="158.02,-42.12 160.07,-36.11 154.72,-39.53 158.02,-42.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="151.5" y="-55.4">R</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Its root bit 1 is 1, so this key fills the empty right slot below the root.</figcaption></figure></section><section class="step"><h4>6 · Insert 10000001</h4><figure><div class="diagram-frame" style="--diagram-width:393.9px"><svg aria-label="At root bit 1 is 1; at depth 1 bit 2 is 0, placing it left of 10000000." height="220pt" role="img" viewbox="0.00 0.00 393.90 219.60" width="394pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-digital-search-tree-build-06-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-digital-search-tree-build-06-node1">
+<title>r</title>
+<path d="M273,-198C273,-198 196,-198 196,-198 190,-198 184,-192 184,-186 184,-186 184,-174 184,-174 184,-168 190,-162 196,-162 196,-162 273,-162 273,-162 279,-162 285,-168 285,-174 285,-174 285,-186 285,-186 285,-192 279,-198 273,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="234.5" y="-176.5">00000000</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-digital-search-tree-build-06-node2">
+<title>r0</title>
+<path d="M212,-117C212,-117 135,-117 135,-117 129,-117 123,-111 123,-105 123,-105 123,-93 123,-93 123,-87 129,-81 135,-81 135,-81 212,-81 212,-81 218,-81 224,-87 224,-93 224,-93 224,-105 224,-105 224,-111 218,-117 212,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-95.5">00000101</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-digital-search-tree-build-06-edge1">
+<title>r-&gt;r0</title>
+<path d="M221.26,-161.86C212.23,-150.16 200.19,-134.56 190.45,-121.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="192.04,-120.57 186.71,-117.11 188.72,-123.14 192.04,-120.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="213" y="-136.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-digital-search-tree-build-06-node5">
+<title>r1</title>
+<path d="M335,-117C335,-117 258,-117 258,-117 252,-117 246,-111 246,-105 246,-105 246,-93 246,-93 246,-87 252,-81 258,-81 258,-81 335,-81 335,-81 341,-81 347,-87 347,-93 347,-93 347,-105 347,-105 347,-111 341,-117 335,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-95.5">10000000</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-digital-search-tree-build-06-edge4">
+<title>r-&gt;r1</title>
+<path d="M247.95,-161.86C257.13,-150.16 269.38,-134.56 279.27,-121.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="281.02,-123.12 283.07,-117.11 277.72,-120.53 281.02,-123.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="274.5" y="-136.4">R</text>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-digital-search-tree-build-06-node3">
+<title>r00</title>
+<path d="M89,-36C89,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 89,0 89,0 95,0 101,-6 101,-12 101,-12 101,-24 101,-24 101,-30 95,-36 89,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="50.5" y="-14.5">00110010</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-digital-search-tree-build-06-edge2">
+<title>r0-&gt;r00</title>
+<path d="M146.81,-80.86C127.87,-68.69 102.37,-52.31 82.36,-39.46" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="83.32,-37.58 77.14,-36.11 81.05,-41.12 83.32,-37.58" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="124" y="-55.4">L</text>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-digital-search-tree-build-06-node4">
+<title>r01</title>
+<path d="M212,-36C212,-36 135,-36 135,-36 129,-36 123,-30 123,-24 123,-24 123,-12 123,-12 123,-6 129,0 135,0 135,0 212,0 212,0 218,0 224,-6 224,-12 224,-12 224,-24 224,-24 224,-30 218,-36 212,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-14.5">01100111</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-digital-search-tree-build-06-edge3">
+<title>r0-&gt;r01</title>
+<path d="M173.5,-80.86C173.5,-69.57 173.5,-54.66 173.5,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="175.6,-42.11 173.5,-36.11 171.4,-42.11 175.6,-42.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="178.5" y="-55.4">R</text>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-digital-search-tree-build-06-node6">
+<title>r10</title>
+<path d="M335,-36C335,-36 258,-36 258,-36 252,-36 246,-30 246,-24 246,-24 246,-12 246,-12 246,-6 252,0 258,0 258,0 335,0 335,0 341,0 347,-6 347,-12 347,-12 347,-24 347,-24 347,-30 341,-36 335,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-14.5">10000001</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-digital-search-tree-build-06-edge5">
+<title>r1-&gt;r10</title>
+<path d="M296.5,-80.86C296.5,-69.57 296.5,-54.66 296.5,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="298.6,-42.11 296.5,-36.11 294.4,-42.11 298.6,-42.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="301" y="-55.4">L</text>
+</g>
+<!-- r11 -->
+<!-- r1&#45;&gt;r11 -->
+</g>
+</svg>
+</div><figcaption>At root bit 1 is 1; at depth 1 bit 2 is 0, placing it left of 10000000.</figcaption></figure></section><section class="step"><h4>7 · Insert 10101100</h4><figure><div class="diagram-frame" style="--diagram-width:405.6px"><svg aria-label="The route is right at bit 1, left at bit 2, then right at bit 3; that slot is empty." height="301pt" role="img" viewbox="0.00 0.00 405.60 300.60" width="406pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-digital-search-tree-build-07-graph0" transform="scale(1 1) rotate(0) translate(10.8 289.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-digital-search-tree-build-07-node1">
+<title>r</title>
+<path d="M273,-279C273,-279 196,-279 196,-279 190,-279 184,-273 184,-267 184,-267 184,-255 184,-255 184,-249 190,-243 196,-243 196,-243 273,-243 273,-243 279,-243 285,-249 285,-255 285,-255 285,-267 285,-267 285,-273 279,-279 273,-279" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="234.5" y="-257.5">00000000</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-digital-search-tree-build-07-node2">
+<title>r0</title>
+<path d="M212,-198C212,-198 135,-198 135,-198 129,-198 123,-192 123,-186 123,-186 123,-174 123,-174 123,-168 129,-162 135,-162 135,-162 212,-162 212,-162 218,-162 224,-168 224,-174 224,-174 224,-186 224,-186 224,-192 218,-198 212,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-176.5">00000101</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-digital-search-tree-build-07-edge1">
+<title>r-&gt;r0</title>
+<path d="M221.26,-242.86C212.23,-231.16 200.19,-215.56 190.45,-202.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="192.04,-201.57 186.71,-198.11 188.72,-204.14 192.04,-201.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="213" y="-217.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-digital-search-tree-build-07-node5">
+<title>r1</title>
+<path d="M335,-198C335,-198 258,-198 258,-198 252,-198 246,-192 246,-186 246,-186 246,-174 246,-174 246,-168 252,-162 258,-162 258,-162 335,-162 335,-162 341,-162 347,-168 347,-174 347,-174 347,-186 347,-186 347,-192 341,-198 335,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-176.5">10000000</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-digital-search-tree-build-07-edge4">
+<title>r-&gt;r1</title>
+<path d="M247.95,-242.86C257.13,-231.16 269.38,-215.56 279.27,-202.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="281.02,-204.12 283.07,-198.11 277.72,-201.53 281.02,-204.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="274.5" y="-217.4">R</text>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-digital-search-tree-build-07-node3">
+<title>r00</title>
+<path d="M89,-117C89,-117 12,-117 12,-117 6,-117 0,-111 0,-105 0,-105 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 89,-81 89,-81 95,-81 101,-87 101,-93 101,-93 101,-105 101,-105 101,-111 95,-117 89,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="50.5" y="-95.5">00110010</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-digital-search-tree-build-07-edge2">
+<title>r0-&gt;r00</title>
+<path d="M146.81,-161.86C127.87,-149.69 102.37,-133.31 82.36,-120.46" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="83.32,-118.58 77.14,-117.11 81.05,-122.12 83.32,-118.58" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="124" y="-136.4">L</text>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-digital-search-tree-build-07-node4">
+<title>r01</title>
+<path d="M212,-117C212,-117 135,-117 135,-117 129,-117 123,-111 123,-105 123,-105 123,-93 123,-93 123,-87 129,-81 135,-81 135,-81 212,-81 212,-81 218,-81 224,-87 224,-93 224,-93 224,-105 224,-105 224,-111 218,-117 212,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-95.5">01100111</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-digital-search-tree-build-07-edge3">
+<title>r0-&gt;r01</title>
+<path d="M173.5,-161.86C173.5,-150.57 173.5,-135.66 173.5,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="175.6,-123.11 173.5,-117.11 171.4,-123.11 175.6,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="178.5" y="-136.4">R</text>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-digital-search-tree-build-07-node6">
+<title>r10</title>
+<path d="M335,-117C335,-117 258,-117 258,-117 252,-117 246,-111 246,-105 246,-105 246,-93 246,-93 246,-87 252,-81 258,-81 258,-81 335,-81 335,-81 341,-81 347,-87 347,-93 347,-93 347,-105 347,-105 347,-111 341,-117 335,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-95.5">10000001</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-digital-search-tree-build-07-edge5">
+<title>r1-&gt;r10</title>
+<path d="M296.5,-161.86C296.5,-150.57 296.5,-135.66 296.5,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="298.6,-123.11 296.5,-117.11 294.4,-123.11 298.6,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="301" y="-136.4">L</text>
+</g>
+<!-- r11 -->
+<!-- r1&#45;&gt;r11 -->
+<!-- r100 -->
+<!-- r10&#45;&gt;r100 -->
+<!-- r101 -->
+<g class="node" id="rev-digital-search-tree-build-07-node8">
+<title>r101</title>
+<path d="M372,-36C372,-36 295,-36 295,-36 289,-36 283,-30 283,-24 283,-24 283,-12 283,-12 283,-6 289,0 295,0 295,0 372,0 372,0 378,0 384,-6 384,-12 384,-12 384,-24 384,-24 384,-30 378,-36 372,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="333.5" y="-14.5">10101100</text>
+</g>
+<!-- r10&#45;&gt;r101 -->
+<g class="edge" id="rev-digital-search-tree-build-07-edge7">
+<title>r10-&gt;r101</title>
+<path d="M304.53,-80.86C309.91,-69.37 317.06,-54.11 322.9,-41.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="324.84,-42.43 325.49,-36.11 321.04,-40.65 324.84,-42.43" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="322.5" y="-55.4">R</text>
+</g>
+</g>
+</svg>
+</div><figcaption>The route is right at bit 1, left at bit 2, then right at bit 3; that slot is empty.</figcaption></figure></section><section class="step"><h4>8 · Insert 11110000</h4><figure><div class="diagram-frame" style="--diagram-width:491.6px"><svg aria-label="At depth 1, bit 2 is 1, so the empty right pointer of 10000000 receives the final key." height="301pt" role="img" viewbox="0.00 0.00 491.60 300.60" width="492pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-digital-search-tree-build-08-graph0" transform="scale(1 1) rotate(0) translate(10.8 289.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-digital-search-tree-build-08-node1">
+<title>r</title>
+<path d="M273,-279C273,-279 196,-279 196,-279 190,-279 184,-273 184,-267 184,-267 184,-255 184,-255 184,-249 190,-243 196,-243 196,-243 273,-243 273,-243 279,-243 285,-249 285,-255 285,-255 285,-267 285,-267 285,-273 279,-279 273,-279" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="234.5" y="-257.5">00000000</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-digital-search-tree-build-08-node2">
+<title>r0</title>
+<path d="M212,-198C212,-198 135,-198 135,-198 129,-198 123,-192 123,-186 123,-186 123,-174 123,-174 123,-168 129,-162 135,-162 135,-162 212,-162 212,-162 218,-162 224,-168 224,-174 224,-174 224,-186 224,-186 224,-192 218,-198 212,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-176.5">00000101</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-digital-search-tree-build-08-edge1">
+<title>r-&gt;r0</title>
+<path d="M221.26,-242.86C212.23,-231.16 200.19,-215.56 190.45,-202.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="192.04,-201.57 186.71,-198.11 188.72,-204.14 192.04,-201.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="213" y="-217.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-digital-search-tree-build-08-node5">
+<title>r1</title>
+<path d="M335,-198C335,-198 258,-198 258,-198 252,-198 246,-192 246,-186 246,-186 246,-174 246,-174 246,-168 252,-162 258,-162 258,-162 335,-162 335,-162 341,-162 347,-168 347,-174 347,-174 347,-186 347,-186 347,-192 341,-198 335,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-176.5">10000000</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-digital-search-tree-build-08-edge4">
+<title>r-&gt;r1</title>
+<path d="M247.95,-242.86C257.13,-231.16 269.38,-215.56 279.27,-202.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="281.02,-204.12 283.07,-198.11 277.72,-201.53 281.02,-204.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="274.5" y="-217.4">R</text>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-digital-search-tree-build-08-node3">
+<title>r00</title>
+<path d="M89,-117C89,-117 12,-117 12,-117 6,-117 0,-111 0,-105 0,-105 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 89,-81 89,-81 95,-81 101,-87 101,-93 101,-93 101,-105 101,-105 101,-111 95,-117 89,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="50.5" y="-95.5">00110010</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-digital-search-tree-build-08-edge2">
+<title>r0-&gt;r00</title>
+<path d="M146.81,-161.86C127.87,-149.69 102.37,-133.31 82.36,-120.46" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="83.32,-118.58 77.14,-117.11 81.05,-122.12 83.32,-118.58" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="124" y="-136.4">L</text>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-digital-search-tree-build-08-node4">
+<title>r01</title>
+<path d="M212,-117C212,-117 135,-117 135,-117 129,-117 123,-111 123,-105 123,-105 123,-93 123,-93 123,-87 129,-81 135,-81 135,-81 212,-81 212,-81 218,-81 224,-87 224,-93 224,-93 224,-105 224,-105 224,-111 218,-117 212,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-95.5">01100111</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-digital-search-tree-build-08-edge3">
+<title>r0-&gt;r01</title>
+<path d="M173.5,-161.86C173.5,-150.57 173.5,-135.66 173.5,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="175.6,-123.11 173.5,-117.11 171.4,-123.11 175.6,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="178.5" y="-136.4">R</text>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-digital-search-tree-build-08-node6">
+<title>r10</title>
+<path d="M335,-117C335,-117 258,-117 258,-117 252,-117 246,-111 246,-105 246,-105 246,-93 246,-93 246,-87 252,-81 258,-81 258,-81 335,-81 335,-81 341,-81 347,-87 347,-93 347,-93 347,-105 347,-105 347,-111 341,-117 335,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-95.5">10000001</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-digital-search-tree-build-08-edge5">
+<title>r1-&gt;r10</title>
+<path d="M296.5,-161.86C296.5,-150.57 296.5,-135.66 296.5,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="298.6,-123.11 296.5,-117.11 294.4,-123.11 298.6,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="301" y="-136.4">L</text>
+</g>
+<!-- r11 -->
+<g class="node" id="rev-digital-search-tree-build-08-node9">
+<title>r11</title>
+<path d="M458,-117C458,-117 381,-117 381,-117 375,-117 369,-111 369,-105 369,-105 369,-93 369,-93 369,-87 375,-81 381,-81 381,-81 458,-81 458,-81 464,-81 470,-87 470,-93 470,-93 470,-105 470,-105 470,-111 464,-117 458,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="419.5" y="-95.5">11110000</text>
+</g>
+<!-- r1&#45;&gt;r11 -->
+<g class="edge" id="rev-digital-search-tree-build-08-edge8">
+<title>r1-&gt;r11</title>
+<path d="M323.19,-161.86C342.13,-149.69 367.63,-133.31 387.64,-120.46" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="388.95,-122.12 392.86,-117.11 386.68,-118.58 388.95,-122.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="370.5" y="-136.4">R</text>
+</g>
+<!-- r100 -->
+<!-- r10&#45;&gt;r100 -->
+<!-- r101 -->
+<g class="node" id="rev-digital-search-tree-build-08-node8">
+<title>r101</title>
+<path d="M372,-36C372,-36 295,-36 295,-36 289,-36 283,-30 283,-24 283,-24 283,-12 283,-12 283,-6 289,0 295,0 295,0 372,0 372,0 378,0 384,-6 384,-12 384,-12 384,-24 384,-24 384,-30 378,-36 372,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="333.5" y="-14.5">10101100</text>
+</g>
+<!-- r10&#45;&gt;r101 -->
+<g class="edge" id="rev-digital-search-tree-build-08-edge7">
+<title>r10-&gt;r101</title>
+<path d="M304.53,-80.86C309.91,-69.37 317.06,-54.11 322.9,-41.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="324.84,-42.43 325.49,-36.11 321.04,-40.65 324.84,-42.43" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="322.5" y="-55.4">R</text>
+</g>
+</g>
+</svg>
+</div><figcaption>At depth 1, bit 2 is 1, so the empty right pointer of 10000000 receives the final key.</figcaption></figure></section></section>
+<p>The route checks explain why the example is useful: <code>00110010</code> is less than the root numerically but follows two left links; <code>01100111</code> is also below the root but takes a right link at its second decision. Only the query bit at the current depth selects a pointer.</p>
+<h3>Search and insertion edge cases</h3>
+<section aria-label="Exact membership, absent branch, and duplicate key" class="walk"><h3>Exact membership, absent branch, and duplicate key</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Find existing key 10101100</h4><figure><div class="array"><span class="cell"><small>1</small>compare 10101100 ≠ 00000000</span><span class="cell"><small>2</small>bit 1 = 1 → right</span><span class="cell"><small>3</small>compare 10101100 ≠ 10000000</span><span class="cell"><small>4</small>bit 2 = 0 → left</span><span class="cell"><small>5</small>compare 10101100 ≠ 10000001</span><span class="cell"><small>6</small>bit 3 = 1 → right</span><span class="cell"><small>7</small>compare 10101100 = 10101100 → found</span></div><figcaption>Every visited record gets a whole-key equality check before the next branch bit is read.</figcaption></figure></section><section class="step"><h4>2 · Search absent key 00001010</h4><figure><div class="array"><span class="cell"><small>1</small>compare 00001010 ≠ 00000000</span><span class="cell"><small>2</small>bit 1 = 0 → left</span><span class="cell"><small>3</small>compare 00001010 ≠ 00000101</span><span class="cell"><small>4</small>bit 2 = 0 → left</span><span class="cell"><small>5</small>compare 00001010 ≠ 00110010</span><span class="cell"><small>6</small>bit 3 = 0 → missing left pointer → absent</span></div><figcaption>Stop at the first null link: do not report a match merely because the route prefix agrees.</figcaption></figure></section><section class="step"><h4>3 · Insert duplicate key 10000001</h4><figure><div class="array"><span class="cell"><small>1</small>compare whole key at 00000000: unequal</span><span class="cell"><small>2</small>route right; compare at 10000000: unequal</span><span class="cell"><small>3</small>route left; compare at 10000001: equal</span><span class="cell"><small>4</small>replace its associated record; add 0 nodes</span></div><figcaption>Updating an existing dictionary key is the stated supplemental map convention. A duplicate is not inserted as a second node.</figcaption></figure></section></section>
+<p>If two distinct fixed-width keys differ, their first differing bit eventually sends insertion down different pointers. If every bit matches, they are the same key: follow the page's update convention (or reject the duplicate if an application specifies set semantics), and do not descend past the full key width. A query that reaches a node but fails full-key equality is not present.</p>
+<h3>Deletion: leaf removal and internal replacement</h3>
+<p>The lecture gives the operation's complexity but does not spell out its deletion algorithm. The following are supplemental teaching procedures for fixed-width keys. A leaf can be detached directly. For an internal node, copying a descendant <strong>leaf record</strong> into the target slot and removing that leaf from its old slot preserves the target's incoming prefix and leaves every other subtree at its original depth. Do not move an internal child pointer up a level: that would change which absolute key bit each child decision represents.</p>
+<section aria-label="Delete a leaf, then an internal node with two children" class="walk"><h3>Delete a leaf, then an internal node with two children</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Starting state</h4><figure><div class="diagram-frame" style="--diagram-width:491.6px"><svg aria-label="The target 10000000 is internal and has two children; 10101100 is a descendant leaf." height="301pt" role="img" viewbox="0.00 0.00 491.60 300.60" width="492pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-digital-search-tree-delete-start-graph0" transform="scale(1 1) rotate(0) translate(10.8 289.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-digital-search-tree-delete-start-node1">
+<title>r</title>
+<path d="M273,-279C273,-279 196,-279 196,-279 190,-279 184,-273 184,-267 184,-267 184,-255 184,-255 184,-249 190,-243 196,-243 196,-243 273,-243 273,-243 279,-243 285,-249 285,-255 285,-255 285,-267 285,-267 285,-273 279,-279 273,-279" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="234.5" y="-257.5">00000000</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-digital-search-tree-delete-start-node2">
+<title>r0</title>
+<path d="M212,-198C212,-198 135,-198 135,-198 129,-198 123,-192 123,-186 123,-186 123,-174 123,-174 123,-168 129,-162 135,-162 135,-162 212,-162 212,-162 218,-162 224,-168 224,-174 224,-174 224,-186 224,-186 224,-192 218,-198 212,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-176.5">00000101</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-digital-search-tree-delete-start-edge1">
+<title>r-&gt;r0</title>
+<path d="M221.26,-242.86C212.23,-231.16 200.19,-215.56 190.45,-202.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="192.04,-201.57 186.71,-198.11 188.72,-204.14 192.04,-201.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="213" y="-217.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-digital-search-tree-delete-start-node5">
+<title>r1</title>
+<path d="M335,-198C335,-198 258,-198 258,-198 252,-198 246,-192 246,-186 246,-186 246,-174 246,-174 246,-168 252,-162 258,-162 258,-162 335,-162 335,-162 341,-162 347,-168 347,-174 347,-174 347,-186 347,-186 347,-192 341,-198 335,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-176.5">10000000</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-digital-search-tree-delete-start-edge4">
+<title>r-&gt;r1</title>
+<path d="M247.95,-242.86C257.13,-231.16 269.38,-215.56 279.27,-202.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="281.02,-204.12 283.07,-198.11 277.72,-201.53 281.02,-204.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="274.5" y="-217.4">R</text>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-digital-search-tree-delete-start-node3">
+<title>r00</title>
+<path d="M89,-117C89,-117 12,-117 12,-117 6,-117 0,-111 0,-105 0,-105 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 89,-81 89,-81 95,-81 101,-87 101,-93 101,-93 101,-105 101,-105 101,-111 95,-117 89,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="50.5" y="-95.5">00110010</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-digital-search-tree-delete-start-edge2">
+<title>r0-&gt;r00</title>
+<path d="M146.81,-161.86C127.87,-149.69 102.37,-133.31 82.36,-120.46" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="83.32,-118.58 77.14,-117.11 81.05,-122.12 83.32,-118.58" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="124" y="-136.4">L</text>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-digital-search-tree-delete-start-node4">
+<title>r01</title>
+<path d="M212,-117C212,-117 135,-117 135,-117 129,-117 123,-111 123,-105 123,-105 123,-93 123,-93 123,-87 129,-81 135,-81 135,-81 212,-81 212,-81 218,-81 224,-87 224,-93 224,-93 224,-105 224,-105 224,-111 218,-117 212,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-95.5">01100111</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-digital-search-tree-delete-start-edge3">
+<title>r0-&gt;r01</title>
+<path d="M173.5,-161.86C173.5,-150.57 173.5,-135.66 173.5,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="175.6,-123.11 173.5,-117.11 171.4,-123.11 175.6,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="178.5" y="-136.4">R</text>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-digital-search-tree-delete-start-node6">
+<title>r10</title>
+<path d="M335,-117C335,-117 258,-117 258,-117 252,-117 246,-111 246,-105 246,-105 246,-93 246,-93 246,-87 252,-81 258,-81 258,-81 335,-81 335,-81 341,-81 347,-87 347,-93 347,-93 347,-105 347,-105 347,-111 341,-117 335,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-95.5">10000001</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-digital-search-tree-delete-start-edge5">
+<title>r1-&gt;r10</title>
+<path d="M296.5,-161.86C296.5,-150.57 296.5,-135.66 296.5,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="298.6,-123.11 296.5,-117.11 294.4,-123.11 298.6,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="301" y="-136.4">L</text>
+</g>
+<!-- r11 -->
+<g class="node" id="rev-digital-search-tree-delete-start-node9">
+<title>r11</title>
+<path d="M458,-117C458,-117 381,-117 381,-117 375,-117 369,-111 369,-105 369,-105 369,-93 369,-93 369,-87 375,-81 381,-81 381,-81 458,-81 458,-81 464,-81 470,-87 470,-93 470,-93 470,-105 470,-105 470,-111 464,-117 458,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="419.5" y="-95.5">11110000</text>
+</g>
+<!-- r1&#45;&gt;r11 -->
+<g class="edge" id="rev-digital-search-tree-delete-start-edge8">
+<title>r1-&gt;r11</title>
+<path d="M323.19,-161.86C342.13,-149.69 367.63,-133.31 387.64,-120.46" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="388.95,-122.12 392.86,-117.11 386.68,-118.58 388.95,-122.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="370.5" y="-136.4">R</text>
+</g>
+<!-- r100 -->
+<!-- r10&#45;&gt;r100 -->
+<!-- r101 -->
+<g class="node" id="rev-digital-search-tree-delete-start-node8">
+<title>r101</title>
+<path d="M372,-36C372,-36 295,-36 295,-36 289,-36 283,-30 283,-24 283,-24 283,-12 283,-12 283,-6 289,0 295,0 295,0 372,0 372,0 378,0 384,-6 384,-12 384,-12 384,-24 384,-24 384,-30 378,-36 372,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="333.5" y="-14.5">10101100</text>
+</g>
+<!-- r10&#45;&gt;r101 -->
+<g class="edge" id="rev-digital-search-tree-delete-start-edge7">
+<title>r10-&gt;r101</title>
+<path d="M304.53,-80.86C309.91,-69.37 317.06,-54.11 322.9,-41.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="324.84,-42.43 325.49,-36.11 321.04,-40.65 324.84,-42.43" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="322.5" y="-55.4">R</text>
+</g>
+</g>
+</svg>
+</div><figcaption>The target 10000000 is internal and has two children; 10101100 is a descendant leaf.</figcaption></figure></section><section class="step"><h4>2 · Remove leaf 10101100</h4><figure><div class="diagram-frame" style="--diagram-width:491.6px"><svg aria-label="Detach its old bit-3 right pointer from 10000001. This is a leaf deletion, so no replacement is needed." height="220pt" role="img" viewbox="0.00 0.00 491.60 219.60" width="492pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-digital-search-tree-delete-leaf-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-digital-search-tree-delete-leaf-node1">
+<title>r</title>
+<path d="M273,-198C273,-198 196,-198 196,-198 190,-198 184,-192 184,-186 184,-186 184,-174 184,-174 184,-168 190,-162 196,-162 196,-162 273,-162 273,-162 279,-162 285,-168 285,-174 285,-174 285,-186 285,-186 285,-192 279,-198 273,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="234.5" y="-176.5">00000000</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-digital-search-tree-delete-leaf-node2">
+<title>r0</title>
+<path d="M212,-117C212,-117 135,-117 135,-117 129,-117 123,-111 123,-105 123,-105 123,-93 123,-93 123,-87 129,-81 135,-81 135,-81 212,-81 212,-81 218,-81 224,-87 224,-93 224,-93 224,-105 224,-105 224,-111 218,-117 212,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-95.5">00000101</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-digital-search-tree-delete-leaf-edge1">
+<title>r-&gt;r0</title>
+<path d="M221.26,-161.86C212.23,-150.16 200.19,-134.56 190.45,-121.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="192.04,-120.57 186.71,-117.11 188.72,-123.14 192.04,-120.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="213" y="-136.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-digital-search-tree-delete-leaf-node5">
+<title>r1</title>
+<path d="M335,-117C335,-117 258,-117 258,-117 252,-117 246,-111 246,-105 246,-105 246,-93 246,-93 246,-87 252,-81 258,-81 258,-81 335,-81 335,-81 341,-81 347,-87 347,-93 347,-93 347,-105 347,-105 347,-111 341,-117 335,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-95.5">10000000</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-digital-search-tree-delete-leaf-edge4">
+<title>r-&gt;r1</title>
+<path d="M247.95,-161.86C257.13,-150.16 269.38,-134.56 279.27,-121.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="281.02,-123.12 283.07,-117.11 277.72,-120.53 281.02,-123.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="274.5" y="-136.4">R</text>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-digital-search-tree-delete-leaf-node3">
+<title>r00</title>
+<path d="M89,-36C89,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 89,0 89,0 95,0 101,-6 101,-12 101,-12 101,-24 101,-24 101,-30 95,-36 89,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="50.5" y="-14.5">00110010</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-digital-search-tree-delete-leaf-edge2">
+<title>r0-&gt;r00</title>
+<path d="M146.81,-80.86C127.87,-68.69 102.37,-52.31 82.36,-39.46" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="83.32,-37.58 77.14,-36.11 81.05,-41.12 83.32,-37.58" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="124" y="-55.4">L</text>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-digital-search-tree-delete-leaf-node4">
+<title>r01</title>
+<path d="M212,-36C212,-36 135,-36 135,-36 129,-36 123,-30 123,-24 123,-24 123,-12 123,-12 123,-6 129,0 135,0 135,0 212,0 212,0 218,0 224,-6 224,-12 224,-12 224,-24 224,-24 224,-30 218,-36 212,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-14.5">01100111</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-digital-search-tree-delete-leaf-edge3">
+<title>r0-&gt;r01</title>
+<path d="M173.5,-80.86C173.5,-69.57 173.5,-54.66 173.5,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="175.6,-42.11 173.5,-36.11 171.4,-42.11 175.6,-42.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="178.5" y="-55.4">R</text>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-digital-search-tree-delete-leaf-node6">
+<title>r10</title>
+<path d="M335,-36C335,-36 258,-36 258,-36 252,-36 246,-30 246,-24 246,-24 246,-12 246,-12 246,-6 252,0 258,0 258,0 335,0 335,0 341,0 347,-6 347,-12 347,-12 347,-24 347,-24 347,-30 341,-36 335,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-14.5">10000001</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-digital-search-tree-delete-leaf-edge5">
+<title>r1-&gt;r10</title>
+<path d="M296.5,-80.86C296.5,-69.57 296.5,-54.66 296.5,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="298.6,-42.11 296.5,-36.11 294.4,-42.11 298.6,-42.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="301" y="-55.4">L</text>
+</g>
+<!-- r11 -->
+<g class="node" id="rev-digital-search-tree-delete-leaf-node7">
+<title>r11</title>
+<path d="M458,-36C458,-36 381,-36 381,-36 375,-36 369,-30 369,-24 369,-24 369,-12 369,-12 369,-6 375,0 381,0 381,0 458,0 458,0 464,0 470,-6 470,-12 470,-12 470,-24 470,-24 470,-30 464,-36 458,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="419.5" y="-14.5">11110000</text>
+</g>
+<!-- r1&#45;&gt;r11 -->
+<g class="edge" id="rev-digital-search-tree-delete-leaf-edge6">
+<title>r1-&gt;r11</title>
+<path d="M323.19,-80.86C342.13,-68.69 367.63,-52.31 387.64,-39.46" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="388.95,-41.12 392.86,-36.11 386.68,-37.58 388.95,-41.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="369.5" y="-55.4">R</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Detach its old bit-3 right pointer from 10000001. This is a leaf deletion, so no replacement is needed.</figcaption></figure></section><section class="step"><h4>3 · Copy that leaf record into 10000000</h4><figure><div class="diagram-frame" style="--diagram-width:491.6px"><svg aria-label="Replace the target at the same depth, retaining both child slots. The new target key shares the root-right prefix and its bit 2 routes left; 11110000 has bit 2 = 1 and stays right." height="220pt" role="img" viewbox="0.00 0.00 491.60 219.60" width="492pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-digital-search-tree-delete-copy-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-digital-search-tree-delete-copy-node1">
+<title>r</title>
+<path d="M273,-198C273,-198 196,-198 196,-198 190,-198 184,-192 184,-186 184,-186 184,-174 184,-174 184,-168 190,-162 196,-162 196,-162 273,-162 273,-162 279,-162 285,-168 285,-174 285,-174 285,-186 285,-186 285,-192 279,-198 273,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="234.5" y="-176.5">00000000</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-digital-search-tree-delete-copy-node2">
+<title>r0</title>
+<path d="M212,-117C212,-117 135,-117 135,-117 129,-117 123,-111 123,-105 123,-105 123,-93 123,-93 123,-87 129,-81 135,-81 135,-81 212,-81 212,-81 218,-81 224,-87 224,-93 224,-93 224,-105 224,-105 224,-111 218,-117 212,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-95.5">00000101</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-digital-search-tree-delete-copy-edge1">
+<title>r-&gt;r0</title>
+<path d="M221.26,-161.86C212.23,-150.16 200.19,-134.56 190.45,-121.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="192.04,-120.57 186.71,-117.11 188.72,-123.14 192.04,-120.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="213" y="-136.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-digital-search-tree-delete-copy-node5">
+<title>r1</title>
+<path d="M335,-117C335,-117 258,-117 258,-117 252,-117 246,-111 246,-105 246,-105 246,-93 246,-93 246,-87 252,-81 258,-81 258,-81 335,-81 335,-81 341,-81 347,-87 347,-93 347,-93 347,-105 347,-105 347,-111 341,-117 335,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-95.5">10101100</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-digital-search-tree-delete-copy-edge4">
+<title>r-&gt;r1</title>
+<path d="M247.95,-161.86C257.13,-150.16 269.38,-134.56 279.27,-121.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="281.02,-123.12 283.07,-117.11 277.72,-120.53 281.02,-123.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="274.5" y="-136.4">R</text>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-digital-search-tree-delete-copy-node3">
+<title>r00</title>
+<path d="M89,-36C89,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 89,0 89,0 95,0 101,-6 101,-12 101,-12 101,-24 101,-24 101,-30 95,-36 89,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="50.5" y="-14.5">00110010</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-digital-search-tree-delete-copy-edge2">
+<title>r0-&gt;r00</title>
+<path d="M146.81,-80.86C127.87,-68.69 102.37,-52.31 82.36,-39.46" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="83.32,-37.58 77.14,-36.11 81.05,-41.12 83.32,-37.58" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="124" y="-55.4">L</text>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-digital-search-tree-delete-copy-node4">
+<title>r01</title>
+<path d="M212,-36C212,-36 135,-36 135,-36 129,-36 123,-30 123,-24 123,-24 123,-12 123,-12 123,-6 129,0 135,0 135,0 212,0 212,0 218,0 224,-6 224,-12 224,-12 224,-24 224,-24 224,-30 218,-36 212,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-14.5">01100111</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-digital-search-tree-delete-copy-edge3">
+<title>r0-&gt;r01</title>
+<path d="M173.5,-80.86C173.5,-69.57 173.5,-54.66 173.5,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="175.6,-42.11 173.5,-36.11 171.4,-42.11 175.6,-42.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="178.5" y="-55.4">R</text>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-digital-search-tree-delete-copy-node6">
+<title>r10</title>
+<path d="M335,-36C335,-36 258,-36 258,-36 252,-36 246,-30 246,-24 246,-24 246,-12 246,-12 246,-6 252,0 258,0 258,0 335,0 335,0 341,0 347,-6 347,-12 347,-12 347,-24 347,-24 347,-30 341,-36 335,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-14.5">10000001</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-digital-search-tree-delete-copy-edge5">
+<title>r1-&gt;r10</title>
+<path d="M296.5,-80.86C296.5,-69.57 296.5,-54.66 296.5,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="298.6,-42.11 296.5,-36.11 294.4,-42.11 298.6,-42.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="301" y="-55.4">L</text>
+</g>
+<!-- r11 -->
+<g class="node" id="rev-digital-search-tree-delete-copy-node7">
+<title>r11</title>
+<path d="M458,-36C458,-36 381,-36 381,-36 375,-36 369,-30 369,-24 369,-24 369,-12 369,-12 369,-6 375,0 381,0 381,0 458,0 458,0 464,0 470,-6 470,-12 470,-12 470,-24 470,-24 470,-30 464,-36 458,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="419.5" y="-14.5">11110000</text>
+</g>
+<!-- r1&#45;&gt;r11 -->
+<g class="edge" id="rev-digital-search-tree-delete-copy-edge6">
+<title>r1-&gt;r11</title>
+<path d="M323.19,-80.86C342.13,-68.69 367.63,-52.31 387.64,-39.46" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="388.95,-41.12 392.86,-36.11 386.68,-37.58 388.95,-41.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="369.5" y="-55.4">R</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Replace the target at the same depth, retaining both child slots. The new target key shares the root-right prefix and its bit 2 routes left; 11110000 has bit 2 = 1 and stays right.</figcaption></figure></section><section class="step"><h4>4 · Final state after deleting 10000000</h4><figure><div class="diagram-frame" style="--diagram-width:491.6px"><svg aria-label="The copied record occurs once, its former leaf slot is empty, and every surviving key still follows its recorded bits." height="220pt" role="img" viewbox="0.00 0.00 491.60 219.60" width="492pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-digital-search-tree-delete-final-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-digital-search-tree-delete-final-node1">
+<title>r</title>
+<path d="M273,-198C273,-198 196,-198 196,-198 190,-198 184,-192 184,-186 184,-186 184,-174 184,-174 184,-168 190,-162 196,-162 196,-162 273,-162 273,-162 279,-162 285,-168 285,-174 285,-174 285,-186 285,-186 285,-192 279,-198 273,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="234.5" y="-176.5">00000000</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-digital-search-tree-delete-final-node2">
+<title>r0</title>
+<path d="M212,-117C212,-117 135,-117 135,-117 129,-117 123,-111 123,-105 123,-105 123,-93 123,-93 123,-87 129,-81 135,-81 135,-81 212,-81 212,-81 218,-81 224,-87 224,-93 224,-93 224,-105 224,-105 224,-111 218,-117 212,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-95.5">00000101</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-digital-search-tree-delete-final-edge1">
+<title>r-&gt;r0</title>
+<path d="M221.26,-161.86C212.23,-150.16 200.19,-134.56 190.45,-121.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="192.04,-120.57 186.71,-117.11 188.72,-123.14 192.04,-120.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="213" y="-136.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-digital-search-tree-delete-final-node5">
+<title>r1</title>
+<path d="M335,-117C335,-117 258,-117 258,-117 252,-117 246,-111 246,-105 246,-105 246,-93 246,-93 246,-87 252,-81 258,-81 258,-81 335,-81 335,-81 341,-81 347,-87 347,-93 347,-93 347,-105 347,-105 347,-111 341,-117 335,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-95.5">10101100</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-digital-search-tree-delete-final-edge4">
+<title>r-&gt;r1</title>
+<path d="M247.95,-161.86C257.13,-150.16 269.38,-134.56 279.27,-121.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="281.02,-123.12 283.07,-117.11 277.72,-120.53 281.02,-123.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="274.5" y="-136.4">R</text>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-digital-search-tree-delete-final-node3">
+<title>r00</title>
+<path d="M89,-36C89,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 89,0 89,0 95,0 101,-6 101,-12 101,-12 101,-24 101,-24 101,-30 95,-36 89,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="50.5" y="-14.5">00110010</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-digital-search-tree-delete-final-edge2">
+<title>r0-&gt;r00</title>
+<path d="M146.81,-80.86C127.87,-68.69 102.37,-52.31 82.36,-39.46" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="83.32,-37.58 77.14,-36.11 81.05,-41.12 83.32,-37.58" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="124" y="-55.4">L</text>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-digital-search-tree-delete-final-node4">
+<title>r01</title>
+<path d="M212,-36C212,-36 135,-36 135,-36 129,-36 123,-30 123,-24 123,-24 123,-12 123,-12 123,-6 129,0 135,0 135,0 212,0 212,0 218,0 224,-6 224,-12 224,-12 224,-24 224,-24 224,-30 218,-36 212,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-14.5">01100111</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-digital-search-tree-delete-final-edge3">
+<title>r0-&gt;r01</title>
+<path d="M173.5,-80.86C173.5,-69.57 173.5,-54.66 173.5,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="175.6,-42.11 173.5,-36.11 171.4,-42.11 175.6,-42.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="178.5" y="-55.4">R</text>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-digital-search-tree-delete-final-node6">
+<title>r10</title>
+<path d="M335,-36C335,-36 258,-36 258,-36 252,-36 246,-30 246,-24 246,-24 246,-12 246,-12 246,-6 252,0 258,0 258,0 335,0 335,0 341,0 347,-6 347,-12 347,-12 347,-24 347,-24 347,-30 341,-36 335,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-14.5">10000001</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-digital-search-tree-delete-final-edge5">
+<title>r1-&gt;r10</title>
+<path d="M296.5,-80.86C296.5,-69.57 296.5,-54.66 296.5,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="298.6,-42.11 296.5,-36.11 294.4,-42.11 298.6,-42.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="301" y="-55.4">L</text>
+</g>
+<!-- r11 -->
+<g class="node" id="rev-digital-search-tree-delete-final-node7">
+<title>r11</title>
+<path d="M458,-36C458,-36 381,-36 381,-36 375,-36 369,-30 369,-24 369,-24 369,-12 369,-12 369,-6 375,0 381,0 381,0 458,0 458,0 464,0 470,-6 470,-12 470,-12 470,-24 470,-24 470,-30 464,-36 458,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="419.5" y="-14.5">11110000</text>
+</g>
+<!-- r1&#45;&gt;r11 -->
+<g class="edge" id="rev-digital-search-tree-delete-final-edge6">
+<title>r1-&gt;r11</title>
+<path d="M323.19,-80.86C342.13,-68.69 367.63,-52.31 387.64,-39.46" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="388.95,-41.12 392.86,-36.11 386.68,-37.58 388.95,-41.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="369.5" y="-55.4">R</text>
+</g>
+</g>
+</svg>
+</div><figcaption>The copied record occurs once, its former leaf slot is empty, and every surviving key still follows its recorded bits.</figcaption></figure></section></section>
+<p>The lecture's internal example is the one-child case: delete <code>1001</code> and use descendant leaf <code>1011</code> in its place. At the target's depth, both records share the root's right-prefix; its remaining left child is still selected by bit 2 = 0. A node with one child can be handled the same way by choosing any descendant leaf. When the target itself is a leaf, simply clear its incoming pointer. Removing the only root record makes the tree empty. These are supplemental explanations; Lecture 12 does not prescribe this deletion procedure.</p>
+<h3>Graphical search contrasts</h3>
+<p>The same eight-key tree makes the stopping rules visible. The highlighted route ends at a matching record, a null pointer, or an already occupied equal-key node; only the first case is a new successful search, and the duplicate case updates without adding a node.</p>
+<section aria-label="Graphical contrasts: found, absent, and duplicate" class="walk"><h3>Graphical contrasts: found, absent, and duplicate</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Exact match at 10101100</h4><figure><div class="diagram-frame" style="--diagram-width:491.6px"><svg aria-label="Follow root-right, then left, then right; compare equal at 10101100 and stop." height="301pt" role="img" viewbox="0.00 0.00 491.60 300.60" width="492pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-digital-search-tree-search-found-graph0" transform="scale(1 1) rotate(0) translate(10.8 289.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-digital-search-tree-search-found-node1">
+<title>r</title>
+<path d="M273,-279C273,-279 196,-279 196,-279 190,-279 184,-273 184,-267 184,-267 184,-255 184,-255 184,-249 190,-243 196,-243 196,-243 273,-243 273,-243 279,-243 285,-249 285,-255 285,-255 285,-267 285,-267 285,-273 279,-279 273,-279" fill="var(--accent,#d5e9d5)" stroke="var(--primary,#25633a)" stroke-width="2"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="234.5" y="-257.5">00000000</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-digital-search-tree-search-found-node2">
+<title>r0</title>
+<path d="M212,-198C212,-198 135,-198 135,-198 129,-198 123,-192 123,-186 123,-186 123,-174 123,-174 123,-168 129,-162 135,-162 135,-162 212,-162 212,-162 218,-162 224,-168 224,-174 224,-174 224,-186 224,-186 224,-192 218,-198 212,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-176.5">00000101</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-digital-search-tree-search-found-edge1">
+<title>r-&gt;r0</title>
+<path d="M221.26,-242.86C212.23,-231.16 200.19,-215.56 190.45,-202.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="192.04,-201.57 186.71,-198.11 188.72,-204.14 192.04,-201.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="213" y="-217.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-digital-search-tree-search-found-node5">
+<title>r1</title>
+<path d="M335,-198C335,-198 258,-198 258,-198 252,-198 246,-192 246,-186 246,-186 246,-174 246,-174 246,-168 252,-162 258,-162 258,-162 335,-162 335,-162 341,-162 347,-168 347,-174 347,-174 347,-186 347,-186 347,-192 341,-198 335,-198" fill="var(--accent,#d5e9d5)" stroke="var(--primary,#25633a)" stroke-width="2"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-176.5">10000000</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-digital-search-tree-search-found-edge4">
+<title>r-&gt;r1</title>
+<path d="M247.95,-242.86C257.13,-231.16 269.38,-215.56 279.27,-202.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="281.02,-204.12 283.07,-198.11 277.72,-201.53 281.02,-204.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="274.5" y="-217.4">R</text>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-digital-search-tree-search-found-node3">
+<title>r00</title>
+<path d="M89,-117C89,-117 12,-117 12,-117 6,-117 0,-111 0,-105 0,-105 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 89,-81 89,-81 95,-81 101,-87 101,-93 101,-93 101,-105 101,-105 101,-111 95,-117 89,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="50.5" y="-95.5">00110010</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-digital-search-tree-search-found-edge2">
+<title>r0-&gt;r00</title>
+<path d="M146.81,-161.86C127.87,-149.69 102.37,-133.31 82.36,-120.46" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="83.32,-118.58 77.14,-117.11 81.05,-122.12 83.32,-118.58" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="124" y="-136.4">L</text>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-digital-search-tree-search-found-node4">
+<title>r01</title>
+<path d="M212,-117C212,-117 135,-117 135,-117 129,-117 123,-111 123,-105 123,-105 123,-93 123,-93 123,-87 129,-81 135,-81 135,-81 212,-81 212,-81 218,-81 224,-87 224,-93 224,-93 224,-105 224,-105 224,-111 218,-117 212,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-95.5">01100111</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-digital-search-tree-search-found-edge3">
+<title>r0-&gt;r01</title>
+<path d="M173.5,-161.86C173.5,-150.57 173.5,-135.66 173.5,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="175.6,-123.11 173.5,-117.11 171.4,-123.11 175.6,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="178.5" y="-136.4">R</text>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-digital-search-tree-search-found-node6">
+<title>r10</title>
+<path d="M335,-117C335,-117 258,-117 258,-117 252,-117 246,-111 246,-105 246,-105 246,-93 246,-93 246,-87 252,-81 258,-81 258,-81 335,-81 335,-81 341,-81 347,-87 347,-93 347,-93 347,-105 347,-105 347,-111 341,-117 335,-117" fill="var(--accent,#d5e9d5)" stroke="var(--primary,#25633a)" stroke-width="2"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-95.5">10000001</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-digital-search-tree-search-found-edge5">
+<title>r1-&gt;r10</title>
+<path d="M296.5,-161.86C296.5,-150.57 296.5,-135.66 296.5,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="298.6,-123.11 296.5,-117.11 294.4,-123.11 298.6,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="301" y="-136.4">L</text>
+</g>
+<!-- r11 -->
+<g class="node" id="rev-digital-search-tree-search-found-node9">
+<title>r11</title>
+<path d="M458,-117C458,-117 381,-117 381,-117 375,-117 369,-111 369,-105 369,-105 369,-93 369,-93 369,-87 375,-81 381,-81 381,-81 458,-81 458,-81 464,-81 470,-87 470,-93 470,-93 470,-105 470,-105 470,-111 464,-117 458,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="419.5" y="-95.5">11110000</text>
+</g>
+<!-- r1&#45;&gt;r11 -->
+<g class="edge" id="rev-digital-search-tree-search-found-edge8">
+<title>r1-&gt;r11</title>
+<path d="M323.19,-161.86C342.13,-149.69 367.63,-133.31 387.64,-120.46" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="388.95,-122.12 392.86,-117.11 386.68,-118.58 388.95,-122.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="370.5" y="-136.4">R</text>
+</g>
+<!-- r100 -->
+<!-- r10&#45;&gt;r100 -->
+<!-- r101 -->
+<g class="node" id="rev-digital-search-tree-search-found-node8">
+<title>r101</title>
+<path d="M372,-36C372,-36 295,-36 295,-36 289,-36 283,-30 283,-24 283,-24 283,-12 283,-12 283,-6 289,0 295,0 295,0 372,0 372,0 378,0 384,-6 384,-12 384,-12 384,-24 384,-24 384,-30 378,-36 372,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="333.5" y="-14.5">10101100</text>
+</g>
+<!-- r10&#45;&gt;r101 -->
+<g class="edge" id="rev-digital-search-tree-search-found-edge7">
+<title>r10-&gt;r101</title>
+<path d="M304.53,-80.86C309.91,-69.37 317.06,-54.11 322.9,-41.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="324.84,-42.43 325.49,-36.11 321.04,-40.65 324.84,-42.43" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="322.5" y="-55.4">R</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Follow root-right, then left, then right; compare equal at 10101100 and stop.</figcaption></figure></section><section class="step"><h4>2 · Missing key 00001010 reaches an empty pointer</h4><figure><div class="diagram-frame" style="--diagram-width:491.6px"><svg aria-label="Follow left, then left, then inspect bit 3 = 0; the left pointer below 00110010 is empty, so report absent." height="301pt" role="img" viewbox="0.00 0.00 491.60 300.60" width="492pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-digital-search-tree-search-missing-graph0" transform="scale(1 1) rotate(0) translate(10.8 289.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-digital-search-tree-search-missing-node1">
+<title>r</title>
+<path d="M273,-279C273,-279 196,-279 196,-279 190,-279 184,-273 184,-267 184,-267 184,-255 184,-255 184,-249 190,-243 196,-243 196,-243 273,-243 273,-243 279,-243 285,-249 285,-255 285,-255 285,-267 285,-267 285,-273 279,-279 273,-279" fill="var(--accent,#d5e9d5)" stroke="var(--primary,#25633a)" stroke-width="2"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="234.5" y="-257.5">00000000</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-digital-search-tree-search-missing-node2">
+<title>r0</title>
+<path d="M212,-198C212,-198 135,-198 135,-198 129,-198 123,-192 123,-186 123,-186 123,-174 123,-174 123,-168 129,-162 135,-162 135,-162 212,-162 212,-162 218,-162 224,-168 224,-174 224,-174 224,-186 224,-186 224,-192 218,-198 212,-198" fill="var(--accent,#d5e9d5)" stroke="var(--primary,#25633a)" stroke-width="2"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-176.5">00000101</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-digital-search-tree-search-missing-edge1">
+<title>r-&gt;r0</title>
+<path d="M221.26,-242.86C212.23,-231.16 200.19,-215.56 190.45,-202.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="192.04,-201.57 186.71,-198.11 188.72,-204.14 192.04,-201.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="213" y="-217.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-digital-search-tree-search-missing-node5">
+<title>r1</title>
+<path d="M335,-198C335,-198 258,-198 258,-198 252,-198 246,-192 246,-186 246,-186 246,-174 246,-174 246,-168 252,-162 258,-162 258,-162 335,-162 335,-162 341,-162 347,-168 347,-174 347,-174 347,-186 347,-186 347,-192 341,-198 335,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-176.5">10000000</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-digital-search-tree-search-missing-edge4">
+<title>r-&gt;r1</title>
+<path d="M247.95,-242.86C257.13,-231.16 269.38,-215.56 279.27,-202.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="281.02,-204.12 283.07,-198.11 277.72,-201.53 281.02,-204.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="274.5" y="-217.4">R</text>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-digital-search-tree-search-missing-node3">
+<title>r00</title>
+<path d="M89,-117C89,-117 12,-117 12,-117 6,-117 0,-111 0,-105 0,-105 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 89,-81 89,-81 95,-81 101,-87 101,-93 101,-93 101,-105 101,-105 101,-111 95,-117 89,-117" fill="var(--accent,#d5e9d5)" stroke="var(--primary,#25633a)" stroke-width="2"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="50.5" y="-95.5">00110010</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-digital-search-tree-search-missing-edge2">
+<title>r0-&gt;r00</title>
+<path d="M146.81,-161.86C127.87,-149.69 102.37,-133.31 82.36,-120.46" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="83.32,-118.58 77.14,-117.11 81.05,-122.12 83.32,-118.58" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="124" y="-136.4">L</text>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-digital-search-tree-search-missing-node4">
+<title>r01</title>
+<path d="M212,-117C212,-117 135,-117 135,-117 129,-117 123,-111 123,-105 123,-105 123,-93 123,-93 123,-87 129,-81 135,-81 135,-81 212,-81 212,-81 218,-81 224,-87 224,-93 224,-93 224,-105 224,-105 224,-111 218,-117 212,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-95.5">01100111</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-digital-search-tree-search-missing-edge3">
+<title>r0-&gt;r01</title>
+<path d="M173.5,-161.86C173.5,-150.57 173.5,-135.66 173.5,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="175.6,-123.11 173.5,-117.11 171.4,-123.11 175.6,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="178.5" y="-136.4">R</text>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-digital-search-tree-search-missing-node6">
+<title>r10</title>
+<path d="M335,-117C335,-117 258,-117 258,-117 252,-117 246,-111 246,-105 246,-105 246,-93 246,-93 246,-87 252,-81 258,-81 258,-81 335,-81 335,-81 341,-81 347,-87 347,-93 347,-93 347,-105 347,-105 347,-111 341,-117 335,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-95.5">10000001</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-digital-search-tree-search-missing-edge5">
+<title>r1-&gt;r10</title>
+<path d="M296.5,-161.86C296.5,-150.57 296.5,-135.66 296.5,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="298.6,-123.11 296.5,-117.11 294.4,-123.11 298.6,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="301" y="-136.4">L</text>
+</g>
+<!-- r11 -->
+<g class="node" id="rev-digital-search-tree-search-missing-node9">
+<title>r11</title>
+<path d="M458,-117C458,-117 381,-117 381,-117 375,-117 369,-111 369,-105 369,-105 369,-93 369,-93 369,-87 375,-81 381,-81 381,-81 458,-81 458,-81 464,-81 470,-87 470,-93 470,-93 470,-105 470,-105 470,-111 464,-117 458,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="419.5" y="-95.5">11110000</text>
+</g>
+<!-- r1&#45;&gt;r11 -->
+<g class="edge" id="rev-digital-search-tree-search-missing-edge8">
+<title>r1-&gt;r11</title>
+<path d="M323.19,-161.86C342.13,-149.69 367.63,-133.31 387.64,-120.46" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="388.95,-122.12 392.86,-117.11 386.68,-118.58 388.95,-122.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="370.5" y="-136.4">R</text>
+</g>
+<!-- r100 -->
+<!-- r10&#45;&gt;r100 -->
+<!-- r101 -->
+<g class="node" id="rev-digital-search-tree-search-missing-node8">
+<title>r101</title>
+<path d="M372,-36C372,-36 295,-36 295,-36 289,-36 283,-30 283,-24 283,-24 283,-12 283,-12 283,-6 289,0 295,0 295,0 372,0 372,0 378,0 384,-6 384,-12 384,-12 384,-24 384,-24 384,-30 378,-36 372,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="333.5" y="-14.5">10101100</text>
+</g>
+<!-- r10&#45;&gt;r101 -->
+<g class="edge" id="rev-digital-search-tree-search-missing-edge7">
+<title>r10-&gt;r101</title>
+<path d="M304.53,-80.86C309.91,-69.37 317.06,-54.11 322.9,-41.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="324.84,-42.43 325.49,-36.11 321.04,-40.65 324.84,-42.43" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="322.5" y="-55.4">R</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Follow left, then left, then inspect bit 3 = 0; the left pointer below 00110010 is empty, so report absent.</figcaption></figure></section><section class="step"><h4>3 · Duplicate 10000001 stops at equality</h4><figure><div class="diagram-frame" style="--diagram-width:491.6px"><svg aria-label="Follow root-right then left; whole-key equality at 10000001 updates its record and creates no node." height="301pt" role="img" viewbox="0.00 0.00 491.60 300.60" width="492pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-digital-search-tree-search-duplicate-graph0" transform="scale(1 1) rotate(0) translate(10.8 289.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-digital-search-tree-search-duplicate-node1">
+<title>r</title>
+<path d="M273,-279C273,-279 196,-279 196,-279 190,-279 184,-273 184,-267 184,-267 184,-255 184,-255 184,-249 190,-243 196,-243 196,-243 273,-243 273,-243 279,-243 285,-249 285,-255 285,-255 285,-267 285,-267 285,-273 279,-279 273,-279" fill="var(--accent,#d5e9d5)" stroke="var(--primary,#25633a)" stroke-width="2"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="234.5" y="-257.5">00000000</text>
+</g>
+<!-- r0 -->
+<g class="node" id="rev-digital-search-tree-search-duplicate-node2">
+<title>r0</title>
+<path d="M212,-198C212,-198 135,-198 135,-198 129,-198 123,-192 123,-186 123,-186 123,-174 123,-174 123,-168 129,-162 135,-162 135,-162 212,-162 212,-162 218,-162 224,-168 224,-174 224,-174 224,-186 224,-186 224,-192 218,-198 212,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-176.5">00000101</text>
+</g>
+<!-- r&#45;&gt;r0 -->
+<g class="edge" id="rev-digital-search-tree-search-duplicate-edge1">
+<title>r-&gt;r0</title>
+<path d="M221.26,-242.86C212.23,-231.16 200.19,-215.56 190.45,-202.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="192.04,-201.57 186.71,-198.11 188.72,-204.14 192.04,-201.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="213" y="-217.4">L</text>
+</g>
+<!-- r1 -->
+<g class="node" id="rev-digital-search-tree-search-duplicate-node5">
+<title>r1</title>
+<path d="M335,-198C335,-198 258,-198 258,-198 252,-198 246,-192 246,-186 246,-186 246,-174 246,-174 246,-168 252,-162 258,-162 258,-162 335,-162 335,-162 341,-162 347,-168 347,-174 347,-174 347,-186 347,-186 347,-192 341,-198 335,-198" fill="var(--accent,#d5e9d5)" stroke="var(--primary,#25633a)" stroke-width="2"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-176.5">10000000</text>
+</g>
+<!-- r&#45;&gt;r1 -->
+<g class="edge" id="rev-digital-search-tree-search-duplicate-edge4">
+<title>r-&gt;r1</title>
+<path d="M247.95,-242.86C257.13,-231.16 269.38,-215.56 279.27,-202.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="281.02,-204.12 283.07,-198.11 277.72,-201.53 281.02,-204.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="274.5" y="-217.4">R</text>
+</g>
+<!-- r00 -->
+<g class="node" id="rev-digital-search-tree-search-duplicate-node3">
+<title>r00</title>
+<path d="M89,-117C89,-117 12,-117 12,-117 6,-117 0,-111 0,-105 0,-105 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 89,-81 89,-81 95,-81 101,-87 101,-93 101,-93 101,-105 101,-105 101,-111 95,-117 89,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="50.5" y="-95.5">00110010</text>
+</g>
+<!-- r0&#45;&gt;r00 -->
+<g class="edge" id="rev-digital-search-tree-search-duplicate-edge2">
+<title>r0-&gt;r00</title>
+<path d="M146.81,-161.86C127.87,-149.69 102.37,-133.31 82.36,-120.46" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="83.32,-118.58 77.14,-117.11 81.05,-122.12 83.32,-118.58" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="124" y="-136.4">L</text>
+</g>
+<!-- r01 -->
+<g class="node" id="rev-digital-search-tree-search-duplicate-node4">
+<title>r01</title>
+<path d="M212,-117C212,-117 135,-117 135,-117 129,-117 123,-111 123,-105 123,-105 123,-93 123,-93 123,-87 129,-81 135,-81 135,-81 212,-81 212,-81 218,-81 224,-87 224,-93 224,-93 224,-105 224,-105 224,-111 218,-117 212,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="173.5" y="-95.5">01100111</text>
+</g>
+<!-- r0&#45;&gt;r01 -->
+<g class="edge" id="rev-digital-search-tree-search-duplicate-edge3">
+<title>r0-&gt;r01</title>
+<path d="M173.5,-161.86C173.5,-150.57 173.5,-135.66 173.5,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="175.6,-123.11 173.5,-117.11 171.4,-123.11 175.6,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="178.5" y="-136.4">R</text>
+</g>
+<!-- r10 -->
+<g class="node" id="rev-digital-search-tree-search-duplicate-node6">
+<title>r10</title>
+<path d="M335,-117C335,-117 258,-117 258,-117 252,-117 246,-111 246,-105 246,-105 246,-93 246,-93 246,-87 252,-81 258,-81 258,-81 335,-81 335,-81 341,-81 347,-87 347,-93 347,-93 347,-105 347,-105 347,-111 341,-117 335,-117" fill="var(--accent,#d5e9d5)" stroke="var(--primary,#25633a)" stroke-width="2"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="296.5" y="-95.5">10000001</text>
+</g>
+<!-- r1&#45;&gt;r10 -->
+<g class="edge" id="rev-digital-search-tree-search-duplicate-edge5">
+<title>r1-&gt;r10</title>
+<path d="M296.5,-161.86C296.5,-150.57 296.5,-135.66 296.5,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="298.6,-123.11 296.5,-117.11 294.4,-123.11 298.6,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="301" y="-136.4">L</text>
+</g>
+<!-- r11 -->
+<g class="node" id="rev-digital-search-tree-search-duplicate-node9">
+<title>r11</title>
+<path d="M458,-117C458,-117 381,-117 381,-117 375,-117 369,-111 369,-105 369,-105 369,-93 369,-93 369,-87 375,-81 381,-81 381,-81 458,-81 458,-81 464,-81 470,-87 470,-93 470,-93 470,-105 470,-105 470,-111 464,-117 458,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="419.5" y="-95.5">11110000</text>
+</g>
+<!-- r1&#45;&gt;r11 -->
+<g class="edge" id="rev-digital-search-tree-search-duplicate-edge8">
+<title>r1-&gt;r11</title>
+<path d="M323.19,-161.86C342.13,-149.69 367.63,-133.31 387.64,-120.46" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="388.95,-122.12 392.86,-117.11 386.68,-118.58 388.95,-122.12" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="370.5" y="-136.4">R</text>
+</g>
+<!-- r100 -->
+<!-- r10&#45;&gt;r100 -->
+<!-- r101 -->
+<g class="node" id="rev-digital-search-tree-search-duplicate-node8">
+<title>r101</title>
+<path d="M372,-36C372,-36 295,-36 295,-36 289,-36 283,-30 283,-24 283,-24 283,-12 283,-12 283,-6 289,0 295,0 295,0 372,0 372,0 378,0 384,-6 384,-12 384,-12 384,-24 384,-24 384,-30 378,-36 372,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="333.5" y="-14.5">10101100</text>
+</g>
+<!-- r10&#45;&gt;r101 -->
+<g class="edge" id="rev-digital-search-tree-search-duplicate-edge7">
+<title>r10-&gt;r101</title>
+<path d="M304.53,-80.86C309.91,-69.37 317.06,-54.11 322.9,-41.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="324.84,-42.43 325.49,-36.11 321.04,-40.65 324.84,-42.43" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="322.5" y="-55.4">R</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Follow root-right then left; whole-key equality at 10000001 updates its record and creates no node.</figcaption></figure></section></section>
+<h3>Method decision table</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Decision</th>
+<th>Stop condition</th>
+<th>Edge cases</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Build</td>
+<td>Insert each record in the supplied order; the first becomes the root, later records compare whole keys and route by the bit at the current depth.</td>
+<td>Insert at the first empty selected pointer, or apply the duplicate policy on whole-key equality.</td>
+<td>Preserve fixed width and leading zeros; each route consumes one bit position.</td>
+</tr>
+<tr>
+<td>Search</td>
+<td>At every occupied node compare the complete query key, then use its current-depth bit to select L for 0 or R for 1.</td>
+<td>Found on whole-key equality; absent at a null pointer.</td>
+<td>Never infer membership from a matching prefix; route through at most W bit positions, with a whole-key check at each occupied node.</td>
+</tr>
+<tr>
+<td>Insert / update</td>
+<td>Follow the search route; create the record at the first null pointer. This guide replaces the record when a full key already exists.</td>
+<td>Empty pointer or exact full-key equality.</td>
+<td>Equal key is not a second node; different keys eventually diverge within W bits.</td>
+</tr>
+<tr>
+<td>Delete</td>
+<td>Find the exact full key first. Detach a leaf; for an internal record, the supplemental procedure replaces it with a descendant leaf record and removes that old leaf.</td>
+<td>Report absent at a null pointer; otherwise finish only after the record is removed once.</td>
+<td>Empty tree / missing key; deleting root; one or two children. Internal replacement is supplemental, not a lecture-prescribed algorithm.</td>
+</tr>
+<tr>
+<td>Meld / combine</td>
+<td>No native root-splice operation is established here; a general combination can insert each donor record into the receiver.</td>
+<td>All donor records have been visited.</td>
+<td>Duplicate-key policy must be defined. For m donor records this costs <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>m</mi><mi>W</mi><mo stretchy="false">)</mo></mrow></math> in the lecture's unit-cost comparison model.</td>
+</tr>
+<tr>
+<td>Minimum, maximum, rank</td>
+<td>No native constant-time operation is supplied by this structure or lecture.</td>
+<td>Use an explicitly chosen traversal or added augmentation; no such method is claimed here.</td>
+<td>Do not import numeric BST ordering: child direction is determined by depth-specific bits.</td>
+</tr>
+</tbody>
+</table>
+<h3>Cost model and limits</h3>
+<p>For W-bit keys, a route has at most W bit positions, so search, insertion, and the described deletion take <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>W</mi><mo stretchy="false">)</mo></mrow></math> routing levels; the number of full-key comparisons is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>h</mi><mi>e</mi><mi>i</mi><mi>g</mi><mi>h</mi><mi>t</mi><mo stretchy="false">)</mo></mrow></math>, as Lecture 12 states. Its <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>W</mi><mo stretchy="false">)</mo></mrow></math> operation bound treats a whole-key comparison as a primitive. If comparing two W-bit strings itself costs <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>W</mi><mo stretchy="false">)</mo></mrow></math>, a worst-case operation may perform <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>W</mi><mo stretchy="false">)</mo></mrow></math> such comparisons and therefore <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>W</mi><mrow><mn>2</mn></mrow></msup><mo stretchy="false">)</mo></mrow></math> bit work. Inserting n records one at a time is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>W</mi><mo stretchy="false">)</mo></mrow></math> in the lecture's comparison model; melding m donor records by insertion is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>m</mi><mi>W</mi><mo stretchy="false">)</mo></mrow></math> in that same model. These are not expected-height claims.</p>
+<p>The fixed-width condition matters. For variable-length keys, a terminator or explicit end-of-key representation is required to distinguish a key from a longer key sharing its prefix. Binary tries use branch-only nodes and element leaves, a different representation from this DST; do not transfer their candidate-leaf comparison count or deletion compression rule to a digital search tree.</p></article><nav class="pager" aria-label="Study sequence"><a href="splay-tree.html"><small>Previous</small>Splay tree <span aria-hidden="true">↗</span></a><a href="binary-trie.html"><small>Next</small>Binary trie <span aria-hidden="true">↗</span></a></nav><footer>ADS field notes <span>Understand the rule. Trace the repair.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  root.querySelectorAll('table').forEach(table => {
+    const region = document.createElement('div');
+    region.className = 'table-scroll' + (table.rows[0]?.cells.length > 5 ? ' wide' : '');
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    table.before(region); region.append(table);
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Data structure diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect every node.'; frame.after(hint);
+    const update = () => { hint.hidden = frame.scrollWidth <= frame.clientWidth + 1 && frame.scrollHeight <= frame.clientHeight + 1; };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {heap:'priority queue insert delete meld minimum maximum trickle down bubble up build',tree:'insert delete search build rotate rotation',trie:'insert delete search build prefix',sorting:'run merge buffer freeze build',analysis:'potential aggregate accounting'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('a').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('ads-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.ADS_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) expand.textContent = 'Expand examples';
+    const section = new URLSearchParams(url.hash.slice(1)).get('section') || (url.hash.startsWith('#topic=') ? '' : url.hash.slice(1));
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = new URLSearchParams(location.hash.slice(1)).get('section') || location.hash.slice(1);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+})();
+</script></body></html>

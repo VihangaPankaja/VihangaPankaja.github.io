@@ -1,0 +1,495 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="How end-to-end transport delivers data to the right process, distinguishes service choices, and handles generic connection and buffer problems."><title>Transport services and connections · Networks field notes</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('cns-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{.table-hint{display:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#243740;--muted:#5e737d;--secondary:#edf2f3;--border:#d5e0e3;--primary:#1e647c;--accent:#dcecf0;--diagram-fill:#eff4f5;--diagram-border:#829da8;--diagram-edge:#65838f;--active-text:#174b61;--focus:#227b98}:root[data-theme=dark]{--background:#141d23;--foreground:#e1eaf0;--muted:#a8beca;--card:#1a2730;--secondary:#22333e;--border:#3b505c;--primary:#90d1e4;--accent:#254757;--diagram-fill:#22333e;--diagram-border:#93b2c1;--diagram-edge:#9bbac9;--topbar:#141d23f5;--active-text:#b6e5f1;--focus:#90d1e4} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> CNS <span class="subbrand">field notes</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Subnet, TCP, TLS…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a href="index.html">Computer networks and security</a></div><div class="nav-group"><p>Foundations</p><a href="osi.html">OSI model and encapsulation</a><a href="data-link.html">Data link framing, errors and flow control</a><a href="wan.html">WAN and MAN technologies</a><a href="lan.html">LAN, Ethernet and switching</a></div><div class="nav-group"><p>Internetworking</p><a href="routing.html">Network layer and routing</a><a href="ipv4.html">IPv4 addressing, subnetting and VLSM</a><a href="ip-delivery.html">IP packets, ARP, ICMP, DHCP and NAT</a><a href="ipv6.html">IPv6 addressing and transition</a></div><div class="nav-group"><p>Transport and wireless</p><a href="transport.html" aria-current="page">Transport services and connections</a><a href="short-range.html">Bluetooth, NFC and ZigBee</a></div><div class="nav-group"><p>Security and design</p><a href="security.html">Security foundations and cryptography</a><a href="pki.html">Public key infrastructure</a><a href="secure-protocols.html">IPsec and TLS</a><a href="network-design.html">Network design</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS3131<br>Computer Networks and Security</div></aside>
+<main id="main"><div class="eyebrow">Transport and wireless <span>/</span> Lecture 8 · Transport</div><h1>Transport services and connections</h1><p class="lead">How end-to-end transport delivers data to the right process, distinguishes service choices, and handles generic connection and buffer problems.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">From hosts to processes</a><a href="#section-2">Multiplexing and demultiplexing</a><a href="#section-3">Choosing a transport service</a><a href="#section-4">Reliability: identify, check, track</a><a href="#section-5">Connection establishment and stale messages</a><a href="#section-6">Connection release and loss cases</a><a href="#section-7">Flow control and receiver buffering</a><a href="#section-8">Quick revision and practice</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>The transport layer carries data from one end process to another. The network layer moves packets between hosts; transport adds the process-level service applications need and can improve on the service the network provides. It is an interface between applications and network delivery, while the data-link layer handles one link at a time.</p>
+<p>The lecture also places fragmentation, multiplexing and inverse multiplexing, service selection, connection naming and lifecycle, and flow control among transport responsibilities. The assigned slides list fragmentation but do not teach a fragmentation procedure here, so this page keeps it at that scope. Layers 1–4 provide transmission toward an end host; layers 5–7 use that service, with transport acting as an important interface for application programmers.</p>
+<h2 id="section-1">From hosts to processes</h2>
+<p>An IP address identifies a host. A transport <strong>port</strong> identifies a service or endpoint on that host. The first deck calls the host-and-port transport address a <strong>TSAP</strong>. A server listens on a service port; a client addresses that port and normally uses its own source port. The server then passes the arriving connection or datagram to the responsible service process.</p>
+<p>The decks list HTTP port <code>80</code>, DNS port <code>53</code>, and SMTP port <code>25</code>. A URL may specify a service in advance; a well-known port, a portmapper, or an application can also identify the port. The lecture describes ports below <code>1024</code> as privileged in the traditional model and client ports as generally <code>1024</code> or above. That is the lecture's convention, not a claim that every modern system applies the same rule.</p>
+<p>Each TCP segment or UDP datagram carries source and destination ports as well as the source and destination IP addresses. For IPv4, the source's four-field identifier has this theoretical number of address/port combinations:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mn>2</mn><mrow><mn>32</mn></mrow></msup><mo>&#x000D7;</mo><msup><mn>2</mn><mrow><mn>16</mn></mrow></msup><mo>&#x000D7;</mo><msup><mn>2</mn><mrow><mn>32</mn></mrow></msup><mo>&#x000D7;</mo><msup><mn>2</mn><mrow><mn>16</mn></mrow></msup><mo>&#x0003D;</mo><msup><mn>2</mn><mrow><mn>96</mn></mrow></msup></mrow></math></div>
+<p>This is a count of possible IPv4 address-and-port tuples from the slide's model, not a promise of that many usable simultaneous Internet connections.</p>
+<h3>Read the endpoint example</h3>
+<p>The source diagram shows four simultaneous connections. Read each line from the client's local endpoint to the remote service:</p>
+<table>
+<thead>
+<tr>
+<th>Client endpoint</th>
+<th>Server endpoint</th>
+<th>What it illustrates</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>192.172.16.25:1026</code></td>
+<td><code>203.115.22.54:25</code></td>
+<td>One client port reaches SMTP on the first server.</td>
+</tr>
+<tr>
+<td><code>192.172.16.25:1027</code></td>
+<td><code>61.45.9.33:25</code></td>
+<td>A second local port reaches SMTP on another server.</td>
+</tr>
+<tr>
+<td><code>192.172.16.56:1027</code></td>
+<td><code>61.45.9.33:25</code></td>
+<td>A different client can also reach that same server port.</td>
+</tr>
+<tr>
+<td><code>192.172.16.56:1235</code></td>
+<td><code>61.45.9.33:80</code></td>
+<td>The second client uses another local port for HTTP.</td>
+</tr>
+</tbody>
+</table>
+<p>The remote service port can be shared by many clients. The full pair of host addresses and ports distinguishes the flows in this example.</p>
+<details class="worked"><summary>Teaching example · reverse the endpoint fields in a reply</summary><p>Suppose a request travels from <code>192.172.16.25:1026</code> to <code>203.115.22.54:25</code>. For the reply, the server becomes the source and the client becomes the destination: source <code>203.115.22.54:25</code>, destination <code>192.172.16.25:1026</code>. The two port numbers do not change; their source/destination roles reverse with direction.</p></details>
+<h2 id="section-2">Multiplexing and demultiplexing</h2>
+<p>Transport can combine traffic from several application conversations for network delivery. At the receiving host, it separates arriving traffic and hands it to the intended process. The lecture pictures DNS and web traffic from several client windows to show this sharing; the picture illustrates the idea rather than specifying a full implementation lookup rule.</p>
+<figure><div class="diagram-frame" style="--diagram-width:950.6px"><svg role="img" aria-label="Several application conversations share network delivery, then arriving data is directed to the intended service. This is a conceptual view, not a complete socket-demultiplexing rule." width="951pt" height="174pt"
+ viewBox="0.00 0.00 950.60 173.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g id="transport-streams-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 162.8)">
+<title>G</title>
+<!-- web1 -->
+<g id="transport-streams-node1" class="node">
+<title>web1</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M194,-152C194,-152 12,-152 12,-152 6,-152 0,-146 0,-140 0,-140 0,-128 0,-128 0,-122 6,-116 12,-116 12,-116 194,-116 194,-116 200,-116 206,-122 206,-128 206,-128 206,-140 206,-140 206,-146 200,-152 194,-152"/>
+<text text-anchor="middle" x="103" y="-130.5" font-family="Georgia" font-size="15.00">Client 1 · Web window 1</text>
+</g>
+<!-- mux -->
+<g id="transport-streams-node4" class="node">
+<title>mux</title>
+<path fill="var(--accent,#d5e9d5)" stroke="var(--primary,#25633a)" stroke-width="2" d="M401,-100C401,-100 250,-100 250,-100 244,-100 238,-94 238,-88 238,-88 238,-64 238,-64 238,-58 244,-52 250,-52 250,-52 401,-52 401,-52 407,-52 413,-58 413,-64 413,-64 413,-88 413,-88 413,-94 407,-100 401,-100"/>
+<text text-anchor="middle" x="325.5" y="-81" font-family="Georgia" font-size="15.00">Transport at sender</text>
+<text text-anchor="middle" x="325.5" y="-64" font-family="Georgia" font-size="15.00">combine streams</text>
+</g>
+<!-- web1&#45;&gt;mux -->
+<g id="transport-streams-edge1" class="edge">
+<title>web1&#45;&gt;mux</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M172.56,-115.97C191.31,-111.03 211.96,-105.6 231.82,-100.38"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="232.41,-102.4 237.68,-98.84 231.34,-98.33 232.41,-102.4"/>
+</g>
+<!-- web2 -->
+<g id="transport-streams-node2" class="node">
+<title>web2</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M194,-94C194,-94 12,-94 12,-94 6,-94 0,-88 0,-82 0,-82 0,-70 0,-70 0,-64 6,-58 12,-58 12,-58 194,-58 194,-58 200,-58 206,-64 206,-70 206,-70 206,-82 206,-82 206,-88 200,-94 194,-94"/>
+<text text-anchor="middle" x="103" y="-72.5" font-family="Georgia" font-size="15.00">Client 1 · Web window 2</text>
+</g>
+<!-- web2&#45;&gt;mux -->
+<g id="transport-streams-edge2" class="edge">
+<title>web2&#45;&gt;mux</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M206.18,-76C214.62,-76 223.12,-76 231.49,-76"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="231.86,-78.1 237.86,-76 231.86,-73.9 231.86,-78.1"/>
+</g>
+<!-- dns -->
+<g id="transport-streams-node3" class="node">
+<title>dns</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M188,-36C188,-36 18,-36 18,-36 12,-36 6,-30 6,-24 6,-24 6,-12 6,-12 6,-6 12,0 18,0 18,0 188,0 188,0 194,0 200,-6 200,-12 200,-12 200,-24 200,-24 200,-30 194,-36 188,-36"/>
+<text text-anchor="middle" x="103" y="-14.5" font-family="Georgia" font-size="15.00">Client 2 · DNS request</text>
+</g>
+<!-- dns&#45;&gt;mux -->
+<g id="transport-streams-edge3" class="edge">
+<title>dns&#45;&gt;mux</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M172.56,-36.03C191.31,-40.97 211.96,-46.4 231.82,-51.62"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="231.34,-53.67 237.68,-53.16 232.41,-49.6 231.34,-53.67"/>
+</g>
+<!-- network -->
+<g id="transport-streams-node5" class="node">
+<title>network</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M565,-94C565,-94 457,-94 457,-94 451,-94 445,-88 445,-82 445,-82 445,-70 445,-70 445,-64 451,-58 457,-58 457,-58 565,-58 565,-58 571,-58 577,-64 577,-70 577,-70 577,-82 577,-82 577,-88 571,-94 565,-94"/>
+<text text-anchor="middle" x="511" y="-72.5" font-family="Georgia" font-size="15.00">Network layer</text>
+</g>
+<!-- mux&#45;&gt;network -->
+<g id="transport-streams-edge4" class="edge">
+<title>mux&#45;&gt;network</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M413.15,-76C421.65,-76 430.21,-76 438.54,-76"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="438.86,-78.1 444.86,-76 438.86,-73.9 438.86,-78.1"/>
+</g>
+<!-- demux -->
+<g id="transport-streams-node6" class="node">
+<title>demux</title>
+<path fill="var(--accent,#d5e9d5)" stroke="var(--primary,#25633a)" stroke-width="2" d="M768,-100C768,-100 621,-100 621,-100 615,-100 609,-94 609,-88 609,-88 609,-64 609,-64 609,-58 615,-52 621,-52 621,-52 768,-52 768,-52 774,-52 780,-58 780,-64 780,-64 780,-88 780,-88 780,-94 774,-100 768,-100"/>
+<text text-anchor="middle" x="694.5" y="-81" font-family="Georgia" font-size="15.00">Transport at server</text>
+<text text-anchor="middle" x="694.5" y="-64" font-family="Georgia" font-size="15.00">split by destination</text>
+</g>
+<!-- network&#45;&gt;demux -->
+<g id="transport-streams-edge5" class="edge">
+<title>network&#45;&gt;demux</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M577.01,-76C585.44,-76 594.2,-76 602.95,-76"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="603,-78.1 609,-76 603,-73.9 603,-78.1"/>
+</g>
+<!-- web -->
+<g id="transport-streams-node7" class="node">
+<title>web</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M915.5,-123C915.5,-123 825.5,-123 825.5,-123 819.5,-123 813.5,-117 813.5,-111 813.5,-111 813.5,-99 813.5,-99 813.5,-93 819.5,-87 825.5,-87 825.5,-87 915.5,-87 915.5,-87 921.5,-87 927.5,-93 927.5,-99 927.5,-99 927.5,-111 927.5,-111 927.5,-117 921.5,-123 915.5,-123"/>
+<text text-anchor="middle" x="870.5" y="-101.5" font-family="Georgia" font-size="15.00">Web service</text>
+</g>
+<!-- demux&#45;&gt;web -->
+<g id="transport-streams-edge6" class="edge">
+<title>demux&#45;&gt;web</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M780.21,-90.12C789.34,-91.64 798.5,-93.17 807.29,-94.63"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="807.05,-96.72 813.32,-95.64 807.74,-92.58 807.05,-96.72"/>
+</g>
+<!-- dnsapp -->
+<g id="transport-streams-node8" class="node">
+<title>dnsapp</title>
+<path fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)" d="M917,-65C917,-65 824,-65 824,-65 818,-65 812,-59 812,-53 812,-53 812,-41 812,-41 812,-35 818,-29 824,-29 824,-29 917,-29 917,-29 923,-29 929,-35 929,-41 929,-41 929,-53 929,-53 929,-59 923,-65 917,-65"/>
+<text text-anchor="middle" x="870.5" y="-43.5" font-family="Georgia" font-size="15.00">DNS service</text>
+</g>
+<!-- demux&#45;&gt;dnsapp -->
+<g id="transport-streams-edge7" class="edge">
+<title>demux&#45;&gt;dnsapp</title>
+<path fill="none" stroke="var(--diagram-edge,#7b8c80)" d="M780.21,-61.88C788.75,-60.46 797.32,-59.03 805.59,-57.65"/>
+<polygon fill="var(--diagram-edge,#7b8c80)" stroke="var(--diagram-edge,#7b8c80)" points="806.27,-59.67 811.85,-56.61 805.58,-55.52 806.27,-59.67"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Several application conversations share network delivery, then arriving data is directed to the intended service. This is a conceptual view, not a complete socket-demultiplexing rule.</figcaption></figure>
+<p>Do not confuse this with <strong>inverse multiplexing</strong>. The first deck uses a download accelerator as an example of one task using several network connections. Ordinary multiplexing combines several conversations; inverse multiplexing spreads one task across connections.</p>
+<h2 id="section-3">Choosing a transport service</h2>
+<p>The lecture presents service choices along three dimensions: connection-oriented or connectionless, reliable or not reliable, and unicast or multicast. Its protocol summary is:</p>
+<table>
+<thead>
+<tr>
+<th>Protocol</th>
+<th>Connection style</th>
+<th>Delivery properties in the lecture</th>
+<th>Destinations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TCP (Transmission Control Protocol)</td>
+<td>Connection-oriented</td>
+<td>Reliable transport service</td>
+<td>Unicast</td>
+</tr>
+<tr>
+<td>UDP</td>
+<td>Connectionless</td>
+<td>Unacknowledged and not reliable at the transport layer</td>
+<td>Unicast or multicast</td>
+</tr>
+</tbody>
+</table>
+<p>The source uses “Unreliable Datagram Protocol” in one slide, but the standards name is <strong>User Datagram Protocol</strong>. “Unreliable” describes the service contrast taught here; it is not the protocol's expansion. <a href="https://www.rfc-editor.org/rfc/rfc768.html">RFC 768</a> defines UDP and says delivery and duplicate protection are not guaranteed. An application that needs reliability may provide it itself. The assigned TCP section ends by deferring TCP to the next lecture, so this page does not expand that protocol into its later mechanics.</p>
+<p>UDP is presented as useful for short messages when connection overhead is inappropriate. The lecture names VoIP, DNS, Sun Network File System (NFS), and remote procedure calls (RPC) as examples. Its header has four 16-bit fields:</p>
+<table>
+<thead>
+<tr>
+<th>Source Port</th>
+<th>Destination Port</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UDP Length</td>
+<td>UDP Checksum</td>
+</tr>
+</tbody>
+</table>
+<p>The four fields total 64 bits, or 8 bytes. In the encapsulation view, the UDP header and data sit inside an IP packet, which sits inside a data-link frame. The checksum helps detect corruption; it does not itself acknowledge, retransmit, or repair data.</p>
+<h2 id="section-4">Reliability: identify, check, track</h2>
+<p>The second deck frames the problem as delivering error-free data to the correct process. Its proposed pieces work together: a checksum helps check packet contents; IP addresses plus ports identify the endpoints; sequence numbers distinguish packets within a connection; and tracking packet status lets a sender learn whether delivery succeeded. Retaining sent copies matters when recovery may be needed. These are general transport functions here, not a description of a particular TCP recovery algorithm.</p>
+<h2 id="section-5">Connection establishment and stale messages</h2>
+<p>The service primitives are <code>listen</code>, <code>connect</code>, <code>send</code>, <code>receive</code>, and <code>disconnect</code>. In the basic service, the server listens, the client requests a connection, the server accepts, and then data can move in both directions. The lecture's detailed diagrams use generic messages—<code>CR</code>, <code>ACK</code>, <code>DATA</code>, and <code>REJECT</code>—because packets can be lost, delayed, or duplicated. They are not TCP flags or a TCP state machine.</p>
+<p>The following walkthroughs preserve the slide's symbolic values <code>x</code>, <code>y</code>, and <code>z</code>. Each arrow is a message from the first host shown to the second; time moves downward.</p>
+<details class="worked"><summary>Worked trace · normal generic connection setup</summary><section class="walk" aria-label="Normal request, acknowledgment, and first data"><h3>Normal request, acknowledgment, and first data</h3><div class="example-input"><p><strong>Givens:</strong> Host 1 initiates; the network may delay, lose, or duplicate messages; the figure uses the symbols <code>x</code> and <code>y</code>.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Request</h4><p>Host 1 sends <code>CR (seq = x)</code> to Host 2. Host 2 has not yet confirmed this request.</p></section><section class="step"><h4>2 · Accept</h4><p>Host 2 replies <code>ACK (seq = y, ACK = x)</code>. The acknowledgment refers to request value <code>x</code>; Host 2 uses <code>y</code> for its own sequence value.</p></section><section class="step"><h4>3 · Begin data transfer</h4><p>Host 1 sends <code>DATA (seq = x, ACK = y)</code>. It refers to Host 2's <code>y</code>, completing the illustrated setup and beginning data transfer. The values are generic teaching labels, not TCP sequence arithmetic.</p></section></section></details>
+
+<details class="worked"><summary>Worked trace · an old duplicate connection request</summary><section class="walk" aria-label="Rejecting an old CR that arrives later"><h3>Rejecting an old CR that arrives later</h3><div class="example-input"><p><strong>Givens:</strong> The incoming request is an old duplicate, not a fresh user request. Sequence symbols describe this generic example only.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Stale request appears</h4><p>An old <code>CR (seq = x)</code> reaches Host 2 after its original context is no longer current.</p></section><section class="step"><h4>2 · Host 2 responds</h4><p>Host 2 sends <code>ACK (seq = y, ACK = x)</code>, as shown in the generic scenario.</p></section><section class="step"><h4>3 · Host 1 identifies the mismatch</h4><p>Host 1 recognizes that this response belongs to an obsolete request and sends <code>REJECT (ACK = y)</code>. The sequence information helps prevent the stale request from being mistaken for a current connection.</p></section></section></details>
+
+<details class="worked"><summary>Worked trace · duplicate request, duplicate ACK, and old data</summary><section class="walk" aria-label="Two stale messages and the current setup context"><h3>Two stale messages and the current setup context</h3><div class="example-input"><p><strong>Givens:</strong> The panel marks <code>CR (seq = x)</code> and <code>DATA (seq = x, ACK = z)</code> as old duplicates. Host 2 sends <code>ACK (seq = y, ACK = x)</code>; the drawn rejection is Host 1 → Host 2. The caption mentions duplicate ACKs, but the panel explicitly marks the old DATA packet.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Old request is duplicated</h4><p>A duplicate <code>CR (seq = x)</code> reaches Host 2. Host 2 returns <code>ACK (seq = y, ACK = x)</code>.</p></section><section class="step"><h4>2 · Old data travels independently</h4><p>The source draws an old duplicate <code>DATA (seq = x, ACK = z)</code> from Host 1 toward Host 2. Its acknowledgment <code>z</code> differs from the current response value <code>y</code>, so this packet does not acknowledge that response. The diagram does not specify a complete receiver acceptance rule.</p></section><section class="step"><h4>3 · Host 1 rejects the unexpected setup response</h4><p>The <code>REJECT (ACK = y)</code> arrow also runs from Host 1 to Host 2. It can answer the unexpected setup acknowledgment received by Host 1; it is not a receiver-side rejection of old DATA by Host 2. The drawing leaves the local decisions implicit. Keep those two events separate rather than infer a rejection rule from their placement. This is a generic duplicate-message illustration, not a TCP procedure.</p></section></section></details>
+<h2 id="section-6">Connection release and loss cases</h2>
+<p>The release goal is threefold: both sides agree the connection is closed, data is not lost, and neither side waits forever for the other. In the normal generic example, each side sends a disconnect request (<code>DR</code>). Host 1 releases after receiving Host 2's <code>DR</code> and sends the final <code>ACK</code>; Host 2 releases after receiving that acknowledgment. The source starts a timer at Host 1's first <code>DR</code> and at Host 2's reply.</p>
+<p>These are generic transport-service examples. The deck does not name formal states or identify this <code>DR</code> exchange with TCP's close procedure.</p>
+<details class="worked"><summary>Worked trace · normal three-message release</summary><section class="walk" aria-label="Both sides exchange DR and ACK"><h3>Both sides exchange DR and ACK</h3><div class="example-input"><p><strong>Givens:</strong> No messages are lost in this trace; each host releases after its indicated peer message.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Host 1 requests release</h4><p>Host 1 sends <code>DR</code> and starts its timer. Host 1 remains able to handle the peer's response while waiting.</p></section><section class="step"><h4>2 · Host 2 responds</h4><p>After receiving the request, Host 2 sends <code>DR</code> and starts its timer. The two sides have now both requested release.</p></section><section class="step"><h4>3 · Host 1 acknowledges; Host 2 closes</h4><p>Host 1 releases its connection and sends <code>ACK</code>. On receiving it, Host 2 releases too. This is the slide's normal three-message case: <code>DR → DR → ACK</code>.</p></section></section></details>
+
+<details class="worked"><summary>Worked trace · final ACK is lost</summary><section class="walk" aria-label="Host 2 uses its timer when the final ACK disappears"><h3>Host 2 uses its timer when the final ACK disappears</h3><div class="example-input"><p><strong>Givens:</strong> The peer DR reaches Host 1; only Host 1's final ACK is lost.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Both DR messages arrive</h4><p>Host 1 sends <code>DR</code> and starts a timer. Host 2 receives it, replies with <code>DR</code>, and starts its own timer.</p></section><section class="step"><h4>2 · Host 1 releases and sends ACK</h4><p>Host 1 receives Host 2's <code>DR</code>, releases, and sends <code>ACK</code>. The network loses this final acknowledgment.</p></section><section class="step"><h4>3 · Host 2 times out</h4><p>Host 2 does not wait forever for the missing <code>ACK</code>. Its timer expires, so it releases the connection as shown in the source.</p></section></section></details>
+
+<details class="worked"><summary>Worked trace · Host 2 response DR is lost</summary><section class="walk" aria-label="Host 1 retries its DR after timeout"><h3>Host 1 retries its DR after timeout</h3><div class="example-input"><p><strong>Givens:</strong> The first response <code>DR</code> is lost; Host 1 retries after timeout; the later exchange is delivered.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Host 2 response disappears</h4><p>Host 1 sends <code>DR</code> and starts its timer. Host 2 receives it and sends <code>DR</code>, but the response is lost.</p></section><section class="step"><h4>2 · Host 1 times out and retries</h4><p>Host 1 receives no response before its timer expires, so it sends <code>DR</code> again and restarts the timer.</p></section><section class="step"><h4>3 · Retry succeeds</h4><p>Host 2 receives the repeated <code>DR</code>, sends <code>DR</code> again, and starts its timer. Host 1 receives it, releases, and sends <code>ACK</code>. Host 2 receives the acknowledgment and releases.</p></section></section></details>
+
+<details class="worked"><summary>Worked trace · response and subsequent DR attempts are lost</summary><section class="walk" aria-label="Both sides eventually release by timeout"><h3>Both sides eventually release by timeout</h3><div class="example-input"><p><strong>Givens:</strong> The initial Host 2 response and Host 1's subsequent DR retries are lost; each side has timeout behavior as drawn.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Initial request reaches Host 2</h4><p>Host 1 sends <code>DR</code> and starts its timer. Host 2 receives it, responds with <code>DR</code>, and starts its timer; the response is lost.</p></section><section class="step"><h4>2 · Host 1 retries; retry is lost</h4><p>Host 1 times out and retransmits <code>DR</code>, restarting its timer. This and subsequent attempts are lost as in the slide's case (d).</p></section><section class="step"><h4>3 · Host 1 reaches its timeout limit</h4><p>After the illustrated <code>N</code> timeouts, Host 1 releases. It cannot keep waiting indefinitely.</p></section><section class="step"><h4>4 · Host 2 times out too</h4><p>Host 2 eventually reaches its own timeout and releases. No final <code>ACK</code> is shown in this case. The teaching point is bounded waiting under repeated loss, not a guarantee that a lost release exchange delivered every control message.</p></section></section></details>
+<h2 id="section-7">Flow control and receiver buffering</h2>
+<p>The sender wants to send quickly, but the receiver has finite buffer space. The lecture's qualitative rule is to keep copies of sent data and avoid sending more than the receiver can currently hold if loss must be avoided. Sending beyond that capacity may be faster, but risks dropped data. This is receiver-buffer flow control in the lecture; it is not a quantitative window algorithm and should not be confused with congestion control.</p>
+<details class="worked"><summary>Supplemental example · reason about a finite receive buffer</summary><section class="walk" aria-label="Eight buffer slots and a ten-unit message"><h3>Eight buffer slots and a ten-unit message</h3><div class="example-input"><p><strong>Givens · teaching example:</strong> current free receiver buffer = 8 units; pending message = 10 units; no additional buffer mechanism is assumed.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Compare message and available space</h4><p>The receiver has room for <strong>8 units</strong>; the sender has a <strong>10-unit</strong> message. If it sends all ten immediately, two units exceed the known free space and may be dropped.</p></section><section class="step"><h4>2 · Choose a no-overflow send</h4><p>Sending at most 8 units stays within the stated capacity. The sender retains its copy of the remaining data and waits for delivery status or room before continuing.</p></section><section class="step"><h4>3 · Check the decision</h4><p><strong>Check:</strong> 8 sent units fit 8 free slots; 2 units remain in the sender's copy. Sending all 10 at once would exceed capacity by 2, so it carries the drop risk described in the lecture. The numbers are a teaching example, not a protocol window field.</p></section></section></details>
+<h2 id="section-8">Quick revision and practice</h2>
+<ul>
+<li>Transport is end-to-end and delivers to processes; data link operates across one link.</li>
+<li>A transport endpoint uses a host address and port. Direction determines which endpoint is source and which is destination.</li>
+<li>Multiplexing combines application conversations; demultiplexing separates them at delivery. Inverse multiplexing uses several network connections for one task.</li>
+<li>The assigned slides' connection messages are generic. Sequence information helps expose old duplicates; it does not make these TCP's actual handshake messages.</li>
+<li>Release exchanges use timers in the illustrated loss cases so a host does not wait forever.</li>
+<li>A checksum can detect errors; acknowledgment and recovery are separate ideas. UDP's checksum does not make UDP reliable.</li>
+<li>Receiver-buffer flow control and network congestion control are different topics.</li>
+<li>Quiz 1 Question 1's three-bit Go-Back-N result (<code>7</code>) belongs to link-layer ARQ, not a TCP window; see <a href="data-link.html">Data link framing, errors and flow control</a>.</li>
+</ul>
+<p class="question">A DNS query uses destination port <code>53</code>. What does this port identify, and what identifies the client endpoint?</p>
+<details class="worked"><summary>Check your answer</summary><p>Port <code>53</code> selects the DNS service on the destination host. The client endpoint is identified by its host IP address and its source port; for the illustrated connection, the full flow also includes both destination fields.</p></details>
+<p class="question">In one sentence, distinguish multiplexing from inverse multiplexing.</p>
+<details class="worked"><summary>Check your answer</summary><p>Multiplexing carries several application conversations over transport/network delivery, while inverse multiplexing uses several network connections for one task, such as the lecture's download accelerator example.</p></details>
+<p class="question">Why does a receiver use sequence information in the old-duplicate examples?</p>
+<details class="worked"><summary>Check your answer</summary><p>It helps distinguish messages belonging to an earlier exchange from messages that match the current connection context, preventing a stale request or data message from being accepted as current.</p></details>
+<p class="question">If a receiver has room for 6 units and the sender sends 9 without waiting, how much exceeds the stated capacity?</p>
+<details class="worked"><summary>Check your answer</summary><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>9</mn><mo>&#x02212;</mo><mn>6</mn><mo>&#x0003D;</mo><mn>3</mn></mrow></math>
+<p>units exceed the stated free capacity, so the send carries a risk of drops. This applies the qualitative buffer-capacity rule.</p></details>
+<p class="question">A peer release response is lost. What does the generic lecture example show the initiating host doing?</p>
+<details class="worked"><summary>Check your answer</summary><p>After its timer expires, it retransmits <code>DR</code> and restarts the timer. If repeated attempts remain lost, both sides eventually release by their timeout behavior in the final loss case.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="ipv6.html"><small>Previous</small>IPv6 addressing and transition <span aria-hidden="true">↗</span></a><a href="short-range.html"><small>Next</small>Bluetooth, NFC and ZigBee <span aria-hidden="true">↗</span></a></nav><footer>Networks field notes <span>Follow the packet. Explain the decision.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  root.querySelectorAll('table').forEach(table => {
+    const region = document.createElement('div');
+    region.className = 'table-scroll' + (table.rows[0]?.cells.length > 5 ? ' wide' : '');
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    table.before(region); region.append(table);
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Network diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {osi:'layers encapsulation protocol service interface pdu',link:'framing crc parity arq flow control sliding window',ethernet:'mac switch arp csma token lab',wan:'man atm isdn frame relay x25',routing:'network forwarding distance vector link state dijkstra',ipv4:'ip subnet mask vlsm binary cidr lab',ipv6:'ip address compression transition lab',transport:'tcp udp handshake congestion window port',bluetooth:'wireless nfc zigbee wpan beacon quiz',security:'cia attacks cryptography encryption hash authentication',infrastructure:'pki certificate ca trust revocation signature',tls:'ssl ipsec ah esp tunnel sa',design:'requirements topology availability delay bandwidth'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('a').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('cns-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.CNS_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) expand.textContent = 'Expand examples';
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

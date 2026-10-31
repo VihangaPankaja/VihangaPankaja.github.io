@@ -1,0 +1,1235 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Index every suffix of a source string. A substring query becomes a prefix search through those suffixes."><title>Suffix tree · ADS field notes</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('ads-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{.table-hint{display:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> ADS <span class="subbrand">field notes</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Heap, delete, trie…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a href="index.html">Data structures, side by side.</a><a href="comparison.html">Operation costs at a glance</a></div><div class="nav-group"><p>Priority queues</p><a href="binary-heap.html">Binary heap</a><a href="d-ary-heap.html">d-ary heap</a><a href="dual-heap.html">Dual min/max heaps</a><a href="correspondence-heaps.html">Correspondence heaps</a><a href="interval-heap.html">Interval heap</a></div><div class="nav-group"><p>Tournament and coding trees</p><a href="winner-tree.html">Winner tree</a><a href="loser-tree.html">Loser tree</a><a href="huffman-tree.html">Huffman tree</a></div><div class="nav-group"><p>Meldable priority queues</p><a href="leftist-tree.html">Leftist tree</a><a href="binomial-heap.html">Lazy binomial heap</a><a href="fibonacci-heap.html">Fibonacci heap</a><a href="pairing-heap.html">Pairing heap</a></div><div class="nav-group"><p>Dictionaries and search trees</p><a href="hash-table.html">Hash table</a><a href="binary-search-tree.html">Binary search tree</a><a href="indexed-bst.html">Indexed BST</a><a href="optimal-bst.html">Optimal BST</a><a href="avl-tree.html">AVL tree</a><a href="red-black-tree.html">Red-black tree</a><a href="b-tree.html">B-tree</a><a href="two-three-tree.html">2-3 tree</a><a href="two-three-four-tree.html">2-3-4 tree</a><a href="b-plus-tree.html">B+ tree</a><a href="splay-tree.html">Splay tree</a></div><div class="nav-group"><p>Digital search and strings</p><a href="digital-search-tree.html">Digital search tree</a><a href="binary-trie.html">Binary trie</a><a href="compressed-trie.html">Compressed binary trie</a><a href="higher-order-trie.html">Higher-order trie</a><a href="multibit-trie.html">Multibit trie and routing</a><a href="suffix-tree.html" aria-current="page">Suffix tree</a></div><div class="nav-group"><p>Reference</p><a href="operation-glossary.html">Operation names and exam traps</a></div><div class="nav-group"><p>Sorting on disk</p><a href="external-sorting.html">External sorting</a></div><div class="nav-group"><p>Analysis</p><a href="amortized-analysis.html">Amortized analysis</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4580<br>Advanced Data Structures</div></aside>
+<main id="main"><div class="eyebrow">Digital search and strings <span>/</span> Lecture 14</div><h1>Suffix tree</h1><p class="lead">Index every suffix of a source string. A substring query becomes a prefix search through those suffixes.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Rule</a><a href="#section-1">Search and special operations</a><a href="#section-2">Construction, repeated strings and common strings</a><a href="#section-3">Update caveats and exam focus</a><a href="#section-4">A larger suffix-list build: banana</a><a href="#section-5">Repetition and common-substring decisions</a><a href="#section-6">Method decisions and stop conditions</a><a href="#section-7">Common mistakes</a><a href="#section-8">Exam focus</a><a href="#section-9">Practice</a></nav><article><h2 id="section-0">Rule</h2>
+<p>A suffix tree is a compressed trie with edge information for all nonempty suffixes of a string. Append a unique terminator # so no suffix is a proper prefix of another. Each leaf stores its suffix's starting position. Store edge labels as source intervals rather than copying long strings.</p>
+<section aria-label="Build fresh from the suffix list of aba#" class="walk"><h3>Build fresh from the suffix list of aba#</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Form the list</h4><figure><div class="array"><span class="cell"><small>1</small>1: aba#</span><span class="cell"><small>2</small>2: ba#</span><span class="cell"><small>3</small>3: a#</span><span class="cell"><small>4</small>4: #</span></div><figcaption>Positions are 1-based here. This is a source string build, rather than an arbitrary dictionary-key build.</figcaption></figure><div class="step-reason"><p>The list is the complete set of nonempty suffixes, indexed from 1; the final # is included in each suffix. This makes every suffix terminate at a distinct leaf and prevents one suffix from ending as a prefix of another. The list is the input to this teaching construction, not yet a tree.</p></div></section><section class="step"><h4>2 · Insert suffixes aba# and ba#</h4><figure><div class="diagram-frame" style="--diagram-width:237.6px"><svg aria-label="The two strings differ at the first character, so they share only the root." height="139pt" role="img" viewbox="0.00 0.00 237.60 138.60" width="238pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="suffix-build-2-graph0" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="suffix-build-2-node1">
+<title>r</title>
+<path d="M122.5,-117C122.5,-117 92.5,-117 92.5,-117 86.5,-117 80.5,-111 80.5,-105 80.5,-105 80.5,-93 80.5,-93 80.5,-87 86.5,-81 92.5,-81 92.5,-81 122.5,-81 122.5,-81 128.5,-81 134.5,-87 134.5,-93 134.5,-93 134.5,-105 134.5,-105 134.5,-111 128.5,-117 122.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="107.5" y="-95.5">root</text>
+</g>
+<!-- a -->
+<g class="node" id="suffix-build-2-node2">
+<title>a</title>
+<path d="M85,-36C85,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 85,0 85,0 91,0 97,-6 97,-12 97,-12 97,-24 97,-24 97,-30 91,-36 85,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="48.5" y="-14.5">position 1</text>
+</g>
+<!-- r&#45;&gt;a -->
+<g class="edge" id="suffix-build-2-edge1">
+<title>r-&gt;a</title>
+<path d="M94.7,-80.86C85.96,-69.16 74.31,-53.56 64.9,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="66.55,-39.66 61.28,-36.11 63.18,-42.17 66.55,-39.66" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="99" y="-55.4">aba#</text>
+</g>
+<!-- b -->
+<g class="node" id="suffix-build-2-node3">
+<title>b</title>
+<path d="M204,-36C204,-36 131,-36 131,-36 125,-36 119,-30 119,-24 119,-24 119,-12 119,-12 119,-6 125,0 131,0 131,0 204,0 204,0 210,0 216,-6 216,-12 216,-12 216,-24 216,-24 216,-30 210,-36 204,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="167.5" y="-14.5">position 2</text>
+</g>
+<!-- r&#45;&gt;b -->
+<g class="edge" id="suffix-build-2-edge2">
+<title>r-&gt;b</title>
+<path d="M120.52,-80.86C129.4,-69.16 141.25,-53.56 150.83,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="152.55,-42.16 154.51,-36.11 149.2,-39.62 152.55,-42.16" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="153" y="-55.4">ba#</text>
+</g>
+</g>
+</svg>
+</div><figcaption>The two strings differ at the first character, so they share only the root.</figcaption></figure><div class="step-reason"><p>Compare the first characters of aba# and ba#: a and b differ, so each suffix gets its own root edge and leaf. No shared prefix exists to compress below the root; continue with the remaining suffixes.</p></div></section><section class="step"><h4>3 · Insert a# and split an edge</h4><figure><div class="diagram-frame" style="--diagram-width:288.6px"><svg aria-label="aba# and a# share a, then branch. Split the old aba# edge after its first character." height="220pt" role="img" viewbox="0.00 0.00 288.60 219.60" width="289pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="suffix-build-3-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="suffix-build-3-node1">
+<title>r</title>
+<path d="M177.5,-198C177.5,-198 147.5,-198 147.5,-198 141.5,-198 135.5,-192 135.5,-186 135.5,-186 135.5,-174 135.5,-174 135.5,-168 141.5,-162 147.5,-162 147.5,-162 177.5,-162 177.5,-162 183.5,-162 189.5,-168 189.5,-174 189.5,-174 189.5,-186 189.5,-186 189.5,-192 183.5,-198 177.5,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="162.5" y="-176.5">root</text>
+</g>
+<!-- x -->
+<g class="node" id="suffix-build-3-node2">
+<title>x</title>
+<path d="M135.5,-117C135.5,-117 79.5,-117 79.5,-117 73.5,-117 67.5,-111 67.5,-105 67.5,-105 67.5,-93 67.5,-93 67.5,-87 73.5,-81 79.5,-81 79.5,-81 135.5,-81 135.5,-81 141.5,-81 147.5,-87 147.5,-93 147.5,-93 147.5,-105 147.5,-105 147.5,-111 141.5,-117 135.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="107.5" y="-95.5">prefix a</text>
+</g>
+<!-- r&#45;&gt;x -->
+<g class="edge" id="suffix-build-3-edge1">
+<title>r-&gt;x</title>
+<path d="M150.57,-161.86C142.49,-150.26 131.75,-134.84 123.02,-122.29" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="124.56,-120.83 119.41,-117.11 121.12,-123.23 124.56,-120.83" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="142.5" y="-136.4">a</text>
+</g>
+<!-- b -->
+<g class="node" id="suffix-build-3-node4">
+<title>b</title>
+<path d="M255,-117C255,-117 182,-117 182,-117 176,-117 170,-111 170,-105 170,-105 170,-93 170,-93 170,-87 176,-81 182,-81 182,-81 255,-81 255,-81 261,-81 267,-87 267,-93 267,-93 267,-105 267,-105 267,-111 261,-117 255,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="218.5" y="-95.5">position 2</text>
+</g>
+<!-- r&#45;&gt;b -->
+<g class="edge" id="suffix-build-3-edge4">
+<title>r-&gt;b</title>
+<path d="M174.65,-161.86C182.87,-150.26 193.81,-134.84 202.7,-122.29" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="204.62,-123.22 206.37,-117.11 201.19,-120.79 204.62,-123.22" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="207" y="-136.4">ba#</text>
+</g>
+<!-- a -->
+<g class="node" id="suffix-build-3-node3">
+<title>a</title>
+<path d="M85,-36C85,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 85,0 85,0 91,0 97,-6 97,-12 97,-12 97,-24 97,-24 97,-30 91,-36 85,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="48.5" y="-14.5">position 1</text>
+</g>
+<!-- x&#45;&gt;a -->
+<g class="edge" id="suffix-build-3-edge2">
+<title>x-&gt;a</title>
+<path d="M94.7,-80.86C85.96,-69.16 74.31,-53.56 64.9,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="66.55,-39.66 61.28,-36.11 63.18,-42.17 66.55,-39.66" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="95" y="-55.4">ba#</text>
+</g>
+<!-- c -->
+<g class="node" id="suffix-build-3-node5">
+<title>c</title>
+<path d="M204,-36C204,-36 131,-36 131,-36 125,-36 119,-30 119,-24 119,-24 119,-12 119,-12 119,-6 125,0 131,0 131,0 204,0 204,0 210,0 216,-6 216,-12 216,-12 216,-24 216,-24 216,-30 210,-36 204,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="167.5" y="-14.5">position 3</text>
+</g>
+<!-- x&#45;&gt;c -->
+<g class="edge" id="suffix-build-3-edge3">
+<title>x-&gt;c</title>
+<path d="M120.52,-80.86C129.4,-69.16 141.25,-53.56 150.83,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="152.55,-42.16 154.51,-36.11 149.2,-39.62 152.55,-42.16" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="146.5" y="-55.4">#</text>
+</g>
+</g>
+</svg>
+</div><figcaption>aba# and a# share a, then branch. Split the old aba# edge after its first character.</figcaption></figure><div class="step-reason"><p>Insert a#: its first a matches the beginning of aba#, but the next characters differ (b versus #). Split the old edge after a, keep the old continuation ba# at leaf 1, and add # to leaf 3. The internal node now records the shared prefix a; continue with the remaining suffix.</p></div></section><section class="step"><h4>4 · Insert #</h4><figure><div class="diagram-frame" style="--diagram-width:407.6px"><svg aria-label="All four suffixes now have distinct leaves. This small build illustrates the structure, not a linear-time construction algorithm." height="220pt" role="img" viewbox="0.00 0.00 407.60 219.60" width="408pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="suffix-build-4-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="suffix-build-4-node1">
+<title>r</title>
+<path d="M233.5,-198C233.5,-198 203.5,-198 203.5,-198 197.5,-198 191.5,-192 191.5,-186 191.5,-186 191.5,-174 191.5,-174 191.5,-168 197.5,-162 203.5,-162 203.5,-162 233.5,-162 233.5,-162 239.5,-162 245.5,-168 245.5,-174 245.5,-174 245.5,-186 245.5,-186 245.5,-192 239.5,-198 233.5,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="218.5" y="-176.5">root</text>
+</g>
+<!-- x -->
+<g class="node" id="suffix-build-4-node2">
+<title>x</title>
+<path d="M135.5,-117C135.5,-117 79.5,-117 79.5,-117 73.5,-117 67.5,-111 67.5,-105 67.5,-105 67.5,-93 67.5,-93 67.5,-87 73.5,-81 79.5,-81 79.5,-81 135.5,-81 135.5,-81 141.5,-81 147.5,-87 147.5,-93 147.5,-93 147.5,-105 147.5,-105 147.5,-111 141.5,-117 135.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="107.5" y="-95.5">prefix a</text>
+</g>
+<!-- r&#45;&gt;x -->
+<g class="edge" id="suffix-build-4-edge1">
+<title>r-&gt;x</title>
+<path d="M194.41,-161.86C177.4,-149.75 154.5,-133.45 136.48,-120.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="137.64,-118.88 131.54,-117.11 135.21,-122.3 137.64,-118.88" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="174.5" y="-136.4">a</text>
+</g>
+<!-- b -->
+<g class="node" id="suffix-build-4-node4">
+<title>b</title>
+<path d="M255,-117C255,-117 182,-117 182,-117 176,-117 170,-111 170,-105 170,-105 170,-93 170,-93 170,-87 176,-81 182,-81 182,-81 255,-81 255,-81 261,-81 267,-87 267,-93 267,-93 267,-105 267,-105 267,-111 261,-117 255,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="218.5" y="-95.5">position 2</text>
+</g>
+<!-- r&#45;&gt;b -->
+<g class="edge" id="suffix-build-4-edge4">
+<title>r-&gt;b</title>
+<path d="M218.5,-161.86C218.5,-150.57 218.5,-135.66 218.5,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="220.6,-123.11 218.5,-117.11 216.4,-123.11 220.6,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="231" y="-136.4">ba#</text>
+</g>
+<!-- d -->
+<g class="node" id="suffix-build-4-node6">
+<title>d</title>
+<path d="M374,-117C374,-117 301,-117 301,-117 295,-117 289,-111 289,-105 289,-105 289,-93 289,-93 289,-87 295,-81 301,-81 301,-81 374,-81 374,-81 380,-81 386,-87 386,-93 386,-93 386,-105 386,-105 386,-111 380,-117 374,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="337.5" y="-95.5">position 4</text>
+</g>
+<!-- r&#45;&gt;d -->
+<g class="edge" id="suffix-build-4-edge5">
+<title>r-&gt;d</title>
+<path d="M244.32,-161.86C262.57,-149.75 287.11,-133.45 306.43,-120.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="307.89,-122.18 311.73,-117.11 305.57,-118.68 307.89,-122.18" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="289.5" y="-136.4">#</text>
+</g>
+<!-- a -->
+<g class="node" id="suffix-build-4-node3">
+<title>a</title>
+<path d="M85,-36C85,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 85,0 85,0 91,0 97,-6 97,-12 97,-12 97,-24 97,-24 97,-30 91,-36 85,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="48.5" y="-14.5">position 1</text>
+</g>
+<!-- x&#45;&gt;a -->
+<g class="edge" id="suffix-build-4-edge2">
+<title>x-&gt;a</title>
+<path d="M94.7,-80.86C85.96,-69.16 74.31,-53.56 64.9,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="66.55,-39.66 61.28,-36.11 63.18,-42.17 66.55,-39.66" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="95" y="-55.4">ba#</text>
+</g>
+<!-- c -->
+<g class="node" id="suffix-build-4-node5">
+<title>c</title>
+<path d="M204,-36C204,-36 131,-36 131,-36 125,-36 119,-30 119,-24 119,-24 119,-12 119,-12 119,-6 125,0 131,0 131,0 204,0 204,0 210,0 216,-6 216,-12 216,-12 216,-24 216,-24 216,-30 210,-36 204,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="167.5" y="-14.5">position 3</text>
+</g>
+<!-- x&#45;&gt;c -->
+<g class="edge" id="suffix-build-4-edge3">
+<title>x-&gt;c</title>
+<path d="M120.52,-80.86C129.4,-69.16 141.25,-53.56 150.83,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="152.55,-42.16 154.51,-36.11 149.2,-39.62 152.55,-42.16" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="146.5" y="-55.4">#</text>
+</g>
+</g>
+</svg>
+</div><figcaption>All four suffixes now have distinct leaves. This small build illustrates the structure, not a linear-time construction algorithm.</figcaption></figure><div class="step-reason"><p>The final suffix # has a root character not used by the other suffixes, so add one edge and leaf at position 4. All four suffixes terminate at distinct leaves, and every internal node branches; this completes this small naive construction.</p></div></section></section>
+<h2 id="section-1">Search and special operations</h2>
+<p>To search pattern p, compare characters along compressed edges. Finishing p in the middle of a matching edge is a success. A mismatch anywhere is failure. Existence search costs <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mo stretchy="false">|</mo><mi>p</mi><mo stretchy="false">|</mo><mo stretchy="false">)</mo></mrow></math> under constant-time child access. Reporting k occurrences costs <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mo stretchy="false">|</mo><mi>p</mi><mo stretchy="false">|</mo><mo>+</mo><mi>k</mi><mo stretchy="false">)</mo></mrow></math> with suitable leaf traversal or the lecture's linked leaves and subtree endpoint pointers.</p>
+<section aria-label="Search a, then ab, then aa" class="walk"><h3>Search a, then ab, then aa</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Search a</h4><figure><div class="array"><span class="cell"><small>1</small>match root edge a</span><span class="cell"><small>2</small>stop at its branch</span><span class="cell"><small>3</small>leaves below: 1,3</span></div><figcaption>The pattern occurs twice, at positions 1 and 3.</figcaption></figure><div class="step-reason"><p>Follow the root edge a and stop exactly at its branch node after one matched character. Since the pattern is exhausted, the search succeeds; the descendant leaves 1 and 3 are precisely the two starts of a. If reporting all matches, visit those leaves (or use the lecture’s linked-leaf interval).</p></div></section><section class="step"><h4>2 · Search ab</h4><figure><div class="array"><span class="cell"><small>1</small>match a</span><span class="cell"><small>2</small>match first b of edge ba#</span><span class="cell"><small>3</small>pattern ends inside edge → success</span></div><figcaption>Only leaf 1 lies below the matched edge. Occurrence starts at 1.</figcaption></figure><div class="step-reason"><p>After matching a, take the b edge and compare only the needed character of its compressed label ba#. The query ends after that b, inside the edge, so it is present and its only descendant leaf is position 1. Stop as soon as the pattern is exhausted; do not require reaching a node.</p></div></section><section class="step"><h4>3 · Search aa</h4><figure><div class="array"><span class="cell"><small>1</small>match a</span><span class="cell"><small>2</small>no outgoing edge starting a</span><span class="cell"><small>3</small>absent</span></div><figcaption>A path for the first character alone does not make the whole pattern present.</figcaption></figure><div class="step-reason"><p>The first a reaches the branch node, but its outgoing labels are b and #, not a. No edge can continue the query’s second character, so aa is absent even though its first character has a path. Stop at this missing child.</p></div></section></section>
+<h2 id="section-2">Construction, repeated strings and common strings</h2>
+<p>The simple fresh build inserts all suffixes and can take <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mrow><mn>2</mn></mrow></msup><mo stretchy="false">)</mo></mrow></math> character work. Efficient suffix-tree algorithms achieve the lecture's <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>r</mi><mo stretchy="false">)</mo></mrow></math> array-node construction bound, which is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math> for fixed alphabet size r. Do not claim the naive suffix insertion viewer attains that bound. A fixed-alphabet tree has <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math> nodes and edge-interval storage.</p>
+<p>For the longest substring occurring <strong>at least m times</strong>, count leaves below each branch and choose the eligible branch with greatest string depth. Overlapping occurrences count. The lecture's problem wording says “more than m” but its algorithm tests ≥ m. These are different: use threshold m for at least m occurrences, and m+1 for strictly more than m. For a substring in both S and T, build on S$T# using distinct separators, label leaves by source, and choose the deepest branch with descendants from both. In the lecture, carport and airports share rport, while arport is a common subsequence but is not a substring common to both strings.</p>
+<h2 id="section-3">Update caveats and exam focus</h2>
+<p>This is primarily a static source index. Rebuilding after text changes is a clear supported approach. Generic insert/delete/meld of source strings is not a constant-time suffix-tree operation. Appending text needs an online construction algorithm, not one ordinary trie insertion. A terminator must not occur in the original alphabet. char# in the slides indicates matched character depth information, not merely the number of graph edges.</p>
+<p>Suffix arrays, enhanced arrays, linearized/virtual suffix trees and suffix cactus/vectors are named relatives. The supplied lesson develops suffix-tree operations, so the revision steps here concentrate on that structure.</p>
+<p class="question">Why can a substring be found through suffixes?</p>
+<details class="worked"><summary>Check your answer</summary><p>Every occurrence starts at some source position. The substring is therefore a prefix of the suffix starting at that position.</p></details>
+<h2 id="section-4">A larger suffix-list build: banana</h2>
+<p>This fresh example inserts every suffix of the source <code>banana</code>, after appending the unique terminator <code>#</code>. Positions are 1-based. The edge labels in the diagrams are expanded for reading; an implementation can store source-string intervals instead. Each state preserves the already-inserted suffixes, and each internal node is created at the first point where two suffixes disagree.</p>
+<section aria-label="Build fresh from the suffix list of banana#" class="walk"><h3>Build fresh from the suffix list of banana#</h3><div class="walk-controls"><button aria-label="Previous step" data-action="prev" type="button">←</button><output aria-live="polite"></output><button aria-label="Next step" data-action="next" type="button">→</button><button data-action="play" type="button">Play</button><button data-action="reset" type="button">Reset</button></div><section class="step"><h4>1 · Form all seven nonempty suffixes</h4><figure><div class="array"><span class="cell"><small>1</small>1: banana#</span><span class="cell"><small>2</small>2: anana#</span><span class="cell"><small>3</small>3: nana#</span><span class="cell"><small>4</small>4: ana#</span><span class="cell"><small>5</small>5: na#</span><span class="cell"><small>6</small>6: a#</span><span class="cell"><small>7</small>7: #</span></div><figcaption>Every source position contributes one suffix, including the suffix consisting only of #.</figcaption></figure></section><section class="step"><h4>2 · Insert banana# (position 1)</h4><figure><div class="diagram-frame" style="--diagram-width:160px"><svg aria-label="The first suffix occupies one compressed root edge; there is no comparison to make yet." height="139pt" role="img" viewbox="0.00 0.00 125.10 138.60" width="125pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-suffix-tree-banana-01-graph0" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-suffix-tree-banana-01-node1">
+<title>r</title>
+<path d="M63.5,-117C63.5,-117 33.5,-117 33.5,-117 27.5,-117 21.5,-111 21.5,-105 21.5,-105 21.5,-93 21.5,-93 21.5,-87 27.5,-81 33.5,-81 33.5,-81 63.5,-81 63.5,-81 69.5,-81 75.5,-87 75.5,-93 75.5,-93 75.5,-105 75.5,-105 75.5,-111 69.5,-117 63.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="48.5" y="-95.5">root</text>
+</g>
+<!-- p1 -->
+<g class="node" id="rev-suffix-tree-banana-01-node2">
+<title>p1</title>
+<path d="M85,-36C85,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 85,0 85,0 91,0 97,-6 97,-12 97,-12 97,-24 97,-24 97,-30 91,-36 85,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="48.5" y="-14.5">position 1</text>
+</g>
+<!-- r&#45;&gt;p1 -->
+<g class="edge" id="rev-suffix-tree-banana-01-edge1">
+<title>r-&gt;p1</title>
+<path d="M48.5,-80.86C48.5,-69.57 48.5,-54.66 48.5,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="50.6,-42.11 48.5,-36.11 46.4,-42.11 50.6,-42.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="76" y="-55.4">banana#</text>
+</g>
+</g>
+</svg>
+</div><figcaption>The first suffix occupies one compressed root edge; there is no comparison to make yet.</figcaption></figure></section><section class="step"><h4>3 · Insert anana# (position 2)</h4><figure><div class="diagram-frame" style="--diagram-width:237.6px"><svg aria-label="The first characters b and a differ, so the suffixes separate at the root." height="139pt" role="img" viewbox="0.00 0.00 237.60 138.60" width="238pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-suffix-tree-banana-02-graph0" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-suffix-tree-banana-02-node1">
+<title>r</title>
+<path d="M122.5,-117C122.5,-117 92.5,-117 92.5,-117 86.5,-117 80.5,-111 80.5,-105 80.5,-105 80.5,-93 80.5,-93 80.5,-87 86.5,-81 92.5,-81 92.5,-81 122.5,-81 122.5,-81 128.5,-81 134.5,-87 134.5,-93 134.5,-93 134.5,-105 134.5,-105 134.5,-111 128.5,-117 122.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="107.5" y="-95.5">root</text>
+</g>
+<!-- p1 -->
+<g class="node" id="rev-suffix-tree-banana-02-node2">
+<title>p1</title>
+<path d="M85,-36C85,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 85,0 85,0 91,0 97,-6 97,-12 97,-12 97,-24 97,-24 97,-30 91,-36 85,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="48.5" y="-14.5">position 1</text>
+</g>
+<!-- r&#45;&gt;p1 -->
+<g class="edge" id="rev-suffix-tree-banana-02-edge1">
+<title>r-&gt;p1</title>
+<path d="M94.7,-80.86C85.96,-69.16 74.31,-53.56 64.9,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="66.55,-39.66 61.28,-36.11 63.18,-42.17 66.55,-39.66" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="110" y="-55.4">banana#</text>
+</g>
+<!-- p2 -->
+<g class="node" id="rev-suffix-tree-banana-02-node3">
+<title>p2</title>
+<path d="M204,-36C204,-36 131,-36 131,-36 125,-36 119,-30 119,-24 119,-24 119,-12 119,-12 119,-6 125,0 131,0 131,0 204,0 204,0 210,0 216,-6 216,-12 216,-12 216,-24 216,-24 216,-30 210,-36 204,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="167.5" y="-14.5">position 2</text>
+</g>
+<!-- r&#45;&gt;p2 -->
+<g class="edge" id="rev-suffix-tree-banana-02-edge2">
+<title>r-&gt;p2</title>
+<path d="M127.2,-80.73C132.17,-75.9 137.28,-70.47 141.5,-65 146.95,-57.94 152.01,-49.61 156.19,-41.99" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="158.24,-42.62 159.21,-36.33 154.53,-40.64 158.24,-42.62" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="173.5" y="-55.4">anana#</text>
+</g>
+</g>
+</svg>
+</div><figcaption>The first characters b and a differ, so the suffixes separate at the root.</figcaption></figure></section><section class="step"><h4>4 · Insert nana# (position 3)</h4><figure><div class="diagram-frame" style="--diagram-width:356.6px"><svg aria-label="The new first character n is distinct from b and a; add its own root edge." height="139pt" role="img" viewbox="0.00 0.00 356.60 138.60" width="357pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-suffix-tree-banana-03-graph0" transform="scale(1 1) rotate(0) translate(10.8 127.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-suffix-tree-banana-03-node1">
+<title>r</title>
+<path d="M182.5,-117C182.5,-117 152.5,-117 152.5,-117 146.5,-117 140.5,-111 140.5,-105 140.5,-105 140.5,-93 140.5,-93 140.5,-87 146.5,-81 152.5,-81 152.5,-81 182.5,-81 182.5,-81 188.5,-81 194.5,-87 194.5,-93 194.5,-93 194.5,-105 194.5,-105 194.5,-111 188.5,-117 182.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="167.5" y="-95.5">root</text>
+</g>
+<!-- p1 -->
+<g class="node" id="rev-suffix-tree-banana-03-node2">
+<title>p1</title>
+<path d="M85,-36C85,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 85,0 85,0 91,0 97,-6 97,-12 97,-12 97,-24 97,-24 97,-30 91,-36 85,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="48.5" y="-14.5">position 1</text>
+</g>
+<!-- r&#45;&gt;p1 -->
+<g class="edge" id="rev-suffix-tree-banana-03-edge1">
+<title>r-&gt;p1</title>
+<path d="M140.38,-84.27C129.89,-78.65 117.92,-71.87 107.5,-65 95.94,-57.39 83.78,-48.14 73.53,-39.94" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="74.64,-38.14 68.66,-36.01 72.01,-41.41 74.64,-38.14" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="135" y="-55.4">banana#</text>
+</g>
+<!-- p2 -->
+<g class="node" id="rev-suffix-tree-banana-03-node3">
+<title>p2</title>
+<path d="M204,-36C204,-36 131,-36 131,-36 125,-36 119,-30 119,-24 119,-24 119,-12 119,-12 119,-6 125,0 131,0 131,0 204,0 204,0 210,0 216,-6 216,-12 216,-12 216,-24 216,-24 216,-30 210,-36 204,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="167.5" y="-14.5">position 2</text>
+</g>
+<!-- r&#45;&gt;p2 -->
+<g class="edge" id="rev-suffix-tree-banana-03-edge2">
+<title>r-&gt;p2</title>
+<path d="M167.5,-80.86C167.5,-69.57 167.5,-54.66 167.5,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="169.6,-42.11 167.5,-36.11 165.4,-42.11 169.6,-42.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="191.5" y="-55.4">anana#</text>
+</g>
+<!-- p3 -->
+<g class="node" id="rev-suffix-tree-banana-03-node4">
+<title>p3</title>
+<path d="M323,-36C323,-36 250,-36 250,-36 244,-36 238,-30 238,-24 238,-24 238,-12 238,-12 238,-6 244,0 250,0 250,0 323,0 323,0 329,0 335,-6 335,-12 335,-12 335,-24 335,-24 335,-30 329,-36 323,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="286.5" y="-14.5">position 3</text>
+</g>
+<!-- r&#45;&gt;p3 -->
+<g class="edge" id="rev-suffix-tree-banana-03-edge3">
+<title>r-&gt;p3</title>
+<path d="M194.63,-81.48C202.99,-76.29 212.17,-70.49 220.5,-65 232.74,-56.93 246.03,-47.75 257.46,-39.72" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="258.87,-41.3 262.57,-36.13 256.45,-37.86 258.87,-41.3" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="258.5" y="-55.4">nana#</text>
+</g>
+</g>
+</svg>
+</div><figcaption>The new first character n is distinct from b and a; add its own root edge.</figcaption></figure></section><section class="step"><h4>5 · Split after ana for ana# (position 4)</h4><figure><div class="diagram-frame" style="--diagram-width:416.6px"><svg aria-label="anana# and ana# share ana. Split the old anana# edge after ana; retain na# to position 2 and add # to position 4." height="220pt" role="img" viewbox="0.00 0.00 416.60 219.60" width="417pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-suffix-tree-banana-04-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-suffix-tree-banana-04-node1">
+<title>r</title>
+<path d="M212.5,-198C212.5,-198 182.5,-198 182.5,-198 176.5,-198 170.5,-192 170.5,-186 170.5,-186 170.5,-174 170.5,-174 170.5,-168 176.5,-162 182.5,-162 182.5,-162 212.5,-162 212.5,-162 218.5,-162 224.5,-168 224.5,-174 224.5,-174 224.5,-186 224.5,-186 224.5,-192 218.5,-198 212.5,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="197.5" y="-176.5">root</text>
+</g>
+<!-- q -->
+<g class="node" id="rev-suffix-tree-banana-04-node2">
+<title>q</title>
+<path d="M263.5,-117C263.5,-117 131.5,-117 131.5,-117 125.5,-117 119.5,-111 119.5,-105 119.5,-105 119.5,-93 119.5,-93 119.5,-87 125.5,-81 131.5,-81 131.5,-81 263.5,-81 263.5,-81 269.5,-81 275.5,-87 275.5,-93 275.5,-93 275.5,-105 275.5,-105 275.5,-111 269.5,-117 263.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="197.5" y="-95.5">shared prefix ana</text>
+</g>
+<!-- r&#45;&gt;q -->
+<g class="edge" id="rev-suffix-tree-banana-04-edge2">
+<title>r-&gt;q</title>
+<path d="M197.5,-161.86C197.5,-150.57 197.5,-135.66 197.5,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="199.6,-123.11 197.5,-117.11 195.4,-123.11 199.6,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="209" y="-136.4">ana</text>
+</g>
+<!-- p1 -->
+<g class="node" id="rev-suffix-tree-banana-04-node3">
+<title>p1</title>
+<path d="M85,-117C85,-117 12,-117 12,-117 6,-117 0,-111 0,-105 0,-105 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 85,-81 85,-81 91,-81 97,-87 97,-93 97,-93 97,-105 97,-105 97,-111 91,-117 85,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="48.5" y="-95.5">position 1</text>
+</g>
+<!-- r&#45;&gt;p1 -->
+<g class="edge" id="rev-suffix-tree-banana-04-edge1">
+<title>r-&gt;p1</title>
+<path d="M170.17,-164.51C146.56,-151.99 112.22,-133.78 86.03,-119.9" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="86.86,-117.96 80.58,-117.01 84.89,-121.67 86.86,-117.96" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="160" y="-136.4">banana#</text>
+</g>
+<!-- p3 -->
+<g class="node" id="rev-suffix-tree-banana-04-node5">
+<title>p3</title>
+<path d="M383,-117C383,-117 310,-117 310,-117 304,-117 298,-111 298,-105 298,-105 298,-93 298,-93 298,-87 304,-81 310,-81 310,-81 383,-81 383,-81 389,-81 395,-87 395,-93 395,-93 395,-105 395,-105 395,-111 389,-117 383,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="346.5" y="-95.5">position 3</text>
+</g>
+<!-- r&#45;&gt;p3 -->
+<g class="edge" id="rev-suffix-tree-banana-04-edge5">
+<title>r-&gt;p3</title>
+<path d="M224.83,-164.51C248.44,-151.99 282.78,-133.78 308.97,-119.9" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="310.11,-121.67 314.42,-117.01 308.14,-117.96 310.11,-121.67" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="301.5" y="-136.4">nana#</text>
+</g>
+<!-- p2 -->
+<g class="node" id="rev-suffix-tree-banana-04-node4">
+<title>p2</title>
+<path d="M175,-36C175,-36 102,-36 102,-36 96,-36 90,-30 90,-24 90,-24 90,-12 90,-12 90,-6 96,0 102,0 102,0 175,0 175,0 181,0 187,-6 187,-12 187,-12 187,-24 187,-24 187,-30 181,-36 175,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="138.5" y="-14.5">position 2</text>
+</g>
+<!-- q&#45;&gt;p2 -->
+<g class="edge" id="rev-suffix-tree-banana-04-edge3">
+<title>q-&gt;p2</title>
+<path d="M184.7,-80.86C175.96,-69.16 164.31,-53.56 154.9,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="156.55,-39.66 151.28,-36.11 153.18,-42.17 156.55,-39.66" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="185" y="-55.4">na#</text>
+</g>
+<!-- p4 -->
+<g class="node" id="rev-suffix-tree-banana-04-node6">
+<title>p4</title>
+<path d="M294,-36C294,-36 221,-36 221,-36 215,-36 209,-30 209,-24 209,-24 209,-12 209,-12 209,-6 215,0 221,0 221,0 294,0 294,0 300,0 306,-6 306,-12 306,-12 306,-24 306,-24 306,-30 300,-36 294,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="257.5" y="-14.5">position 4</text>
+</g>
+<!-- q&#45;&gt;p4 -->
+<g class="edge" id="rev-suffix-tree-banana-04-edge4">
+<title>q-&gt;p4</title>
+<path d="M210.52,-80.86C219.4,-69.16 231.25,-53.56 240.83,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="242.55,-42.16 244.51,-36.11 239.2,-39.62 242.55,-42.16" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="236.5" y="-55.4">#</text>
+</g>
+</g>
+</svg>
+</div><figcaption>anana# and ana# share ana. Split the old anana# edge after ana; retain na# to position 2 and add # to position 4.</figcaption></figure></section><section class="step"><h4>6 · Split after na for na# (position 5)</h4><figure><div class="diagram-frame" style="--diagram-width:546.6px"><svg aria-label="nana# and na# share na. Split the old nana# edge after na; its old continuation na# stays with position 3, while # ends position 5." height="220pt" role="img" viewbox="0.00 0.00 546.60 219.60" width="547pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-suffix-tree-banana-05-graph0" transform="scale(1 1) rotate(0) translate(10.8 208.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-suffix-tree-banana-05-node1">
+<title>r</title>
+<path d="M212.5,-198C212.5,-198 182.5,-198 182.5,-198 176.5,-198 170.5,-192 170.5,-186 170.5,-186 170.5,-174 170.5,-174 170.5,-168 176.5,-162 182.5,-162 182.5,-162 212.5,-162 212.5,-162 218.5,-162 224.5,-168 224.5,-174 224.5,-174 224.5,-186 224.5,-186 224.5,-192 218.5,-198 212.5,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="197.5" y="-176.5">root</text>
+</g>
+<!-- q -->
+<g class="node" id="rev-suffix-tree-banana-05-node2">
+<title>q</title>
+<path d="M263.5,-117C263.5,-117 131.5,-117 131.5,-117 125.5,-117 119.5,-111 119.5,-105 119.5,-105 119.5,-93 119.5,-93 119.5,-87 125.5,-81 131.5,-81 131.5,-81 263.5,-81 263.5,-81 269.5,-81 275.5,-87 275.5,-93 275.5,-93 275.5,-105 275.5,-105 275.5,-111 269.5,-117 263.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="197.5" y="-95.5">shared prefix ana</text>
+</g>
+<!-- r&#45;&gt;q -->
+<g class="edge" id="rev-suffix-tree-banana-05-edge2">
+<title>r-&gt;q</title>
+<path d="M197.5,-161.86C197.5,-150.57 197.5,-135.66 197.5,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="199.6,-123.11 197.5,-117.11 195.4,-123.11 199.6,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="209" y="-136.4">ana</text>
+</g>
+<!-- u -->
+<g class="node" id="rev-suffix-tree-banana-05-node3">
+<title>u</title>
+<path d="M433,-117C433,-117 310,-117 310,-117 304,-117 298,-111 298,-105 298,-105 298,-93 298,-93 298,-87 304,-81 310,-81 310,-81 433,-81 433,-81 439,-81 445,-87 445,-93 445,-93 445,-105 445,-105 445,-111 439,-117 433,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="371.5" y="-95.5">shared prefix na</text>
+</g>
+<!-- r&#45;&gt;u -->
+<g class="edge" id="rev-suffix-tree-banana-05-edge5">
+<title>r-&gt;u</title>
+<path d="M224.69,-166.66C252.43,-154.06 295.89,-134.33 328.34,-119.6" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="329.26,-121.49 333.85,-117.09 327.52,-117.66 329.26,-121.49" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="303.5" y="-136.4">na</text>
+</g>
+<!-- p1 -->
+<g class="node" id="rev-suffix-tree-banana-05-node4">
+<title>p1</title>
+<path d="M85,-117C85,-117 12,-117 12,-117 6,-117 0,-111 0,-105 0,-105 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 85,-81 85,-81 91,-81 97,-87 97,-93 97,-93 97,-105 97,-105 97,-111 91,-117 85,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="48.5" y="-95.5">position 1</text>
+</g>
+<!-- r&#45;&gt;p1 -->
+<g class="edge" id="rev-suffix-tree-banana-05-edge1">
+<title>r-&gt;p1</title>
+<path d="M170.17,-164.51C146.56,-151.99 112.22,-133.78 86.03,-119.9" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="86.86,-117.96 80.58,-117.01 84.89,-121.67 86.86,-117.96" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="160" y="-136.4">banana#</text>
+</g>
+<!-- p2 -->
+<g class="node" id="rev-suffix-tree-banana-05-node5">
+<title>p2</title>
+<path d="M142,-36C142,-36 69,-36 69,-36 63,-36 57,-30 57,-24 57,-24 57,-12 57,-12 57,-6 63,0 69,0 69,0 142,0 142,0 148,0 154,-6 154,-12 154,-12 154,-24 154,-24 154,-30 148,-36 142,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="105.5" y="-14.5">position 2</text>
+</g>
+<!-- q&#45;&gt;p2 -->
+<g class="edge" id="rev-suffix-tree-banana-05-edge3">
+<title>q-&gt;p2</title>
+<path d="M177.54,-80.86C163.67,-68.95 145.1,-53.01 130.29,-40.29" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="131.34,-38.42 125.42,-36.11 128.61,-41.61 131.34,-38.42" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="170" y="-55.4">na#</text>
+</g>
+<!-- p4 -->
+<g class="node" id="rev-suffix-tree-banana-05-node7">
+<title>p4</title>
+<path d="M261,-36C261,-36 188,-36 188,-36 182,-36 176,-30 176,-24 176,-24 176,-12 176,-12 176,-6 182,0 188,0 188,0 261,0 261,0 267,0 273,-6 273,-12 273,-12 273,-24 273,-24 273,-30 267,-36 261,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="224.5" y="-14.5">position 4</text>
+</g>
+<!-- q&#45;&gt;p4 -->
+<g class="edge" id="rev-suffix-tree-banana-05-edge4">
+<title>q-&gt;p4</title>
+<path d="M203.36,-80.86C207.25,-69.47 212.41,-54.39 216.65,-41.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="218.7,-42.47 218.65,-36.11 214.73,-41.11 218.7,-42.47" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="218.5" y="-55.4">#</text>
+</g>
+<!-- p3 -->
+<g class="node" id="rev-suffix-tree-banana-05-node6">
+<title>p3</title>
+<path d="M394,-36C394,-36 321,-36 321,-36 315,-36 309,-30 309,-24 309,-24 309,-12 309,-12 309,-6 315,0 321,0 321,0 394,0 394,0 400,0 406,-6 406,-12 406,-12 406,-24 406,-24 406,-30 400,-36 394,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="357.5" y="-14.5">position 3</text>
+</g>
+<!-- u&#45;&gt;p3 -->
+<g class="edge" id="rev-suffix-tree-banana-05-edge6">
+<title>u-&gt;p3</title>
+<path d="M368.46,-80.86C366.46,-69.57 363.82,-54.66 361.63,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="363.65,-41.65 360.53,-36.11 359.51,-42.38 363.65,-41.65" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="377" y="-55.4">na#</text>
+</g>
+<!-- p5 -->
+<g class="node" id="rev-suffix-tree-banana-05-node8">
+<title>p5</title>
+<path d="M513,-36C513,-36 440,-36 440,-36 434,-36 428,-30 428,-24 428,-24 428,-12 428,-12 428,-6 434,0 440,0 440,0 513,0 513,0 519,0 525,-6 525,-12 525,-12 525,-24 525,-24 525,-30 519,-36 513,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="476.5" y="-14.5">position 5</text>
+</g>
+<!-- u&#45;&gt;p5 -->
+<g class="edge" id="rev-suffix-tree-banana-05-edge7">
+<title>u-&gt;p5</title>
+<path d="M394.28,-80.86C410.24,-68.85 431.67,-52.73 448.65,-39.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="450.23,-41.39 453.76,-36.11 447.7,-38.04 450.23,-41.39" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="434.5" y="-55.4">#</text>
+</g>
+</g>
+</svg>
+</div><figcaption>nana# and na# share na. Split the old nana# edge after na; its old continuation na# stays with position 3, while # ends position 5.</figcaption></figure></section><section class="step"><h4>7 · Split after a for a# (position 6)</h4><figure><div class="diagram-frame" style="--diagram-width:576.6px"><svg aria-label="a# shares a with the existing root-a path, then differs because the old path continues na. Split after a, keep na to the old branch, and add # to position 6." height="301pt" role="img" viewbox="0.00 0.00 576.60 300.60" width="577pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-suffix-tree-banana-06-graph0" transform="scale(1 1) rotate(0) translate(10.8 289.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-suffix-tree-banana-06-node1">
+<title>r</title>
+<path d="M250.5,-279C250.5,-279 220.5,-279 220.5,-279 214.5,-279 208.5,-273 208.5,-267 208.5,-267 208.5,-255 208.5,-255 208.5,-249 214.5,-243 220.5,-243 220.5,-243 250.5,-243 250.5,-243 256.5,-243 262.5,-249 262.5,-255 262.5,-255 262.5,-267 262.5,-267 262.5,-273 256.5,-279 250.5,-279" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="235.5" y="-257.5">root</text>
+</g>
+<!-- v -->
+<g class="node" id="rev-suffix-tree-banana-06-node2">
+<title>v</title>
+<path d="M292,-198C292,-198 179,-198 179,-198 173,-198 167,-192 167,-186 167,-186 167,-174 167,-174 167,-168 173,-162 179,-162 179,-162 292,-162 292,-162 298,-162 304,-168 304,-174 304,-174 304,-186 304,-186 304,-192 298,-198 292,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="235.5" y="-176.5">shared prefix a</text>
+</g>
+<!-- r&#45;&gt;v -->
+<g class="edge" id="rev-suffix-tree-banana-06-edge2">
+<title>r-&gt;v</title>
+<path d="M235.5,-242.86C235.5,-231.57 235.5,-216.66 235.5,-204.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="237.6,-204.11 235.5,-198.11 233.4,-204.11 237.6,-204.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="239.5" y="-217.4">a</text>
+</g>
+<!-- u -->
+<g class="node" id="rev-suffix-tree-banana-06-node4">
+<title>u</title>
+<path d="M461,-198C461,-198 338,-198 338,-198 332,-198 326,-192 326,-186 326,-186 326,-174 326,-174 326,-168 332,-162 338,-162 338,-162 461,-162 461,-162 467,-162 473,-168 473,-174 473,-174 473,-186 473,-186 473,-192 467,-198 461,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="399.5" y="-176.5">shared prefix na</text>
+</g>
+<!-- r&#45;&gt;u -->
+<g class="edge" id="rev-suffix-tree-banana-06-edge7">
+<title>r-&gt;u</title>
+<path d="M262.58,-246.95C288.7,-234.37 328.59,-215.16 358.58,-200.71" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="359.57,-202.57 364.06,-198.07 357.75,-198.78 359.57,-202.57" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="334.5" y="-217.4">na</text>
+</g>
+<!-- p1 -->
+<g class="node" id="rev-suffix-tree-banana-06-node5">
+<title>p1</title>
+<path d="M133,-198C133,-198 60,-198 60,-198 54,-198 48,-192 48,-186 48,-186 48,-174 48,-174 48,-168 54,-162 60,-162 60,-162 133,-162 133,-162 139,-162 145,-168 145,-174 145,-174 145,-186 145,-186 145,-192 139,-198 133,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="96.5" y="-176.5">position 1</text>
+</g>
+<!-- r&#45;&gt;p1 -->
+<g class="edge" id="rev-suffix-tree-banana-06-edge1">
+<title>r-&gt;p1</title>
+<path d="M208.24,-245.19C197.95,-239.55 186.16,-233.03 175.5,-227 160.87,-218.72 144.82,-209.41 131.03,-201.35" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="131.9,-199.43 125.67,-198.21 129.78,-203.05 131.9,-199.43" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="203" y="-217.4">banana#</text>
+</g>
+<!-- q -->
+<g class="node" id="rev-suffix-tree-banana-06-node3">
+<title>q</title>
+<path d="M164,-117C164,-117 51,-117 51,-117 45,-117 39,-111 39,-105 39,-105 39,-93 39,-93 39,-87 45,-81 51,-81 51,-81 164,-81 164,-81 170,-81 176,-87 176,-93 176,-93 176,-105 176,-105 176,-111 170,-117 164,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="107.5" y="-95.5">then shared na</text>
+</g>
+<!-- v&#45;&gt;q -->
+<g class="edge" id="rev-suffix-tree-banana-06-edge3">
+<title>v-&gt;q</title>
+<path d="M207.73,-161.86C187.93,-149.64 161.25,-133.17 140.39,-120.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="141.43,-118.47 135.22,-117.11 139.22,-122.05 141.43,-118.47" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="187.5" y="-136.4">na</text>
+</g>
+<!-- p6 -->
+<g class="node" id="rev-suffix-tree-banana-06-node10">
+<title>p6</title>
+<path d="M283,-117C283,-117 210,-117 210,-117 204,-117 198,-111 198,-105 198,-105 198,-93 198,-93 198,-87 204,-81 210,-81 210,-81 283,-81 283,-81 289,-81 295,-87 295,-93 295,-93 295,-105 295,-105 295,-111 289,-117 283,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="246.5" y="-95.5">position 6</text>
+</g>
+<!-- v&#45;&gt;p6 -->
+<g class="edge" id="rev-suffix-tree-banana-06-edge6">
+<title>v-&gt;p6</title>
+<path d="M237.89,-161.86C239.46,-150.57 241.53,-135.66 243.26,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="245.37,-123.34 244.12,-117.11 241.21,-122.76 245.37,-123.34" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="246.5" y="-136.4">#</text>
+</g>
+<!-- p2 -->
+<g class="node" id="rev-suffix-tree-banana-06-node6">
+<title>p2</title>
+<path d="M85,-36C85,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 85,0 85,0 91,0 97,-6 97,-12 97,-12 97,-24 97,-24 97,-30 91,-36 85,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="48.5" y="-14.5">position 2</text>
+</g>
+<!-- q&#45;&gt;p2 -->
+<g class="edge" id="rev-suffix-tree-banana-06-edge4">
+<title>q-&gt;p2</title>
+<path d="M94.7,-80.86C85.96,-69.16 74.31,-53.56 64.9,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="66.55,-39.66 61.28,-36.11 63.18,-42.17 66.55,-39.66" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="95" y="-55.4">na#</text>
+</g>
+<!-- p4 -->
+<g class="node" id="rev-suffix-tree-banana-06-node8">
+<title>p4</title>
+<path d="M204,-36C204,-36 131,-36 131,-36 125,-36 119,-30 119,-24 119,-24 119,-12 119,-12 119,-6 125,0 131,0 131,0 204,0 204,0 210,0 216,-6 216,-12 216,-12 216,-24 216,-24 216,-30 210,-36 204,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="167.5" y="-14.5">position 4</text>
+</g>
+<!-- q&#45;&gt;p4 -->
+<g class="edge" id="rev-suffix-tree-banana-06-edge5">
+<title>q-&gt;p4</title>
+<path d="M120.52,-80.86C129.4,-69.16 141.25,-53.56 150.83,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="152.55,-42.16 154.51,-36.11 149.2,-39.62 152.55,-42.16" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="146.5" y="-55.4">#</text>
+</g>
+<!-- p3 -->
+<g class="node" id="rev-suffix-tree-banana-06-node7">
+<title>p3</title>
+<path d="M424,-117C424,-117 351,-117 351,-117 345,-117 339,-111 339,-105 339,-105 339,-93 339,-93 339,-87 345,-81 351,-81 351,-81 424,-81 424,-81 430,-81 436,-87 436,-93 436,-93 436,-105 436,-105 436,-111 430,-117 424,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="387.5" y="-95.5">position 3</text>
+</g>
+<!-- u&#45;&gt;p3 -->
+<g class="edge" id="rev-suffix-tree-banana-06-edge8">
+<title>u-&gt;p3</title>
+<path d="M396.9,-161.86C395.18,-150.57 392.92,-135.66 391.04,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="393.08,-122.72 390.1,-117.11 388.92,-123.36 393.08,-122.72" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="406" y="-136.4">na#</text>
+</g>
+<!-- p5 -->
+<g class="node" id="rev-suffix-tree-banana-06-node9">
+<title>p5</title>
+<path d="M543,-117C543,-117 470,-117 470,-117 464,-117 458,-111 458,-105 458,-105 458,-93 458,-93 458,-87 464,-81 470,-81 470,-81 543,-81 543,-81 549,-81 555,-87 555,-93 555,-93 555,-105 555,-105 555,-111 549,-117 543,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="506.5" y="-95.5">position 5</text>
+</g>
+<!-- u&#45;&gt;p5 -->
+<g class="edge" id="rev-suffix-tree-banana-06-edge9">
+<title>u-&gt;p5</title>
+<path d="M422.72,-161.86C438.98,-149.85 460.82,-133.73 478.12,-120.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="479.75,-122.36 483.33,-117.11 477.25,-118.98 479.75,-122.36" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="463.5" y="-136.4">#</text>
+</g>
+</g>
+</svg>
+</div><figcaption>a# shares a with the existing root-a path, then differs because the old path continues na. Split after a, keep na to the old branch, and add # to position 6.</figcaption></figure></section><section class="step"><h4>8 · Insert the terminator suffix # (position 7)</h4><figure><div class="diagram-frame" style="--diagram-width:613.6px"><svg aria-label="No existing root edge starts with #, so add the final leaf. All seven suffixes now have their own leaves; each branch edge preserves exactly the suffixes sharing its prefix." height="301pt" role="img" viewbox="0.00 0.00 613.60 300.60" width="614pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-suffix-tree-banana-07-graph0" transform="scale(1 1) rotate(0) translate(10.8 289.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-suffix-tree-banana-07-node1">
+<title>r</title>
+<path d="M331.5,-279C331.5,-279 301.5,-279 301.5,-279 295.5,-279 289.5,-273 289.5,-267 289.5,-267 289.5,-255 289.5,-255 289.5,-249 295.5,-243 301.5,-243 301.5,-243 331.5,-243 331.5,-243 337.5,-243 343.5,-249 343.5,-255 343.5,-255 343.5,-267 343.5,-267 343.5,-273 337.5,-279 331.5,-279" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="316.5" y="-257.5">root</text>
+</g>
+<!-- v -->
+<g class="node" id="rev-suffix-tree-banana-07-node2">
+<title>v</title>
+<path d="M292,-198C292,-198 179,-198 179,-198 173,-198 167,-192 167,-186 167,-186 167,-174 167,-174 167,-168 173,-162 179,-162 179,-162 292,-162 292,-162 298,-162 304,-168 304,-174 304,-174 304,-186 304,-186 304,-192 298,-198 292,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="235.5" y="-176.5">shared prefix a</text>
+</g>
+<!-- r&#45;&gt;v -->
+<g class="edge" id="rev-suffix-tree-banana-07-edge2">
+<title>r-&gt;v</title>
+<path d="M298.92,-242.86C286.82,-231.06 270.65,-215.28 257.67,-202.62" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="258.8,-200.79 253.04,-198.11 255.87,-203.8 258.8,-200.79" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="285.5" y="-217.4">a</text>
+</g>
+<!-- u -->
+<g class="node" id="rev-suffix-tree-banana-07-node4">
+<title>u</title>
+<path d="M461,-198C461,-198 338,-198 338,-198 332,-198 326,-192 326,-186 326,-186 326,-174 326,-174 326,-168 332,-162 338,-162 338,-162 461,-162 461,-162 467,-162 473,-168 473,-174 473,-174 473,-186 473,-186 473,-192 467,-198 461,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="399.5" y="-176.5">shared prefix na</text>
+</g>
+<!-- r&#45;&gt;u -->
+<g class="edge" id="rev-suffix-tree-banana-07-edge7">
+<title>r-&gt;u</title>
+<path d="M334.51,-242.86C347.02,-230.95 363.77,-215.01 377.13,-202.29" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="378.63,-203.77 381.53,-198.11 375.73,-200.72 378.63,-203.77" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="371.5" y="-217.4">na</text>
+</g>
+<!-- p1 -->
+<g class="node" id="rev-suffix-tree-banana-07-node5">
+<title>p1</title>
+<path d="M133,-198C133,-198 60,-198 60,-198 54,-198 48,-192 48,-186 48,-186 48,-174 48,-174 48,-168 54,-162 60,-162 60,-162 133,-162 133,-162 139,-162 145,-168 145,-174 145,-174 145,-186 145,-186 145,-192 139,-198 133,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="96.5" y="-176.5">position 1</text>
+</g>
+<!-- r&#45;&gt;p1 -->
+<g class="edge" id="rev-suffix-tree-banana-07-edge1">
+<title>r-&gt;p1</title>
+<path d="M289.12,-252.02C267.82,-245.66 237.6,-236.31 211.5,-227 188.64,-218.85 163.57,-208.94 142.7,-200.41" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="143.28,-198.38 136.93,-198.04 141.68,-202.26 143.28,-198.38" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="239" y="-217.4">banana#</text>
+</g>
+<!-- p7 -->
+<g class="node" id="rev-suffix-tree-banana-07-node11">
+<title>p7</title>
+<path d="M580,-198C580,-198 507,-198 507,-198 501,-198 495,-192 495,-186 495,-186 495,-174 495,-174 495,-168 501,-162 507,-162 507,-162 580,-162 580,-162 586,-162 592,-168 592,-174 592,-174 592,-186 592,-186 592,-192 586,-198 580,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="543.5" y="-176.5">position 7</text>
+</g>
+<!-- r&#45;&gt;p7 -->
+<g class="edge" id="rev-suffix-tree-banana-07-edge10">
+<title>r-&gt;p7</title>
+<path d="M343.88,-250.47C379.73,-238 443.38,-215.84 489.18,-199.9" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="489.98,-201.85 494.96,-197.89 488.6,-197.88 489.98,-201.85" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="449.5" y="-217.4">#</text>
+</g>
+<!-- q -->
+<g class="node" id="rev-suffix-tree-banana-07-node3">
+<title>q</title>
+<path d="M164,-117C164,-117 51,-117 51,-117 45,-117 39,-111 39,-105 39,-105 39,-93 39,-93 39,-87 45,-81 51,-81 51,-81 164,-81 164,-81 170,-81 176,-87 176,-93 176,-93 176,-105 176,-105 176,-111 170,-117 164,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="107.5" y="-95.5">then shared na</text>
+</g>
+<!-- v&#45;&gt;q -->
+<g class="edge" id="rev-suffix-tree-banana-07-edge3">
+<title>v-&gt;q</title>
+<path d="M207.73,-161.86C187.93,-149.64 161.25,-133.17 140.39,-120.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="141.43,-118.47 135.22,-117.11 139.22,-122.05 141.43,-118.47" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="187.5" y="-136.4">na</text>
+</g>
+<!-- p6 -->
+<g class="node" id="rev-suffix-tree-banana-07-node10">
+<title>p6</title>
+<path d="M283,-117C283,-117 210,-117 210,-117 204,-117 198,-111 198,-105 198,-105 198,-93 198,-93 198,-87 204,-81 210,-81 210,-81 283,-81 283,-81 289,-81 295,-87 295,-93 295,-93 295,-105 295,-105 295,-111 289,-117 283,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="246.5" y="-95.5">position 6</text>
+</g>
+<!-- v&#45;&gt;p6 -->
+<g class="edge" id="rev-suffix-tree-banana-07-edge6">
+<title>v-&gt;p6</title>
+<path d="M237.89,-161.86C239.46,-150.57 241.53,-135.66 243.26,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="245.37,-123.34 244.12,-117.11 241.21,-122.76 245.37,-123.34" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="247.5" y="-136.4">#</text>
+</g>
+<!-- p2 -->
+<g class="node" id="rev-suffix-tree-banana-07-node6">
+<title>p2</title>
+<path d="M85,-36C85,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 85,0 85,0 91,0 97,-6 97,-12 97,-12 97,-24 97,-24 97,-30 91,-36 85,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="48.5" y="-14.5">position 2</text>
+</g>
+<!-- q&#45;&gt;p2 -->
+<g class="edge" id="rev-suffix-tree-banana-07-edge4">
+<title>q-&gt;p2</title>
+<path d="M94.7,-80.86C85.96,-69.16 74.31,-53.56 64.9,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="66.55,-39.66 61.28,-36.11 63.18,-42.17 66.55,-39.66" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="95" y="-55.4">na#</text>
+</g>
+<!-- p4 -->
+<g class="node" id="rev-suffix-tree-banana-07-node8">
+<title>p4</title>
+<path d="M204,-36C204,-36 131,-36 131,-36 125,-36 119,-30 119,-24 119,-24 119,-12 119,-12 119,-6 125,0 131,0 131,0 204,0 204,0 210,0 216,-6 216,-12 216,-12 216,-24 216,-24 216,-30 210,-36 204,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="167.5" y="-14.5">position 4</text>
+</g>
+<!-- q&#45;&gt;p4 -->
+<g class="edge" id="rev-suffix-tree-banana-07-edge5">
+<title>q-&gt;p4</title>
+<path d="M120.52,-80.86C129.4,-69.16 141.25,-53.56 150.83,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="152.55,-42.16 154.51,-36.11 149.2,-39.62 152.55,-42.16" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="146.5" y="-55.4">#</text>
+</g>
+<!-- p3 -->
+<g class="node" id="rev-suffix-tree-banana-07-node7">
+<title>p3</title>
+<path d="M424,-117C424,-117 351,-117 351,-117 345,-117 339,-111 339,-105 339,-105 339,-93 339,-93 339,-87 345,-81 351,-81 351,-81 424,-81 424,-81 430,-81 436,-87 436,-93 436,-93 436,-105 436,-105 436,-111 430,-117 424,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="387.5" y="-95.5">position 3</text>
+</g>
+<!-- u&#45;&gt;p3 -->
+<g class="edge" id="rev-suffix-tree-banana-07-edge8">
+<title>u-&gt;p3</title>
+<path d="M396.9,-161.86C395.18,-150.57 392.92,-135.66 391.04,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="393.08,-122.72 390.1,-117.11 388.92,-123.36 393.08,-122.72" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="407" y="-136.4">na#</text>
+</g>
+<!-- p5 -->
+<g class="node" id="rev-suffix-tree-banana-07-node9">
+<title>p5</title>
+<path d="M543,-117C543,-117 470,-117 470,-117 464,-117 458,-111 458,-105 458,-105 458,-93 458,-93 458,-87 464,-81 470,-81 470,-81 543,-81 543,-81 549,-81 555,-87 555,-93 555,-93 555,-105 555,-105 555,-111 549,-117 543,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="506.5" y="-95.5">position 5</text>
+</g>
+<!-- u&#45;&gt;p5 -->
+<g class="edge" id="rev-suffix-tree-banana-07-edge9">
+<title>u-&gt;p5</title>
+<path d="M422.72,-161.86C438.98,-149.85 460.82,-133.73 478.12,-120.96" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="479.75,-122.36 483.33,-117.11 477.25,-118.98 479.75,-122.36" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="464.5" y="-136.4">#</text>
+</g>
+</g>
+</svg>
+</div><figcaption>No existing root edge starts with #, so add the final leaf. All seven suffixes now have their own leaves; each branch edge preserves exactly the suffixes sharing its prefix.</figcaption></figure></section></section>
+<h3>Search edge cases as paths, not just nodes</h3>
+<p>Compressed edges can contain successful stopping points that are not explicit nodes. These diagrams mark the endpoint conceptually in the edge caption: the path must match every query character, but the query need not end at a branch or leaf.</p>
+<figure><div class="diagram-frame" style="--diagram-width:365.6px"><svg aria-label="Query an ends inside compressed edge na after its first character; it succeeds and the edge subtree reports starts 2 and 4." height="301pt" role="img" viewbox="0.00 0.00 365.60 300.60" width="366pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-suffix-tree-search-inside-edge-graph0" transform="scale(1 1) rotate(0) translate(10.8 289.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-suffix-tree-search-inside-edge-node1">
+<title>r</title>
+<path d="M216.5,-279C216.5,-279 186.5,-279 186.5,-279 180.5,-279 174.5,-273 174.5,-267 174.5,-267 174.5,-255 174.5,-255 174.5,-249 180.5,-243 186.5,-243 186.5,-243 216.5,-243 216.5,-243 222.5,-243 228.5,-249 228.5,-255 228.5,-255 228.5,-267 228.5,-267 228.5,-273 222.5,-279 216.5,-279" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="201.5" y="-257.5">root</text>
+</g>
+<!-- v -->
+<g class="node" id="rev-suffix-tree-search-inside-edge-node2">
+<title>v</title>
+<path d="M229.5,-198C229.5,-198 173.5,-198 173.5,-198 167.5,-198 161.5,-192 161.5,-186 161.5,-186 161.5,-174 161.5,-174 161.5,-168 167.5,-162 173.5,-162 173.5,-162 229.5,-162 229.5,-162 235.5,-162 241.5,-168 241.5,-174 241.5,-174 241.5,-186 241.5,-186 241.5,-192 235.5,-198 229.5,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="201.5" y="-176.5">prefix a</text>
+</g>
+<!-- r&#45;&gt;v -->
+<g class="edge" id="rev-suffix-tree-search-inside-edge-edge1">
+<title>r-&gt;v</title>
+<path d="M201.5,-242.86C201.5,-231.57 201.5,-216.66 201.5,-204.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="203.6,-204.11 201.5,-198.11 199.4,-204.11 203.6,-204.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="205.5" y="-217.4">a</text>
+</g>
+<!-- q -->
+<g class="node" id="rev-suffix-tree-search-inside-edge-node3">
+<title>q</title>
+<path d="M170.5,-117C170.5,-117 44.5,-117 44.5,-117 38.5,-117 32.5,-111 32.5,-105 32.5,-105 32.5,-93 32.5,-93 32.5,-87 38.5,-81 44.5,-81 44.5,-81 170.5,-81 170.5,-81 176.5,-81 182.5,-87 182.5,-93 182.5,-93 182.5,-105 182.5,-105 182.5,-111 176.5,-117 170.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="107.5" y="-95.5">branch after ana</text>
+</g>
+<!-- v&#45;&gt;q -->
+<g class="edge" id="rev-suffix-tree-search-inside-edge-edge2">
+<title>v-&gt;q</title>
+<path d="M161.23,-175.49C141.62,-171.52 119.7,-163.22 107.5,-146 102.95,-139.59 101.9,-131.3 102.33,-123.54" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="104.46,-123.37 103,-117.19 100.29,-122.94 104.46,-123.37" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="188" y="-136.4">na  [query an ends after n]</text>
+</g>
+<!-- p6 -->
+<g class="node" id="rev-suffix-tree-search-inside-edge-node6">
+<title>p6</title>
+<path d="M332,-117C332,-117 259,-117 259,-117 253,-117 247,-111 247,-105 247,-105 247,-93 247,-93 247,-87 253,-81 259,-81 259,-81 332,-81 332,-81 338,-81 344,-87 344,-93 344,-93 344,-105 344,-105 344,-111 338,-117 332,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="295.5" y="-95.5">position 6</text>
+</g>
+<!-- v&#45;&gt;p6 -->
+<g class="edge" id="rev-suffix-tree-search-inside-edge-edge5">
+<title>v-&gt;p6</title>
+<path d="M241.81,-164.37C251.62,-159.55 261.56,-153.46 269.5,-146 276.35,-139.57 281.87,-130.93 286.04,-122.87" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="287.96,-123.73 288.71,-117.42 284.19,-121.88 287.96,-123.73" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="284.5" y="-136.4">#</text>
+</g>
+<!-- p2 -->
+<g class="node" id="rev-suffix-tree-search-inside-edge-node4">
+<title>p2</title>
+<path d="M85,-36C85,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 85,0 85,0 91,0 97,-6 97,-12 97,-12 97,-24 97,-24 97,-30 91,-36 85,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="48.5" y="-14.5">position 2</text>
+</g>
+<!-- q&#45;&gt;p2 -->
+<g class="edge" id="rev-suffix-tree-search-inside-edge-edge3">
+<title>q-&gt;p2</title>
+<path d="M94.7,-80.86C85.96,-69.16 74.31,-53.56 64.9,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="66.55,-39.66 61.28,-36.11 63.18,-42.17 66.55,-39.66" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="95" y="-55.4">na#</text>
+</g>
+<!-- p4 -->
+<g class="node" id="rev-suffix-tree-search-inside-edge-node5">
+<title>p4</title>
+<path d="M204,-36C204,-36 131,-36 131,-36 125,-36 119,-30 119,-24 119,-24 119,-12 119,-12 119,-6 125,0 131,0 131,0 204,0 204,0 210,0 216,-6 216,-12 216,-12 216,-24 216,-24 216,-30 210,-36 204,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="167.5" y="-14.5">position 4</text>
+</g>
+<!-- q&#45;&gt;p4 -->
+<g class="edge" id="rev-suffix-tree-search-inside-edge-edge4">
+<title>q-&gt;p4</title>
+<path d="M120.52,-80.86C129.4,-69.16 141.25,-53.56 150.83,-40.95" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="152.55,-42.16 154.51,-36.11 149.2,-39.62 152.55,-42.16" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="146.5" y="-55.4">#</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Query an ends inside compressed edge na after its first character; it succeeds and the edge subtree reports starts 2 and 4.</figcaption></figure>
+<p>For a failed path, the stopping point matters just as much:</p>
+<figure><div class="diagram-frame" style="--diagram-width:356.6px"><svg aria-label="Query anab matches ana to a real branch, then fails: the available next labels are n and #, not b. The dashed red edge denotes the absent choice." height="301pt" role="img" viewbox="0.00 0.00 356.60 300.60" width="357pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#23332a)}svg:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--foreground:#23332a;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--primary:#286b43;--accent:#d5e9d5}@media(prefers-color-scheme:dark){svg:root{--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--foreground:#e2ebe3;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--primary:#94d4a2;--accent:#2d5039}}</style>
+<g class="graph" id="rev-suffix-tree-search-missing-child-graph0" transform="scale(1 1) rotate(0) translate(10.8 289.8)">
+<title>G</title>
+<!-- r -->
+<g class="node" id="rev-suffix-tree-search-missing-child-node1">
+<title>r</title>
+<path d="M182.5,-279C182.5,-279 152.5,-279 152.5,-279 146.5,-279 140.5,-273 140.5,-267 140.5,-267 140.5,-255 140.5,-255 140.5,-249 146.5,-243 152.5,-243 152.5,-243 182.5,-243 182.5,-243 188.5,-243 194.5,-249 194.5,-255 194.5,-255 194.5,-267 194.5,-267 194.5,-273 188.5,-279 182.5,-279" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="167.5" y="-257.5">root</text>
+</g>
+<!-- v -->
+<g class="node" id="rev-suffix-tree-search-missing-child-node2">
+<title>v</title>
+<path d="M195.5,-198C195.5,-198 139.5,-198 139.5,-198 133.5,-198 127.5,-192 127.5,-186 127.5,-186 127.5,-174 127.5,-174 127.5,-168 133.5,-162 139.5,-162 139.5,-162 195.5,-162 195.5,-162 201.5,-162 207.5,-168 207.5,-174 207.5,-174 207.5,-186 207.5,-186 207.5,-192 201.5,-198 195.5,-198" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="167.5" y="-176.5">prefix a</text>
+</g>
+<!-- r&#45;&gt;v -->
+<g class="edge" id="rev-suffix-tree-search-missing-child-edge1">
+<title>r-&gt;v</title>
+<path d="M167.5,-242.86C167.5,-231.57 167.5,-216.66 167.5,-204.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="169.6,-204.11 167.5,-198.11 165.4,-204.11 169.6,-204.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="171.5" y="-217.4">a</text>
+</g>
+<!-- q -->
+<g class="node" id="rev-suffix-tree-search-missing-child-node3">
+<title>q</title>
+<path d="M230.5,-117C230.5,-117 104.5,-117 104.5,-117 98.5,-117 92.5,-111 92.5,-105 92.5,-105 92.5,-93 92.5,-93 92.5,-87 98.5,-81 104.5,-81 104.5,-81 230.5,-81 230.5,-81 236.5,-81 242.5,-87 242.5,-93 242.5,-93 242.5,-105 242.5,-105 242.5,-111 236.5,-117 230.5,-117" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="167.5" y="-95.5">branch after ana</text>
+</g>
+<!-- v&#45;&gt;q -->
+<g class="edge" id="rev-suffix-tree-search-missing-child-edge2">
+<title>v-&gt;q</title>
+<path d="M167.5,-161.86C167.5,-150.57 167.5,-135.66 167.5,-123.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="169.6,-123.11 167.5,-117.11 165.4,-123.11 169.6,-123.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="175.5" y="-136.4">na</text>
+</g>
+<!-- p2 -->
+<g class="node" id="rev-suffix-tree-search-missing-child-node4">
+<title>p2</title>
+<path d="M85,-36C85,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 85,0 85,0 91,0 97,-6 97,-12 97,-12 97,-24 97,-24 97,-30 91,-36 85,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="48.5" y="-14.5">position 2</text>
+</g>
+<!-- q&#45;&gt;p2 -->
+<g class="edge" id="rev-suffix-tree-search-missing-child-edge3">
+<title>q-&gt;p2</title>
+<path d="M141.68,-80.86C123.43,-68.75 98.89,-52.45 79.57,-39.63" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="80.43,-37.68 74.27,-36.11 78.11,-41.18 80.43,-37.68" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="128" y="-55.4">na#</text>
+</g>
+<!-- p4 -->
+<g class="node" id="rev-suffix-tree-search-missing-child-node5">
+<title>p4</title>
+<path d="M204,-36C204,-36 131,-36 131,-36 125,-36 119,-30 119,-24 119,-24 119,-12 119,-12 119,-6 125,0 131,0 131,0 204,0 204,0 210,0 216,-6 216,-12 216,-12 216,-24 216,-24 216,-30 210,-36 204,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="167.5" y="-14.5">position 4</text>
+</g>
+<!-- q&#45;&gt;p4 -->
+<g class="edge" id="rev-suffix-tree-search-missing-child-edge4">
+<title>q-&gt;p4</title>
+<path d="M167.5,-80.86C167.5,-69.57 167.5,-54.66 167.5,-42.3" fill="none" stroke="var(--diagram-edge,#7b8c80)"></path>
+<polygon fill="var(--diagram-edge,#7b8c80)" points="169.6,-42.11 167.5,-36.11 165.4,-42.11 169.6,-42.11" stroke="var(--diagram-edge,#7b8c80)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="172.5" y="-55.4">#</text>
+</g>
+<!-- missing -->
+<g class="node" id="rev-suffix-tree-search-missing-child-node6">
+<title>missing</title>
+<path d="M323,-36C323,-36 250,-36 250,-36 244,-36 238,-30 238,-24 238,-24 238,-12 238,-12 238,-6 244,0 250,0 250,0 323,0 323,0 329,0 335,-6 335,-12 335,-12 335,-24 335,-24 335,-30 329,-36 323,-36" fill="var(--diagram-fill,#f5f6f1)" stroke="var(--diagram-border,#86968b)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="286.5" y="-14.5">no b child</text>
+</g>
+<!-- q&#45;&gt;missing -->
+<g class="edge" id="rev-suffix-tree-search-missing-child-edge5">
+<title>q-&gt;missing</title>
+<path d="M193.32,-80.86C211.57,-68.75 236.11,-52.45 255.43,-39.63" fill="none" stroke="var(--node-red,#b42332)" stroke-dasharray="5,2"></path>
+<polygon fill="var(--node-red,#b42332)" points="256.89,-41.18 260.73,-36.11 254.57,-37.68 256.89,-41.18" stroke="var(--node-red,#b42332)"></polygon>
+<text fill="var(--node-red,#b42332)" font-family="Georgia" font-size="12.00" text-anchor="middle" x="237.5" y="-55.4">b</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Query anab matches ana to a real branch, then fails: the available next labels are n and #, not b. The dashed red edge denotes the absent choice.</figcaption></figure>
+<p>The naive fresh-list construction compares suffix characters while inserting and can take quadratic character work in the source length. That is a different method from the lecture’s efficient construction bound: the lecture states <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>r</mi><mo stretchy="false">)</mo></mrow></math> with array nodes, hence <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math> for a fixed alphabet of size r. Do not assign that efficient bound to these insertion viewers. Edge-interval labels and the fixed-alphabet <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math>-node size bound explain how a completed suffix tree can remain linear in space.</p>
+<h2 id="section-5">Repetition and common-substring decisions</h2>
+<p>In the completed <code>banana#</code> tree, prefix <code>ana</code> reaches the branch after path <code>a</code> + <code>na</code>; its leaves are positions 2 and 4. Thus <code>ana</code> occurs twice, and it is the longest repeated substring: the next shared character differs (<code>n</code> continues suffix 2 while <code>#</code> ends suffix 4). Prefix <code>na</code> similarly has leaves 3 and 5 but depth 2. Overlapping occurrences count. For “at least m” occurrences, retain branches with at least m descendant leaves; for “more than m,” use m+1. The lecture heading says “more than m” while its test uses ≥m, so state the intended threshold explicitly.</p>
+<p>For the lecture’s common-substring example, concatenate <code>carport$airports#</code> with distinct separators. Label each suffix leaf by whether it starts in <code>carport</code> or <code>airports</code>; among branches with at least one leaf from each source, choose the greatest character depth. The result is <code>rport</code> (positions 3 in both source strings). <code>arport</code> is a substring of <code>carport</code> and a subsequence of both strings, but it is not a substring common to both because <code>airports</code> does not contain it contiguously. The slides pose this construction as an exercise; the deepest mixed-source branch criterion is the operational interpretation, not a separately detailed lecture algorithm.</p>
+<h2 id="section-6">Method decisions and stop conditions</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Decision</th>
+<th>Stop condition</th>
+<th>Edge cases and cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fresh construction</td>
+<td>Append a unique terminator, list all suffixes, and insert them into a compressed trie; split at the first mismatch.</td>
+<td>Every nonempty suffix reaches its own leaf.</td>
+<td>The illustrated insertion method can do <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mrow><mn>2</mn></mrow></msup><mo stretchy="false">)</mo></mrow></math> character work. The lecture’s separate array-node method is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>r</mi><mo stretchy="false">)</mo></mrow></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math> when alphabet size r is fixed.</td>
+</tr>
+<tr>
+<td>Substring existence</td>
+<td>Follow the root edge matching each next character and compare through compressed labels.</td>
+<td>Success when all pattern characters match, including when the last one ends inside an edge; failure on a mismatch or missing child.</td>
+<td>O(</td>
+</tr>
+<tr>
+<td>Report occurrences</td>
+<td>After a successful pattern path, enumerate descendant suffix leaves; with the lecture augmentation, use the branch’s leftmost/rightmost leaf pointers and inorder leaf chain.</td>
+<td>Stop after all descendant leaves are reported.</td>
+<td>O(</td>
+</tr>
+<tr>
+<td>Longest repeating substring</td>
+<td>Count descendant leaves at each branch and choose maximum string depth meeting the requested count threshold.</td>
+<td>Stop after evaluating every branch (or using a valid bottom-up aggregate).</td>
+<td>Count overlapping starts. Use m for “at least m,” m+1 for “more than m”; the lecture wording and ≥ test differ.</td>
+</tr>
+<tr>
+<td>Longest common substring</td>
+<td>Build S$T# with distinct separators, label source membership at leaves, then choose the deepest branch containing both labels.</td>
+<td>Stop after all eligible mixed-source branches have been compared.</td>
+<td>Contiguity is required; this is not the common-subsequence problem. The lecture provides the combined string as an exercise.</td>
+</tr>
+<tr>
+<td>Update source</td>
+<td>Rebuild the static index after edits unless using a separately specified online suffix-tree construction.</td>
+<td>The rebuilt index again contains every suffix of the changed text.</td>
+<td>Ordinary key insert/delete/meld are not suffix-tree operations; appending one character is not one ordinary trie insertion.</td>
+</tr>
+<tr>
+<td>Named relatives</td>
+<td>Linearized/virtual suffix trees, suffix arrays, enhanced suffix arrays, suffix cactus and suffix vectors are named in the lecture.</td>
+<td>Their operation-specific stopping rules depend on their own representation.</td>
+<td>The lecture does not develop these variants here, so no extra algorithm or bound is inferred for them.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="section-7">Common mistakes</h2>
+<ul>
+<li>Treating a successful search as requiring arrival at a node. A pattern may finish in the middle of a compressed edge.</li>
+<li>Treating a matching first character as a full match. Compare every remaining query character and fail at the first absent child or mismatching edge character.</li>
+<li>Counting graph edges instead of matched characters. The lecture’s <code>char#</code> annotation records character depth along compressed labels.</li>
+<li>Confusing the simple suffix-list insertion demonstration with the lecture’s <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>r</mi><mo stretchy="false">)</mo></mrow></math> construction method.</li>
+<li>Using one terminator that can occur in the source, or reusing the same separator for both source strings in the common-substring construction.</li>
+<li>Confusing occurrences with distinct paths: one branch path may report several starting positions, and overlapping positions still count.</li>
+</ul>
+<h2 id="section-8">Exam focus</h2>
+<p>Know the compressed-trie definition; explain why a unique terminator makes suffix endpoints distinct; prove substring iff prefix of a suffix; trace edge splits at the first mismatch; distinguish a node endpoint from an implicit edge endpoint; report leaf positions; and state which construction and reporting assumptions support each complexity bound. For repeat/common-substring questions, combine branch depth with descendant leaf counts or source labels, and resolve “at least” versus “more than” before selecting a threshold.</p>
+<h2 id="section-9">Practice</h2>
+<p><strong>Why does <code>an</code> occur twice in <code>banana</code>, even though its search ends inside an edge?</strong></p>
+<details><summary>Check your answer</summary><p>It matches the path <code>a</code> then the first <code>n</code> on the compressed <code>na</code> edge. The matched edge’s subtree has suffix leaves 2 and 4, so the starts are 2 and 4. Reaching the end of the edge is unnecessary because the query has already ended.</p></details>
+<p><strong>What should the tree do for query <code>anab</code>?</strong></p>
+<details><summary>Check your answer</summary><p>It matches <code>ana</code> to the branch, then fails because that branch continues with <code>n</code> or <code>#</code>, not <code>b</code>. A successful prefix does not rescue a later missing character.</p></details>
+<p><strong>For a substring required to occur more than 2 times, what leaf-count threshold is used?</strong></p>
+<details><summary>Check your answer</summary><p>Use at least 3 descendant leaves. Distinct suffix starts count separately, including overlapping occurrences.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="multibit-trie.html"><small>Previous</small>Multibit trie and routing <span aria-hidden="true">↗</span></a><a href="operation-glossary.html"><small>Next</small>Operation names and exam traps <span aria-hidden="true">↗</span></a></nav><footer>ADS field notes <span>Understand the rule. Trace the repair.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  root.querySelectorAll('table').forEach(table => {
+    const region = document.createElement('div');
+    region.className = 'table-scroll' + (table.rows[0]?.cells.length > 5 ? ' wide' : '');
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    table.before(region); region.append(table);
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Data structure diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect every node.'; frame.after(hint);
+    const update = () => { hint.hidden = frame.scrollWidth <= frame.clientWidth + 1 && frame.scrollHeight <= frame.clientHeight + 1; };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {heap:'priority queue insert delete meld minimum maximum trickle down bubble up build',tree:'insert delete search build rotate rotation',trie:'insert delete search build prefix',sorting:'run merge buffer freeze build',analysis:'potential aggregate accounting'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('a').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('ads-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.ADS_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) expand.textContent = 'Expand examples';
+    const section = new URLSearchParams(url.hash.slice(1)).get('section') || (url.hash.startsWith('#topic=') ? '' : url.hash.slice(1));
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = new URLSearchParams(location.hash.slice(1)).get('section') || location.hash.slice(1);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+})();
+</script></body></html>
