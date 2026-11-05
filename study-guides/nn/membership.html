@@ -1,0 +1,434 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Read membership-function shapes, fuzzify crisp inputs, form weak cuts, and compare six scalar defuzzification methods with complete calculations."><title>Membership, fuzzification and defuzzification · Neural networks and fuzzy logic</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('nn-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#34304a;--muted:#68647b;--secondary:#f0eef7;--border:#dfdced;--primary:#6251a5;--accent:#e7e1f7;--diagram-fill:#f1eff8;--diagram-border:#948cb2;--diagram-edge:#766c9b;--active-text:#493a84;--focus:#7865c1}:root[data-theme=dark]{--background:#191722;--foreground:#eeeaf8;--muted:#b9b2ce;--card:#211f2e;--secondary:#2b283b;--border:#48435e;--primary:#c0b2ff;--accent:#39334f;--diagram-fill:#2b283b;--diagram-border:#aaa0ce;--diagram-edge:#b4a9db;--topbar:#191722f5;--active-text:#d4caff;--focus:#c0b2ff} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> NNFL <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Neuron, learning, fuzzy sets…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Neural networks and fuzzy logic</a></div><div class="nav-group"><p>Neural networks</p><a class="nav-entry" href="foundations.html">Neurons, activations and network foundations</a><a class="nav-entry" href="perceptron.html">Threshold logic and perceptron learning</a><a class="nav-entry" href="adaptive-linear.html">ADALINE and MADALINE learning</a><a class="nav-entry" href="lms.html">Widrow-Hoff derivation and LMS calculations</a><a class="nav-entry" href="backpropagation.html">Multilayer networks and backpropagation</a><a class="nav-entry" href="training-variants.html">Backpropagation variations and deeper networks</a><a class="nav-entry" href="pnn.html">Probabilistic neural networks</a></div><div class="nav-group"><p>Fuzzy foundations</p><a class="nav-entry" href="fuzzy-sets.html">Crisp and fuzzy sets</a><a class="nav-entry" href="fuzzy-relations.html">Relations and matrix composition</a><a class="nav-entry" href="membership.html" aria-current="page">Membership, fuzzification and defuzzification</a></div><div class="nav-group"><p>Fuzzy reasoning</p><a class="nav-entry" href="classical-logic.html">Classical logic and crisp rule relations</a><a class="nav-entry" href="logic-language.html">Fuzzy propositions, linguistic variables and implications</a><a class="nav-entry" href="fuzzy-systems.html">Mamdani, Sugeno, Tsukamoto and ANFIS</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">MA4144<br>Neural Networks and Fuzzy Logic</div></aside>
+<main id="main"><div class="eyebrow">Fuzzy foundations <span>/</span> Fuzzy lessons 1-3</div><h1>Membership, fuzzification and defuzzification</h1><p class="lead">Read membership-function shapes, fuzzify crisp inputs, form weak cuts, and compare six scalar defuzzification methods with complete calculations.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Membership functions and their shape</a><a href="#section-2">Ordinary, interval-valued, and type-2 membership</a><a href="#section-3">Fuzzification: evaluate a crisp input</a><a href="#section-4">Weak λ-cuts, support, and crisp relation cuts</a><a href="#section-5">Union cuts: preserve max and threshold order</a><a href="#section-6">Scalar defuzzification: six methods, six questions</a><a href="#section-7">Common mistakes</a><a href="#section-8">Exam focus</a><a href="#section-9">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>A membership function turns a vague label such as “hot” into a grade for each value in a stated universe. Fuzzification evaluates that function for a crisp input. Later, a fuzzy result can be converted either into a crisp set by a cut or into one crisp number by scalar defuzzification. Those are different conversions: a cut keeps every value that meets a threshold, while a scalar method chooses one representative output.</p>
+<p>These notes continue from <a href="fuzzy-sets.html">crisp and fuzzy sets</a>. For relation cuts, see <a href="fuzzy-relations.html">relations and matrix composition</a>; the later <a href="fuzzy-systems.html">fuzzy-system architectures</a> page uses an aggregated output before scalar defuzzification.</p>
+
+<h2 id="section-1">Membership functions and their shape</h2>
+<p>For a fuzzy set A on universe X, μ<sub>A</sub>(x) assigns each x one grade in [0,1]. The grade describes how strongly x fits the chosen concept under that membership function; it is not automatically a probability. The same real-world quantity may receive different grades under different concepts or reasonable membership curves.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x003BC;</mi><mi>A</mi></msub><mi>:</mi><mi>X</mi><mo>&#x02192;</mo><mo stretchy="false">[</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">]</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>x</mi><mo>&#x021A6;</mo><msub><mi>&#x003BC;</mi><mi>A</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>The handout’s “hot” example uses X=[20,40]°C and a triangular function peaking at 30°C. Evaluating its branches exposes all the geometric vocabulary at once: the core is where grade is 1; support is where grade is positive; the boundary has a positive but incomplete grade. Height is the largest grade. A normal set reaches 1; a subnormal one does not. If exactly one element reaches 1, that element is the prototype. A crossover point has grade 0.5.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x003BC;</mi><mrow><mi>h</mi><mi>o</mi><mi>t</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007B;</mo><mtable><mtr><mtd columnalign="left"><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo>&#x02212;</mo><mn>20</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>10</mn></mtd><mtd columnalign="left"><mn>20</mn><mo>&#x02264;</mo><mi>x</mi><mo>&#x02264;</mo><mn>30</mn></mtd></mtr><mtr><mtd columnalign="left"><mo stretchy="false">&#x00028;</mo><mn>40</mn><mo>&#x02212;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>10</mn></mtd><mtd columnalign="left"><mn>30</mn><mo>&#x0003C;</mo><mi>x</mi><mo>&#x02264;</mo><mn>40</mn></mtd></mtr><mtr><mtd columnalign="left"><mn>0</mn></mtd><mtd columnalign="left"><mtext>otherwise</mtext></mtd></mtr></mtable></mrow></mrow></math></div>
+<figure class="membership-figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 390" role="img" aria-labelledby="membership-figure-1-title membership-figure-1-desc">
+<title id="membership-figure-1-title">Hot temperature membership function</title><desc id="membership-figure-1-desc">A triangle from 20 to 40 degrees Celsius with its peak at 30 and crossover grades one half at 25 and 35.</desc>
+<style>.axis{stroke:var(--diagram-border,#56616d);stroke-width:2}.curve{fill:none;stroke:var(--primary,#6b55a5);stroke-width:4}.guide{stroke:var(--muted,#9299a3);stroke-dasharray:5 5}.label{fill:var(--foreground,#252b33);font:16px system-ui}.accent{fill:var(--primary,#604b9b);font:600 16px system-ui}</style>
+<path class="axis" d="M80 320H660M80 320V38"/><path class="curve" d="M140 320L360 70L580 320"/>
+<path class="guide" d="M250 320V195M360 320V70M470 320V195M80 195H580"/>
+<text class="label" x="44" y="326">0</text><text class="label" x="42" y="202">0.5</text><text class="label" x="53" y="76">1</text>
+<text class="label" x="126" y="350">20</text><text class="label" x="235" y="350">25</text><text class="label" x="346" y="350">30</text><text class="label" x="455" y="350">35</text><text class="label" x="566" y="350">40</text>
+<text class="label" x="604" y="350">temperature (°C)</text><text class="label" x="12" y="30">μ<tspan baseline-shift="sub" font-size="12">hot</tspan>(x)</text>
+<text class="accent" x="270" y="100">core {30}</text><text class="accent" x="267" y="185">crossovers: 25, 35</text><text class="label" x="130" y="300">support: (20, 40)</text>
+<circle cx="360" cy="70" r="5" fill="var(--primary,#604b9b)"/><circle cx="250" cy="195" r="5" fill="var(--primary,#604b9b)"/><circle cx="470" cy="195" r="5" fill="var(--primary,#604b9b)"/>
+</svg>
+<figcaption>Hot temperature on [20,40]°C: core {30}, support (20,40), and crossovers at 25°C and 35°C.</figcaption></figure>
+<p>The triangular profile is nondecreasing then nonincreasing, and it satisfies the lecture’s convexity test: for x&lt;y&lt;z, μ(y) ≥ min(μ(x),μ(z)). This non-strict form allows plateaus such as trapezoids. The source’s nearby word “strictly” is too restrictive for its own weak inequality and flat examples. The source’s working definition calls a convex, single-point normal fuzzy set on the real line a fuzzy number; we keep that course definition here.</p>
+
+<details class="worked"><summary>Walk the hot-temperature grades and features</summary><section class="walk" tabindex="0" aria-label="Hot triangle: evaluate the defining branches"><h3>Hot triangle: evaluate the defining branches</h3><div class="example-input"><strong>Given:</strong> X=[20,40]°C; rising branch (x−20)/10 for 20≤x≤30; falling branch (40−x)/10 for 30&lt;x≤40.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>At 20°C: left endpoint</h4><p>Rule: use the rising branch, μ(x) = (x − 20)/10. Substitute x = 20: (20 − 20)/10 = 0. This endpoint is not in the positive support.</p></section><section class="step"><h4>At 25°C: first crossover</h4><p>Rule: rising branch. Substitute x = 25: (25 − 20)/10 = 5/10 = 0.5. This is a crossover point because the grade is exactly one half.</p></section><section class="step"><h4>At 30°C: peak</h4><p>Rule: either branch meets at the peak. The rising value is (30 − 20)/10 = 1 and the falling value is (40 − 30)/10 = 1. Thus the core is {30}, the height is 1, and the set is normal with prototype 30.</p></section><section class="step"><h4>At 35°C: second crossover</h4><p>Rule: use the falling branch, μ(x) = (40 − x)/10. Substitute x = 35: (40 − 35)/10 = 0.5. The second crossover is 35°C.</p></section><section class="step"><h4>At 40°C: right endpoint</h4><p>Rule: falling branch. Substitute x = 40: (40 − 40)/10 = 0. The support is therefore (20, 40), not [20, 40]. The nonzero partial grades form the boundary; the triangle is convex and, using the lecture’s working definition, a fuzzy number.</p></section></section></details>
+
+<h2 id="section-2">Ordinary, interval-valued, and type-2 membership</h2>
+<p>An ordinary membership function gives each universe element one scalar grade. This is the common form and it may be symmetric or asymmetric, and one-dimensional or multidimensional. Generalized forms are useful when the available information does not justify one precise grade.</p>
+<p>In the “close to 5” illustration, the interval-valued membership at x=4 is [0.8,1]: the available information bounds the grade but does not pick one value. In a type-2 illustration, that interval itself becomes fuzzy. The source writes μ(4)={0.5/0.8 + 1/0.9 + 0.5/1}: grades 0.8, 0.9, and 1 have secondary grades 0.5, 1, and 0.5. The slash and plus signs collect grade/secondary-grade pairs; they do not mean division and ordinary addition. No type-reduction procedure is developed in these assigned pages.</p>
+<table><thead><tr><th>x</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th></tr></thead><tbody><tr><td>Interval grade</td><td>[0.6,0.8]</td><td>[0.8,1]</td><td>[1,1]</td><td>[0.8,1]</td><td>[0.6,0.8]</td></tr></tbody></table>
+<table><thead><tr><th>Form</th><th>What is assigned at x?</th><th>What it captures</th></tr></thead><tbody><tr><td>Ordinary</td><td>One grade μ(x)</td><td>A single specified membership curve</td></tr><tr><td>Interval-valued</td><td>Lower and upper grades [α₁,α₂]</td><td>Uncertainty about the exact grade</td></tr><tr><td>Type-2 illustration</td><td>A fuzzy set over possible primary grades</td><td>Uncertainty represented with secondary grades</td></tr></tbody></table>
+
+<h2 id="section-3">Fuzzification: evaluate a crisp input</h2>
+<p>Fuzzification makes a crisp quantity fuzzy by evaluating each relevant membership function at the input. For example, a crisp temperature of 25°C has “hot” grade (25−20)/10=0.5. If another label is also being used, evaluate its own function separately; one grade does not define all labels. Membership grades indicate fit, not a probability distribution.</p>
+
+<h2 id="section-4">Weak λ-cuts, support, and crisp relation cuts</h2>
+<p>A weak λ-cut converts a fuzzy set into a crisp set by retaining elements whose membership is at least λ. Equality matters: a grade exactly equal to λ is included. At λ=0 the weak cut is all of X, even at zero-grade elements. The positive support is instead A<sub>0+</sub>={x:μ<sub>A</sub>(x)&gt;0}. A strong λ-cut uses &gt;λ and therefore excludes equality cases.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>A</mi><mi>&#x003BB;</mi></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x0007B;</mo><mi>x</mi><mo>&#x02208;</mo><mi>X</mi><mo>&#x02223;</mo><msub><mi>&#x003BC;</mi><mi>A</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x02265;</mo><mi>&#x003BB;</mi><mo stretchy="false">&#x0007D;</mo><mo>&#x0002C;</mo><mspace width="1em" /><mn>0</mn><mo>&#x02264;</mo><mi>&#x003BB;</mi><mo>&#x02264;</mo><mn>1</mn><mi>;</mi><mspace width="2em" /><msub><mi>A</mi><mn>0</mn></msub><mo>&#x0003D;</mo><mi>X</mi><mo>&#x0002C;</mo><mspace width="1em" /><msub><mi>A</mi><mrow><mn>0</mn><mo>&#x0002B;</mo></mrow></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x0007B;</mo><mi>x</mi><mo>&#x02223;</mo><msub><mi>&#x003BC;</mi><mi>A</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003E;</mo><mn>0</mn><mo stretchy="false">&#x0007D;</mo></mrow></math></div>
+<p>For nested thresholds λ≤α, A<sub>α</sub>⊆A<sub>λ</sub>: raising the threshold can only remove elements. The core is A₁. The source’s discrete “numbers close to 5” example gives the grades shown below. The diagram highlights both weak cuts; the written sets preserve every threshold, including 0, 0+, 0.4, 0.5, 0.7, 0.9, and 1.</p>
+<figure class="membership-figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" aria-labelledby="membership-figure-2-title membership-figure-2-desc">
+<title id="membership-figure-2-title">Weak and strong cuts on a discrete fuzzy set</title><desc id="membership-figure-2-desc">Membership grades for elements one through ten, with weak cuts at 0.5 and 0.7. Equality at the threshold is included.</desc>
+<style>.axis{stroke:var(--diagram-border,#56616d);stroke-width:2}.bar{fill:var(--accent,#bcb1df)}.selected{fill:var(--primary,#6b55a5)}.line{stroke:var(--diagram-link,#a05d3b);stroke-dasharray:6 5;stroke-width:2}.label{fill:var(--foreground,#252b33);font:15px system-ui}.small{fill:var(--foreground,#252b33);font:13px system-ui}</style>
+<path class="axis" d="M65 240H680M65 240V35"/><path class="line" d="M65 140H680"/><path class="line" d="M65 100H680"/>
+<g><rect class="bar" x="92" y="240" width="36" height="0"/><rect class="bar" x="149" y="160" width="36" height="80"/><rect class="selected" x="206" y="100" width="36" height="140"/><rect class="selected" x="263" y="60" width="36" height="180"/><rect class="selected" x="320" y="40" width="36" height="200"/><rect class="selected" x="377" y="60" width="36" height="180"/><rect class="selected" x="434" y="100" width="36" height="140"/><rect class="bar" x="491" y="160" width="36" height="80"/><rect class="bar" x="548" y="240" width="36" height="0"/><rect class="bar" x="605" y="240" width="36" height="0"/></g>
+<g class="small"><text x="104" y="262">1</text><text x="161" y="262">2</text><text x="218" y="262">3</text><text x="275" y="262">4</text><text x="332" y="262">5</text><text x="389" y="262">6</text><text x="446" y="262">7</text><text x="503" y="262">8</text><text x="560" y="262">9</text><text x="614" y="262">10</text></g>
+<text class="label" x="28" y="244">0</text><text class="label" x="25" y="145">0.5</text><text class="label" x="25" y="44">1</text><text class="label" x="610" y="145">λ=.5</text><text class="label" x="610" y="105">λ=.7</text><text class="label" x="520" y="25">Weak cut: μ(x) ≥ λ</text><text class="small" x="185" y="290">x=3,7 tie at .7 and are included</text>
+</svg>
+<figcaption>The discrete “close to 5” grades with weak-cut thresholds .5 and .7; equality at .7 keeps x=3 and x=7.</figcaption></figure>
+<table><thead><tr><th>Threshold</th><th>Rule</th><th>Weak cut</th></tr></thead><tbody><tr><td>0</td><td>μ≥0</td><td>{1,2,3,4,5,6,7,8,9,10}=X</td></tr><tr><td>0+</td><td>μ&gt;0</td><td>{2,3,4,5,6,7,8}</td></tr><tr><td>0.4</td><td>μ≥0.4</td><td>{2,3,4,5,6,7,8}</td></tr><tr><td>0.5</td><td>μ≥0.5</td><td>{3,4,5,6,7}</td></tr><tr><td>0.7</td><td>μ≥0.7</td><td>{3,4,5,6,7}</td></tr><tr><td>0.9</td><td>μ≥0.9</td><td>{4,5,6}</td></tr><tr><td>1</td><td>μ≥1</td><td>{5}</td></tr></tbody></table>
+<p>The λ=0 row and support are deliberately separate. At λ=0 all ten universe elements qualify because every membership grade is at least zero; at 0+ the zero-grade elements disappear. At λ=0.7, x=3 and x=7 each equal the threshold and remain in the weak cut.</p>
+
+<details class="worked"><summary>Build the discrete weak cuts, including ties</summary><section class="walk" tabindex="0" aria-label="“Close to 5”: threshold the full grade vector"><h3>“Close to 5”: threshold the full grade vector</h3><div class="example-input"><strong>Given:</strong> X={1,…,10}; grades in order are (0, 0.4, 0.7, 0.9, 1, 0.9, 0.7, 0.4, 0, 0). Weak rule: keep μ(x)≥λ.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>λ = 0: the universal weak cut</h4><p>Rule: A₀ = {x ∈ X : μ(x) ≥ 0}. All listed grades are nonnegative, so A₀ = {1,2,3,4,5,6,7,8,9,10} = X, including the zero-grade endpoints 1, 9, and 10.</p></section><section class="step"><h4>λ = 0+: positive support</h4><p>Rule: A₀₊ = {x : μ(x) &gt; 0}. The positive grades are at x = 2 through 8, so A₀₊ = {2,3,4,5,6,7,8}. This is not the λ=0 cut.</p></section><section class="step"><h4>λ = 0.4: equality stays in</h4><p>Rule: include grades μ ≥ 0.4. Grades at x = 2 and 8 equal 0.4; x = 3 through 7 are larger. Result: {2,3,4,5,6,7,8}. Under a strong cut μ &gt; 0.4, x = 2 and 8 would be excluded.</p></section><section class="step"><h4>λ = 0.5: compare each grade</h4><p>Rule: include μ ≥ 0.5. The selected elements are {3,4,5,6,7}; x = 2 and 8 have only 0.4.</p></section><section class="step"><h4>λ = 0.7: preserve both ties</h4><p>Rule: include μ ≥ 0.7. Elements 3 and 7 have grade exactly 0.7, so both are included. Result: {3,4,5,6,7}. A strict &gt; rule would incorrectly drop these equality cases.</p></section><section class="step"><h4>λ = 0.9: retain the high grades</h4><p>Rule: μ ≥ 0.9. Elements 4, 5, and 6 have grades 0.9, 1, and 0.9. Result: {4,5,6}.</p></section><section class="step"><h4>λ = 1: only the core remains</h4><p>Rule: μ ≥ 1. Only element 5 reaches 1. Result: A₁ = {5}, the core. As λ rises, weak cuts nest inward: when λ ≤ α, Aα ⊆ Aλ.</p></section></section></details>
+
+<p>Complement and cut do not commute in general. For the standard complement μ<sub>Aᶜ</sub>=1−μ<sub>A</sub>, the exact relation is (Aᶜ)<sub>λ</sub>=X∖A<sub>1−λ</sub><sup>+</sup>, using the strong cut μ<sub>A</sub>&gt;1−λ. The lecture’s statement that the two weak-cut constructions agree at λ=0.5 needs a condition: they agree only if no universe element has grade exactly 0.5. The source’s handwritten pair demonstrates both outcomes.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="false">&#x00028;</mo><msup><mi>A</mi><mi>c</mi></msup><msub><mo stretchy="false">&#x00029;</mo><mi>&#x003BB;</mi></msub><mo>&#x0003D;</mo><mi>X</mi><mi>&#x029F5;</mi><msubsup><mi>A</mi><mrow><mn>1</mn><mo>&#x02212;</mo><mi>&#x003BB;</mi></mrow><mo>&#x0002B;</mo></msubsup><mo>&#x0002C;</mo><mspace width="2em" /><msubsup><mi>A</mi><mi>&#x003B1;</mi><mo>&#x0002B;</mo></msubsup><mo>&#x0003D;</mo><mo stretchy="false">&#x0007B;</mo><mi>x</mi><mo>&#x02223;</mo><msub><mi>&#x003BC;</mi><mi>A</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003E;</mo><mi>&#x003B1;</mi><mo stretchy="false">&#x0007D;</mo></mrow></math></div>
+<details class="worked"><summary>Compare complement-first and cut-first in both cases</summary><section class="walk" tabindex="0" aria-label="Complement and weak cuts: test the half-grade case"><h3>Complement and weak cuts: test the half-grade case</h3><div class="example-input"><strong>Given:</strong> X={1,2,3,4}; complement grades are 1−μA(x). Compare (Aᶜ)λ with X∖Aλ using the weak ≥ cut.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Case 1, λ = 0.7</h4><p>Original grades (0.1, 0.3, 0.5, 0.9); complement grades (0.9, 0.7, 0.5, 0.1). Complement first: keep complement grades ≥ 0.7, giving {1,2}. Cut A first: A₀.₇ = {4}, then X\{4} = {1,2,3}. The results differ.</p></section><section class="step"><h4>Case 1, λ = 0.5: exact half-grade</h4><p>Complement first gives {1,2,3}, since complement grades at 1, 2, 3 are ≥ 0.5. The original weak cut A₀.₅ = {3,4}; its complement is {1,2}. They differ because μA(3) = 0.5 is included by the weak cut on both sides of the comparison.</p></section><section class="step"><h4>Case 2, λ = 0.7</h4><p>Change only μA(3) to 0.6. Complement grades become (0.9, 0.7, 0.4, 0.1). Complement-first still gives {1,2}; A₀.₇ = {4}, whose complement is {1,2,3}. They differ.</p></section><section class="step"><h4>Case 2, λ = 0.5: no exact half-grade</h4><p>Complement first now gives {1,2}, because the third complement grade is 0.4. A₀.₅ = {3,4}; its complement is also {1,2}. Equality holds here. General rule: (Aᶜ)λ = X∖A⁺₍₁₋λ₎, where the strong cut uses μ &gt; 1−λ. At λ=0.5 the weak and strong threshold sets differ only if some element has grade exactly 0.5.</p></section></section></details>
+
+<p>The same threshold rule converts a fuzzy relation into a crisp relation: retain ordered pairs whose relation grade is at least λ. For the source’s 3×3 relation at λ=0.5, the retained positions are listed in the walkthrough; the relation-composition calculations remain on the <a href="fuzzy-relations.html">relations page</a>.</p>
+
+<details class="worked"><summary>Read the source relation’s 0.5-cut</summary><section class="walk" tabindex="0" aria-label="Fuzzy relation to crisp relation"><h3>Fuzzy relation to crisp relation</h3><div class="example-input"><strong>Given:</strong> R=[[.8,.4,.1],[.2,.9,.5],[.6,.7,.3]], rows x₁–x₃, columns y₁–y₃; λ=.5.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Keep entries at least 0.5</h4><p>Rule: a relation λ-cut retains every matrix entry μR(x,y) ≥ λ. From rows x₁,x₂,x₃ and columns y₁,y₂,y₃, the source matrix is [[.8,.4,.1],[.2,.9,.5],[.6,.7,.3]]. At λ=.5, keep (x₁,y₁), (x₂,y₂), (x₂,y₃), (x₃,y₁), and (x₃,y₂). Entries equal to .5 qualify.</p></section><section class="step"><h4>Write the crisp relation</h4><p>R₀.₅ = {(x₁,y₁),(x₂,y₂),(x₂,y₃),(x₃,y₁),(x₃,y₂)}. Check: this is exactly the set of positions whose matrix grades meet or exceed the threshold; no composition is performed here.</p></section></section></details>
+
+<h2 id="section-5">Union cuts: preserve max and threshold order</h2>
+<p>The source uses max for fuzzy union. Its example checks that cutting the max-union gives the same crisp set as cutting each input and then taking their crisp union. This illustrates the identity on actual grades rather than asking the reader to infer it from notation.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x003BC;</mi><mrow><mi>A</mi><mo>&#x0222A;</mo><mi>B</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>max</mo><mo stretchy="false">&#x0007B;</mo><msub><mi>&#x003BC;</mi><mi>A</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><msub><mi>&#x003BC;</mi><mi>B</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x0007D;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mo stretchy="false">&#x00028;</mo><mi>A</mi><mo>&#x0222A;</mo><mi>B</mi><msub><mo stretchy="false">&#x00029;</mo><mi>&#x003BB;</mi></msub><mo>&#x0003D;</mo><msub><mi>A</mi><mi>&#x003BB;</mi></msub><mo>&#x0222A;</mo><msub><mi>B</mi><mi>&#x003BB;</mi></msub></mrow></math></div>
+<details class="worked"><summary>Verify the union-cut identity at λ=0.5</summary><section class="walk" tabindex="0" aria-label="Pointwise max, then weak cut"><h3>Pointwise max, then weak cut</h3><div class="example-input"><strong>Given:</strong> A={(1,.1),(2,.5),(3,.8),(4,1),(5,.8),(6,.5),(7,.1)}; B={(4,.4),(5,.7),(6,.9),(7,.7),(8,.4)}.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Form the pointwise max</h4><p>Rule: μA∪B(x) = max(μA(x), μB(x)). In order x=1,…,8, the max vector is (0.1, 0.5, 0.8, 1.0, 0.8, 0.9, 0.7, 0.4). At x=4, max(1.0,0.4)=1.0; at x=6, max(0.5,0.9)=0.9.</p></section><section class="step"><h4>Take the union’s 0.5-cut</h4><p>Rule: keep max grade ≥ 0.5. This gives {2,3,4,5,6,7}. The boundary ties at x=2 (0.5) and x=7 (0.7) are included.</p></section><section class="step"><h4>Cut each set, then unite</h4><p>A₀.₅ = {2,3,4,5,6}; B₀.₅ = {5,6,7}. Their crisp union is {2,3,4,5,6,7}, matching the previous result. This checks (A∪B)λ = Aλ∪Bλ for this example.</p></section></section></details>
+
+<h2 id="section-6">Scalar defuzzification: six methods, six questions</h2>
+<p>When a fuzzy process produces an output membership function, scalar defuzzification turns it into one precise value. The methods can disagree because they summarize different properties: a peak, a geometric balance point, a height-weighted representative, a maxima convention, an algebraic sum of sets, or the largest convex region. Choose the method called for by the problem and preserve its assumptions.</p>
+<p>The handout’s example uses C₁ trapezoid (0,0),(2,1),(4,1),(6,0) and C₂ triangle (4,0),(6,1),(8,0). Their max-union is the pointwise outer envelope; it is not the algebraic sum. Both individual maxima are 1. The overlap is between z=4 and z=6 and its minimum-shaped area must be handled differently by the union centroid and center of sums.</p>
+<p>An earlier lecture figure shows another union: C₁ trapezoid (0,0),(2,0.5),(6,0.5),(8,0), and C₂ triangle (6,0),(8,1),(10,0). The exact vertices give crossing z=20/3 and μ=1/3; the handout plot is schematic and should not be read as an exact z=7 crossing.</p>
+<figure class="membership-figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" aria-labelledby="membership-figure-3-title membership-figure-3-desc">
+<title id="membership-figure-3-title">Maximum union of a half-height trapezoid and a triangle</title><desc id="membership-figure-3-desc">The lecture's C1 trapezoid and C2 triangle overlap. The union follows whichever membership curve is higher, switching at their crossing z equals seven.</desc>
+<style>.axis{stroke:var(--diagram-border,#56616d);stroke-width:2}.c1{fill:none;stroke:var(--diagram-link,#36806d);stroke-width:3}.c2{fill:none;stroke:var(--diagram-edge,#bf6b45);stroke-width:3}.env{fill:none;stroke:var(--primary,#6b55a5);stroke-width:5}.guide{stroke:var(--muted,#9299a3);stroke-dasharray:5 5}.label{fill:var(--foreground,#252b33);font:15px system-ui}.accent{fill:var(--primary,#604b9b);font:600 14px system-ui}</style>
+<path class="axis" d="M70 270H680M70 270V35"/><path class="c1" d="M100 270L220 155H460L580 270"/><path class="c2" d="M460 270L580 40L700 270"/>
+<path class="env" d="M100 270L220 155H460L500 193.33L580 40L700 270"/><path class="guide" d="M500 270V193.33M70 155H460"/>
+<text class="label" x="91" y="294">0</text><text class="label" x="210" y="294">2</text><text class="label" x="450" y="294">6</text><text class="label" x="484" y="294">20/3</text><text class="label" x="570" y="294">8</text><text class="label" x="690" y="294">10</text>
+<text class="label" x="27" y="275">0</text><text class="label" x="27" y="160">0.5</text><text class="label" x="44" y="45">1</text><text class="accent" x="280" y="143">C₁ plateau</text><text class="label" x="500" y="187">crossing</text><text class="accent" x="570" y="35">C₂ peak</text><text class="label" x="330" y="322">output z</text><text class="label" x="12" y="30">μ(z)</text>
+</svg>
+<figcaption>Earlier lecture union: the max envelope switches between C₁ and C₂ at the exact intersection z=20/3, μ=1/3.</figcaption></figure>
+<details class="worked"><summary>Construct the lecture’s max-union envelope</summary><section class="walk" tabindex="0" aria-label="Use max at every output value"><h3>Use max at every output value</h3><div class="example-input"><strong>Given:</strong> C₁=(0,0),(2,.5),(6,.5),(8,0); C₂=(6,0),(8,1),(10,0).</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Read the two functions</h4><p>C₁ is (0,0),(2,.5),(6,.5),(8,0); C₂ is (6,0),(8,1),(10,0). The rising C₂ branch and falling C₁ branch overlap on 6≤z≤8.</p></section><section class="step"><h4>Solve for their crossing</h4><p>On 6≤z≤8, μ₁=(8−z)/4 and μ₂=(z−6)/2. Equate them: (8−z)/4=(z−6)/2 ⇒ 8−z=2z−12 ⇒ z=20/3≈6.667. Substitution gives μ=1/3. The exact coordinates imply this crossing; the handout’s sketch is schematic.</p></section><section class="step"><h4>Choose the maximum at every output</h4><p>Rule: μC(z)=max(μ₁(z),μ₂(z)). Before z=20/3, C₁ is higher in the overlap, so the envelope follows C₁. After that point, C₂ is higher, so it follows C₂. The outer envelope switches at the intersection; it does not add the two grades.</p></section></section></details>
+
+<figure class="membership-figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" aria-labelledby="membership-figure-4-title membership-figure-4-desc">
+<title id="membership-figure-4-title">Two fuzzy output sets and their max-union</title><desc id="membership-figure-4-desc">A trapezoid from zero to six with a unit plateau from two to four and a triangle from four to eight with peak at six. The max envelope crosses at five. The global maxima are the plateau from two to four and the isolated point six.</desc>
+<style>.axis{stroke:var(--diagram-border,#56616d);stroke-width:2}.c1{fill:none;stroke:var(--diagram-link,#36806d);stroke-width:3}.c2{fill:none;stroke:var(--diagram-edge,#bf6b45);stroke-width:3}.env{fill:none;stroke:var(--primary,#6b55a5);stroke-width:5}.guide{stroke:var(--muted,#9299a3);stroke-dasharray:5 5}.label{fill:var(--foreground,#252b33);font:15px system-ui}.a{fill:var(--primary,#604b9b);font:600 14px system-ui}</style>
+<path class="axis" d="M70 290H680M70 290V36"/><path class="c1" d="M100 290L220 70H340L460 290"/><path class="c2" d="M340 290L460 70L580 290"/>
+<path class="env" d="M100 290L220 70H340L400 180L460 70L580 290"/><path class="guide" d="M400 290V180M70 180H400"/>
+<text class="label" x="40" y="296">0</text><text class="label" x="31" y="185">0.5</text><text class="label" x="40" y="74">1</text><text class="label" x="92" y="316">0</text><text class="label" x="212" y="316">2</text><text class="label" x="332" y="316">4</text><text class="label" x="392" y="316">5</text><text class="label" x="452" y="316">6</text><text class="label" x="572" y="316">8</text>
+<text class="a" x="265" y="55">C₁ plateau</text><text class="label" x="408" y="172">intersection (5, .5)</text><text class="a" x="465" y="56">isolated maximum</text><text class="label" x="270" y="345">output z</text><text class="label" x="15" y="35">μ(z)</text>
+</svg>
+<figcaption>The max envelope of the lecture’s C₁ trapezoid and C₂ triangle; global maxima are a plateau [2,4] and a separate point 6.</figcaption></figure>
+<table><thead><tr><th>Method</th><th>Mechanism and applicability</th><th>Source example result</th></tr></thead><tbody><tr><td>Max membership (height)</td><td>Choose any z where μC is globally maximal; source restricts use to peaked outputs. Can be non-unique.</td><td>[2,4]∪{6}; no unique scalar</td></tr><tr><td>Centroid</td><td>Balance first moment over area of the aggregated max-union; overlap counted once.</td><td>43/11 ≈ 3.90909</td></tr><tr><td>Weighted average</td><td>Average component centroids, weighted by each component’s maximum grade; usually restricted to symmetric sets.</td><td>4.5</td></tr><tr><td>Mean max (MOM)</td><td>For one plateau [a,b], use its midpoint. Disconnected maximizers need an explicit convention.</td><td>3 under plateau midpoint; 6 is another source selection</td></tr><tr><td>Center of sums</td><td>Area-weight individual-set centroids; overlapping area is counted separately in each set.</td><td>4</td></tr><tr><td>Center of largest area</td><td>Choose the largest-area convex region and use its centroid; equals centroid for an already convex aggregate.</td><td>3 (C₁ is larger)</td></tr></tbody></table>
+<p>For a continuous output, centroid is z*=(∫μ<sub>C</sub>(z)z dz)/(∫μ<sub>C</sub>(z)dz); for a discrete output, replace the integrals by sums. The source’s weighted average is Σ h<sub>k</sub>z̄<sub>k</sub>/Σh<sub>k</sub>, where h<sub>k</sub> is the component peak and z̄<sub>k</sub> its centroid. Center of sums instead uses areas A<sub>k</sub>: ΣA<sub>k</sub>z̄<sub>k</sub>/ΣA<sub>k</sub>.</p>
+<p>The lecture’s separate weighted-average illustration has individual symmetric-set centroids a and b with respective peak heights 0.5 and 0.9: z*=[a(0.5)+b(0.9)]/[0.5+0.9]. The symbols a and b are centroids; 0.5 and 0.9 are the height weights.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msubsup><mi>z</mi><mrow><mi>c</mi><mi>e</mi><mi>n</mi><mi>t</mi><mi>r</mi><mi>o</mi><mi>i</mi><mi>d</mi></mrow><mo>&#x0002A;</mo></msubsup><mo>&#x0003D;</mo><mfrac><mrow><mo>&#x0222B;</mo><msub><mi>&#x003BC;</mi><mi>C</mi></msub><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo stretchy="false">&#x00029;</mo><mi>z</mi><mspace width="0.167em" /><mi>d</mi><mi>z</mi></mrow><mrow><mo>&#x0222B;</mo><msub><mi>&#x003BC;</mi><mi>C</mi></msub><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mi>d</mi><mi>z</mi></mrow></mfrac><mo>&#x0002C;</mo><mspace width="2em" /><msubsup><mi>z</mi><mrow><mi>C</mi><mi>O</mi><mi>S</mi></mrow><mo>&#x0002A;</mo></msubsup><mo>&#x0003D;</mo><mfrac><mrow><msub><mo>&#x02211;</mo><mi>k</mi></msub><msub><mi>A</mi><mi>k</mi></msub><msub><mover><mi>z</mi><mo stretchy="true">&#x000AF;</mo></mover><mi>k</mi></msub></mrow><mrow><msub><mo>&#x02211;</mo><mi>k</mi></msub><msub><mi>A</mi><mi>k</mi></msub></mrow></mfrac><mo>&#x0002C;</mo><mspace width="2em" /><msubsup><mi>z</mi><mrow><mi>W</mi><mi>A</mi></mrow><mo>&#x0002A;</mo></msubsup><mo>&#x0003D;</mo><mfrac><mrow><msub><mo>&#x02211;</mo><mi>k</mi></msub><msub><mi>h</mi><mi>k</mi></msub><msub><mover><mi>z</mi><mo stretchy="true">&#x000AF;</mo></mover><mi>k</mi></msub></mrow><mrow><msub><mo>&#x02211;</mo><mi>k</mi></msub><msub><mi>h</mi><mi>k</mi></msub></mrow></mfrac></mrow></math></div>
+<details class="worked"><summary>Work all six methods on the exact two-output example</summary><section class="walk" tabindex="0" aria-label="Two output sets: areas, overlap, moments, six methods"><h3>Two output sets: areas, overlap, moments, six methods</h3><div class="example-input"><strong>Given:</strong> C₁ trapezoid (0,0),(2,1),(4,1),(6,0); C₂ triangle (4,0),(6,1),(8,0). Areas and centroids: A₁=4, z̄₁=3; A₂=2, z̄₂=6. Aggregation uses max.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1 · Identify areas and first moments of both shapes</h4><p>C₁ has a left triangle of area ½·2·1=1, a plateau rectangle of area 2·1=2, and a right triangle of area ½·2·1=1. Thus A₁=4. Symmetry about z=3 gives z̄₁=3 and M₁=A₁z̄₁=4·3=12. C₂ has base 8−4=4 and height 1, so A₂=½·4·1=2; symmetry gives z̄₂=6 and M₂=2·6=12. The max aggregation is the outer envelope, not the sum.</p></section><section class="step"><h4>2 · Locate the intersection and compute overlap moments</h4><p>Between z=4 and 6, the falling C₁ side is μ₁=(6−z)/2 and the rising C₂ side is μ₂=(z−4)/2. Set them equal: (6−z)/2=(z−4)/2, so z=5 and μ=0.5. The minimum overlap is two triangles: each has area ½·1·0.5=0.25. Their centroids are 14/3 and 16/3, so their first moments are 0.25·14/3=7/6 and 0.25·16/3=4/3. Total overlap area is 0.5 and moment is 7/6+4/3=15/6=2.5 (equivalently 0.5·5 by symmetry).</p></section><section class="step"><h4>3 · Max membership: return the maximizing set</h4><p>Rule: choose z where μC(z) is maximal. Both component peaks are 1. Therefore arg max μC = [2,4] ∪ {6}. This method does not produce a unique scalar unless a tie convention is added. The lecture’s illustrated choices include midpoint 3 of the plateau or the isolated maximum 6.</p></section><section class="step"><h4>4 · Centroid of the max-union</h4><p>Rule: integrate the max envelope, counting overlap once. Area: A∪=4+2−0.5=5.5. First moment: M∪=(4·3)+(2·6)−2.5=12+12−2.5=21.5. Thus z*=M∪/A∪=21.5/5.5=43/11≈3.90909. Independent check: this is left of 4 because the overlap removed lies around z=5.</p></section><section class="step"><h4>5 · Weighted average: weight by peak heights</h4><p>For the source convention, use each symmetric component centroid weighted by its maximum grade. Both heights are 1: z*=(1·3+1·6)/(1+1)=9/2=4.5. This method is usually restricted to symmetric output membership functions; do not replace the height weights with areas.</p></section><section class="step"><h4>6 · Mean max (MOM): state the tie convention</h4><p>For one continuous maximum plateau [a,b], MOM takes (a+b)/2; the plateau [2,4] gives 3. Here the global maximizing set is disconnected, [2,4] ∪ {6}. “The middle of the maxima” has no unique scalar without specifying how disconnected maxima are treated. The lecture illustrates either 3 (plateau midpoint) or 6; neither should be called the unique result.</p></section><section class="step"><h4>7 · Center of sums: add component areas separately</h4><p>Rule: use the algebraic sum of the two individual output sets. The overlap is counted once in each component, so do not subtract it. z*=(A₁z̄₁+A₂z̄₂)/(A₁+A₂)=(4·3+2·6)/(4+2)=24/6=4. This differs from the max-union centroid because the aggregation and area accounting differ.</p></section><section class="step"><h4>8 · Center of largest area</h4><p>Split the nonconvex max aggregate into its convex output regions and select the largest-area source region. C₁ has area 4, C₂ area 2; choose C₁ and take its centroid: z*=3. For an already convex aggregate, this method agrees with its centroid.</p></section><section class="step"><h4>Compare all six outcomes</h4><p>Max membership returns [2,4]∪{6} (or a stated selection); centroid of max-union = 43/11≈3.90909; weighted average = 4.5; MOM = 3 under the plateau-midpoint convention, but disconnected maxima make it convention-dependent; center of sums = 4; center of largest area = 3. They answer different questions and intentionally need not agree.</p></section></section></details>
+
+<p>A separate source example checks center of sums on an asymmetric output. Its first triangle has two unequal sides, so we compute its area and moment rather than assuming its centroid is the midpoint. This is useful because the weighted-average method’s source caveat is about symmetric component shapes, while center of sums can use an asymmetric set through its actual centroid.</p>
+
+<details class="worked"><summary>Center of sums with the asymmetric source example</summary><section class="walk" tabindex="0" aria-label="Asymmetric C₁ and symmetric C₂"><h3>Asymmetric C₁ and symmetric C₂</h3><div class="example-input"><strong>Given:</strong> C₁ vertices (1,0),(2,1),(6,0); C₂ vertices (5,0),(7,0.8),(9,0).</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Find the asymmetric first area and moment</h4><p>For C₁ vertices (1,0),(2,1),(6,0), area is left triangle ½·1·1=0.5 plus right triangle ½·4·1=2, so A₁=2.5. The left first moment is ∫₁²(z−1)z dz = [z³/3−z²/2]₁² = 5/6. The right first moment is ∫₂⁶((6−z)/4)z dz = ¼[3z²−z³/3]₂⁶ = 20/3. Thus M₁=5/6+20/3=45/6=7.5 and z̄₁=7.5/2.5=3.</p></section><section class="step"><h4>Find the second area and centroid</h4><p>C₂ is symmetric triangle (5,0),(7,0.8),(9,0). Area A₂=½·4·0.8=1.6 and symmetry gives z̄₂=7.</p></section><section class="step"><h4>Apply center of sums</h4><p>Use area weights, with no overlap subtraction: z*=(2.5·3+1.6·7)/(2.5+1.6)=(7.5+11.2)/4.1=18.7/4.1≈4.56098. The asymmetric C₁ is valid here; the height-weighted method’s source caveat concerns symmetric component sets.</p></section></section></details>
+
+<h2 id="section-7">Common mistakes</h2>
+<ul><li>Do not interpret μ(x) as a probability without a separate probabilistic model.</li><li>Do not confuse the core μ=1 with support μ&gt;0 or boundary 0&lt;μ&lt;1.</li><li>Do not use the strong condition &gt;λ when the source defines a weak cut with ≥λ.</li><li>Do not replace A₀=X with positive support A₀₊; zero-grade elements belong only to the former.</li><li>At λ=0.5, an exact half-grade changes complement/cut equality.</li><li>Do not confuse the centroid of the max-union with center of sums: the former counts overlap once; the latter counts the component overlap separately and must not subtract it.</li><li>Do not report MOM as unique for [2,4]∪{6}; state a convention or the maximizing set.</li><li>Weighted average uses peak heights in this source convention; center of sums uses areas.</li></ul>
+
+<h2 id="section-8">Exam focus</h2>
+<ul><li>Define membership grade and distinguish it from probability.</li><li>Read core, support, boundary, height, normality, prototype, crossover, convexity, and fuzzy-number status from a graph.</li><li>Evaluate a crisp input by selecting the correct membership-function branch.</li><li>State weak λ-cut with ≥; distinguish A₀=X, support A₀₊, and strong cut with &gt;.</li><li>Apply set and relation cuts while retaining threshold-equality cases.</li><li>Explain the complement/weak-cut exception at exact grade 0.5.</li><li>Name all six scalar methods, their inputs/assumptions, overlap accounting, and non-unique maximum conventions.</li><li>Show area and first-moment calculations before reporting a centroid.</li></ul>
+
+<h2 id="section-9">Practice questions</h2>
+<p class="question">For the hot triangle, what are the grade at 27.5°C, the core, and the support?</p>
+<details class="worked"><summary>Check your answer</summary><p>Teaching example: μ=(27.5−20)/10=0.75. The core is {30}; the support is (20,40). The input is in the boundary because 0&lt;0.75&lt;1.</p></details>
+<p class="question">A membership vector contains grades (0, .4, .7, .9) at x=(1,2,3,4). Find its weak 0.7-cut and strong 0.7-cut.</p>
+<details class="worked"><summary>Check your answer</summary><p>Weak: {3,4}, because equality at x=3 is included. Strong: {4}, because it requires μ&gt;0.7.</p></details>
+<p class="question">When do complement-then-cut and cut-then-complement agree at λ=0.5?</p>
+<details class="worked"><summary>Check your answer</summary><p>For standard complement and weak cuts, they agree exactly when no element has original grade 0.5. At a grade of exactly 0.5, both weak thresholds include that element on the relevant side, so the results differ.</p></details>
+<p class="question">Why is center of sums 4 for the two-output example while the max-union centroid is 43/11?</p>
+<details class="worked"><summary>Check your answer</summary><p>Center of sums uses separate areas and moments: (4·3+2·6)/(4+2)=4, counting overlap in each component. The max-union centroid removes the overlap once from area and moment, giving (12+12−2.5)/(4+2−0.5)=43/11.</p></details>
+<p class="question">What is the MOM result for the maximum set [2,4]∪{6}?</p>
+<details class="worked"><summary>Check your answer</summary><p>There is no unique scalar without a disconnected-maxima convention. The lecture illustrates 3 as the plateau midpoint or 6 as the isolated maximum; report the convention explicitly.</p></details>
+<p class="question">Which source method usually assumes symmetric component membership functions, and which handles the asymmetric worked set?</p>
+<details class="worked"><summary>Check your answer</summary><p>Weighted average is usually restricted to symmetric output sets. Center of sums uses component areas and actual centroids, so it handles the asymmetric C₁ example.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="fuzzy-relations.html"><small>Previous</small>Relations and matrix composition <span aria-hidden="true">↗</span></a><a href="classical-logic.html"><small>Next</small>Classical logic and crisp rule relations <span aria-hidden="true">↗</span></a></nav><footer>Neural Networks and Fuzzy Logic · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('.example-input,.step') || expression.closest('p,li,summary,figcaption,h2,h3,h4');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 2;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Neural network and fuzzy-system diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {neuron:'activation threshold weighted sum bias',perceptron:'threshold logic decision boundary learning',adaline:'lms least mean squares madaline widrow hoff',backpropagation:'gradient chain rule delta multilayer',pnn:'probabilistic pattern classification radial basis',fuzzy:'membership set relation composition fuzzification defuzzification',membership:'fuzzification defuzzification centroid',logic:'linguistic variable rule inference',anfis:'mamdani sugeno tsukamoto adaptive neuro fuzzy'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('nn-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.NN_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

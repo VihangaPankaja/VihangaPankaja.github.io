@@ -1,0 +1,529 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="A memory-based classifier that turns stored examples into Gaussian class-density estimates."><title>Probabilistic neural networks · Neural networks and fuzzy logic</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('nn-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#34304a;--muted:#68647b;--secondary:#f0eef7;--border:#dfdced;--primary:#6251a5;--accent:#e7e1f7;--diagram-fill:#f1eff8;--diagram-border:#948cb2;--diagram-edge:#766c9b;--active-text:#493a84;--focus:#7865c1}:root[data-theme=dark]{--background:#191722;--foreground:#eeeaf8;--muted:#b9b2ce;--card:#211f2e;--secondary:#2b283b;--border:#48435e;--primary:#c0b2ff;--accent:#39334f;--diagram-fill:#2b283b;--diagram-border:#aaa0ce;--diagram-edge:#b4a9db;--topbar:#191722f5;--active-text:#d4caff;--focus:#c0b2ff} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> NNFL <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Neuron, learning, fuzzy sets…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Neural networks and fuzzy logic</a></div><div class="nav-group"><p>Neural networks</p><a class="nav-entry" href="foundations.html">Neurons, activations and network foundations</a><a class="nav-entry" href="perceptron.html">Threshold logic and perceptron learning</a><a class="nav-entry" href="adaptive-linear.html">ADALINE and MADALINE learning</a><a class="nav-entry" href="lms.html">Widrow-Hoff derivation and LMS calculations</a><a class="nav-entry" href="backpropagation.html">Multilayer networks and backpropagation</a><a class="nav-entry" href="training-variants.html">Backpropagation variations and deeper networks</a><a class="nav-entry" href="pnn.html" aria-current="page">Probabilistic neural networks</a></div><div class="nav-group"><p>Fuzzy foundations</p><a class="nav-entry" href="fuzzy-sets.html">Crisp and fuzzy sets</a><a class="nav-entry" href="fuzzy-relations.html">Relations and matrix composition</a><a class="nav-entry" href="membership.html">Membership, fuzzification and defuzzification</a></div><div class="nav-group"><p>Fuzzy reasoning</p><a class="nav-entry" href="classical-logic.html">Classical logic and crisp rule relations</a><a class="nav-entry" href="logic-language.html">Fuzzy propositions, linguistic variables and implications</a><a class="nav-entry" href="fuzzy-systems.html">Mamdani, Sugeno, Tsukamoto and ANFIS</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">MA4144<br>Neural Networks and Fuzzy Logic</div></aside>
+<main id="main"><div class="eyebrow">Neural networks <span>/</span> Lesson 5</div><h1>Probabilistic neural networks</h1><p class="lead">A memory-based classifier that turns stored examples into Gaussian class-density estimates.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Four layers, one stored example per pattern unit</a><a href="#section-2">From exemplar distance to class density</a><a href="#section-3">Decision: density, prior, and misclassification cost</a><a href="#section-4">Teaching example: classify a one-dimensional query</a><a href="#section-5">Bandwidth and practical trade-offs</a><a href="#section-6">Common mistakes</a><a href="#section-7">Exam focus</a><a href="#section-8">Practice</a><a href="#section-9">Primary reference for the two-class loss convention</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>A probabilistic neural network (PNN) is a feedforward classifier that estimates a probability density for each class from labeled examples. It uses nonparametric density estimation: each stored example contributes a local Gaussian bump, and the class layer averages those contributions. Classification compares the resulting class scores. This is the kernel-density idea implemented as a four-layer network.</p>
+
+<h2 id="section-1">Four layers, one stored example per pattern unit</h2>
+<p>The architecture makes the computation visible: the input is compared with every stored exemplar; each pattern unit sends its Gaussian response to the summation unit for that exemplar’s class; the output layer compares the class scores. If a new labeled example arrives, training adds a pattern unit, stores its feature vector, and connects it to the matching class. There is no sequence of weight corrections, epochs, or bias updates.</p>
+<figure><div class="diagram-frame" style="--diagram-width:818.6px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Four-layer PNN: each pattern unit stores a labeled exemplar, and only contributes to its class summation unit. The number of pattern units grows with the training set." width="819pt" height="210pt"
+ viewBox="0.00 0.00 818.60 209.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="pnn-figure-1-pnn-four-layer-architecture-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 198.8)">
+<title>G</title>
+<!-- input -->
+<g id="pnn-figure-1-pnn-four-layer-architecture-node1" class="node">
+<title>input</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M131,-118C131,-118 12,-118 12,-118 6,-118 0,-112 0,-106 0,-106 0,-82 0,-82 0,-76 6,-70 12,-70 12,-70 131,-70 131,-70 137,-70 143,-76 143,-82 143,-82 143,-106 143,-106 143,-112 137,-118 131,-118"/>
+<text text-anchor="middle" x="71.5" y="-99" font-family="Georgia" font-size="15.00">Input layer</text>
+<text text-anchor="middle" x="71.5" y="-82" font-family="Georgia" font-size="15.00">feature vector x</text>
+</g>
+<!-- p_a1 -->
+<g id="pnn-figure-1-pnn-four-layer-architecture-node2" class="node">
+<title>p_a1</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M278,-188C278,-188 188,-188 188,-188 182,-188 176,-182 176,-176 176,-176 176,-152 176,-152 176,-146 182,-140 188,-140 188,-140 278,-140 278,-140 284,-140 290,-146 290,-152 290,-152 290,-176 290,-176 290,-182 284,-188 278,-188"/>
+<text text-anchor="middle" x="233" y="-169" font-family="Georgia" font-size="15.00">Pattern unit</text>
+<text text-anchor="middle" x="233" y="-152" font-family="Georgia" font-size="15.00">stores x_A1</text>
+</g>
+<!-- input&#45;&gt;p_a1 -->
+<g id="pnn-figure-1-pnn-four-layer-architecture-edge1" class="edge">
+<title>input&#45;&gt;p_a1</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M127.39,-118.09C141.5,-124.28 156.77,-130.98 171.17,-137.3"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="170.41,-139.46 177.28,-139.98 172.24,-135.29 170.41,-139.46"/>
+</g>
+<!-- p_a2 -->
+<g id="pnn-figure-1-pnn-four-layer-architecture-node3" class="node">
+<title>p_a2</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M278,-118C278,-118 188,-118 188,-118 182,-118 176,-112 176,-106 176,-106 176,-82 176,-82 176,-76 182,-70 188,-70 188,-70 278,-70 278,-70 284,-70 290,-76 290,-82 290,-82 290,-106 290,-106 290,-112 284,-118 278,-118"/>
+<text text-anchor="middle" x="233" y="-99" font-family="Georgia" font-size="15.00">Pattern unit</text>
+<text text-anchor="middle" x="233" y="-82" font-family="Georgia" font-size="15.00">stores x_A2</text>
+</g>
+<!-- input&#45;&gt;p_a2 -->
+<g id="pnn-figure-1-pnn-four-layer-architecture-edge2" class="edge">
+<title>input&#45;&gt;p_a2</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M143.39,-94C151.84,-94 160.42,-94 168.76,-94"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="169.19,-96.28 175.69,-94 169.19,-91.73 169.19,-96.28"/>
+</g>
+<!-- p_b1 -->
+<g id="pnn-figure-1-pnn-four-layer-architecture-node4" class="node">
+<title>p_b1</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M278,-48C278,-48 188,-48 188,-48 182,-48 176,-42 176,-36 176,-36 176,-12 176,-12 176,-6 182,0 188,0 188,0 278,0 278,0 284,0 290,-6 290,-12 290,-12 290,-36 290,-36 290,-42 284,-48 278,-48"/>
+<text text-anchor="middle" x="233" y="-29" font-family="Georgia" font-size="15.00">Pattern unit</text>
+<text text-anchor="middle" x="233" y="-12" font-family="Georgia" font-size="15.00">stores x_B1</text>
+</g>
+<!-- input&#45;&gt;p_b1 -->
+<g id="pnn-figure-1-pnn-four-layer-architecture-edge3" class="edge">
+<title>input&#45;&gt;p_b1</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M127.39,-69.91C141.5,-63.72 156.77,-57.02 171.17,-50.7"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="172.24,-52.71 177.28,-48.02 170.41,-48.54 172.24,-52.71"/>
+</g>
+<!-- sum_a -->
+<g id="pnn-figure-1-pnn-four-layer-architecture-node5" class="node">
+<title>sum_a</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M568,-118C568,-118 448,-118 448,-118 442,-118 436,-112 436,-106 436,-106 436,-82 436,-82 436,-76 442,-70 448,-70 448,-70 568,-70 568,-70 574,-70 580,-76 580,-82 580,-82 580,-106 580,-106 580,-112 574,-118 568,-118"/>
+<text text-anchor="middle" x="508" y="-99" font-family="Georgia" font-size="15.00">Summation unit</text>
+<text text-anchor="middle" x="508" y="-82" font-family="Georgia" font-size="15.00">class A density</text>
+</g>
+<!-- p_a1&#45;&gt;sum_a -->
+<g id="pnn-figure-1-pnn-four-layer-architecture-edge4" class="edge">
+<title>p_a1&#45;&gt;sum_a</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M290.23,-149.58C330.48,-139.26 385.16,-125.24 429.53,-113.86"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="430.27,-116.02 436,-112.21 429.14,-111.62 430.27,-116.02"/>
+<text text-anchor="middle" x="363" y="-148.4" font-family="Georgia" font-size="12.00">Gaussian response</text>
+</g>
+<!-- p_a2&#45;&gt;sum_a -->
+<g id="pnn-figure-1-pnn-four-layer-architecture-edge5" class="edge">
+<title>p_a2&#45;&gt;sum_a</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M290.23,-94C330.39,-94 384.93,-94 429.25,-94"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="429.5,-96.28 436,-94 429.5,-91.73 429.5,-96.28"/>
+<text text-anchor="middle" x="363" y="-97.4" font-family="Georgia" font-size="12.00">Gaussian response</text>
+</g>
+<!-- sum_b -->
+<g id="pnn-figure-1-pnn-four-layer-architecture-node6" class="node">
+<title>sum_b</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M568,-48C568,-48 448,-48 448,-48 442,-48 436,-42 436,-36 436,-36 436,-12 436,-12 436,-6 442,0 448,0 448,0 568,0 568,0 574,0 580,-6 580,-12 580,-12 580,-36 580,-36 580,-42 574,-48 568,-48"/>
+<text text-anchor="middle" x="508" y="-29" font-family="Georgia" font-size="15.00">Summation unit</text>
+<text text-anchor="middle" x="508" y="-12" font-family="Georgia" font-size="15.00">class B density</text>
+</g>
+<!-- p_b1&#45;&gt;sum_b -->
+<g id="pnn-figure-1-pnn-four-layer-architecture-edge6" class="edge">
+<title>p_b1&#45;&gt;sum_b</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M290.23,-24C330.39,-24 384.93,-24 429.25,-24"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="429.5,-26.28 436,-24 429.5,-21.73 429.5,-26.28"/>
+<text text-anchor="middle" x="363" y="-27.4" font-family="Georgia" font-size="12.00">Gaussian response</text>
+</g>
+<!-- decision -->
+<g id="pnn-figure-1-pnn-four-layer-architecture-node7" class="node">
+<title>decision</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M785,-82C785,-82 625,-82 625,-82 619,-82 613,-76 613,-70 613,-70 613,-46 613,-46 613,-40 619,-34 625,-34 625,-34 785,-34 785,-34 791,-34 797,-40 797,-46 797,-46 797,-70 797,-70 797,-76 791,-82 785,-82"/>
+<text text-anchor="middle" x="705" y="-63" font-family="Georgia" font-size="15.00">Output / decision</text>
+<text text-anchor="middle" x="705" y="-46" font-family="Georgia" font-size="15.00">compare class scores</text>
+</g>
+<!-- sum_a&#45;&gt;decision -->
+<g id="pnn-figure-1-pnn-four-layer-architecture-edge7" class="edge">
+<title>sum_a&#45;&gt;decision</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M580.23,-80.85C588.64,-79.3 597.33,-77.69 606.03,-76.09"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="606.69,-78.28 612.67,-74.86 605.87,-73.8 606.69,-78.28"/>
+</g>
+<!-- sum_b&#45;&gt;decision -->
+<g id="pnn-figure-1-pnn-four-layer-architecture-edge8" class="edge">
+<title>sum_b&#45;&gt;decision</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M580.23,-36.42C588.64,-37.89 597.33,-39.4 606.03,-40.92"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="605.88,-43.2 612.67,-42.08 606.66,-38.72 605.88,-43.2"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Four-layer PNN: each pattern unit stores a labeled exemplar, and only contributes to its class summation unit. The number of pattern units grows with the training set.</figcaption></figure>
+<h2 id="section-2">From exemplar distance to class density</h2>
+<p>Let <code>x</code> be the input feature vector and <code><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub></mrow></math></code> the j-th stored example from class C<sub>k</sub>. The pattern unit evaluates an isotropic Gaussian kernel. Here d is the number of features, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi></mrow></math> is the shared smoothing bandwidth, and the squared Euclidean distance measures how far the query is from that exemplar.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x003D5;</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mo stretchy="false">&#x00028;</mo><mn>2</mn><mi>&#x003C0;</mi><msup><mo stretchy="false">&#x00029;</mo><mrow><mi>d</mi><mo>&#x0002F;</mo><mn>2</mn></mrow></msup><msup><mi>&#x003C3;</mi><mi>d</mi></msup></mrow></mfrac><mi>exp</mi><mspace width="negativethinmathspace" /><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mo>&#x02212;</mo><mfrac><mrow><mo>&#x02016;</mo><mi>x</mi><mo>&#x02212;</mo><msub><mi>x</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><msup><mo>&#x02016;</mo><mn>2</mn></msup></mrow><mrow><mn>2</mn><msup><mi>&#x003C3;</mi><mn>2</mn></msup></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow></mrow></math></div>
+<p>Nearby examples produce larger responses; distant examples produce smaller ones. The summation unit averages all responses belonging to its class, using that class’s own sample count <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>N</mi><mi>k</mi></msub></mrow></math>.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mover accent="true"><mi>f</mi><mo>&#x0005E;</mo></mover><mi>k</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><msub><mi>N</mi><mi>k</mi></msub></mrow></mfrac><munderover><mo>&#x02211;</mo><mrow><mi>j</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><msub><mi>N</mi><mi>k</mi></msub></mrow></munderover><msub><mi>&#x003D5;</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>Because this is an average, a class does not receive a larger density merely because it has more stored exemplars. A prior probability is a separate factor applied during the decision.</p>
+
+<h2 id="section-3">Decision: density, prior, and misclassification cost</h2>
+<p>With equal priors and equal misclassification costs, choose the class with the largest estimated density:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mover accent="true"><mi>y</mi><mo>&#x0005E;</mo></mover><mo>&#x0003D;</mo><mo /><msub><mrow><mi>a</mi><mi>r</mi><mi>g</mi><mspace width="0.167em" /><mi>m</mi><mi>a</mi><mi>x</mi></mrow><mrow><mi>k</mi></mrow></msub><msub><mover accent="true"><mi>f</mi><mo>&#x0005E;</mo></mover><mi>k</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>For two classes, the lecture gives the comparison below. The cost convention matters: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mi>A</mi></msub></mrow></math> is the loss for deciding B when the true class is A (a missed A); <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mi>B</mi></msub></mrow></math> is the loss for deciding A when the true class is B (a false A). Correct decisions have zero loss.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtext>choose&#x000A0;A&#x000A0;if&#x000A0;</mtext><msub><mi>h</mi><mi>A</mi></msub><msub><mi>C</mi><mi>A</mi></msub><msub><mover accent="true"><mi>f</mi><mo>&#x0005E;</mo></mover><mi>A</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003E;</mo><msub><mi>h</mi><mi>B</mi></msub><msub><mi>C</mi><mi>B</mi></msub><msub><mover accent="true"><mi>f</mi><mo>&#x0005E;</mo></mover><mi>B</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>This form follows from comparing the two possible conditional risks. The risk of deciding A is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mi>B</mi></msub></mrow></math><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>B</mi><mo>&#x02223;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math>, while the risk of deciding B is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mi>A</mi></msub></mrow></math><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>A</mi><mo>&#x02223;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math>. Substituting Bayes’ rule and canceling the shared evidence term gives the displayed inequality. Thus, under this explicit crossed misclassification-cost convention, the lecture’s rule is valid. For a general multiclass loss matrix, choose the action with the smallest conditional expected loss; do not treat one scalar loss per class as a universal rule.</p>
+
+<h2 id="section-4">Teaching example: classify a one-dimensional query</h2>
+<p>The worked values below illustrate the source’s kernel, class-specific averaging, and equal-prior/equal-cost decision.</p>
+
+<details class="worked"><summary>Step-by-step distances, kernels, averages, and decision</summary><section class="walk" tabindex="0" aria-label="PNN classification: distances to class decision"><h3>PNN classification: distances to class decision</h3><div class="example-input"><p><strong>Teaching example inputs</strong></p>
+<ul>
+<li>Query: x = 1; dimension: d = 1; bandwidth: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi></mrow></math> = 1.</li>
+<li>Class A stores exemplars 0 and 2; class B stores exemplar 4.</li>
+<li>Equal priors and equal misclassification costs; common Gaussian normalizer: 1/√(2π) ≈ 0.3989423.</li>
+<li>For each exemplar, compute its squared distance, then its kernel response. Average responses within each class.</li>
+</ul></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Start from the labeled exemplars</h4><p>The pattern layer has two A units and one B unit: A:{0, 2}; B:{4}. These stored values stay fixed during classification. The query is x = 1.</p></section><section class="step"><h4>2. Compute squared distances</h4><p>Use (x − <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub></mrow></math>)². For A: (1 − 0)² = 1 and (1 − 2)² = 1. For B: (1 − 4)² = 9. Both A exemplars are closer to the query.</p></section><section class="step"><h4>3. Evaluate the Gaussian pattern responses</h4><p>Substitute each squared distance into the kernel with <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi></mrow></math> = 1:</p>
+<table>
+<thead>
+<tr>
+<th>Class / exemplar</th>
+<th style="text-align: right;">Squared distance</th>
+<th style="text-align: right;">Kernel response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A / 0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.3989423 exp(−1/2) = <strong>0.2419707</strong></td>
+</tr>
+<tr>
+<td>A / 2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.3989423 exp(−1/2) = <strong>0.2419707</strong></td>
+</tr>
+<tr>
+<td>B / 4</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">0.3989423 exp(−9/2) = <strong>0.00443185</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The farther B exemplar has a much smaller response because the Gaussian decays with squared distance.</p></section><section class="step"><h4>4. Average responses inside each class</h4><p>Divide by the number of stored examples in that class:</p>
+<ul>
+<li>A: (0.2419707 + 0.2419707) / 2 = <strong>0.2419707</strong>.</li>
+<li>B: 0.00443185 / 1 = <strong>0.00443185</strong>.</li>
+</ul>
+<p>The divisor is class-specific: N<sub>A</sub> = 2 and N<sub>B</sub> = 1. This is a class average, not a raw total.</p></section><section class="step"><h4>5. Decide and independently check</h4><p>Equal priors and costs mean compare the densities directly. Since 0.2419707 &gt; 0.00443185, predict <strong>class A</strong>.</p>
+<p>Independent check: the query is one unit from both A exemplars and three units from B’s exemplar, so with the same Gaussian bandwidth and equal class weighting, A’s mean response must be larger. The computed decision agrees.</p></section></section></details>
+
+<h2 id="section-5">Bandwidth and practical trade-offs</h2>
+<p>The bandwidth <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi></mrow></math> controls the width of every Gaussian bump. A small <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi></mrow></math> makes each example’s influence narrow, so the estimate follows individual samples closely and can overfit. A large <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi></mrow></math> spreads influence farther, smoothing the estimate and potentially obscuring class structure. With enough data and a suitable smoothing choice, the density estimate can approach the true class density; this is an asymptotic property, not a guarantee for every finite data set.</p>
+<p>Training is fast because adding a sample mainly stores it and wires a pattern unit. The same design means memory grows with the training set, and a prediction evaluates stored examples, so inference work grows with the number of samples (and feature dimension for each distance). Gaussian responses also decrease for far-away exemplars, limiting their individual influence.</p>
+
+<h2 id="section-6">Common mistakes</h2>
+<ul>
+<li><strong>Summing instead of averaging:</strong> divide each class total by its own <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>N</mi><mi>k</mi></msub></mrow></math>.</li>
+<li><strong>Calling a density a posterior:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mover accent="true"><mi>f</mi><mo>&#x0005E;</mo></mover><mi>k</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math> estimates the class-conditional density. Priors are separate; posterior probabilities require normalization across classes.</li>
+<li><strong>Using distance without the kernel:</strong> the pattern response includes both the Gaussian exponential and its normalizing factor.</li>
+<li><strong>Reversing the cost meanings:</strong> in the two-class inequality, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mi>A</mi></msub></mrow></math> penalizes missing a true A, while <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mi>B</mi></msub></mrow></math> penalizes falsely deciding A for a true B.</li>
+<li><strong>Describing PNN training as iterative optimization:</strong> the method stores each labeled example; the lecture’s procedure has no epochs or gradient updates.</li>
+<li><strong>Ignoring <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi></mrow></math>:</strong> very narrow kernels can overfit; very broad kernels can oversmooth.</li>
+</ul>
+
+<h2 id="section-7">Exam focus</h2>
+<ul>
+<li>Name the layers in order: input, pattern, summation, output/decision.</li>
+<li>For a pattern unit, compute squared Euclidean distance and substitute it into the Gaussian kernel.</li>
+<li>Average the pattern responses within each class using its own <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>N</mi><mi>k</mi></msub></mrow></math>.</li>
+<li>With equal priors and costs, select the maximum-density class.</li>
+<li>For the two-class cost rule, state which error each class cost penalizes before applying the inequality.</li>
+<li>Explain the trade-off: quick sample insertion and density interpretation, with storage/inference costs and bandwidth sensitivity.</li>
+</ul>
+
+<h2 id="section-8">Practice</h2>
+<p class="question">If a query is equally distant from every stored exemplar and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi></mrow></math> is shared, what determines the pattern-response ranking?</p>
+<details class="worked"><summary>Check your answer</summary><p>All pattern units have the same Gaussian response because the kernel depends on the same squared distance, dimension, and bandwidth. Class averages will therefore tie unless class-specific priors or costs change the decision.</p></details>
+<p class="question">Class A has 3 stored examples and class B has 6. What denominator is used for each class density estimate?</p>
+<details class="worked"><summary>Check your answer</summary><p>Use 3 for A and 6 for B: each estimated density is the average of that class’s pattern responses, divided by its own <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>N</mi><mi>k</mi></msub></mrow></math>.</p></details>
+<p class="question">A PNN receives one newly labeled training example. What changes?</p>
+<details class="worked"><summary>Check your answer</summary><p>Add one pattern unit that stores the new feature vector and connect it to its class summation unit. No epoch or gradient update is required.</p></details>
+<p class="question">In the two-class rule, what does <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mi>B</mi></msub></mrow></math> mean under the stated convention?</p>
+<details class="worked"><summary>Check your answer</summary><p>It is the loss for deciding A when the true class is B: a false-A decision. <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mi>A</mi></msub></mrow></math> is the loss for deciding B when the true class is A.</p></details>
+<p class="question">What happens when <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi></mrow></math> is made much larger?</p>
+<details class="worked"><summary>Check your answer</summary><p>Each Gaussian bump becomes broader. The estimated density becomes smoother, but may blur class structure (oversmoothing).</p></details>
+<h2 id="section-9">Primary reference for the two-class loss convention</h2>
+<p>Specht’s original PNN paper defines the two-category Bayes decision rule using priors, class densities, and the losses associated with each possible misclassification, with zero loss for correct decisions: <a href="https://people.engr.tamu.edu/rgutier/web_courses/cpsc636_s10/specht1990pnn.pdf">D. F. Specht, “Probabilistic Neural Networks” (1990), p. 110, equation (1)</a>.</p></article><nav class="pager" aria-label="Study sequence"><a href="training-variants.html"><small>Previous</small>Backpropagation variations and deeper networks <span aria-hidden="true">↗</span></a><a href="fuzzy-sets.html"><small>Next</small>Crisp and fuzzy sets <span aria-hidden="true">↗</span></a></nav><footer>Neural Networks and Fuzzy Logic · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('.example-input,.step') || expression.closest('p,li,summary,figcaption,h2,h3,h4');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 2;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Neural network and fuzzy-system diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {neuron:'activation threshold weighted sum bias',perceptron:'threshold logic decision boundary learning',adaline:'lms least mean squares madaline widrow hoff',backpropagation:'gradient chain rule delta multilayer',pnn:'probabilistic pattern classification radial basis',fuzzy:'membership set relation composition fuzzification defuzzification',membership:'fuzzification defuzzification centroid',logic:'linguistic variable rule inference',anfis:'mamdani sugeno tsukamoto adaptive neuro fuzzy'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('nn-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.NN_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

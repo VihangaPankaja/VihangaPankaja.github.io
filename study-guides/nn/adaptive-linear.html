@@ -1,0 +1,579 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="How ADALINE learns from linear error and how early MADALINE rules choose hidden-unit updates."><title>ADALINE and MADALINE learning · Neural networks and fuzzy logic</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('nn-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#34304a;--muted:#68647b;--secondary:#f0eef7;--border:#dfdced;--primary:#6251a5;--accent:#e7e1f7;--diagram-fill:#f1eff8;--diagram-border:#948cb2;--diagram-edge:#766c9b;--active-text:#493a84;--focus:#7865c1}:root[data-theme=dark]{--background:#191722;--foreground:#eeeaf8;--muted:#b9b2ce;--card:#211f2e;--secondary:#2b283b;--border:#48435e;--primary:#c0b2ff;--accent:#39334f;--diagram-fill:#2b283b;--diagram-border:#aaa0ce;--diagram-edge:#b4a9db;--topbar:#191722f5;--active-text:#d4caff;--focus:#c0b2ff} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> NNFL <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Neuron, learning, fuzzy sets…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Neural networks and fuzzy logic</a></div><div class="nav-group"><p>Neural networks</p><a class="nav-entry" href="foundations.html">Neurons, activations and network foundations</a><a class="nav-entry" href="perceptron.html">Threshold logic and perceptron learning</a><a class="nav-entry" href="adaptive-linear.html" aria-current="page">ADALINE and MADALINE learning</a><a class="nav-entry" href="lms.html">Widrow-Hoff derivation and LMS calculations</a><a class="nav-entry" href="backpropagation.html">Multilayer networks and backpropagation</a><a class="nav-entry" href="training-variants.html">Backpropagation variations and deeper networks</a><a class="nav-entry" href="pnn.html">Probabilistic neural networks</a></div><div class="nav-group"><p>Fuzzy foundations</p><a class="nav-entry" href="fuzzy-sets.html">Crisp and fuzzy sets</a><a class="nav-entry" href="fuzzy-relations.html">Relations and matrix composition</a><a class="nav-entry" href="membership.html">Membership, fuzzification and defuzzification</a></div><div class="nav-group"><p>Fuzzy reasoning</p><a class="nav-entry" href="classical-logic.html">Classical logic and crisp rule relations</a><a class="nav-entry" href="logic-language.html">Fuzzy propositions, linguistic variables and implications</a><a class="nav-entry" href="fuzzy-systems.html">Mamdani, Sugeno, Tsukamoto and ANFIS</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">MA4144<br>Neural Networks and Fuzzy Logic</div></aside>
+<main id="main"><div class="eyebrow">Neural networks <span>/</span> Lesson 3</div><h1>ADALINE and MADALINE learning</h1><p class="lead">How ADALINE learns from linear error and how early MADALINE rules choose hidden-unit updates.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">ADALINE learns before thresholding</a><a href="#section-2">Half-squared error and the delta update</a><a href="#section-3">Choosing the learning rate</a><a href="#section-4">What one ADALINE can and cannot represent</a><a href="#section-5">MADALINE adds hidden decisions</a><a href="#section-6">MR-I: change hidden units under a fixed OR output</a><a href="#section-7">MR-II: test a hidden-output flip</a><a href="#section-8">Common mistakes</a><a href="#section-9">Exam focus</a><a href="#section-10">Practice</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>ADALINE shows why the value used to learn a classifier can differ from the value used to report its class. It computes a continuous weighted sum, measures the target’s distance from that linear response, and nudges weights and bias to reduce squared error. A threshold may still turn the final response into a class, but that threshold is outside the ADALINE training error. MADALINE combines thresholded ADALINE units so the overall decision can be nonlinear; MR-I and MR-II are early ways to decide which hidden units to adjust.</p>
+<p>ADALINE (Adaptive Linear Neuron) is associated with Bernard Widrow and Ted Hoff. MADALINE means Many ADALINE. The key thread through this lesson is the changing training state: first a linear error corrects one neuron, then hidden-unit rules handle the credit-assignment problem in a small network.</p>
+
+<h2 id="section-1">ADALINE learns before thresholding</h2>
+<p>For input features x and corresponding weights w, the net input adds the bias b to the weighted sum. The training activation is linear, so the response used to calculate error is the net input itself. A separate quantizer may then produce a bipolar class label.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>z</mi><mo>&#x0003D;</mo><munderover><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>n</mi></mrow></munderover><msub><mi>w</mi><mi>i</mi></msub><msub><mi>x</mi><mi>i</mi></msub><mo>&#x0002B;</mo><mi>b</mi><mo>&#x0002C;</mo><mspace width="1em" /><mi>y</mi><mo>&#x0003D;</mo><mi>f</mi><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>z</mi><mo>&#x0002C;</mo><mspace width="1em" /><mi>e</mi><mo>&#x0003D;</mo><mi>t</mi><mo>&#x02212;</mo><mi>y</mi></mrow></math></div>
+<p>This ordering is the main distinction from perceptron learning. The perceptron compares a hard-threshold output with its target. ADALINE compares its unthresholded real-valued response with the target, so even a correctly classified sample can still produce a nonzero training error.</p>
+<figure><div class="diagram-frame" style="--diagram-width:1117.75px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="ADALINE learns from the continuous linear response; thresholding is a separate downstream classification step." width="1118pt" height="138pt"
+ viewBox="0.00 0.00 1117.75 138.02" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="adaptive-linear-figure-1-adaptive-linear-adaline-flow-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 127.22)">
+<title>G</title>
+<!-- input -->
+<g id="adaptive-linear-figure-1-adaptive-linear-adaline-flow-node1" class="node">
+<title>input</title>
+<ellipse fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" cx="53.03" cy="-52.92" rx="53.07" ry="21.84"/>
+<text text-anchor="middle" x="53.03" y="-49.42" font-family="Georgia" font-size="15.00">input x</text>
+</g>
+<!-- sum -->
+<g id="adaptive-linear-figure-1-adaptive-linear-adaline-flow-node2" class="node">
+<title>sum</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M326.07,-70.92C326.07,-70.92 150.07,-70.92 150.07,-70.92 144.07,-70.92 138.07,-64.92 138.07,-58.92 138.07,-58.92 138.07,-46.92 138.07,-46.92 138.07,-40.92 144.07,-34.92 150.07,-34.92 150.07,-34.92 326.07,-34.92 326.07,-34.92 332.07,-34.92 338.07,-40.92 338.07,-46.92 338.07,-46.92 338.07,-58.92 338.07,-58.92 338.07,-64.92 332.07,-70.92 326.07,-70.92"/>
+<text text-anchor="middle" x="238.07" y="-49.42" font-family="Georgia" font-size="15.00">net input z = Σ wᵢxᵢ + b</text>
+</g>
+<!-- input&#45;&gt;sum -->
+<g id="adaptive-linear-figure-1-adaptive-linear-adaline-flow-edge1" class="edge">
+<title>input&#45;&gt;sum</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M106.48,-52.92C114.4,-52.92 122.79,-52.92 131.35,-52.92"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="131.43,-55.2 137.93,-52.92 131.43,-50.65 131.43,-55.2"/>
+</g>
+<!-- linear -->
+<g id="adaptive-linear-figure-1-adaptive-linear-adaline-flow-node3" class="node">
+<title>linear</title>
+<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" d="M606.07,-70.92C606.07,-70.92 382.07,-70.92 382.07,-70.92 376.07,-70.92 370.07,-64.92 370.07,-58.92 370.07,-58.92 370.07,-46.92 370.07,-46.92 370.07,-40.92 376.07,-34.92 382.07,-34.92 382.07,-34.92 606.07,-34.92 606.07,-34.92 612.07,-34.92 618.07,-40.92 618.07,-46.92 618.07,-46.92 618.07,-58.92 618.07,-58.92 618.07,-64.92 612.07,-70.92 606.07,-70.92"/>
+<text text-anchor="middle" x="494.07" y="-49.42" font-family="Georgia" font-size="15.00">linear training response y = z</text>
+</g>
+<!-- sum&#45;&gt;linear -->
+<g id="adaptive-linear-figure-1-adaptive-linear-adaline-flow-edge2" class="edge">
+<title>sum&#45;&gt;linear</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M338.36,-52.92C346.4,-52.92 354.6,-52.92 362.82,-52.92"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="363.23,-55.2 369.73,-52.92 363.23,-50.65 363.23,-55.2"/>
+</g>
+<!-- error -->
+<g id="adaptive-linear-figure-1-adaptive-linear-adaline-flow-node4" class="node">
+<title>error</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M848.61,-101.92C848.61,-101.92 738.61,-101.92 738.61,-101.92 732.61,-101.92 726.61,-95.92 726.61,-89.92 726.61,-89.92 726.61,-77.92 726.61,-77.92 726.61,-71.92 732.61,-65.92 738.61,-65.92 738.61,-65.92 848.61,-65.92 848.61,-65.92 854.61,-65.92 860.61,-71.92 860.61,-77.92 860.61,-77.92 860.61,-89.92 860.61,-89.92 860.61,-95.92 854.61,-101.92 848.61,-101.92"/>
+<text text-anchor="middle" x="793.61" y="-80.42" font-family="Georgia" font-size="15.00">error e = t − y</text>
+</g>
+<!-- linear&#45;&gt;error -->
+<g id="adaptive-linear-figure-1-adaptive-linear-adaline-flow-edge3" class="edge">
+<title>linear&#45;&gt;error</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M618.24,-65.75C652.72,-69.35 689.09,-73.14 719.65,-76.32"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="719.78,-78.62 726.48,-77.03 720.25,-74.09 719.78,-78.62"/>
+</g>
+<!-- class -->
+<g id="adaptive-linear-figure-1-adaptive-linear-adaline-flow-node6" class="node">
+<title>class</title>
+<ellipse fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" cx="793.61" cy="-21.92" rx="143.59" ry="21.84"/>
+<text text-anchor="middle" x="793.61" y="-18.42" font-family="Georgia" font-size="15.00">optional class threshold</text>
+</g>
+<!-- linear&#45;&gt;class -->
+<g id="adaptive-linear-figure-1-adaptive-linear-adaline-flow-edge5" class="edge">
+<title>linear&#45;&gt;class</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M618.24,-40.09C634.61,-38.38 651.41,-36.63 667.81,-34.92"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="668.08,-37.18 674.31,-34.25 667.61,-32.66 668.08,-37.18"/>
+</g>
+<!-- update -->
+<g id="adaptive-linear-figure-1-adaptive-linear-adaline-flow-node5" class="node">
+<title>update</title>
+<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" d="M1084.15,-116.42C1084.15,-116.42 981.15,-116.42 981.15,-116.42 975.15,-116.42 969.15,-110.42 969.15,-104.42 969.15,-104.42 969.15,-63.42 969.15,-63.42 969.15,-57.42 975.15,-51.42 981.15,-51.42 981.15,-51.42 1084.15,-51.42 1084.15,-51.42 1090.15,-51.42 1096.15,-57.42 1096.15,-63.42 1096.15,-63.42 1096.15,-104.42 1096.15,-104.42 1096.15,-110.42 1090.15,-116.42 1084.15,-116.42"/>
+<text text-anchor="middle" x="1032.65" y="-97.42" font-family="Georgia" font-size="15.00">delta update</text>
+<text text-anchor="middle" x="1032.65" y="-80.42" font-family="Georgia" font-size="15.00">wᵢ ← wᵢ + ηexᵢ</text>
+<text text-anchor="middle" x="1032.65" y="-63.42" font-family="Georgia" font-size="15.00">b ← b + ηe</text>
+</g>
+<!-- error&#45;&gt;update -->
+<g id="adaptive-linear-figure-1-adaptive-linear-adaline-flow-edge4" class="edge">
+<title>error&#45;&gt;update</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M860.64,-83.92C892.23,-83.92 930.05,-83.92 962.09,-83.92"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="962.33,-86.2 968.83,-83.92 962.33,-81.65 962.33,-86.2"/>
+</g>
+</g>
+</svg>
+</div><figcaption>ADALINE learns from the continuous linear response; thresholding is a separate downstream classification step.</figcaption></figure>
+<table>
+<thead><tr><th>Question</th><th>Perceptron</th><th>ADALINE</th></tr></thead>
+<tbody>
+<tr><td>What drives the training error?</td><td>Thresholded class output</td><td>Linear response before thresholding</td></tr>
+<tr><td>What does the update measure?</td><td>Whether the hard decision is wrong</td><td>How far the linear response is from the target</td></tr>
+<tr><td>What is the final decision?</td><td>Thresholded output</td><td>Linear response, optionally thresholded for classification</td></tr>
+</tbody></table>
+
+<h2 id="section-2">Half-squared error and the delta update</h2>
+<p>The lesson defines the single-pattern loss with a factor of one half. For a training set, it sums that half-squared error across patterns. The factor one half cancels the 2 produced by differentiating a square, leaving the additive update below. Keep the sign convention <strong>target minus linear output</strong> throughout.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>E</mi><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false">&#x00028;</mo><mi>t</mi><mo>&#x02212;</mo><mi>y</mi><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0002C;</mo><mspace width="1em" /><msub><mi>E</mi><mrow><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi></mrow></mrow></msub><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><munder><mo>&#x02211;</mo><mi>p</mi></munder><mo stretchy="false">&#x00028;</mo><msup><mi>t</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>p</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x02212;</mo><msup><mi>y</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>p</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x00394;</mi><msub><mi>w</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mi>&#x003B7;</mi><mo stretchy="false">&#x00028;</mo><mi>t</mi><mo>&#x02212;</mo><mi>y</mi><mo stretchy="false">&#x00029;</mo><msub><mi>x</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mi>&#x003B7;</mi><mi>e</mi><msub><mi>x</mi><mi>i</mi></msub><mo>&#x0002C;</mo><mspace width="1em" /><mi>&#x00394;</mi><mi>b</mi><mo>&#x0003D;</mo><mi>&#x003B7;</mi><mo stretchy="false">&#x00028;</mo><mi>t</mi><mo>&#x02212;</mo><mi>y</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>&#x003B7;</mi><mi>e</mi></mrow></math></div>
+<p>At each presentation: compute z and y, find e, then add ηex to the weights and ηe to the bias. Repeat over the examples and passes until the total error is acceptably small. Initialize with small random values or zeros, as the lesson allows. The next viewer starts from zero so every update can be checked directly.</p>
+
+<details class="worked"><summary>Teaching example: two patterns over two online epochs</summary><section class="walk" tabindex="0" aria-label="ADALINE: two online epochs with the Lesson 3 update"><h3>ADALINE: two online epochs with the Lesson 3 update</h3><div class="example-input"><p><strong>Teaching example — added values:</strong> two inputs, initial weights <strong>w = (0, 0)</strong> and bias <strong>b = 0</strong>, learning rate <strong><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math></strong>. Pattern order is fixed: <strong>A:</strong> x = (1, 1), t = 1; then <strong>B:</strong> x = (1, −1), t = −1. Training uses y = wᵀx + b before thresholding. The source total error is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>E</mi><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><msub><mo>&#x02211;</mo><mi>p</mi></msub><mo stretchy="false">&#x00028;</mo><msup><mi>t</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>p</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x02212;</mo><msup><mi>y</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>p</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></math>.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Epoch 1, pattern A: update from the linear output</h4><p><strong>Given for this presentation:</strong> x = (1, 1), t = 1; current w = (0, 0), b = 0. <strong>Rule:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi><mo>&#x0003D;</mo><msup><mi>w</mi><mi>T</mi></msup><mi>x</mi><mo>&#x0002B;</mo><mi>b</mi><mo>&#x0002C;</mo><mspace width="1em" /><mi>e</mi><mo>&#x0003D;</mo><mi>t</mi><mo>&#x02212;</mo><mi>y</mi><mo>&#x0002C;</mo><mspace width="1em" /><mi>&#x00394;</mi><mi>w</mi><mo>&#x0003D;</mo><mi>&#x003B7;</mi><mi>e</mi><mi>x</mi><mo>&#x0002C;</mo><mspace width="1em" /><mi>&#x00394;</mi><mi>b</mi><mo>&#x0003D;</mo><mi>&#x003B7;</mi><mi>e</mi></mrow></math><br><strong>Substitute:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi><mo>&#x0003D;</mo><mn>0</mn><mo>&#x0002C;</mo><mi>e</mi><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><mn>0</mn><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002C;</mo><mi>&#x003B7;</mi><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math>, so <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>w</mi><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.1</mn><mo>&#x0002C;</mo><mn>0.1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="1em" /><mi>&#x00394;</mi><mi>b</mi><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math><br><strong>State after update:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.1</mn><mo>&#x0002C;</mo><mn>0.1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mi>b</mi><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math><br>Next presentation uses these new parameters.</p></section><section class="step"><h4>2. Epoch 1, pattern B: use its own pre-update response</h4><p><strong>Given:</strong> x = (1, −1), t = −1; current <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.1</mn><mo>&#x0002C;</mo><mn>0.1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mi>b</mi><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math>. <strong>Rule:</strong> calculate the linear response before any class threshold. <strong>Substitute:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mn>0.1</mn><mo>&#x0003D;</mo><mn>0.1</mn><mo>&#x0002C;</mo><mspace width="1em" /><mi>e</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x02212;</mo><mn>0.1</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1.1</mn></mrow></math>. Then <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>w</mi><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1.1</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.11</mn><mo>&#x0002C;</mo><mn>0.11</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="1em" /><mi>&#x00394;</mi><mi>b</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.11</mn></mrow></math><br><strong>State after update:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.01</mn><mo>&#x0002C;</mo><mn>0.21</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mi>b</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.01</mn></mrow></math><br>Next check both training patterns with this completed epoch state.</p></section><section class="step"><h4>3. End of epoch 1: check the complete training set</h4><p><strong>Rule:</strong> evaluate both linear outputs using the same final epoch parameters, then compute the source total error <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>E</mi><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><msub><mo>&#x02211;</mo><mi>p</mi></msub><mo stretchy="false">&#x00028;</mo><msup><mi>t</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>p</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x02212;</mo><msup><mi>y</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>p</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></math>. <strong>Substitute:</strong> for pattern A, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mi>A</mi></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.01</mn><mo>&#x0002B;</mo><mn>0.21</mn><mo>&#x02212;</mo><mn>0.01</mn><mo>&#x0003D;</mo><mn>0.19</mn></mrow></math>; for B, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mi>B</mi></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.01</mn><mo>&#x02212;</mo><mn>0.21</mn><mo>&#x02212;</mo><mn>0.01</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.23</mn></mrow></math>. Therefore <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>E</mi><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false">[</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mn>0.19</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>0.23</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo stretchy="false">]</mo><mo>&#x0003D;</mo><mn>0.6245</mn></mrow></math>. Both thresholded classes are already correct, but the continuous responses still have nonzero training error, so continue.</p></section><section class="step"><h4>4. Epoch 2, pattern A: update the closer-than-target response</h4><p><strong>Given:</strong> x = (1, 1), t = 1; current <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.01</mn><mo>&#x0002C;</mo><mn>0.21</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mi>b</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.01</mn></mrow></math>. <strong>Rule:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>e</mi><mo>&#x0003D;</mo><mi>t</mi><mo>&#x02212;</mo><mi>y</mi></mrow></math>. <strong>Substitute:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.01</mn><mo>&#x0002B;</mo><mn>0.21</mn><mo>&#x02212;</mo><mn>0.01</mn><mo>&#x0003D;</mo><mn>0.19</mn><mo>&#x0002C;</mo><mspace width="1em" /><mi>e</mi><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><mn>0.19</mn><mo>&#x0003D;</mo><mn>0.81</mn></mrow></math>; then <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>w</mi><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>0.81</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.081</mn><mo>&#x0002C;</mo><mn>0.081</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="1em" /><mi>&#x00394;</mi><mi>b</mi><mo>&#x0003D;</mo><mn>0.081</mn></mrow></math><br><strong>State after update:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.071</mn><mo>&#x0002C;</mo><mn>0.291</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mi>b</mi><mo>&#x0003D;</mo><mn>0.071</mn></mrow></math><br>Next present pattern B.</p></section><section class="step"><h4>5. Epoch 2, pattern B: complete the second pass</h4><p><strong>Given:</strong> x = (1, −1), t = −1; current <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.071</mn><mo>&#x0002C;</mo><mn>0.291</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mi>b</mi><mo>&#x0003D;</mo><mn>0.071</mn></mrow></math>. <strong>Substitute:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi><mo>&#x0003D;</mo><mn>0.071</mn><mo>&#x02212;</mo><mn>0.291</mn><mo>&#x0002B;</mo><mn>0.071</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.149</mn><mo>&#x0002C;</mo><mspace width="1em" /><mi>e</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x02212;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.149</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.851</mn></mrow></math>. Thus <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>w</mi><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.851</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.0851</mn><mo>&#x0002C;</mo><mn>0.0851</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="1em" /><mi>&#x00394;</mi><mi>b</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.0851</mn></mrow></math><br><strong>Final parameters:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.0141</mn><mo>&#x0002C;</mo><mn>0.3761</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mi>b</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.0141</mn></mrow></math><br>Now check both patterns again.</p></section><section class="step"><h4>6. End of epoch 2: verify outputs and error</h4><p><strong>Rule:</strong> recompute from the final weights, not from the stored per-pattern values. <strong>Substitute:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mi>A</mi></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.0141</mn><mo>&#x0002B;</mo><mn>0.3761</mn><mo>&#x02212;</mo><mn>0.0141</mn><mo>&#x0003D;</mo><mn>0.3479</mn></mrow></math>; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mi>B</mi></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.0141</mn><mo>&#x02212;</mo><mn>0.3761</mn><mo>&#x02212;</mo><mn>0.0141</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.4043</mn></mrow></math>. <strong>Result:</strong> thresholding at zero gives +1 for A and −1 for B. <strong>Independent error check:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>E</mi><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false">[</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mn>0.3479</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>0.4043</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo stretchy="false">]</mo><mo>&#x0003D;</mo><mn>0.39004645</mn></mrow></math>, below the initial <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>E</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math>. The dataset error falls across these two passes; individual online errors need not decrease after every single presentation.</p></section></section></details>
+
+<h2 id="section-3">Choosing the learning rate</h2>
+<p>The learning rate η controls the size of each correction. A rate that is too large can overshoot, oscillate, or diverge; a rate that is too small makes progress slow. The lesson relates a theoretical mean-stability bound to the largest eigenvalue of the input correlation matrix</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>R</mi><mo>&#x0003D;</mo><mfrac><mn>1</mn><mi>P</mi></mfrac><munderover><mo>&#x02211;</mo><mrow><mi>p</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>P</mi></mrow></munderover><msup><mi>x</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>p</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo stretchy="false">&#x00028;</mo><msup><mi>x</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>p</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><msup><mo stretchy="false">&#x00029;</mo><mi>T</mi></msup><mo>&#x0002C;</mo><mspace width="1em" /><mn>0</mn><mo>&#x0003C;</mo><mi>&#x003B7;</mi><mo>&#x0003C;</mo><mfrac><mrow><mn>2</mn></mrow><mrow><msub><mi>&#x003BB;</mi><mrow><mo>max</mo></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>R</mi><mo stretchy="false">&#x00029;</mo></mrow></mfrac></mrow></math></div>
+<p>The displayed bound matches the update without a factor of 2, <strong><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi><mo>&#x02190;</mo><mi>w</mi><mo>&#x0002B;</mo><mi>&#x003B7;</mi><mi>e</mi><mi>x</mi></mrow></math></strong>. When a text places that factor of 2 in the gradient update, the stated bound is <strong><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0003C;</mo><mi>&#x003B7;</mi><mo>&#x0003C;</mo><mfrac><mn>1</mn><mrow><msub><mi>&#x003BB;</mi><mrow><mo>max</mo></mrow></msub></mrow></mfrac></mrow></math></strong>. These constants must stay paired with their update convention. They describe the lesson’s stability guidance; they do not promise that every individual online sample error falls monotonically.</p>
+<p>Since computing R and its eigenvalues may be inconvenient, the lesson also gives practical guidance: begin small (for example <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math> or less) and reduce η if training error becomes unstable. For a single neuron with n inputs, it gives the heuristic <strong><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.1</mn><mo>&#x02264;</mo><mi>n</mi><mi>&#x003B7;</mi><mo>&#x02264;</mo><mn>1</mn></mrow></math></strong>. For the source’s <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi><mo>&#x0003D;</mo><mn>100</mn></mrow></math> input-pixel example:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mfrac><mrow><mn>0.1</mn></mrow><mrow><mn>100</mn></mrow></mfrac><mo>&#x02264;</mo><mi>&#x003B7;</mi><mo>&#x02264;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>100</mn></mrow></mfrac><mspace width="1em" /><mi>&#x027F9;</mi><mspace width="1em" /><mn>0.001</mn><mo>&#x02264;</mo><mi>&#x003B7;</mi><mo>&#x02264;</mo><mn>0.01</mn></mrow></math></div>
+<p>Thus <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi><mo>&#x0003D;</mo><mn>0.005</mn></mrow></math> is one suggested value inside the interval. This is a practical heuristic, not a theorem. The separate “start small” suggestion and the n-scaled interval answer different questions and should not be conflated.</p>
+<p>The full quadratic-error derivation, correlation-matrix calculations, and detailed LMS worked trace continue in <a href="lms.html">Widrow–Hoff derivation and LMS calculations</a>.</p>
+
+<h2 id="section-4">What one ADALINE can and cannot represent</h2>
+<p>Adjustable weights and bias let one ADALINE learn a linear decision boundary by directly minimizing a squared-error objective. Its simple update also makes the model useful for understanding adaptive systems and signal processing. But thresholding the output does not bend the boundary: one ADALINE remains a single-layer linear classifier and cannot directly solve a nonlinearly separable problem such as XOR.</p>
+
+<h2 id="section-5">MADALINE adds hidden decisions</h2>
+<p>A MADALINE combines multiple ADALINE units. In the Lesson 3 example, two hidden units each compute a weighted sum and pass it through a bipolar threshold, then an output unit combines their signals. Several hidden linear boundaries can therefore form a nonlinear overall decision. That extra representational power makes hidden-layer training harder: when the output is wrong, the algorithm must choose which hidden unit to change.</p>
+<figure><div class="diagram-frame" style="--diagram-width:546.69px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="The Lesson 3 example has two input signals, two thresholded hidden ADALINE units, and one output unit." width="547pt" height="131pt"
+ viewBox="0.00 0.00 546.69 131.44" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="adaptive-linear-figure-2-adaptive-linear-madaline-two-hidden-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 120.64)">
+<title>G</title>
+<!-- x1 -->
+<g id="adaptive-linear-figure-2-adaptive-linear-madaline-two-hidden-node1" class="node">
+<title>x1</title>
+<ellipse fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" cx="57.28" cy="-87.92" rx="57.05" ry="21.84"/>
+<text text-anchor="middle" x="57.28" y="-84.42" font-family="Georgia" font-size="15.00">input x₁</text>
+</g>
+<!-- z1 -->
+<g id="adaptive-linear-figure-2-adaptive-linear-madaline-two-hidden-node3" class="node">
+<title>z1</title>
+<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" d="M308.55,-101.92C308.55,-101.92 158.55,-101.92 158.55,-101.92 152.55,-101.92 146.55,-95.92 146.55,-89.92 146.55,-89.92 146.55,-77.92 146.55,-77.92 146.55,-71.92 152.55,-65.92 158.55,-65.92 158.55,-65.92 308.55,-65.92 308.55,-65.92 314.55,-65.92 320.55,-71.92 320.55,-77.92 320.55,-77.92 320.55,-89.92 320.55,-89.92 320.55,-95.92 314.55,-101.92 308.55,-101.92"/>
+<text text-anchor="middle" x="233.55" y="-80.42" font-family="Georgia" font-size="15.00">hidden ADALINE Z₁</text>
+</g>
+<!-- x1&#45;&gt;z1 -->
+<g id="adaptive-linear-figure-2-adaptive-linear-madaline-two-hidden-edge1" class="edge">
+<title>x1&#45;&gt;z1</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M114.86,-86.62C122.94,-86.44 131.42,-86.24 139.97,-86.05"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="140.07,-88.32 146.51,-85.9 139.96,-83.77 140.07,-88.32"/>
+</g>
+<!-- z2 -->
+<g id="adaptive-linear-figure-2-adaptive-linear-madaline-two-hidden-node4" class="node">
+<title>z2</title>
+<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" d="M308.55,-43.92C308.55,-43.92 158.55,-43.92 158.55,-43.92 152.55,-43.92 146.55,-37.92 146.55,-31.92 146.55,-31.92 146.55,-19.92 146.55,-19.92 146.55,-13.92 152.55,-7.92 158.55,-7.92 158.55,-7.92 308.55,-7.92 308.55,-7.92 314.55,-7.92 320.55,-13.92 320.55,-19.92 320.55,-19.92 320.55,-31.92 320.55,-31.92 320.55,-37.92 314.55,-43.92 308.55,-43.92"/>
+<text text-anchor="middle" x="233.55" y="-22.42" font-family="Georgia" font-size="15.00">hidden ADALINE Z₂</text>
+</g>
+<!-- x1&#45;&gt;z2 -->
+<g id="adaptive-linear-figure-2-adaptive-linear-madaline-two-hidden-edge2" class="edge">
+<title>x1&#45;&gt;z2</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M98.61,-72.53C113.62,-66.88 130.83,-60.51 146.55,-54.92 154.6,-52.06 163.09,-49.11 171.48,-46.24"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="172.45,-48.31 177.87,-44.06 170.98,-44.01 172.45,-48.31"/>
+</g>
+<!-- x2 -->
+<g id="adaptive-linear-figure-2-adaptive-linear-madaline-two-hidden-node2" class="node">
+<title>x2</title>
+<ellipse fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" cx="57.28" cy="-21.92" rx="57.05" ry="21.84"/>
+<text text-anchor="middle" x="57.28" y="-18.42" font-family="Georgia" font-size="15.00">input x₂</text>
+</g>
+<!-- x2&#45;&gt;z1 -->
+<g id="adaptive-linear-figure-2-adaptive-linear-madaline-two-hidden-edge3" class="edge">
+<title>x2&#45;&gt;z1</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M98.61,-37.31C113.62,-42.96 130.83,-49.33 146.55,-54.92 154.6,-57.78 163.09,-60.73 171.48,-63.6"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="170.98,-65.83 177.87,-65.78 172.45,-61.53 170.98,-65.83"/>
+</g>
+<!-- x2&#45;&gt;z2 -->
+<g id="adaptive-linear-figure-2-adaptive-linear-madaline-two-hidden-edge4" class="edge">
+<title>x2&#45;&gt;z2</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M114.86,-23.22C122.94,-23.4 131.42,-23.6 139.97,-23.8"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="139.96,-26.07 146.51,-23.95 140.07,-21.52 139.96,-26.07"/>
+</g>
+<!-- y -->
+<g id="adaptive-linear-figure-2-adaptive-linear-madaline-two-hidden-node5" class="node">
+<title>y</title>
+<ellipse fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" cx="438.82" cy="-54.92" rx="86.03" ry="21.84"/>
+<text text-anchor="middle" x="438.82" y="-51.42" font-family="Georgia" font-size="15.00">output unit Y</text>
+</g>
+<!-- z1&#45;&gt;y -->
+<g id="adaptive-linear-figure-2-adaptive-linear-madaline-two-hidden-edge5" class="edge">
+<title>z1&#45;&gt;y</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M320.75,-71.62C332.62,-69.93 344.78,-68.19 356.56,-66.51"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="356.94,-68.76 363.05,-65.59 356.3,-64.25 356.94,-68.76"/>
+</g>
+<!-- z2&#45;&gt;y -->
+<g id="adaptive-linear-figure-2-adaptive-linear-madaline-two-hidden-edge6" class="edge">
+<title>z2&#45;&gt;y</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M320.75,-38.22C332.62,-39.91 344.78,-41.65 356.56,-43.33"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="356.3,-45.59 363.05,-44.25 356.94,-41.08 356.3,-45.59"/>
+</g>
+</g>
+</svg>
+</div><figcaption>The Lesson 3 example has two input signals, two thresholded hidden ADALINE units, and one output unit.</figcaption></figure>
+<p>For the course’s MR-I example, every unit uses the inclusive bipolar threshold:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>f</mi><mo stretchy="false">&#x00028;</mo><mi>u</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007B;</mo><mtable><mtr><mtd columnalign="left"><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0002C;</mo></mtd><mtd columnalign="left"><mi>u</mi><mo>&#x02265;</mo><mn>0</mn></mtd></mtr><mtr><mtd columnalign="left"><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002C;</mo></mtd><mtd columnalign="left"><mi>u</mi><mo>&#x0003C;</mo><mn>0</mn></mtd></mtr></mtable></mrow></mrow></math></div>
+<p>The output unit is fixed as a bipolar OR combiner with <strong><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>v</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>v</mi><mn>2</mn></msub><mo>&#x0003D;</mo><msub><mi>b</mi><mi>y</mi></msub><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></math></strong>. Its net is <strong><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo>&#x0003D;</mo><msub><mi>b</mi><mi>y</mi></msub><mo>&#x0002B;</mo><msub><mi>z</mi><mn>1</mn></msub><msub><mi>v</mi><mn>1</mn></msub><mo>&#x0002B;</mo><msub><mi>z</mi><mn>2</mn></msub><msub><mi>v</mi><mn>2</mn></msub></mrow></math></strong>, followed by the same threshold. Only when both hidden outputs are −1 is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></math> and the network returns −1; any +1 hidden output makes y<sub>in</sub> ≥ ½ and the result +1.</p>
+<table><thead><tr><th>z₁</th><th>z₂</th><th>y<sub>in</sub></th><th>y</th></tr></thead><tbody>
+<tr><td>−1</td><td>−1</td><td>−½</td><td>−1</td></tr>
+<tr><td>−1</td><td>+1</td><td>+½</td><td>+1</td></tr>
+<tr><td>+1</td><td>−1</td><td>+½</td><td>+1</td></tr>
+<tr><td>+1</td><td>+1</td><td>+3/2</td><td>+1</td></tr>
+</tbody></table>
+
+<h2 id="section-6">MR-I: change hidden units under a fixed OR output</h2>
+<p>MR-I leaves the output-unit weights fixed and changes only weights and biases feeding hidden ADALINEs. If the output already matches the target, it makes no update. When the target is +1 but the output is −1, it chooses the hidden net closest to zero, because that unit is the easiest to push across the threshold. It moves that unit’s linear net toward +1 using the delta-style residual <strong><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x02212;</mo><msub><mi>z</mi><mrow><mi>i</mi><mi>n</mi><mo>&#x0002C;</mo><mi>j</mi></mrow></msub></mrow></math></strong>.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msubsup><mi>b</mi><mi>j</mi><mrow><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msubsup><mo>&#x0003D;</mo><msubsup><mi>b</mi><mi>j</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi></mrow></msubsup><mo>&#x0002B;</mo><mi>&#x003B1;</mi><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><msub><mi>z</mi><mrow><mi>i</mi><mi>n</mi><mo>&#x0002C;</mo><mi>j</mi></mrow></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="1em" /><msubsup><mi>w</mi><mrow><mi>i</mi><mi>j</mi></mrow><mrow><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msubsup><mo>&#x0003D;</mo><msubsup><mi>w</mi><mrow><mi>i</mi><mi>j</mi></mrow><mrow><mi>o</mi><mi>l</mi><mi>d</mi></mrow></msubsup><mo>&#x0002B;</mo><mi>&#x003B1;</mi><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><msub><mi>z</mi><mrow><mi>i</mi><mi>n</mi><mo>&#x0002C;</mo><mi>j</mi></mrow></msub><mo stretchy="false">&#x00029;</mo><msub><mi>x</mi><mi>i</mi></msub></mrow></math></div>
+<p>When the target is −1 but the output is +1, MR-I adjusts all hidden units that currently output +1, moving each linear net toward −1:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msubsup><mi>b</mi><mi>j</mi><mrow><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msubsup><mo>&#x0003D;</mo><msubsup><mi>b</mi><mi>j</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi></mrow></msubsup><mo>&#x0002B;</mo><mi>&#x003B1;</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x02212;</mo><msub><mi>z</mi><mrow><mi>i</mi><mi>n</mi><mo>&#x0002C;</mo><mi>j</mi></mrow></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="1em" /><msubsup><mi>w</mi><mrow><mi>i</mi><mi>j</mi></mrow><mrow><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msubsup><mo>&#x0003D;</mo><msubsup><mi>w</mi><mrow><mi>i</mi><mi>j</mi></mrow><mrow><mi>o</mi><mi>l</mi><mi>d</mi></mrow></msubsup><mo>&#x0002B;</mo><mi>&#x003B1;</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x02212;</mo><msub><mi>z</mi><mrow><mi>i</mi><mi>n</mi><mo>&#x0002C;</mo><mi>j</mi></mrow></msub><mo stretchy="false">&#x00029;</mo><msub><mi>x</mi><mi>i</mi></msub></mrow></math></div>
+<p>The lesson’s negative-target step says “positive” nets, but its activation rule assigns +1 to <strong>every net at or above zero</strong>. To keep the rule consistent, update every hidden unit currently outputting +1, including a unit exactly at zero. The second example makes this boundary case explicit.</p>
+
+<details class="worked"><summary>MR-I teaching example: target +1 selects the closest net</summary><section class="walk" tabindex="0" aria-label="MR-I target +1: update the nearest hidden net"><h3>MR-I target +1: update the nearest hidden net</h3><div class="example-input"><p><strong>Teaching example — added values:</strong> fixed bipolar OR combiner <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>v</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>v</mi><mn>2</mn></msub><mo>&#x0003D;</mo><msub><mi>b</mi><mi>y</mi></msub><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></math>; hidden weights/biases and α = 0.1 are stated in step 1. Activation is +1 for net ≥ 0 and −1 otherwise.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Compute hidden and output states</h4><p><strong>Teaching example — added values:</strong> x=(1,1), target t=+1, α=0.1. Start Z₁ with <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>w</mi><mrow><mn>11</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>w</mi><mrow><mn>21</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>b</mi><mn>1</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.2</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>0.3</mn><mo stretchy="false">&#x00029;</mo></mrow></math> and Z₂ with <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>w</mi><mrow><mn>12</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>w</mi><mrow><mn>22</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>b</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0.1</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>0.5</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. <strong>Rule:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>z</mi><mrow><mi>i</mi><mi>n</mi><mn>1</mn></mrow></msub><mo>&#x0003D;</mo><msub><mi>b</mi><mn>1</mn></msub><mo>&#x0002B;</mo><msub><mi>x</mi><mn>1</mn></msub><msub><mi>w</mi><mrow><mn>11</mn></mrow></msub><mo>&#x0002B;</mo><msub><mi>x</mi><mn>2</mn></msub><msub><mi>w</mi><mrow><mn>21</mn></mrow></msub><mo>&#x0002C;</mo><mspace width="1em" /><msub><mi>z</mi><mrow><mi>i</mi><mi>n</mi><mn>2</mn></mrow></msub><mo>&#x0003D;</mo><msub><mi>b</mi><mn>2</mn></msub><mo>&#x0002B;</mo><msub><mi>x</mi><mn>1</mn></msub><msub><mi>w</mi><mrow><mn>12</mn></mrow></msub><mo>&#x0002B;</mo><msub><mi>x</mi><mn>2</mn></msub><msub><mi>w</mi><mrow><mn>22</mn></mrow></msub></mrow></math>. <strong>Substitute:</strong> nets are −0.1 and −0.4, so both hidden outputs are −1. With fixed <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>v</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>v</mi><mn>2</mn></msub><mo>&#x0003D;</mo><msub><mi>b</mi><mi>y</mi></msub><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo>&#x0003D;</mo><mn>0.5</mn><mo>&#x02212;</mo><mn>0.5</mn><mo>&#x02212;</mo><mn>0.5</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.5</mn></mrow></math>, hence y=−1. The target is missed; MR-I must adjust a hidden unit.</p></section><section class="step"><h4>2. Select the hidden unit closest to zero</h4><p><strong>Rule:</strong> for t=+1, MR-I updates only the hidden unit whose linear net is closest to zero. <strong>Compare:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x0007C;</mo><msub><mi>z</mi><mrow><mi>i</mi><mi>n</mi><mn>1</mn></mrow></msub><mo stretchy="false">&#x0007C;</mo><mo>&#x0003D;</mo><mn>0.1</mn><mo>&#x0003C;</mo><mo stretchy="false">&#x0007C;</mo><msub><mi>z</mi><mrow><mi>i</mi><mi>n</mi><mn>2</mn></mrow></msub><mo stretchy="false">&#x0007C;</mo><mo>&#x0003D;</mo><mn>0.4</mn></mrow></math>; select Z₁. The target-directed residual is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x02212;</mo><msub><mi>z</mi><mrow><mi>i</mi><mi>n</mi><mn>1</mn></mrow></msub><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1.1</mn></mrow></math>. <strong>Substitute the update:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><msub><mi>b</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>1.1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.11</mn></mrow></math>; because x=(1,1), <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><msub><mi>w</mi><mrow><mn>11</mn></mrow></msub><mo>&#x0003D;</mo><mi>&#x00394;</mi><msub><mi>w</mi><mrow><mn>21</mn></mrow></msub><mo>&#x0003D;</mo><mn>0.11</mn></mrow></math><br><strong>New parameters:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>w</mi><mrow><mn>11</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>w</mi><mrow><mn>21</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>b</mi><mn>1</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.31</mn><mo>&#x0002C;</mo><mn>0.11</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>0.19</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; Z₂ is unchanged. The new Z₁ net is 0.23, so its bipolar output changes to +1.</p></section><section class="step"><h4>3. Recompute the fixed OR combiner and check</h4><p><strong>Rule:</strong> keep the output parameters fixed and recompute from the hidden bipolar outputs. <strong>Substitute:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>z</mi><mn>1</mn></msub><mo>&#x0002C;</mo><msub><mi>z</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="1em" /><msub><mi>y</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo>&#x0003D;</mo><mn>0.5</mn><mo>&#x0002B;</mo><mn>0.5</mn><mo>&#x02212;</mo><mn>0.5</mn><mo>&#x0003D;</mo><mn>0.5</mn></mrow></math>. Since the boundary is inclusive, y=+1. <strong>Result:</strong> the network now matches t=+1. Independent check: the two hidden outputs are not both −1, so the fixed bipolar OR combiner returns +1.</p></section></section></details>
+
+<details class="worked"><summary>MR-I teaching example: target −1 also updates a zero-net unit</summary><section class="walk" tabindex="0" aria-label="MR-I target −1: update every hidden output currently +1"><h3>MR-I target −1: update every hidden output currently +1</h3><div class="example-input"><p><strong>Teaching example — added values:</strong> x = (1, −1), fixed <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>v</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>v</mi><mn>2</mn></msub><mo>&#x0003D;</mo><msub><mi>b</mi><mi>y</mi></msub><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></math>, α = 0.1. Initial hidden weights and biases are listed in step 1. Use the course threshold <strong>net ≥ 0 → +1</strong>.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. The zero-boundary unit is active</h4><p><strong>Teaching example — added values:</strong> x=(1,−1), target t=−1, α=0.1. Start Z₁ at <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>w</mi><mrow><mn>11</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>w</mi><mrow><mn>21</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>b</mi><mn>1</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.1</mn><mo>&#x0002C;</mo><mn>0.1</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></math> and Z₂ at <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>w</mi><mrow><mn>12</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>w</mi><mrow><mn>22</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>b</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.2</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. <strong>Substitute:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>z</mi><mrow><mi>i</mi><mi>n</mi><mn>1</mn></mrow></msub><mo>&#x0003D;</mo><mn>0.1</mn><mo>&#x02212;</mo><mn>0.1</mn><mo>&#x0003D;</mo><mn>0</mn><mo>&#x0002C;</mo><mspace width="1em" /><msub><mi>z</mi><mrow><mi>i</mi><mi>n</mi><mn>2</mn></mrow></msub><mo>&#x0003D;</mo><mn>0.2</mn></mrow></math>. With the stated <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x0003D;</mo><mo>&#x0002B;</mo><mn>1</mn><mtext>&#x000A0;when&#x000A0;</mtext><msub><mi>z</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo>&#x02265;</mo><mn>0</mn></mrow></math>, both units output +1. The fixed combiner gives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo>&#x0003D;</mo><mn>0.5</mn><mo>&#x0002B;</mo><mn>0.5</mn><mo>&#x0002B;</mo><mn>0.5</mn><mo>&#x0003D;</mo><mn>1.5</mn></mrow></math>, so y=+1 and the negative target is missed.</p></section><section class="step"><h4>2. Move every currently +1 hidden unit toward −1</h4><p><strong>Rule:</strong> the target-directed residual for each active hidden unit is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>1</mn><mo>&#x02212;</mo><msub><mi>z</mi><mrow><mi>i</mi><mi>n</mi><mi>j</mi></mrow></msub></mrow></math>. Apply MR-I’s update to every unit that currently outputs +1; the inclusive threshold means this includes Z₁ at exactly zero. For Z₁, residual −1 gives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><msub><mi>b</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.1</mn><mo>&#x0002C;</mo><mspace width="1em" /><mi>&#x00394;</mi><msub><mi>w</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.1</mn><mo>&#x0002C;</mo><mn>0.1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, so new parameters are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0.2</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>0.1</mn><mo stretchy="false">&#x00029;</mo></mrow></math> and new net is −0.3. For Z₂, residual <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>1</mn><mo>&#x02212;</mo><mn>0.2</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1.2</mn></mrow></math> gives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><msub><mi>b</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.12</mn><mo>&#x0002C;</mo><mspace width="1em" /><mi>&#x00394;</mi><msub><mi>w</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.12</mn><mo>&#x0002C;</mo><mn>0.12</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; new parameters are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>0.08</mn><mo>&#x0002C;</mo><mn>0.12</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>0.12</mn><mo stretchy="false">&#x00029;</mo></mrow></math> and new net is −0.16.</p></section><section class="step"><h4>3. Recompute the output and verify the target</h4><p><strong>Rule:</strong> threshold both updated hidden nets, then evaluate the unchanged combiner. <strong>State:</strong> both nets are negative, so <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>z</mi><mn>1</mn></msub><mo>&#x0002C;</mo><msub><mi>z</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. <strong>Substitute:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo>&#x0003D;</mo><mn>0.5</mn><mo>&#x02212;</mo><mn>0.5</mn><mo>&#x02212;</mo><mn>0.5</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.5</mn></mrow></math>; therefore y=−1, matching t. Both initially active units were updated, including the one at zero.</p></section></section></details>
+
+<h2 id="section-7">MR-II: test a hidden-output flip</h2>
+<p>MR-II is described as more general than the MR-I case: it does not require a fixed OR output combiner and allows weights throughout the network to be adjusted. For an incorrect response, it considers hidden units with nets near zero (the lesson gives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><mo>&#x02212;</mo><mn>0.25</mn><mo>&#x0002C;</mo><mn>0.25</mn><mo stretchy="false">]</mo></mrow></math> as an example), starting with the closest. It flips one hidden output, recomputes the network response, and keeps the trial only when the error improves. If accepted, it delta-adjusts that unit toward its newly assigned output.</p>
+<p>The lesson provides this trial-flip heuristic, not a complete formula for every architecture or a universal error measure. The viewer below therefore states its small network, weights, biases, and target-match error test explicitly. It shows one rejected trial and a separate accepted trial.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>&#x0002B;</mo><mn>1</mn><mo>&#x02194;</mo><mo>&#x02212;</mo><mn>1</mn></mrow></math></div>
+<details class="worked"><summary>MR-II supplemental teaching example: reject, accept, then update</summary><section class="walk" tabindex="0" aria-label="MR-II: a rejected flip followed by an accepted one"><h3>MR-II: a rejected flip followed by an accepted one</h3><div class="example-input"><p><strong>Teaching example — supplemental trial network:</strong> two bipolar hidden units, one bipolar output thresholded at zero, explicit weights and biases in step 1. The output error test is the source’s target-match test (y = t); the sample interval <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><mo>&#x02212;</mo><mn>0.25</mn><mo>&#x0002C;</mo><mn>0.25</mn><mo stretchy="false">]</mo></mrow></math> is the source’s example. The output combiner is deliberately not the MR-I fixed OR combiner.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Evaluate this fully specified MR-II trial network</h4><p><strong>Teaching example — added architecture and values:</strong> x=(1,−1), target t=+1, α=0.1; Z₁ has weights/bias (0.1,0,−0.15), Z₂ has (0,−0.1,−0.02). Output weights/bias are v₁=0.1, v₂=−0.4, bᵧ=0. <strong>Substitute:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>z</mi><mrow><mi>i</mi><mi>n</mi><mn>1</mn></mrow></msub><mo>&#x0003D;</mo><mn>0.1</mn><mo>&#x02212;</mo><mn>0.15</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.05</mn><mo>&#x0002C;</mo><mspace width="1em" /><msub><mi>z</mi><mrow><mi>i</mi><mi>n</mi><mn>2</mn></mrow></msub><mo>&#x0003D;</mo><mn>0.1</mn><mo>&#x02212;</mo><mn>0.02</mn><mo>&#x0003D;</mo><mn>0.08</mn></mrow></math>, so hidden outputs are (−1,+1). The output net is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mn>0.4</mn><mo stretchy="false">&#x00028;</mo><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.5</mn></mrow></math>; y=−1, so the target is missed. Both hidden nets are in the example interval [−0.25,0.25].</p></section><section class="step"><h4>2. Try the nearest unit and reject the flip</h4><p><strong>Decision:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x0007C;</mo><mo>&#x02212;</mo><mn>0.05</mn><mo stretchy="false">&#x0007C;</mo><mo>&#x0003C;</mo><mo stretchy="false">&#x0007C;</mo><mn>0.08</mn><mo stretchy="false">&#x0007C;</mo></mrow></math>, so try Z₁ first. <strong>Trial:</strong> flip its output −1→+1 while holding all weights fixed. The output net becomes <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mn>0.4</mn><mo stretchy="false">&#x00028;</mo><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.3</mn></mrow></math>; thresholding still gives −1. <strong>Intermediate state:</strong> target mismatch remains, so reject this trial and restore Z₁ output to −1. No delta update follows a rejected trial.</p></section><section class="step"><h4>3. Try Z₂ and accept the improved network response</h4><p><strong>Trial:</strong> next flip Z₂ output +1→−1, with Z₁ restored to −1. <strong>Substitute:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo>&#x0003D;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mn>0.4</mn><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.3</mn></mrow></math>; the network output becomes +1, matching t. <strong>Decision:</strong> accept the trial because the classification error changes from one mismatch to zero. This trial result is local to the explicit combiner values above.</p></section><section class="step"><h4>4. Delta-adjust the accepted unit and check its state</h4><p><strong>Rule:</strong> use the accepted hidden output −1 as the target in the linear delta adjustment. Z₂’s pre-adjustment net was 0.08, so <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>e</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x02212;</mo><mn>0.08</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1.08</mn><mo>&#x0002C;</mo><mspace width="1em" /><mi>&#x00394;</mi><msub><mi>w</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mi>&#x003B1;</mi><msub><mi>e</mi><mn>2</mn></msub><mi>x</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.108</mn><mo>&#x0002C;</mo><mn>0.108</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="1em" /><mi>&#x00394;</mi><msub><mi>b</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.108</mn></mrow></math><br><strong>New parameters:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>w</mi><mrow><mn>12</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>w</mi><mrow><mn>22</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>b</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.108</mn><mo>&#x0002C;</mo><mn>0.008</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>0.128</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; the recomputed hidden net is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>0.108</mn><mo>&#x0002B;</mo><mn>0.008</mn><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mn>0.128</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.244</mn></mrow></math>, which still thresholds to −1. <strong>Final check:</strong> output net stays 0.3 and y=+1=t. The source gives this trial heuristic, not a universal architecture or a complete general MR-II update specification.</p></section></section></details>
+
+<h2 id="section-8">Common mistakes</h2>
+<ul>
+<li><strong>Training on a thresholded output:</strong> ADALINE’s error uses y = z before the optional class quantizer.</li>
+<li><strong>Reversing the error:</strong> the source uses e = t − y. The additive update depends on this sign.</li>
+<li><strong>Dropping the half-loss convention:</strong> Lesson 3 uses E = ½e² and the ηex update. Do not silently add the factor of 2 from a different squared-error convention.</li>
+<li><strong>Mixing a rate bound with the wrong update:</strong> pair 2/λ<sub>max</sub>(R) with <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi><mo>&#x02190;</mo><mi>w</mi><mo>&#x0002B;</mo><mi>&#x003B7;</mi><mi>e</mi><mi>x</mi></mrow></math>, or 1/λ<sub>max</sub>(R) with a factor-two update.</li>
+<li><strong>Reading MR-I “positive” as strictly greater than zero:</strong> the course activation includes zero in the +1 class; its negative-target update must cover that case.</li>
+<li><strong>Changing the MR-I output combiner:</strong> its <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>v</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>v</mi><mn>2</mn></msub><mo>&#x0003D;</mo><msub><mi>b</mi><mi>y</mi></msub><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></math> weights stay fixed; the hidden layer carries the correction.</li>
+<li><strong>Treating the MR-II example as universal:</strong> the lesson gives a near-zero trial heuristic. The example’s network and mismatch test are teaching choices, not a rule for every architecture.</li>
+</ul>
+
+<h2 id="section-9">Exam focus</h2>
+<ul>
+<li>Write the order: weighted sum plus bias → linear response → target-minus-response error → additive weight and bias updates → optional class threshold.</li>
+<li>State the half-squared loss and derive or apply <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><msub><mi>w</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mi>&#x003B7;</mi><mi>e</mi><msub><mi>x</mi><mi>i</mi></msub></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>b</mi><mo>&#x0003D;</mo><mi>&#x003B7;</mi><mi>e</mi></mrow></math>.</li>
+<li>Explain why a correct class can still have nonzero ADALINE training error.</li>
+<li>Rearrange <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.1</mn><mo>&#x02264;</mo><mi>n</mi><mi>&#x003B7;</mi><mo>&#x02264;</mo><mn>1</mn></mrow></math>; for <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi><mo>&#x0003D;</mo><mn>100</mn></mrow></math>, η lies from 0.001 to 0.01, with 0.005 as the source’s example choice.</li>
+<li>For MR-I, name what is fixed, then distinguish the positive-target nearest-net case from the negative-target all-active-units case.</li>
+<li>Apply the inclusive threshold consistently: net 0 produces +1 and is active for the MR-I negative-target update.</li>
+<li>For MR-II, describe candidate selection, flip, output recomputation, accept/reject, and delta adjustment after acceptance. Do not present the heuristic as a full architecture-independent formula.</li>
+</ul>
+
+<h2 id="section-10">Practice</h2>
+<p class="question">An ADALINE has y = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>0.3</mn></mrow></math>, target t = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x0002B;</mo><mn>1</mn></mrow></math>, and input x = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. With <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math>, what are e, Δw, and Δb?</p>
+<details class="worked"><summary>Check your answer</summary><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>e</mi><mo>&#x0003D;</mo><mi>t</mi><mo>&#x02212;</mo><mi>y</mi><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.3</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1.3</mn></mrow></math>
+<p>. Then 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>w</mi><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>1.3</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.26</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>0.13</mn><mo stretchy="false">&#x00029;</mo></mrow></math></p>
+<p>and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>b</mi><mo>&#x0003D;</mo><mn>0.13</mn></mrow></math></p>
+<p>. These changes are added to the old parameters.</p></details>
+<p class="question">Why can an ADALINE output be classified correctly while its training error is still nonzero?</p>
+<details class="worked"><summary>Check your answer</summary><p>The class threshold discards the response magnitude. Training compares the continuous linear response with the target, so a response on the correct side of the boundary may still differ from the target.</p></details>
+<p class="question">With MR-I’s fixed combiner, what output results for hidden outputs (−1,+1)?</p>
+<details class="worked"><summary>Check your answer</summary><p>The output net is ½ + (−1)(½) + (+1)(½) = ½, so the inclusive threshold returns +1.</p></details>
+<p class="question">Under the stated MR-I threshold, does a hidden net of exactly zero count as +1 for the negative-target branch?</p>
+<details class="worked"><summary>Check your answer</summary><p>Yes. The course defines +1 for net ≥ 0, so zero is currently outputting +1 and belongs to the set of units to adjust toward −1.</p></details>
+<p class="question">In the MR-II viewer, why is the first flipped unit restored?</p>
+<details class="worked"><summary>Check your answer</summary><p>Its trial changes the output net from −0.5 to −0.3, which still thresholds to −1 and still misses target +1. The trial therefore does not improve the stated mismatch error.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="perceptron.html"><small>Previous</small>Threshold logic and perceptron learning <span aria-hidden="true">↗</span></a><a href="lms.html"><small>Next</small>Widrow-Hoff derivation and LMS calculations <span aria-hidden="true">↗</span></a></nav><footer>Neural Networks and Fuzzy Logic · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('.example-input,.step') || expression.closest('p,li,summary,figcaption,h2,h3,h4');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 2;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Neural network and fuzzy-system diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {neuron:'activation threshold weighted sum bias',perceptron:'threshold logic decision boundary learning',adaline:'lms least mean squares madaline widrow hoff',backpropagation:'gradient chain rule delta multilayer',pnn:'probabilistic pattern classification radial basis',fuzzy:'membership set relation composition fuzzification defuzzification',membership:'fuzzification defuzzification centroid',logic:'linguistic variable rule inference',anfis:'mamdani sugeno tsukamoto adaptive neuro fuzzy'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('nn-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.NN_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

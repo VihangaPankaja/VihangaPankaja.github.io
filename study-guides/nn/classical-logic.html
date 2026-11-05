@@ -1,0 +1,638 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="A guided route from binary propositions and proof patterns to crisp IF/ELSE relations and inference."><title>Classical logic and crisp rule relations · Neural networks and fuzzy logic</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('nn-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#34304a;--muted:#68647b;--secondary:#f0eef7;--border:#dfdced;--primary:#6251a5;--accent:#e7e1f7;--diagram-fill:#f1eff8;--diagram-border:#948cb2;--diagram-edge:#766c9b;--active-text:#493a84;--focus:#7865c1}:root[data-theme=dark]{--background:#191722;--foreground:#eeeaf8;--muted:#b9b2ce;--card:#211f2e;--secondary:#2b283b;--border:#48435e;--primary:#c0b2ff;--accent:#39334f;--diagram-fill:#2b283b;--diagram-border:#aaa0ce;--diagram-edge:#b4a9db;--topbar:#191722f5;--active-text:#d4caff;--focus:#c0b2ff} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> NNFL <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Neuron, learning, fuzzy sets…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Neural networks and fuzzy logic</a></div><div class="nav-group"><p>Neural networks</p><a class="nav-entry" href="foundations.html">Neurons, activations and network foundations</a><a class="nav-entry" href="perceptron.html">Threshold logic and perceptron learning</a><a class="nav-entry" href="adaptive-linear.html">ADALINE and MADALINE learning</a><a class="nav-entry" href="lms.html">Widrow-Hoff derivation and LMS calculations</a><a class="nav-entry" href="backpropagation.html">Multilayer networks and backpropagation</a><a class="nav-entry" href="training-variants.html">Backpropagation variations and deeper networks</a><a class="nav-entry" href="pnn.html">Probabilistic neural networks</a></div><div class="nav-group"><p>Fuzzy foundations</p><a class="nav-entry" href="fuzzy-sets.html">Crisp and fuzzy sets</a><a class="nav-entry" href="fuzzy-relations.html">Relations and matrix composition</a><a class="nav-entry" href="membership.html">Membership, fuzzification and defuzzification</a></div><div class="nav-group"><p>Fuzzy reasoning</p><a class="nav-entry" href="classical-logic.html" aria-current="page">Classical logic and crisp rule relations</a><a class="nav-entry" href="logic-language.html">Fuzzy propositions, linguistic variables and implications</a><a class="nav-entry" href="fuzzy-systems.html">Mamdani, Sugeno, Tsukamoto and ANFIS</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">MA4144<br>Neural Networks and Fuzzy Logic</div></aside>
+<main id="main"><div class="eyebrow">Fuzzy reasoning <span>/</span> Fuzzy lesson 4</div><h1>Classical logic and crisp rule relations</h1><p class="lead">A guided route from binary propositions and proof patterns to crisp IF/ELSE relations and inference.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Propositions and truth sets</a><a href="#section-2">Connectives and their truth tables</a><a href="#section-3">Conditional, converse, inverse, and contrapositive</a><a href="#section-4">Tautologies, contradictions, and equivalence</a><a href="#section-5">Modus ponens and modus tollens</a><a href="#section-6">Proof by contradiction</a><a href="#section-7">Crisp rule relations on two universes</a><a href="#section-8">Crisp inference by relational composition</a><a href="#section-9">Common mistakes</a><a href="#section-10">Exam focus</a><a href="#section-11">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Classical logic gives each proposition a binary truth value: true or false. Once a proposition is viewed as the set of cases where it is true, logical operations become familiar set operations. The same idea extends to rules connecting different domains: a rule becomes a relation on a Cartesian product, and a new input set can be composed with that relation to infer possible outputs.</p>
+
+<h2 id="section-1">Propositions and truth sets</h2>
+<p>A proposition is a declarative statement that has one definite truth value for each instance in its universe of discourse. We use 1 for true and 0 for false. Its truth set contains the instances that make it true; its falsity set is the exact complement within the universe.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>T</mi><mi>:</mi><mi>U</mi><mo>&#x02192;</mo><mo stretchy="false">&#x0007B;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x0007D;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>u</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn><mtext>&#x000A0;means&#x000A0;true&#x000A0;and&#x000A0;</mtext><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>u</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn><mtext>&#x000A0;means&#x000A0;false</mtext></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x0007B;</mo><mi>u</mi><mo>&#x02208;</mo><mi>U</mi><mi>:</mi><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>u</mi><mo stretchy="false">&#x00029;</mo><mtext>&#x000A0;is&#x000A0;true</mtext><mo stretchy="false">&#x0007D;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>F</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mover><mrow><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mi>U</mi><mi>&#x029F5;</mi><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>The two sets partition U: every instance is in exactly one of them. In the lecture’s boundary convention, the whole universe is true and the empty set is false. Two propositions are <strong>mutually exclusive</strong> when their truth sets do not overlap. For membership propositions P: x ∈ A and Q: x ∈ B, this means a true P forces Q false, and a true Q forces P false.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0222A;</mo><mi>F</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>U</mi><mo>&#x0002C;</mo><mspace width="2em" /><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x02229;</mo><mi>F</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02205;</mo></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>U</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002C;</mo><mspace width="2em" /><mi>T</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02205;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x02229;</mo><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>Q</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02205;</mo><mspace width="1em" /><mi>&#x027FA;</mi><mspace width="1em" /><mi>P</mi><mo>&#x021D2;</mo><mover><mrow><mi>Q</mi></mrow><mo accent="true">&#x02015;</mo></mover><mtext>&#x000A0;and&#x000A0;</mtext><mi>Q</mi><mo>&#x021D2;</mo><mover><mrow><mi>P</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow></math></div>
+
+<h2 id="section-2">Connectives and their truth tables</h2>
+<p>For propositions P and Q on the same universe, negation reverses truth, inclusive OR is true when at least one proposition is true, and AND is true only when both are true. In set language, these correspond to complement, union, and intersection. Inclusive OR includes the case where both propositions are true.</p>
+<figure><table><thead><tr><th scope="col">P</th><th scope="col">Q</th><th scope="col">¬P</th><th scope="col">¬Q</th></tr></thead><tbody><tr><th scope="row">T</th><td>T</td><td>F</td><td>F</td></tr><tr><th scope="row">T</th><td>F</td><td>F</td><td>T</td></tr><tr><th scope="row">F</th><td>T</td><td>T</td><td>F</td></tr><tr><th scope="row">F</th><td>F</td><td>T</td><td>T</td></tr></tbody></table><figcaption>Negation reverses each proposition’s truth value.</figcaption></figure>
+<figure><table><thead><tr><th scope="col">P</th><th scope="col">Q</th><th scope="col">P ∨ Q</th><th scope="col">P ∧ Q</th></tr></thead><tbody><tr><th scope="row">T</th><td>T</td><td>T</td><td>T</td></tr><tr><th scope="row">T</th><td>F</td><td>T</td><td>F</td></tr><tr><th scope="row">F</th><td>T</td><td>T</td><td>F</td></tr><tr><th scope="row">F</th><td>F</td><td>F</td><td>F</td></tr></tbody></table><figcaption>Inclusive OR and AND for all four possible input pairs.</figcaption></figure>
+<p><strong>Implication</strong> P ⇒ Q reads “if P, then Q.” P is the antecedent (hypothesis); Q is the consequent (conclusion). It is false only when P is true and Q is false. If P is false, the implication is true regardless of Q: the condition did not occur, so it did not break the rule. This is called <strong>vacuous truth</strong>.</p>
+<figure><table><thead><tr><th scope="col">P</th><th scope="col">Q</th><th scope="col">P ⇒ Q</th><th scope="col">P ⇔ Q</th></tr></thead><tbody><tr><th scope="row">T</th><td>T</td><td>T</td><td>T</td></tr><tr><th scope="row">T</th><td>F</td><td>F</td><td>F</td></tr><tr><th scope="row">F</th><td>T</td><td>T</td><td>F</td></tr><tr><th scope="row">F</th><td>F</td><td>T</td><td>T</td></tr></tbody></table><figcaption>The only false implication row is P = T, Q = F; equivalence is true when the values match.</figcaption></figure>
+<p><strong>Equivalence</strong> P ⇔ Q means “P if and only if Q.” It holds when both propositions have the same truth value, or equivalently when P ⇒ Q and Q ⇒ P. For set-membership propositions, implication fails on A ∖ B and is true on its complement.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo>&#x021D2;</mo><mi>Q</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>T</mi><mo stretchy="false">&#x00028;</mo><mover><mrow><mi>P</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x02228;</mo><mi>Q</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>max</mo><mo stretchy="false">&#x0007B;</mo><mn>1</mn><mo>&#x02212;</mo><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>Q</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x0007D;</mo></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>P</mi><mo>&#x021D2;</mo><mi>Q</mi><mspace width="0.278em" /><mo>&#x02261;</mo><mspace width="0.278em" /><mover><mrow><mi>A</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0222A;</mo><mi>B</mi><mo>&#x0002C;</mo><mspace width="2em" /><mtext>false&#x000A0;exactly&#x000A0;on&#x000A0;</mtext><mi>A</mi><mi>&#x029F5;</mi><mi>B</mi></mrow></math></div>
+<p>Exclusive OR (XOR) means exactly one proposition is true. The lecture’s travel example is “by plane or boat,” but not both; its earlier menu example is “soup or salad” when choosing both is excluded. XNOR is the negation of XOR, so it agrees with logical equivalence.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>P</mi><mo>&#x02295;</mo><mi>Q</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo>&#x02227;</mo><mover><mi>Q</mi><mo accent="true">&#x02015;</mo></mover><mo stretchy="false">&#x00029;</mo><mo>&#x02228;</mo><mo stretchy="false">&#x00028;</mo><mover><mi>P</mi><mo accent="true">&#x02015;</mo></mover><mo>&#x02227;</mo><mi>Q</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>P</mi><mo>&#x02299;</mo><mi>Q</mi><mo>&#x0003D;</mo><mover><mrow><mi>P</mi><mo>&#x02295;</mo><mi>Q</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow></math></div>
+<figure><table><thead><tr><th scope="col">P</th><th scope="col">Q</th><th scope="col">P ⊕ Q (XOR)</th><th scope="col">P ⊙ Q (XNOR)</th></tr></thead><tbody><tr><th scope="row">T</th><td>T</td><td>F</td><td>T</td></tr><tr><th scope="row">T</th><td>F</td><td>T</td><td>F</td></tr><tr><th scope="row">F</th><td>T</td><td>T</td><td>F</td></tr><tr><th scope="row">F</th><td>F</td><td>F</td><td>T</td></tr></tbody></table><figcaption>XOR is true for different values; XNOR is true for matching values.</figcaption></figure>
+
+<h2 id="section-3">Conditional, converse, inverse, and contrapositive</h2>
+<p>Starting from the conditional P ⇒ Q, reversing the direction gives the converse. Negating both parts gives the inverse; reversing and negating gives the contrapositive. The conditional is equivalent to its contrapositive, while the converse is equivalent to the inverse. The converse does not generally follow from the original conditional.</p>
+<figure><table><thead><tr><th scope="col">Form</th><th scope="col">Statement</th><th scope="col">Relationship to P ⇒ Q</th></tr></thead><tbody><tr><th scope="row">Conditional</th><td>P ⇒ Q</td><td>Original statement</td></tr><tr><th scope="row">Converse</th><td>Q ⇒ P</td><td>Not generally equivalent</td></tr><tr><th scope="row">Inverse</th><td>¬P ⇒ ¬Q</td><td>Equivalent to the converse</td></tr><tr><th scope="row">Contrapositive</th><td>¬Q ⇒ ¬P</td><td>Equivalent to the conditional</td></tr></tbody></table><figcaption>Keep the negation bars on both terms of the inverse and contrapositive.</figcaption></figure>
+<p><strong>Teaching example:</strong> “If a number is divisible by 4, then it is even” has the contrapositive “if a number is not even, then it is not divisible by 4.” The converse “if a number is even, then it is divisible by 4” is false: 6 is even but is not divisible by 4. This illustrates why reversing a conditional alone is not a valid equivalence.</p>
+
+<h2 id="section-4">Tautologies, contradictions, and equivalence</h2>
+<p>A <strong>tautology</strong> is true under every assignment of truth values. A <strong>contradiction</strong> is false under every assignment. The complement laws show one of each: every instance is either in A or outside A, and no instance can be both.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mover><mi>A</mi><mo accent="true">&#x02015;</mo></mover><mo>&#x0222A;</mo><mi>A</mi><mo>&#x0003D;</mo><mi>U</mi><mspace width="1em" /><mtext>(tautology)</mtext><mo>&#x0002C;</mo><mspace width="2em" /><mi>A</mi><mo>&#x02229;</mo><mover><mi>A</mi><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mo>&#x02205;</mo><mspace width="1em" /><mtext>(contradiction)</mtext></mrow></math></div>
+<p>Two propositions are logically equivalent when their truth sets are identical. The lecture’s integer example compares “x is even” with “x² is even.” If x = 2k, then x² = 4k² = 2(2k²), so x² is even. Conversely, if x is odd, x = 2k + 1 and x² = 4k² + 4k + 1 = 2(2k² + 2k) + 1, which is odd. Thus x² is even exactly when x is even; the propositions have the same truth set over the integers.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>P</mi><mi>:</mi><mtext>&#x000A0;</mtext><mi>x</mi><mo>&#x02208;</mo><mi>&#x02124;</mi><mtext>&#x000A0;is&#x000A0;even</mtext><mo>&#x0002C;</mo><mspace width="2em" /><mi>Q</mi><mi>:</mi><mtext>&#x000A0;</mtext><msup><mi>x</mi><mn>2</mn></msup><mtext>&#x000A0;is&#x000A0;even</mtext><mo>&#x0002C;</mo><mspace width="2em" /><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>Q</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>The <strong>duality principle</strong> from the lecture says that a valid identity involving only AND, OR, and the constants 0 and 1 has a valid dual after swapping AND with OR and 0 with 1 (and complementing set symbols where that notation is used).</p>
+
+<h2 id="section-5">Modus ponens and modus tollens</h2>
+<p>Modus ponens applies a rule when its antecedent is known to be true: from P and P ⇒ Q, conclude Q. Modus tollens reasons from a false consequent: from ¬Q and P ⇒ Q, conclude ¬P. Each is a tautological inference pattern, not a guess about cause and effect.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo>&#x02227;</mo><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo>&#x021D2;</mo><mi>Q</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x021D2;</mo><mi>Q</mi><mspace width="1em" /><mtext>(modus&#x000A0;ponens)</mtext></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="false">&#x00028;</mo><mover><mi>Q</mi><mo accent="true">&#x02015;</mo></mover><mo>&#x02227;</mo><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo>&#x021D2;</mo><mi>Q</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x021D2;</mo><mover><mi>P</mi><mo accent="true">&#x02015;</mo></mover><mspace width="1em" /><mtext>(modus&#x000A0;tollens)</mtext></mrow></math></div>
+<details class="worked"><summary>Teaching example: modus ponens</summary><p><strong>Rule:</strong> If the access card is valid (P), then the door unlocks (Q).<br />
+<strong>Given:</strong> The card is valid (P).<br />
+<strong>Apply modus ponens:</strong> P and P ⇒ Q are both true, so conclude Q: the door unlocks.<br />
+<strong>Check:</strong> This uses the rule in its forward direction; it does not infer that the card is valid merely because the door unlocked.</p></details>
+
+<details class="worked"><summary>Teaching example: modus tollens</summary><p><strong>Rule:</strong> If the alarm is enabled (P), then its indicator is lit (Q).<br />
+<strong>Given:</strong> The indicator is not lit (¬Q).<br />
+<strong>Apply modus tollens:</strong> A true P would require Q, but Q is false, so conclude ¬P: the alarm is not enabled.<br />
+<strong>Check:</strong> The inference uses the negated consequent. “The indicator is lit, therefore the alarm is enabled” would be the converse and is not licensed by this rule.</p></details>
+
+<p>The lecture verifies modus tollens with all four A,B assignments. First calculate the rule and ¬B, then combine them into the premise. That premise is true only when both ¬B and A ⇒ B hold; in that row, ¬A is true. Therefore the final implication is true in every row.</p>
+<figure><table><thead><tr><th scope="col">A</th><th scope="col">B</th><th scope="col">¬B</th><th scope="col">A ⇒ B</th></tr></thead><tbody><tr><th scope="row">0</th><td>0</td><td>1</td><td>1</td></tr><tr><th scope="row">0</th><td>1</td><td>0</td><td>1</td></tr><tr><th scope="row">1</th><td>0</td><td>1</td><td>0</td></tr><tr><th scope="row">1</th><td>1</td><td>0</td><td>1</td></tr></tbody></table><figcaption>Intermediate values in source row order 00, 01, 10, 11.</figcaption></figure>
+<figure><table><thead><tr><th scope="col">AB row</th><th scope="col">¬B ∧ (A ⇒ B)</th><th scope="col">¬A</th><th scope="col">(¬B ∧ (A ⇒ B)) ⇒ ¬A</th></tr></thead><tbody><tr><th scope="row">00</th><td>1</td><td>1</td><td>1</td></tr><tr><th scope="row">01</th><td>0</td><td>1</td><td>1</td></tr><tr><th scope="row">10</th><td>0</td><td>0</td><td>1</td></tr><tr><th scope="row">11</th><td>0</td><td>0</td><td>1</td></tr></tbody></table><figcaption>The full premise and conclusion check: the last column is true in every row.</figcaption></figure>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="false">&#x00028;</mo><mover><mi>B</mi><mo accent="true">&#x02015;</mo></mover><mo>&#x02227;</mo><mo stretchy="false">&#x00028;</mo><mi>A</mi><mo>&#x021D2;</mo><mi>B</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x021D2;</mo><mover><mi>A</mi><mo accent="true">&#x02015;</mo></mover><mtext>&#x000A0;is&#x000A0;true&#x000A0;for&#x000A0;all&#x000A0;four&#x000A0;rows</mtext></mrow></math></div>
+
+<h2 id="section-6">Proof by contradiction</h2>
+<p>To verify an argument with hypotheses P₁,…,Pₙ and conclusion Q, the lecture first asks whether (P₁ ∧ … ∧ Pₙ) ⇒ Q is a tautology. A direct truth-table check can be organized as: formulate the full claim, decompose it into atomic propositions, translate it into connectives, then evaluate whether the implication is always true. For an indirect proof, assume all hypotheses and also ¬Q. If those assumptions lead to an impossibility, the counterexample cannot exist and the implication is valid.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x00028;</mo><msub><mi>P</mi><mn>1</mn></msub><mo>&#x02227;</mo><mo>&#x022EF;</mo><mo>&#x02227;</mo><msub><mi>P</mi><mi>n</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x021D2;</mo><mi>Q</mi><mo stretchy="false">&#x00029;</mo><mtext>&#x000A0;is&#x000A0;valid</mtext><mspace width="1em" /><mi>&#x027FA;</mi><mspace width="1em" /><msub><mi>P</mi><mn>1</mn></msub><mo>&#x02227;</mo><mo>&#x022EF;</mo><mo>&#x02227;</mo><msub><mi>P</mi><mi>n</mi></msub><mo>&#x02227;</mo><mover><mi>Q</mi><mo accent="true">&#x02015;</mo></mover><mtext>&#x000A0;is&#x000A0;impossible</mtext></mrow></math></div>
+<details class="worked"><summary>Teaching example: rule out the counterexample step by step</summary><section class="walk" tabindex="0" aria-label="Teaching example: prove an implication by contradiction"><h3>Teaching example: prove an implication by contradiction</h3><div class="example-input"><p><strong>Claim to prove:</strong> If an integer n is even, then n² is even.<br />
+<strong>Definitions:</strong> n is even when n = 2k for some integer k; an even number is not odd.<br />
+<strong>Contradiction method:</strong> assume the hypothesis and the negation of the conclusion together.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. State the implication</h4><p>Let P mean “n is even” and Q mean “n² is even.” The target is P ⇒ Q. The lecture’s test is to check whether the implication is always true.</p></section><section class="step"><h4>2. Assume a counterexample</h4><p>Assume P and ¬Q: n is even but n² is odd. By the definition of even, write n = 2k for some integer k. This is the only assumption added for the indirect proof.</p></section><section class="step"><h4>3. Substitute and simplify</h4><p>Substitute n = 2k into the square: n² = (2k)² = 4k² = 2(2k²). Since 2k² is an integer, n² has the form 2m and is even. This contradicts the assumption that n² is odd.</p></section><section class="step"><h4>4. Conclude and check</h4><p>The assumptions P ∧ ¬Q cannot both hold, so the counterexample is impossible and P ⇒ Q is true. <strong>Independent check:</strong> every even n has square 4k², which is divisible by 2. The contradiction proof agrees with the direct divisibility check.</p></section></section></details>
+
+<h2 id="section-7">Crisp rule relations on two universes</h2>
+<p>A proposition about membership in A and a consequent about membership in B may refer to different universes. The rule then relates an x from X to a y from Y, so its truth region is a subset of the product X × Y. For IF A THEN B, pairs in A must land in B; when x lies outside A, the conditional is vacuously true for every y. That second region is the complement branch Ā × Y.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>R</mi><mrow><mtext>if</mtext></mrow></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mi>A</mi><mo>&#x000D7;</mo><mi>B</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0222A;</mo><mo stretchy="false">&#x00028;</mo><mover><mi>A</mi><mo accent="true">&#x02015;</mo></mover><mo>&#x000D7;</mo><mi>Y</mi><mo stretchy="false">&#x00029;</mo><mo>&#x02286;</mo><mi>X</mi><mo>&#x000D7;</mo><mi>Y</mi></mrow></math></div>
+<figure><div class="diagram-frame" style="--diagram-width:433.6px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="The ordinary implication relation includes A × B and the vacuously true region Ā × Y." width="434pt" height="292pt"
+ viewBox="0.00 0.00 433.60 291.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="classical-logic-figure-1-classical-logic-product-if-then-01-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 280.8)">
+<title>G</title>
+<!-- rule -->
+<g id="classical-logic-figure-1-classical-logic-product-if-then-01-node1" class="node">
+<title>rule</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M265,-270C265,-270 137,-270 137,-270 131,-270 125,-264 125,-258 125,-258 125,-234 125,-234 125,-228 131,-222 137,-222 137,-222 265,-222 265,-222 271,-222 277,-228 277,-234 277,-234 277,-258 277,-258 277,-264 271,-270 265,-270"/>
+<text text-anchor="middle" x="201" y="-251" font-family="Georgia" font-size="15.00">IF A THEN B</text>
+<text text-anchor="middle" x="201" y="-234" font-family="Georgia" font-size="15.00">relation on X × Y</text>
+</g>
+<!-- test -->
+<g id="classical-logic-figure-1-classical-logic-product-if-then-01-node2" class="node">
+<title>test</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M189.56,-185.39C189.56,-185.39 60.44,-144.61 60.44,-144.61 54.72,-142.81 54.72,-139.19 60.44,-137.39 60.44,-137.39 189.56,-96.61 189.56,-96.61 195.28,-94.81 206.72,-94.81 212.44,-96.61 212.44,-96.61 341.56,-137.39 341.56,-137.39 347.28,-139.19 347.28,-142.81 341.56,-144.61 341.56,-144.61 212.44,-185.39 212.44,-185.39 206.72,-187.19 195.28,-187.19 189.56,-185.39"/>
+<text text-anchor="middle" x="201" y="-146" font-family="Georgia" font-size="15.00">Which X branch?</text>
+<text text-anchor="middle" x="201" y="-129" font-family="Georgia" font-size="15.00">x ∈ A or x ∈ Ā</text>
+</g>
+<!-- rule&#45;&gt;test -->
+<g id="classical-logic-figure-1-classical-logic-product-if-then-01-edge1" class="edge">
+<title>rule&#45;&gt;test</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M201,-221.88C201,-214.06 201,-204.96 201,-195.76"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="203.28,-195.57 201,-189.07 198.73,-195.57 203.28,-195.57"/>
+</g>
+<!-- then -->
+<g id="classical-logic-figure-1-classical-logic-product-if-then-01-node3" class="node">
+<title>then</title>
+<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2" d="M174,-48C174,-48 12,-48 12,-48 6,-48 0,-42 0,-36 0,-36 0,-12 0,-12 0,-6 6,0 12,0 12,0 174,0 174,0 180,0 186,-6 186,-12 186,-12 186,-36 186,-36 186,-42 180,-48 174,-48"/>
+<text text-anchor="middle" x="93" y="-29" font-family="Georgia" font-size="15.00">A × B</text>
+<text text-anchor="middle" x="93" y="-12" font-family="Georgia" font-size="15.00">if x ∈ A, require y ∈ B</text>
+</g>
+<!-- test&#45;&gt;then -->
+<g id="classical-logic-figure-1-classical-logic-product-if-then-01-edge2" class="edge">
+<title>test&#45;&gt;then</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M166.83,-103.61C151.5,-87.3 133.71,-68.34 119.43,-53.14"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="120.83,-51.31 114.73,-48.13 117.52,-54.43 120.83,-51.31"/>
+<text text-anchor="middle" x="157.5" y="-67.4" font-family="Georgia" font-size="12.00">x ∈ A</text>
+</g>
+<!-- otherwise -->
+<g id="classical-logic-figure-1-classical-logic-product-if-then-01-node4" class="node">
+<title>otherwise</title>
+<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2" d="M400,-48C400,-48 220,-48 220,-48 214,-48 208,-42 208,-36 208,-36 208,-12 208,-12 208,-6 214,0 220,0 220,0 400,0 400,0 406,0 412,-6 412,-12 412,-12 412,-36 412,-36 412,-42 406,-48 400,-48"/>
+<text text-anchor="middle" x="310" y="-29" font-family="Georgia" font-size="15.00">Ā × Y</text>
+<text text-anchor="middle" x="310" y="-12" font-family="Georgia" font-size="15.00">if x ∈ Ā, any y is allowed</text>
+</g>
+<!-- test&#45;&gt;otherwise -->
+<g id="classical-logic-figure-1-classical-logic-product-if-then-01-edge3" class="edge">
+<title>test&#45;&gt;otherwise</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M235.49,-103.61C250.95,-87.3 268.92,-68.34 283.33,-53.14"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="285.25,-54.42 288.07,-48.13 281.95,-51.29 285.25,-54.42"/>
+<text text-anchor="middle" x="287.5" y="-67.4" font-family="Georgia" font-size="12.00">x ∈ Ā</text>
+</g>
+</g>
+</svg>
+</div><figcaption>The ordinary implication relation includes A × B and the vacuously true region Ā × Y.</figcaption></figure>
+<p>An ELSE rule sends the outside-A branch to C rather than leaving y unrestricted. The bars are essential: the branch condition and its product region are both the complement of A. The lecture’s rule-form line writes P in both implications, while its branch description and product-space formula use the complement for ELSE. Read the intended branches as P ⇒ Q and ¬P ⇒ S; otherwise both consequences would fire from the same condition. If B and C are disjoint, the two consequent regions are visibly separate, as in the lecture’s product-space sketch.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>R</mi><mrow><mtext>if/else</mtext></mrow></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mi>A</mi><mo>&#x000D7;</mo><mi>B</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0222A;</mo><mo stretchy="false">&#x00028;</mo><mover><mi>A</mi><mo accent="true">&#x02015;</mo></mover><mo>&#x000D7;</mo><mi>C</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<figure><div class="diagram-frame" style="--diagram-width:349.6px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="The ELSE rule partitions the X rows: A uses B, while its exact complement Ā uses C." width="350pt" height="373pt"
+ viewBox="0.00 0.00 349.60 372.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="classical-logic-figure-2-classical-logic-product-if-else-01-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 361.8)">
+<title>G</title>
+<!-- rule -->
+<g id="classical-logic-figure-2-classical-logic-product-if-else-01-node1" class="node">
+<title>rule</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M212.5,-351C212.5,-351 114.5,-351 114.5,-351 108.5,-351 102.5,-345 102.5,-339 102.5,-339 102.5,-315 102.5,-315 102.5,-309 108.5,-303 114.5,-303 114.5,-303 212.5,-303 212.5,-303 218.5,-303 224.5,-309 224.5,-315 224.5,-315 224.5,-339 224.5,-339 224.5,-345 218.5,-351 212.5,-351"/>
+<text text-anchor="middle" x="163.5" y="-332" font-family="Georgia" font-size="15.00">IF A THEN B</text>
+<text text-anchor="middle" x="163.5" y="-315" font-family="Georgia" font-size="15.00">ELSE C</text>
+</g>
+<!-- test -->
+<g id="classical-logic-figure-2-classical-logic-product-if-else-01-node2" class="node">
+<title>test</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M152.06,-266.39C152.06,-266.39 22.94,-225.61 22.94,-225.61 17.22,-223.81 17.22,-220.19 22.94,-218.39 22.94,-218.39 152.06,-177.61 152.06,-177.61 157.78,-175.81 169.22,-175.81 174.94,-177.61 174.94,-177.61 304.06,-218.39 304.06,-218.39 309.78,-220.19 309.78,-223.81 304.06,-225.61 304.06,-225.61 174.94,-266.39 174.94,-266.39 169.22,-268.19 157.78,-268.19 152.06,-266.39"/>
+<text text-anchor="middle" x="163.5" y="-227" font-family="Georgia" font-size="15.00">Which X branch?</text>
+<text text-anchor="middle" x="163.5" y="-210" font-family="Georgia" font-size="15.00">x ∈ A or x ∈ Ā</text>
+</g>
+<!-- rule&#45;&gt;test -->
+<g id="classical-logic-figure-2-classical-logic-product-if-else-01-edge1" class="edge">
+<title>rule&#45;&gt;test</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M163.5,-302.88C163.5,-295.06 163.5,-285.96 163.5,-276.76"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="165.78,-276.57 163.5,-270.07 161.23,-276.57 165.78,-276.57"/>
+</g>
+<!-- then -->
+<g id="classical-logic-figure-2-classical-logic-product-if-else-01-node3" class="node">
+<title>then</title>
+<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2" d="M141,-129C141,-129 12,-129 12,-129 6,-129 0,-123 0,-117 0,-117 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 141,-81 141,-81 147,-81 153,-87 153,-93 153,-93 153,-117 153,-117 153,-123 147,-129 141,-129"/>
+<text text-anchor="middle" x="76.5" y="-110" font-family="Georgia" font-size="15.00">A × B</text>
+<text text-anchor="middle" x="76.5" y="-93" font-family="Georgia" font-size="15.00">if x ∈ A, choose B</text>
+</g>
+<!-- test&#45;&gt;then -->
+<g id="classical-logic-figure-2-classical-logic-product-if-else-01-edge2" class="edge">
+<title>test&#45;&gt;then</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M134.77,-183.03C122.78,-167.18 109.09,-149.08 98,-134.42"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="99.77,-132.99 94.03,-129.18 96.14,-135.73 99.77,-132.99"/>
+<text text-anchor="middle" x="132" y="-148.4" font-family="Georgia" font-size="12.00">x ∈ A</text>
+</g>
+<!-- otherwise -->
+<g id="classical-logic-figure-2-classical-logic-product-if-else-01-node4" class="node">
+<title>otherwise</title>
+<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2" d="M316,-129C316,-129 187,-129 187,-129 181,-129 175,-123 175,-117 175,-117 175,-93 175,-93 175,-87 181,-81 187,-81 187,-81 316,-81 316,-81 322,-81 328,-87 328,-93 328,-93 328,-117 328,-117 328,-123 322,-129 316,-129"/>
+<text text-anchor="middle" x="251.5" y="-110" font-family="Georgia" font-size="15.00">Ā × C</text>
+<text text-anchor="middle" x="251.5" y="-93" font-family="Georgia" font-size="15.00">if x ∈ Ā, choose C</text>
+</g>
+<!-- test&#45;&gt;otherwise -->
+<g id="classical-logic-figure-2-classical-logic-product-if-else-01-edge3" class="edge">
+<title>test&#45;&gt;otherwise</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M192.56,-183.03C204.69,-167.18 218.53,-149.08 229.76,-134.42"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="231.62,-135.72 233.76,-129.18 228.01,-132.96 231.62,-135.72"/>
+<text text-anchor="middle" x="237" y="-148.4" font-family="Georgia" font-size="12.00">x ∈ Ā</text>
+</g>
+<!-- result -->
+<g id="classical-logic-figure-2-classical-logic-product-if-else-01-node5" class="node">
+<title>result</title>
+<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2" d="M245.5,-48C245.5,-48 81.5,-48 81.5,-48 75.5,-48 69.5,-42 69.5,-36 69.5,-36 69.5,-12 69.5,-12 69.5,-6 75.5,0 81.5,0 81.5,0 245.5,0 245.5,0 251.5,0 257.5,-6 257.5,-12 257.5,-12 257.5,-36 257.5,-36 257.5,-42 251.5,-48 245.5,-48"/>
+<text text-anchor="middle" x="163.5" y="-29" font-family="Georgia" font-size="15.00">R = (A × B) ∪ (Ā × C)</text>
+<text text-anchor="middle" x="163.5" y="-12" font-family="Georgia" font-size="15.00">subset of X × Y</text>
+</g>
+<!-- then&#45;&gt;result -->
+<g id="classical-logic-figure-2-classical-logic-product-if-else-01-edge4" class="edge">
+<title>then&#45;&gt;result</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M102.13,-80.72C111.87,-71.89 123.05,-61.73 133.17,-52.54"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="134.77,-54.16 138.05,-48.11 131.71,-50.79 134.77,-54.16"/>
+</g>
+<!-- otherwise&#45;&gt;result -->
+<g id="classical-logic-figure-2-classical-logic-product-if-else-01-edge5" class="edge">
+<title>otherwise&#45;&gt;result</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M225.57,-80.72C215.73,-71.89 204.42,-61.73 194.17,-52.54"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="195.6,-50.76 189.24,-48.11 192.56,-54.14 195.6,-50.76"/>
+</g>
+</g>
+</svg>
+</div><figcaption>The ELSE rule partitions the X rows: A uses B, while its exact complement Ā uses C.</figcaption></figure>
+<p>These relations capture different geometries. Plain implication excludes only the counterexample region A × (Y ∖ B); the rest of X × Y is allowed. IF/ELSE assigns the A rows to B and the Ā rows to C, so its relation is the union of two branch regions. It is not (A × B) ∪ (A × C).</p>
+
+<h2 id="section-8">Crisp inference by relational composition</h2>
+<p>Given a new antecedent A′, compose its characteristic row with the rule relation. For every output y, take min across the input and relation memberships for each x, then max across x. With crisp 0/1 values, min is AND and max is OR. The result B′ is a set on Y, not X. This is the Boolean form of the lecture’s max–min composition.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x003C7;</mi><mrow><mi>B</mi><mi>&#x02032;</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mo>max</mo><mrow><mi>x</mi><mo>&#x02208;</mo><mi>X</mi></mrow></msub><mo>min</mo><mo stretchy="false">&#x0007B;</mo><msub><mi>&#x003C7;</mi><mrow><mi>A</mi><mi>&#x02032;</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><msub><mi>&#x003C7;</mi><mi>R</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo>&#x0002C;</mo><mi>y</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x0007D;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>B</mi><mi>&#x02032;</mi><mo>&#x0003D;</mo><mi>A</mi><mi>&#x02032;</mi><mo>&#x02218;</mo><mi>R</mi></mrow></math></div>
+<details class="worked"><summary>Teaching example: calculate both crisp ELSE outputs</summary><section class="walk" tabindex="0" aria-label="Teaching example: crisp IF/ELSE inference by composition"><h3>Teaching example: crisp IF/ELSE inference by composition</h3><div class="example-input"><p><strong>Universes:</strong> X = {x₁, x₂, x₃}; Y = {y₁, y₂}. <strong>Antecedent set:</strong> A = {x₁, x₂}, so Ā = {x₃}. <strong>Consequents:</strong> B = {y₂}, C = {y₁}. Rule: IF A THEN B ELSE C, so R = (A × B) ∪ (Ā × C). For crisp grades, max is OR and min is AND.</p><figure><table><thead><tr><th scope="col">x in X</th><th scope="col">χA′(x)</th></tr></thead><tbody><tr><th scope="row">x₁</th><td>0</td></tr><tr><th scope="row">x₂</th><td>1</td></tr><tr><th scope="row">x₃</th><td>1</td></tr></tbody></table><figcaption>Input antecedent A′ = {x₂, x₃}.</figcaption></figure><figure><table><thead><tr><th scope="col">x in X</th><th scope="col">y₁</th><th scope="col">y₂</th></tr></thead><tbody><tr><th scope="row">x₁</th><td>0</td><td>1</td></tr><tr><th scope="row">x₂</th><td>0</td><td>1</td></tr><tr><th scope="row">x₃</th><td>1</td><td>0</td></tr></tbody></table><figcaption>R for IF A THEN B ELSE C; rows are X, columns are Y.</figcaption></figure><p>Compute χB′(y) = max<sub>x∈X</sub> min(χA′(x), χR(x,y)) in output order y₁, y₂. The output is a subset of Y.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Calculate χB′(y₁)</h4><p><strong>Current output:</strong> χB′(y₁). Use the input grades and the y₁ column of R. For each x, AND the input and relation values with min, then OR the paths with max.</p>
+<p><strong>Path calculations:</strong></p>
+<table>
+<thead>
+<tr>
+<th>x</th>
+<th style="text-align: right;">χA′(x)</th>
+<th style="text-align: right;">χR(x, y)</th>
+<th style="text-align: right;">min on path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>x₁</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">min(0, 0) = 0</td>
+</tr>
+<tr>
+<td>x₂</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">min(1, 0) = 0</td>
+</tr>
+<tr>
+<td>x₃</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">min(1, 1) = 1</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Substitute:</strong> max(0, 0, 1) = <strong>1</strong>. This is the value for the current y; now process the other output column.</p>
+<p><strong>Output so far in Y order [y₁, y₂]:</strong> [1, ·].</p></section><section class="step"><h4>2. Calculate χB′(y₂)</h4><p><strong>Current output:</strong> χB′(y₂). Use the input grades and the y₂ column of R. For each x, AND the input and relation values with min, then OR the paths with max.</p>
+<p><strong>Path calculations:</strong></p>
+<table>
+<thead>
+<tr>
+<th>x</th>
+<th style="text-align: right;">χA′(x)</th>
+<th style="text-align: right;">χR(x, y)</th>
+<th style="text-align: right;">min on path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>x₁</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">min(0, 1) = 0</td>
+</tr>
+<tr>
+<td>x₂</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">min(1, 1) = 1</td>
+</tr>
+<tr>
+<td>x₃</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">min(1, 0) = 0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Substitute:</strong> max(0, 1, 0) = <strong>1</strong>. This is the value for the current y; now process the other output column.</p>
+<p><strong>Output so far in Y order [y₁, y₂]:</strong> [1, 1].</p>
+<p><strong>Final result:</strong> B′ = {y₁, y₂}. <strong>Independent check:</strong> x₂ is in A and supports y₂; x₃ is outside A and supports y₁ through the ELSE branch. Thus both outputs appear, exactly matching B ∪ C for this mixed input.</p></section></section></details>
+
+<p>When A′ is wholly inside A, only the B branch is active. When A′ is wholly inside Ā, only C is produced. When A′ intersects both A and Ā, the relation can return B ∪ C. The walkthrough uses the mixed case so each branch contributes one output.</p>
+
+<h2 id="section-9">Common mistakes</h2>
+<ul>
+<li>Inclusive OR allows both propositions to be true; XOR does not.</li>
+<li>Material implication is false only for a true antecedent and a false consequent. A false antecedent makes it vacuously true.</li>
+<li>Do not treat the converse as equivalent to the conditional. Only the conditional and contrapositive are guaranteed equivalent.</li>
+<li>Modus tollens needs ¬Q together with P ⇒ Q; merely observing Q does not prove P.</li>
+<li>Use the universe-relative complement Ā in the implication relation. The ordinary rule includes Ā × Y; the ELSE rule uses Ā × C.</li>
+<li>For relation inference, keep rows indexed by X and outputs indexed by Y. Compute every output column by ANDing each path and ORing the paths.</li>
+</ul>
+
+<h2 id="section-10">Exam focus</h2>
+<ul>
+<li>Define truth and falsity sets and show that they partition U.</li>
+<li>Reproduce the four-row tables for negation, inclusive OR, AND, implication, equivalence, XOR, and XNOR.</li>
+<li>Explain the false-antecedent case and identify the single false row of P ⇒ Q.</li>
+<li>Write the converse, inverse, and contrapositive with both complement bars in place.</li>
+<li>Recognize tautologies, contradictions, modus ponens, modus tollens, and the counterexample test for proof by contradiction.</li>
+<li>For crisp rules across X and Y, write the correct product regions and compute B′ one output at a time.</li>
+</ul>
+
+<h2 id="section-11">Practice questions</h2>
+<p class="question">1. If P is false and Q is true, what is P ⇒ Q, and why?</p>
+<details class="worked"><summary>Check your answer</summary><p>It is true. An implication is violated only when P is true and Q is false; a false antecedent makes it vacuously true.</p></details>
+<p class="question">2. Write the converse, inverse, and contrapositive of P ⇒ Q. Which one is equivalent to the original?</p>
+<details class="worked"><summary>Check your answer</summary><p>Converse: Q ⇒ P. Inverse: ¬P ⇒ ¬Q. Contrapositive: ¬Q ⇒ ¬P. The contrapositive is equivalent to the original; the converse is equivalent to the inverse.</p></details>
+<p class="question">3. In the integers, are “x is even” and “x² is even” equivalent? Give a short check.</p>
+<details class="worked"><summary>Check your answer</summary><p>Yes. If x = 2k, then x² = 2(2k²) is even. If x is odd, x = 2k+1 and x² = 2(2k²+2k)+1 is odd. Thus x² is even exactly when x is even.</p></details>
+<p class="question">4. From “if P then Q” and ¬Q, what can be concluded? Name the rule.</p>
+<details class="worked"><summary>Check your answer</summary><p>Conclude ¬P by modus tollens.</p></details>
+<p class="question">5. For IF A THEN B on X × Y, what pairs form the vacuously true branch?</p>
+<details class="worked"><summary>Check your answer</summary><p>Ā × Y: every pair whose x is outside A, with any y in Y.</p></details>
+<p class="question">6. For IF A THEN B ELSE C, what region corresponds to the ELSE branch?</p>
+<details class="worked"><summary>Check your answer</summary><p>Ā × C. The antecedent complement selects the ELSE case, and the consequent is restricted to C.</p></details>
+<p class="question">7. In Boolean relation composition, how do you compute one output membership χB′(y)?</p>
+<details class="worked"><summary>Check your answer</summary><p>For each x, compute min(χA′(x), χR(x,y)); then take the maximum over all x. With 0/1 values this is OR over the ANDed paths.</p></details>
+
+<p>Continue to <a href="fuzzy-relations.html">relations and matrix composition</a> for graded relational calculations, and to <a href="logic-language.html">fuzzy propositions, linguistic variables, and implications</a> for the graded rule semantics that build on these crisp foundations.</p></article><nav class="pager" aria-label="Study sequence"><a href="membership.html"><small>Previous</small>Membership, fuzzification and defuzzification <span aria-hidden="true">↗</span></a><a href="logic-language.html"><small>Next</small>Fuzzy propositions, linguistic variables and implications <span aria-hidden="true">↗</span></a></nav><footer>Neural Networks and Fuzzy Logic · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('.example-input,.step') || expression.closest('p,li,summary,figcaption,h2,h3,h4');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 2;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Neural network and fuzzy-system diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {neuron:'activation threshold weighted sum bias',perceptron:'threshold logic decision boundary learning',adaline:'lms least mean squares madaline widrow hoff',backpropagation:'gradient chain rule delta multilayer',pnn:'probabilistic pattern classification radial basis',fuzzy:'membership set relation composition fuzzification defuzzification',membership:'fuzzification defuzzification centroid',logic:'linguistic variable rule inference',anfis:'mamdani sugeno tsukamoto adaptive neuro fuzzy'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('nn-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.NN_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

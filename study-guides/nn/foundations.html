@@ -1,0 +1,518 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="See how weighted signals, bias, activation, architecture, and learning fit together before working through the course’s training procedures."><title>Neurons, activations and network foundations · Neural networks and fuzzy logic</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('nn-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#34304a;--muted:#68647b;--secondary:#f0eef7;--border:#dfdced;--primary:#6251a5;--accent:#e7e1f7;--diagram-fill:#f1eff8;--diagram-border:#948cb2;--diagram-edge:#766c9b;--active-text:#493a84;--focus:#7865c1}:root[data-theme=dark]{--background:#191722;--foreground:#eeeaf8;--muted:#b9b2ce;--card:#211f2e;--secondary:#2b283b;--border:#48435e;--primary:#c0b2ff;--accent:#39334f;--diagram-fill:#2b283b;--diagram-border:#aaa0ce;--diagram-edge:#b4a9db;--topbar:#191722f5;--active-text:#d4caff;--focus:#c0b2ff} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> NNFL <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Neuron, learning, fuzzy sets…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Neural networks and fuzzy logic</a></div><div class="nav-group"><p>Neural networks</p><a class="nav-entry" href="foundations.html" aria-current="page">Neurons, activations and network foundations</a><a class="nav-entry" href="perceptron.html">Threshold logic and perceptron learning</a><a class="nav-entry" href="adaptive-linear.html">ADALINE and MADALINE learning</a><a class="nav-entry" href="lms.html">Widrow-Hoff derivation and LMS calculations</a><a class="nav-entry" href="backpropagation.html">Multilayer networks and backpropagation</a><a class="nav-entry" href="training-variants.html">Backpropagation variations and deeper networks</a><a class="nav-entry" href="pnn.html">Probabilistic neural networks</a></div><div class="nav-group"><p>Fuzzy foundations</p><a class="nav-entry" href="fuzzy-sets.html">Crisp and fuzzy sets</a><a class="nav-entry" href="fuzzy-relations.html">Relations and matrix composition</a><a class="nav-entry" href="membership.html">Membership, fuzzification and defuzzification</a></div><div class="nav-group"><p>Fuzzy reasoning</p><a class="nav-entry" href="classical-logic.html">Classical logic and crisp rule relations</a><a class="nav-entry" href="logic-language.html">Fuzzy propositions, linguistic variables and implications</a><a class="nav-entry" href="fuzzy-systems.html">Mamdani, Sugeno, Tsukamoto and ANFIS</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">MA4144<br>Neural Networks and Fuzzy Logic</div></aside>
+<main id="main"><div class="eyebrow">Neural networks <span>/</span> Lesson 1</div><h1>Neurons, activations and network foundations</h1><p class="lead">See how weighted signals, bias, activation, architecture, and learning fit together before working through the course’s training procedures.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">A neuron turns signals into an output</a><a href="#section-2">From one neuron to a network</a><a href="#section-3">Activations shape the response</a><a href="#section-4">Learning overview</a><a href="#section-5">Threshold and bias use different conventions</a><a href="#section-6">Strengths, limits, and model families</a><a href="#section-7">Common mistakes</a><a href="#section-8">Exam focus</a><a href="#section-9">Practice questions</a><a href="#section-10">Continue the study route</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>A neural network turns input signals into an output through connected neurons. Each connection scales a signal with a weight; each neuron adds its weighted signals and bias, then applies an activation function (also called a transfer function here). During learning, a training algorithm changes the weights and biases so the outputs better match the task. This page builds that foundation before the later pages work through particular learning rules.</p>
+<h2 id="section-1">A neuron turns signals into an output</h2>
+<p>Think of a neuron as a small calculator. Each input contributes according to its weight: a positive weight reinforces that input’s effect, a negative weight reverses its direction, and a weight near zero contributes little. The neuron first forms its <strong>net input</strong> and only then turns it into an <strong>output</strong> with an activation.</p>
+<figure><div class="diagram-frame" style="--diagram-width:880px"><svg xmlns="http://www.w3.org/2000/svg" width="880" height="390" viewBox="0 0 880 390" role="img" aria-label="Neuron computation from inputs through weights, bias, net input, activation, and output">
+  <defs>
+    <marker id="foundations-figure-1-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0L10 4L0 8Z" fill="var(--diagram-edge,#766c9b)"/></marker>
+    <style>
+      text{font-family:Georgia,serif;fill:var(--foreground,#34304a)}
+      .edge{fill:none;stroke:var(--diagram-edge,#766c9b);stroke-width:2;marker-end:url(#foundations-figure-1-arrow)}
+      .node{stroke:var(--diagram-border,#948cb2);stroke-width:2;fill:var(--diagram-fill,#f1eff8)}
+      .bias{fill:var(--secondary,#f0eef7);stroke:var(--primary,#6251a5)}
+      .sum{fill:var(--secondary,#f0eef7);stroke:var(--diagram-border,#948cb2)}
+      .act{fill:var(--accent,#e7e1f7);stroke:var(--primary,#6251a5)}
+      .output{fill:var(--card,#fff);stroke:var(--primary,#6251a5)}
+      .label{font-size:16px}.small{font-size:13px;fill:var(--muted,#68647b)}
+    </style>
+  </defs>
+  <path class="edge" d="M106 86 C190 86 212 104 285 119"/><path class="edge" d="M106 170 C190 170 212 168 285 168"/><path class="edge" d="M106 254 C190 254 212 232 285 217"/>
+  <path class="edge" d="M433 119C465 119 465 143 495 143"/><path class="edge" d="M433 168H495"/><path class="edge" d="M433 217C465 217 465 193 495 193"/><path class="edge" d="M625 168H674"/><path class="edge" d="M550 286V213"/>
+  <circle class="node" cx="78" cy="86" r="27"/><circle class="node" cx="78" cy="170" r="27"/><circle class="node" cx="78" cy="254" r="27"/>
+  <text class="label" x="78" y="92" text-anchor="middle">x₁</text><text class="label" x="78" y="176" text-anchor="middle">x₂</text><text class="label" x="78" y="260" text-anchor="middle">x₃</text>
+  <text class="small" x="78" y="310" text-anchor="middle">input signals</text>
+  <rect class="node" x="285" y="100" width="148" height="38" rx="19"/><rect class="node" x="285" y="149" width="148" height="38" rx="19"/><rect class="node" x="285" y="198" width="148" height="38" rx="19"/>
+  <text class="label" x="359" y="125" text-anchor="middle">w₁x₁</text><text class="label" x="359" y="174" text-anchor="middle">w₂x₂</text><text class="label" x="359" y="223" text-anchor="middle">w₃x₃</text>
+  <text class="small" x="359" y="269" text-anchor="middle">weighted contributions</text>
+  <rect class="bias" x="492" y="286" width="116" height="56" rx="9"/><text class="label" x="550" y="309" text-anchor="middle">bias b</text><text class="small" x="550" y="329" text-anchor="middle">constant input 1</text>
+  <rect class="sum" x="495" y="123" width="130" height="90" rx="12"/><text class="small" x="560" y="151" text-anchor="middle">net input</text><text class="label" x="560" y="180" text-anchor="middle">y_in = Σwᵢxᵢ + b</text>
+  <rect class="act" x="674" y="136" width="104" height="64" rx="12"/><text class="small" x="726" y="160" text-anchor="middle">activation</text><text class="label" x="726" y="184" text-anchor="middle">f(y_in)</text>
+  <path class="edge" d="M778 168H827"/><circle class="output" cx="846" cy="168" r="19"/><text class="label" x="846" y="174" text-anchor="middle">y</text>
+</svg>
+</div><figcaption>A neuron scales each input by its connection weight, adds the bias, then applies its activation.</figcaption></figure>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>y</mi><mrow><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></mrow></msub><mo>&#x0003D;</mo><munderover><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>n</mi></mrow></munderover><msub><mi>w</mi><mi>i</mi></msub><msub><mi>x</mi><mi>i</mi></msub></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>y</mi><mrow><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></mrow></msub><mo>&#x0003D;</mo><mi>b</mi><mo>&#x0002B;</mo><munderover><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>n</mi></mrow></munderover><msub><mi>w</mi><mi>i</mi></msub><msub><mi>x</mi><mi>i</mi></msub><mo>&#x0002C;</mo><mspace width="2em" /><mi>y</mi><mo>&#x0003D;</mo><mi>f</mi><mo stretchy="false">&#x00028;</mo><msub><mi>y</mi><mrow><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></mrow></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>f</mi><mo stretchy="false">&#x00028;</mo><msup><mi>&#x1D430;</mi><mrow><mi mathvariant="sans-serif">T</mi></mrow></msup><mi>&#x1D431;</mi><mo>&#x0002B;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>The bias <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi></mrow></math> is an adjustable offset. It can also be viewed as a constant input of <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn></mrow></math> with its own weight. In a layer, each neuron can have its own weights and bias. Under this page’s <strong>additive-bias convention</strong>, the net input is weighted sum <strong>plus</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi></mrow></math>; the sign of a threshold symbol depends on how that alternate formula is written.</p>
+<p>The notation table uses <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mi>i</mi></msub></mrow></math> for a unit’s input activation, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mi>j</mi></msub></mrow></math> for a unit’s output activation, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>w</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math> for the directed weight from unit <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi></mrow></math> to unit <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>j</mi></mrow></math>, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>W</mi></mrow></math> for a weight matrix. In the single-neuron examples, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mi>i</mi></msub></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>w</mi><mi>i</mi></msub></mrow></math> are the corresponding scalar inputs and weights. The lecture also uses <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi></mrow></math> for learning rate, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B8;</mi></mrow></math> for threshold, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>s</mi></mrow></math> for an input training vector, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>t</mi></mrow></math> for a target output vector, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi></mrow></math> for bias, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>f</mi></mrow></math> for activation.</p>
+<details class="worked"><summary>Source example — weighted sum −2.5 and step output 0</summary><section class="walk" tabindex="0" aria-label="Compute one neuron output"><h3>Compute one neuron output</h3><div class="example-input"><p><strong>Inputs:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><msub><mi>x</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mn>2</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><msub><mi>x</mi><mn>3</mn></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn></mrow></math><br><strong>Weights:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>w</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mn>0.5</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><msub><mi>w</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><msub><mi>w</mi><mn>3</mn></msub><mo>&#x0003D;</mo><mn>2</mn></mrow></math><br><strong>Bias:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math><br><strong>Activation:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi><mo>&#x0003D;</mo><mn>1</mn><mtext>&#x000A0;when&#x000A0;</mtext><msub><mi>y</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo>&#x02265;</mo><mn>0</mn><mi>;</mi><mtext>&#x000A0;otherwise&#x000A0;</mtext><mi>y</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math><br>The givens stay visible while the net input and decision are worked out.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Form each weighted contribution</h4><p><strong>Rule:</strong> multiply each input by its corresponding weight. <strong>Substitute:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>w</mi><mn>1</mn></msub><msub><mi>x</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.5</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.5</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>w</mi><mn>2</mn></msub><msub><mi>x</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>2</mn></mrow></math>, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>w</mi><mn>3</mn></msub><msub><mi>x</mi><mn>3</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>2</mn></mrow></math>. <strong>Intermediate state:</strong> the three contributions are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.5</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>2</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>2</mn></mrow></math>; next, add them and the given bias.</p></section><section class="step"><h4>2. Add the weighted contributions and bias</h4><p><strong>Rule:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo>&#x0003D;</mo><mi>b</mi><mo>&#x0002B;</mo><msubsup><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mn>3</mn></mrow></msubsup><msub><mi>w</mi><mi>i</mi></msub><msub><mi>x</mi><mi>i</mi></msub></mrow></math>. <strong>Substitute:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>0.5</mn><mo>&#x02212;</mo><mn>2</mn><mo>&#x02212;</mo><mn>2</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>2.5</mn></mrow></math>. <strong>Intermediate state:</strong> net input <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>2.5</mn></mrow></math>; next, apply the selected step activation.</p></section><section class="step"><h4>3. Compare with the step boundary</h4><p><strong>Rule:</strong> the lecture step gives 1 when <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo>&#x02265;</mo><mn>0</mn></mrow></math> and 0 when <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo>&#x0003C;</mo><mn>0</mn></mrow></math>. <strong>Substitute:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>2.5</mn><mo>&#x0003C;</mo><mn>0</mn></mrow></math>. The condition for output 1 is false, so the output is 0.</p></section><section class="step"><h4>4. Read the result and check it</h4><p><strong>Result:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>. <strong>Independent check:</strong> the weighted part is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.5</mn><mo>&#x02212;</mo><mn>2</mn><mo>&#x02212;</mo><mn>2</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>3.5</mn></mrow></math>; adding <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math> gives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>2.5</mn></mrow></math>, still below the inclusive zero boundary. This is a forward calculation; Lesson 1 gives no training update rule or epoch values.</p></section></section></details>
+<h3>What the bias changes</h3>
+<p>For the lecture’s sigmoid example, the full argument is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x0002B;</mo><mi>b</mi></mrow></math>. A sigmoid reaches its midpoint when that argument is zero, so the midpoint is at <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mi>b</mi></mrow></math>. This is why a positive additive bias shifts the curve left and a negative one shifts it right.</p>
+<details class="worked"><summary>Source example — sigmoid bias midpoints 0, −2 and +2</summary><section class="walk" tabindex="0" aria-label="Track the sigmoid midpoint as bias changes"><h3>Track the sigmoid midpoint as bias changes</h3><div class="example-input"><p><strong>Neuron convention:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi><mo>&#x0003D;</mo><mi>f</mi><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo>&#x0002B;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo></mrow></math><br><strong>Sigmoid:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>f</mi><mo stretchy="false">&#x00028;</mo><mi>u</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><msup><mi>e</mi><mrow><mo>&#x02212;</mo><mi>u</mi></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow></math><br><strong>Midpoint condition:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi><mo>&#x0003D;</mo><mn>0.5</mn></mrow></math> occurs when the sigmoid argument <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>u</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math><br><strong>Cases:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi><mo>&#x0003D;</mo><mn>0</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mi>b</mi><mo>&#x0003D;</mo><mn>2</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mi>b</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>2</mn></mrow></math>.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. No bias: midpoint at 0</h4><p><strong>Rule:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi><mo>&#x0003D;</mo><mi>f</mi><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo>&#x0002B;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo></mrow></math> and a sigmoid has midpoint <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>f</mi><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.5</mn></mrow></math>. <strong>Substitute:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, so <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><msup><mi>e</mi><mrow><mo>&#x02212;</mo><mi>x</mi></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow></math>; set its argument to zero: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>. The curve midpoint is 0; next add a positive bias.</p></section><section class="step"><h4>2. Positive bias: midpoint at −2</h4><p><strong>Rule:</strong> substitute the bias into the complete sigmoid argument. <strong>Substitute:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi><mo>&#x0003D;</mo><mn>2</mn></mrow></math> gives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><msup><mi>e</mi><mrow><mo>&#x02212;</mo><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo>&#x0002B;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow></math>; set the argument to zero, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x0002B;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, hence <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>2</mn></mrow></math>. The midpoint moves two units left; next use a negative bias.</p></section><section class="step"><h4>3. Negative bias: midpoint at +2</h4><p><strong>Rule:</strong> substitute the bias into the complete sigmoid argument. <strong>Substitute:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>2</mn></mrow></math> gives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><msup><mi>e</mi><mrow><mo>&#x02212;</mo><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo>&#x02212;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow></math>; set the argument to zero, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x02212;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, hence <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x0003D;</mo><mn>2</mn></mrow></math>. The midpoint moves two units right.</p></section><section class="step"><h4>4. Check the three cases</h4><p><strong>Result:</strong> for <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi><mo>&#x0003D;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>2</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>2</mn></mrow></math>, the midpoints are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x0003D;</mo><mn>0</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>2</mn></mrow></math>. <strong>Independent check:</strong> every case satisfies <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x0002B;</mo><mi>b</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>; at that point the sigmoid is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><msup><mi>e</mi><mn>0</mn></msup><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.5</mn></mrow></math>. The full argument <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x0002B;</mo><mi>b</mi></mrow></math> determines the shift.</p></section></section></details>
+<h2 id="section-2">From one neuron to a network</h2>
+<p><strong>Architecture</strong> is the arrangement of neurons into layers and the pattern of their connections. The input layer receives data, hidden layers process it into intermediate features, and the output layer produces the prediction or decision. The lecture’s Figure 2 and Figure 3 are separate illustrations with different hidden-layer sizes: one has three hidden units; the other has four and shows bias terms at both hidden and output layers.</p>
+<p>With one trainable weight layer directly from input to output and no hidden layer, the source describes the network as suitable for simple linearly separable problems in the introductory threshold-classifier setting. A multilayer network can build intermediate representations and model nonlinear decision boundaries. Approximation results are conditional: for example, Cybenko’s result concerns continuous functions on a compact domain and a single hidden layer with a continuous sigmoidal nonlinearity and sufficient units; it is an existence result, not a guarantee that training finds useful parameters (<a href="https://doi.org/10.1007/BF02551274">primary paper, 1989</a>).</p>
+<figure><div class="diagram-frame" style="--diagram-width:660px"><svg xmlns="http://www.w3.org/2000/svg" width="660" height="430" viewBox="0 0 660 430" role="img" aria-label="Three input units connect to three hidden units, which connect to one output unit">
+  <defs><marker id="foundations-figure-2-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0L10 4L0 8Z" fill="var(--diagram-edge,#766c9b)"/></marker><style>
+    text{font-family:Georgia,serif;fill:var(--foreground,#34304a)}.edge{stroke:var(--diagram-edge,#766c9b);stroke-width:1.7;fill:none;marker-end:url(#foundations-figure-2-arrow)}
+    .input{fill:var(--diagram-fill,#f1eff8);stroke:var(--diagram-border,#948cb2);stroke-width:2}.hidden{fill:var(--accent,#e7e1f7);stroke:var(--primary,#6251a5);stroke-width:2}.output{fill:var(--card,#fff);stroke:var(--primary,#6251a5);stroke-width:2}.layer{font-size:15px;font-weight:bold}.unit{font-size:18px}
+  </style></defs>
+  <text class="layer" x="105" y="35" text-anchor="middle">Input layer · 3</text><text class="layer" x="330" y="35" text-anchor="middle">Hidden layer · 3</text><text class="layer" x="555" y="35" text-anchor="middle">Output · 1</text>
+  <path class="edge" d="M131 112L303 142"/><path class="edge" d="M131 112L303 215"/><path class="edge" d="M131 112L303 288"/>
+  <path class="edge" d="M131 215L303 142"/><path class="edge" d="M131 215H303"/><path class="edge" d="M131 215L303 288"/>
+  <path class="edge" d="M131 318L303 142"/><path class="edge" d="M131 318L303 215"/><path class="edge" d="M131 318L303 288"/>
+  <path class="edge" d="M357 142L530 215"/><path class="edge" d="M357 215H530"/><path class="edge" d="M357 288L530 215"/>
+  <circle class="input" cx="105" cy="112" r="27"/><circle class="input" cx="105" cy="215" r="27"/><circle class="input" cx="105" cy="318" r="27"/>
+  <text class="unit" x="105" y="118" text-anchor="middle">x₁</text><text class="unit" x="105" y="221" text-anchor="middle">x₂</text><text class="unit" x="105" y="324" text-anchor="middle">x₃</text>
+  <circle class="hidden" cx="330" cy="142" r="27"/><circle class="hidden" cx="330" cy="215" r="27"/><circle class="hidden" cx="330" cy="288" r="27"/>
+  <text class="unit" x="330" y="148" text-anchor="middle">h₁</text><text class="unit" x="330" y="221" text-anchor="middle">h₂</text><text class="unit" x="330" y="294" text-anchor="middle">h₃</text>
+  <circle class="output" cx="555" cy="215" r="27"/><text class="unit" x="555" y="221" text-anchor="middle">y</text>
+</svg>
+</div><figcaption>Lesson 1 Figure 2: three inputs, three hidden units, and one output (3–3–1).</figcaption></figure>
+<figure><div class="diagram-frame" style="--diagram-width:700px"><svg xmlns="http://www.w3.org/2000/svg" width="700" height="520" viewBox="0 0 700 520" role="img" aria-label="Three inputs, four hidden units, one output, hidden layer bias b1 and output layer bias b2">
+  <defs><marker id="foundations-figure-3-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0L10 4L0 8Z" fill="var(--diagram-edge,#766c9b)"/></marker><marker id="foundations-figure-3-biasarrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0L10 4L0 8Z" fill="var(--primary,#6251a5)"/></marker><style>
+    text{font-family:Georgia,serif;fill:var(--foreground,#34304a)}.edge{stroke:var(--diagram-edge,#766c9b);stroke-width:1.5;fill:none;marker-end:url(#foundations-figure-3-arrow)}.biasedge{stroke:var(--primary,#6251a5);stroke-width:1.7;stroke-dasharray:5 4;fill:none;marker-end:url(#foundations-figure-3-biasarrow)}
+    .input{fill:var(--diagram-fill,#f1eff8);stroke:var(--diagram-border,#948cb2);stroke-width:2}.hidden{fill:var(--accent,#e7e1f7);stroke:var(--primary,#6251a5);stroke-width:2}.output{fill:var(--card,#fff);stroke:var(--primary,#6251a5);stroke-width:2}.bias{fill:var(--secondary,#f0eef7);stroke:var(--primary,#6251a5);stroke-width:2}.layer{font-size:14px;font-weight:bold}.unit{font-size:17px}.small{font-size:13px}
+  </style></defs>
+  <text class="layer" x="85" y="35" text-anchor="middle">Input · 3</text><text class="layer" x="330" y="35" text-anchor="middle">Hidden · 4</text><text class="layer" x="570" y="35" text-anchor="middle">Output · 1</text>
+  <path class="edge" d="M111 100L303 105"/><path class="edge" d="M111 100L303 175"/><path class="edge" d="M111 100L303 245"/><path class="edge" d="M111 100L303 315"/>
+  <path class="edge" d="M111 195L303 105"/><path class="edge" d="M111 195L303 175"/><path class="edge" d="M111 195L303 245"/><path class="edge" d="M111 195L303 315"/>
+  <path class="edge" d="M111 290L303 105"/><path class="edge" d="M111 290L303 175"/><path class="edge" d="M111 290L303 245"/><path class="edge" d="M111 290L303 315"/>
+  <path class="edge" d="M357 105L544 195"/><path class="edge" d="M357 175L544 195"/><path class="edge" d="M357 245L544 195"/><path class="edge" d="M357 315L544 195"/>
+  <path class="biasedge" d="M287 415Q290 365 307 334"/><path class="biasedge" d="M287 415Q288 320 307 264"/><path class="biasedge" d="M287 415Q286 265 307 194"/><path class="biasedge" d="M287 415Q284 210 307 124"/><path class="biasedge" d="M550 415L562 222"/>
+  <circle class="input" cx="85" cy="100" r="26"/><circle class="input" cx="85" cy="195" r="26"/><circle class="input" cx="85" cy="290" r="26"/>
+  <text class="unit" x="85" y="106" text-anchor="middle">x₁</text><text class="unit" x="85" y="201" text-anchor="middle">x₂</text><text class="unit" x="85" y="296" text-anchor="middle">x₃</text>
+  <circle class="hidden" cx="330" cy="105" r="26"/><circle class="hidden" cx="330" cy="175" r="26"/><circle class="hidden" cx="330" cy="245" r="26"/><circle class="hidden" cx="330" cy="315" r="26"/>
+  <text class="unit" x="330" y="111" text-anchor="middle">h₁</text><text class="unit" x="330" y="181" text-anchor="middle">h₂</text><text class="unit" x="330" y="251" text-anchor="middle">h₃</text><text class="unit" x="330" y="321" text-anchor="middle">h₄</text>
+  <circle class="output" cx="570" cy="195" r="26"/><text class="unit" x="570" y="201" text-anchor="middle">y</text>
+  <rect class="bias" x="270" y="415" width="120" height="48" rx="9"/><text class="small" x="330" y="445" text-anchor="middle">hidden bias b¹</text>
+  <rect class="bias" x="510" y="415" width="120" height="48" rx="9"/><text class="small" x="570" y="445" text-anchor="middle">output bias b²</text>
+</svg>
+</div><figcaption>Lesson 1 Figure 3: a separate 3–4–1 example with bias terms at the hidden and output layers.</figcaption></figure>
+<p>A hidden layer adds expressive power when nonlinear activations are used. If every layer applies only a linear transformation, stacking those layers still produces one linear transformation; depth alone does not create a nonlinear relationship.</p>
+<h2 id="section-3">Activations shape the response</h2>
+<p>An activation maps the net input to the neuron’s output. It can gate a response, constrain its range, and—when nonlinear—let a network represent nonlinear relationships. The lecture calls these “transfer functions” in its MATLAB table. The exact boundary cases matter: the two hard-limit functions return their nonnegative-side value at zero, and the saturating linear functions include their endpoints in the middle interval.</p>
+<table>
+<thead>
+<tr>
+<th>Activation (MATLAB transfer function)</th>
+<th>Rule on net input n</th>
+<th>Range or boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Step / hard limit (<code>hardlim</code>)</td>
+<td>0 if <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi><mo>&#x0003C;</mo><mn>0</mn></mrow></math>; 1 if <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi><mo>&#x02265;</mo><mn>0</mn></mrow></math></td>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi><mo>&#x0003D;</mo><mn>0</mn><mo>&#x021A6;</mo><mn>1</mn></mrow></math></td>
+</tr>
+<tr>
+<td>Symmetrical hard limit (<code>hardlims</code>)</td>
+<td>−1 if <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi><mo>&#x0003C;</mo><mn>0</mn></mrow></math>; +1 if <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi><mo>&#x02265;</mo><mn>0</mn></mrow></math></td>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi><mo>&#x0003D;</mo><mn>0</mn><mo>&#x021A6;</mo><mo>&#x0002B;</mo><mn>1</mn></mrow></math></td>
+</tr>
+<tr>
+<td>Sigmoid / log-sigmoid (<code>logsig</code>)</td>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><msup><mi>e</mi><mrow><mo>&#x02212;</mo><mi>n</mi></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow></math></td>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; smooth and differentiable</td>
+</tr>
+<tr>
+<td>Hyperbolic tangent (<code>tansig</code>)</td>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>tanh</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><msup><mi>e</mi><mi>n</mi></msup><mo>&#x02212;</mo><msup><mi>e</mi><mrow><mo>&#x02212;</mo><mi>n</mi></mrow></msup><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><msup><mi>e</mi><mi>n</mi></msup><mo>&#x0002B;</mo><msup><mi>e</mi><mrow><mo>&#x02212;</mo><mi>n</mi></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow></math></td>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; symmetric about zero</td>
+</tr>
+<tr>
+<td>Linear (<code>purelin</code>)</td>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0003D;</mo><mi>n</mi></mrow></math></td>
+<td>Continuous-valued output; used for regression in the lecture</td>
+</tr>
+<tr>
+<td>Saturating linear (<code>satlin</code>)</td>
+<td>0 if <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi><mo>&#x0003C;</mo><mn>0</mn></mrow></math>; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0003D;</mo><mi>n</mi></mrow></math> if <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x02264;</mo><mi>n</mi><mo>&#x02264;</mo><mn>1</mn></mrow></math>; 1 if <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi><mo>&#x0003E;</mo><mn>1</mn></mrow></math></td>
+<td>Middle interval includes 0 and 1</td>
+</tr>
+<tr>
+<td>Symmetric saturating linear (<code>satlins</code>)</td>
+<td>−1 if <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi><mo>&#x0003C;</mo><mo>&#x02212;</mo><mn>1</mn></mrow></math>; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0003D;</mo><mi>n</mi></mrow></math> if <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>1</mn><mo>&#x02264;</mo><mi>n</mi><mo>&#x02264;</mo><mn>1</mn></mrow></math>; 1 if <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi><mo>&#x0003E;</mo><mn>1</mn></mrow></math></td>
+<td>Middle interval includes −1 and 1</td>
+</tr>
+<tr>
+<td>ReLU / positive linear (<code>poslin</code>)</td>
+<td>0 if <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi><mo>&#x0003C;</mo><mn>0</mn></mrow></math>; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0003D;</mo><mi>n</mi></mrow></math> if <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi><mo>&#x02265;</mo><mn>0</mn></mrow></math></td>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>max</mo><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo></mrow></math></td>
+</tr>
+<tr>
+<td>Competitive (<code>compet</code>)</td>
+<td>1 for units at the maximum n; 0 for other units</td>
+<td>Lesson table leaves tie behavior unspecified; MATLAB marks every tied maximum as 1 (<a href="https://www.mathworks.com/help/deeplearning/ref/compet.html">MathWorks documentation</a>)</td>
+</tr>
+</tbody>
+</table>
+<p>A sigmoid output lies between 0 and 1, so it is on a probability scale; calibration is a separate property that must be checked. Modern neural networks can be poorly calibrated, and temperature scaling is one studied post-training correction (<a href="https://proceedings.mlr.press/v70/guo17a.html">Guo et al., 2017</a>). Also, the step function is not differentiable at zero and has zero derivative away from zero, so Lesson 1’s list should not be read as saying that an ordinary gradient backpropagation procedure can directly train every listed activation.</p>
+<h2 id="section-4">Learning overview</h2>
+<p>Learning changes weights (and, where used, biases) to improve the network’s responses. In <strong>supervised learning</strong>, examples come with target outputs; in <strong>unsupervised learning</strong>, only inputs are given and the model seeks structure such as groupings or patterns. The lecture’s high-level supervised workflow is:</p>
+<ol>
+<li>Propagate an input forward and produce a prediction.</li>
+<li>Compare the prediction with its target using a loss function.</li>
+<li>Use backpropagation and the chain rule to calculate how the loss depends on parameters.</li>
+<li>Use an optimizer such as gradient descent to update the weights and biases.</li>
+<li>Repeat over training examples.</li>
+</ol>
+<p>Backpropagation calculates parameter gradients; gradient descent uses those gradients for an update. They are related stages, not two names for the same operation.</p>
+<figure><div class="diagram-frame" style="--diagram-width:620px"><svg xmlns="http://www.w3.org/2000/svg" width="620" height="530" viewBox="0 0 620 530" role="img" aria-label="Training stages from input and forward pass through loss, backpropagation gradients, and gradient descent update">
+  <defs><marker id="foundations-figure-4-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0L10 4L0 8Z" fill="var(--diagram-edge,#766c9b)"/></marker><style>
+    text{font-family:Georgia,serif;fill:var(--foreground,#34304a)}.edge{stroke:var(--diagram-edge,#766c9b);stroke-width:2;fill:none;marker-end:url(#foundations-figure-4-arrow)}
+    .node{fill:var(--diagram-fill,#f1eff8);stroke:var(--diagram-border,#948cb2);stroke-width:2}.forward{fill:var(--secondary,#f0eef7);stroke:var(--diagram-border,#948cb2)}.loss{fill:var(--secondary,#f0eef7);stroke:var(--diagram-border,#948cb2)}.back{fill:var(--accent,#e7e1f7);stroke:var(--primary,#6251a5)}.update{fill:var(--card,#fff);stroke:var(--primary,#6251a5)}.label{font-size:17px}.small{font-size:14px;fill:var(--muted,#68647b)}
+  </style></defs>
+  <path class="edge" d="M310 78V105"/><path class="edge" d="M310 170V195"/><path class="edge" d="M310 260V285"/><path class="edge" d="M310 355V380"/>
+  <rect class="node" x="190" y="20" width="240" height="58" rx="12"/><text class="label" x="310" y="56" text-anchor="middle">training input x</text>
+  <rect class="node" x="20" y="199" width="130" height="56" rx="12"/><text class="label" x="85" y="233" text-anchor="middle">target t</text><path class="edge" d="M150 227H190"/>
+  <rect class="forward" x="190" y="105" width="240" height="65" rx="12"/><text class="label" x="310" y="132" text-anchor="middle">forward pass</text><text class="small" x="310" y="153" text-anchor="middle">compute the prediction</text>
+  <rect class="loss" x="190" y="195" width="240" height="65" rx="12"/><text class="label" x="310" y="222" text-anchor="middle">loss calculation</text><text class="small" x="310" y="243" text-anchor="middle">compare prediction with target</text>
+  <rect class="back" x="160" y="285" width="300" height="70" rx="12"/><text class="label" x="310" y="312" text-anchor="middle">backpropagation</text><text class="small" x="310" y="335" text-anchor="middle">chain rule computes parameter gradients</text>
+  <rect class="update" x="160" y="380" width="300" height="70" rx="12"/><text class="label" x="310" y="407" text-anchor="middle">gradient descent update</text><text class="small" x="310" y="430" text-anchor="middle">use gradients to update weights and biases</text>
+  <text class="small" x="310" y="496" text-anchor="middle">repeat across training examples</text>
+</svg>
+</div><figcaption>Forward computation, loss, backpropagation gradients, and gradient descent updates are separate training stages.</figcaption></figure>
+<p>Lesson 1 introduces the learning rate <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi></mrow></math> qualitatively: too large a value may make learning unstable, while too small a value may make it slow. It does not supply an update equation, numeric rate, initialized parameters, or training example. The following pages develop those procedures from the course material: <a href="perceptron.html">threshold logic and perceptron learning</a>, <a href="adaptive-linear.html">ADALINE, LMS, and MADALINE</a>, and <a href="backpropagation.html">backpropagation</a>.</p>
+<h2 id="section-5">Threshold and bias use different conventions</h2>
+<p>The threshold <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B8;</mi></mrow></math> describes the level at which a neuron becomes active. To compare it with the additive-bias form, state the net-input convention. <strong>Supplemental explanation:</strong> with threshold net input <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>&#x1D430;</mi><mrow><mi mathvariant="sans-serif">T</mi></mrow></msup><mi>&#x1D431;</mi><mo>&#x02212;</mo><mi>&#x003B8;</mi></mrow></math>, the same quantity can be written <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>&#x1D430;</mi><mrow><mi mathvariant="sans-serif">T</mi></mrow></msup><mi>&#x1D431;</mi><mo>&#x0002B;</mo><mi>b</mi></mrow></math> by setting <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mi>&#x003B8;</mi></mrow></math>. The symbol changes sign because the two formulas place the parameter differently. The lecture does not give this conversion formula, so keep the chosen convention visible in any calculation.</p>
+<h2 id="section-6">Strengths, limits, and model families</h2>
+<p>Neural networks learn from examples, model complex relationships, support pattern recognition and prediction, and can learn useful feature combinations. They may generalize beyond training examples, though generalization is not guaranteed. Their limits include data and computation needs, hard-to-interpret internal decisions, sensitivity to architecture and training choices, and overfitting when model complexity is high relative to the data.</p>
+<p>The lecture names CNNs for image-related tasks, RNNs for sequential or time-dependent data, and Transformers for language and sequence processing. It also lists computer vision and medical imaging, speech recognition, language tasks, forecasting, recommendations, anomaly and fraud detection, fault diagnosis, and document classification. These are an overview here; their internal algorithms are outside Lesson 1.</p>
+<h2 id="section-7">Common mistakes</h2>
+<ul>
+<li><strong>Confusing net input with output:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub></mrow></math> is the weighted sum plus bias; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi></mrow></math> is the result after applying <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>f</mi></mrow></math>.</li>
+<li><strong>Reversing the bias shift:</strong> for <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>f</mi><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo>&#x0002B;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo></mrow></math>, positive <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi></mrow></math> moves the curve left because the midpoint solves <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x0002B;</mo><mi>b</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>.</li>
+<li><strong>Counting the input layer as trainable:</strong> “single-layer” here refers to one trainable weight layer from input to output.</li>
+<li><strong>Treating a forward pass as training:</strong> a forward pass computes a response; training also compares it with a target and updates parameters.</li>
+<li><strong>Treating backpropagation as the optimizer:</strong> backpropagation supplies gradients; gradient descent uses them to update parameters.</li>
+<li><strong>Assuming every method is supervised:</strong> unsupervised learning has inputs without target outputs.</li>
+<li><strong>Assuming a 0–1 sigmoid output is automatically calibrated:</strong> the range alone does not establish calibration; assess it for the trained model.</li>
+<li><strong>Assuming a step activation is differentiable:</strong> its zero boundary needs special treatment and its ordinary derivative is zero elsewhere.</li>
+</ul>
+<h2 id="section-8">Exam focus</h2>
+<ul>
+<li>State the three network characteristics: architecture, learning algorithm (training algorithm), and activation function.</li>
+<li>Compute <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo>&#x0003D;</mo><mi>b</mi><mo>&#x0002B;</mo><msub><mo>&#x02211;</mo><mi>i</mi></msub><msub><mi>w</mi><mi>i</mi></msub><msub><mi>x</mi><mi>i</mi></msub></mrow></math>, then apply the named activation with its exact boundary rule.</li>
+<li>For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>f</mi><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo>&#x0002B;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo></mrow></math>, solve <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x0002B;</mo><mi>b</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math> to find the sigmoid midpoint; positive <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi></mrow></math> shifts left and negative <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi></mrow></math> shifts right.</li>
+<li>Distinguish supervised targets from unsupervised structure discovery.</li>
+<li>Separate the forward pass, loss calculation, backpropagation gradients, and optimizer update.</li>
+<li>Remember that hidden layers gain nonlinear expressive power through nonlinear activations; stacking linear layers alone remains linear.</li>
+</ul>
+<h2 id="section-9">Practice questions</h2>
+<p class="question">A neuron has inputs <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D431;</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>2</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, weights <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D430;</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.5</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, and bias <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math>. What is its net input and step output?</p>
+<details class="worked"><summary>Check your answer</summary><p>The net input is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002B;</mo><mn>0.5</mn><mo>&#x02212;</mo><mn>2</mn><mo>&#x02212;</mo><mn>2</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>2.5</mn></mrow></math>. Since <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>2.5</mn><mo>&#x0003C;</mo><mn>0</mn></mrow></math>, the lecture’s step rule returns 0.</p></details>
+<p class="question">What output does hardlim return when its net input is exactly zero? What does hardlims return?</p>
+<details class="worked"><summary>Check your answer</summary><p>At zero, <code>hardlim</code> returns 1 and <code>hardlims</code> returns +1; both use the nonnegative branch.</p></details>
+<p class="question">For a neuron using the lecture convention <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi><mo>&#x0003D;</mo><mi>f</mi><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo>&#x0002B;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo></mrow></math> with <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi><mo>&#x0003D;</mo><mn>2</mn></mrow></math>, where is the sigmoid midpoint and in which direction is the curve shifted?</p>
+<details class="worked"><summary>Check your answer</summary><p>The midpoint solves <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x0002B;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, so <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>2</mn></mrow></math>. The positive bias shifts the curve two units left.</p></details>
+<p class="question">In the lecture’s training overview, what does backpropagation do, and what does gradient descent do?</p>
+<details class="worked"><summary>Check your answer</summary><p>Backpropagation applies the chain rule to calculate loss gradients for parameters. Gradient descent uses those gradients to update parameters.</p></details>
+<h2 id="section-10">Continue the study route</h2>
+<p>Use the next pages for the course’s numerical learning procedures: <a href="perceptron.html">perceptron learning</a>, <a href="adaptive-linear.html">ADALINE and LMS</a>, and <a href="backpropagation.html">backpropagation</a>.</p></article><nav class="pager" aria-label="Study sequence"><a href="index.html"><small>Previous</small>Neural networks and fuzzy logic <span aria-hidden="true">↗</span></a><a href="perceptron.html"><small>Next</small>Threshold logic and perceptron learning <span aria-hidden="true">↗</span></a></nav><footer>Neural Networks and Fuzzy Logic · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('.example-input,.step') || expression.closest('p,li,summary,figcaption,h2,h3,h4');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 2;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Neural network and fuzzy-system diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {neuron:'activation threshold weighted sum bias',perceptron:'threshold logic decision boundary learning',adaline:'lms least mean squares madaline widrow hoff',backpropagation:'gradient chain rule delta multilayer',pnn:'probabilistic pattern classification radial basis',fuzzy:'membership set relation composition fuzzification defuzzification',membership:'fuzzification defuzzification centroid',logic:'linguistic variable rule inference',anfis:'mamdani sugeno tsukamoto adaptive neuro fuzzy'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('nn-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.NN_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

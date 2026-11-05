@@ -1,0 +1,713 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Trace canonical rule evaluation, compare Mamdani, TSK, and Tsukamoto inference, and see how ANFIS layers connect TSK with hybrid learning."><title>Mamdani, Sugeno, Tsukamoto and ANFIS · Neural networks and fuzzy logic</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('nn-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();</script><style>:root{--background:#fafaf6;--foreground:#23332a;--muted:#627168;--card:#fff;--secondary:#eef2e9;--border:#dce3d8;--primary:#286b43;--accent:#d9ead6;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #a8c6a7}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#99b39f}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #47845a;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#fafaf6f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#215332}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:#45584a}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid #c8d8c7;border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #aebfab;background:#f5f6f1;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#f5f6f1;--diagram-border:#86968b;--diagram-edge:#7b8c80;--node-red:#b42332;--node-black:#151c18;--diagram-link:#2463eb;--topbar:#fafaf6f5;--active-text:#215332;--focus:#47845a}
+:root[data-theme=dark]{color-scheme:dark;--background:#151c18;--foreground:#e2ebe3;--muted:#a7b9ad;--card:#1b251f;--secondary:#24312a;--border:#3b4d40;--primary:#94d4a2;--accent:#2d5039;--diagram-fill:#24312a;--diagram-border:#93ad9b;--diagram-edge:#9ab5a2;--node-red:#ff7c89;--node-black:#d6dfd8;--diagram-link:#8fbcff;--topbar:#151c18f5;--active-text:#b7e8c2;--focus:#94d4a2}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:var(--muted);font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#34304a;--muted:#68647b;--secondary:#f0eef7;--border:#dfdced;--primary:#6251a5;--accent:#e7e1f7;--diagram-fill:#f1eff8;--diagram-border:#948cb2;--diagram-edge:#766c9b;--active-text:#493a84;--focus:#7865c1}:root[data-theme=dark]{--background:#191722;--foreground:#eeeaf8;--muted:#b9b2ce;--card:#211f2e;--secondary:#2b283b;--border:#48435e;--primary:#c0b2ff;--accent:#39334f;--diagram-fill:#2b283b;--diagram-border:#aaa0ce;--diagram-edge:#b4a9db;--topbar:#191722f5;--active-text:#d4caff;--focus:#c0b2ff} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> NNFL <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Neuron, learning, fuzzy sets…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Neural networks and fuzzy logic</a></div><div class="nav-group"><p>Neural networks</p><a class="nav-entry" href="foundations.html">Neurons, activations and network foundations</a><a class="nav-entry" href="perceptron.html">Threshold logic and perceptron learning</a><a class="nav-entry" href="adaptive-linear.html">ADALINE and MADALINE learning</a><a class="nav-entry" href="lms.html">Widrow-Hoff derivation and LMS calculations</a><a class="nav-entry" href="backpropagation.html">Multilayer networks and backpropagation</a><a class="nav-entry" href="training-variants.html">Backpropagation variations and deeper networks</a><a class="nav-entry" href="pnn.html">Probabilistic neural networks</a></div><div class="nav-group"><p>Fuzzy foundations</p><a class="nav-entry" href="fuzzy-sets.html">Crisp and fuzzy sets</a><a class="nav-entry" href="fuzzy-relations.html">Relations and matrix composition</a><a class="nav-entry" href="membership.html">Membership, fuzzification and defuzzification</a></div><div class="nav-group"><p>Fuzzy reasoning</p><a class="nav-entry" href="classical-logic.html">Classical logic and crisp rule relations</a><a class="nav-entry" href="logic-language.html">Fuzzy propositions, linguistic variables and implications</a><a class="nav-entry" href="fuzzy-systems.html" aria-current="page">Mamdani, Sugeno, Tsukamoto and ANFIS</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">MA4144<br>Neural Networks and Fuzzy Logic</div></aside>
+<main id="main"><div class="eyebrow">Fuzzy reasoning <span>/</span> Fuzzy lesson 7</div><h1>Mamdani, Sugeno, Tsukamoto and ANFIS</h1><p class="lead">Trace canonical rule evaluation, compare Mamdani, TSK, and Tsukamoto inference, and see how ANFIS layers connect TSK with hybrid learning.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">From expert rules to a canonical rule base</a><a href="#section-2">Rule aggregation is separate from antecedent logic</a><a href="#section-3">One inference skeleton, three consequent designs</a><a href="#section-4">Mamdani: fuzzy consequents, clipping or scaling, then centroid</a><a href="#section-5">Sugeno / TSK: crisp constant or input-function consequents</a><a href="#section-6">ANFIS: five TSK layers and hybrid parameter fitting</a><a href="#section-7">Tsukamoto: monotonic consequents map firing grades to crisp values</a><a href="#section-8">Heat exchanger: calculate the physical baseline, then identify missing fuzzy data</a><a href="#section-9">Compact operator reference</a><a href="#section-10">Common mistakes</a><a href="#section-11">Exam focus</a><a href="#section-12">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>A fuzzy rule-based system turns linguistic conditions into a numerical decision. The rule’s left side says when it applies; the right side determines what kind of output each rule produces. Mamdani rules conclude with fuzzy sets, Sugeno (TSK) rules conclude with constants or input functions, and Tsukamoto rules conclude with strictly monotonic fuzzy sets that can be inverted. That one structural choice changes how rules combine and how the final crisp result is obtained.</p>
+<p>This page continues from <a href="logic-language.html">logic, linguistic variables, and fuzzy rules</a>, which introduces the fuzzy connectives and rule language used below. For membership functions and the derivations of scalar defuzzification methods, use <a href="membership.html">membership, fuzzification, and defuzzification</a>; here the centroid is applied only to the restaurant system. Later ANFIS learning connections point to <a href="lms.html">LMS</a> and <a href="backpropagation.html">backpropagation</a>.</p>
+
+<h2 id="section-1">From expert rules to a canonical rule base</h2>
+<p>An IF–THEN rule is a deductive statement: the <strong>premise</strong> or <strong>antecedent</strong> is the condition, and the <strong>conclusion</strong> or <strong>consequent</strong> is what follows. Rule-based systems capture shallow, empirical knowledge: “if the patient has fever and cough, suspect influenza”; “if temperature is high, open the cooling valve more”; “if the car will not start and the headlights are dim, the battery may be flat.” Deep knowledge explains why, through a causal disease model, a thermodynamic energy balance, or the vehicle’s circuit, battery chemistry, and alternator. Fuzzy rules retain readable expert language while making the mapping between input and output states explicit.</p>
+<p>The lecture’s canonical fuzzy-set form has one antecedent set and one consequent set per rule. Compound antecedents are reduced using fuzzy intersection for AND and fuzzy union for OR. Under the standard operators, AND takes the minimum grade and OR takes the maximum. This canonical fuzzy-set form is the starting point; TSK function consequents and Tsukamoto inverse-mapped outputs are later, distinct model structures.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>R</mi><mi>s</mi></msub><mi>:</mi><mi>e</mi><mi>x</mi><mi>t</mi><mrow><mi>I</mi><mi>F</mi></mrow><mi>x</mi><mi>e</mi><mi>x</mi><mi>t</mi><mrow><mi>i</mi><mi>s</mi></mrow><msub><mi>A</mi><mi>s</mi></msub><mi>e</mi><mi>x</mi><mi>t</mi><mrow><mi>T</mi><mi>H</mi><mi>E</mi><mi>N</mi></mrow><mi>y</mi><mi>e</mi><mi>x</mi><mi>t</mi><mrow><mi>i</mi><mi>s</mi></mrow><msub><mi>B</mi><mi>s</mi></msub><mo>&#x0002C;</mo><mi>q</mi><mi>q</mi><mi>u</mi><mi>a</mi><mi>d</mi><mi>s</mi><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002C;</mo><mi>l</mi><mi>d</mi><mi>o</mi><mi>t</mi><mi>s</mi><mo>&#x0002C;</mo><mi>r</mi></mrow></math></div>
+<p>For a conjunctive antecedent, the weakest membership limits the rule. For a disjunctive antecedent, the strongest alternative determines its grade. With mixed connectives, preserve parentheses and reduce the expression tree from leaves upward. The source uses classical precedence, AND before OR; explicit grouping is safer whenever a rule could be read in more than one way.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x003BC;</mi><mrow><mi>A</mi><mo>&#x02229;</mo><mi>B</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>min</mo><mo stretchy="false">&#x0007B;</mo><msub><mi>&#x003BC;</mi><mi>A</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><msub><mi>&#x003BC;</mi><mi>B</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x0007D;</mo><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>&#x003BC;</mi><mrow><mi>A</mi><mo>&#x0222A;</mo><mi>B</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>max</mo><mo stretchy="false">&#x0007B;</mo><msub><mi>&#x003BC;</mi><mi>A</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><msub><mi>&#x003BC;</mi><mi>B</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x0007D;</mo></mrow></math></div>
+<figure><div class="diagram-frame" style="--diagram-width:315.6px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="The source rule groups (A1 AND A2) OR A3: evaluate the lower min node first, then the root max node." width="316pt" height="230pt"
+ viewBox="0.00 0.00 315.60 229.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="fuzzy-systems-figure-1-fuzzy-systems-rule-tree-01-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 218.8)">
+<title>G</title>
+<!-- root -->
+<g id="fuzzy-systems-figure-1-fuzzy-systems-rule-tree-01-node1" class="node">
+<title>root</title>
+<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2" d="M263.5,-208C263.5,-208 89.5,-208 89.5,-208 83.5,-208 77.5,-202 77.5,-196 77.5,-196 77.5,-172 77.5,-172 77.5,-166 83.5,-160 89.5,-160 89.5,-160 263.5,-160 263.5,-160 269.5,-160 275.5,-166 275.5,-172 275.5,-172 275.5,-196 275.5,-196 275.5,-202 269.5,-208 263.5,-208"/>
+<text text-anchor="middle" x="176.5" y="-189" font-family="Georgia" font-size="15.00">OR · max</text>
+<text text-anchor="middle" x="176.5" y="-172" font-family="Georgia" font-size="15.00">max(0.40, 0.80) = 0.80</text>
+</g>
+<!-- and -->
+<g id="fuzzy-systems-figure-1-fuzzy-systems-rule-tree-01-node2" class="node">
+<title>and</title>
+<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2" d="M183,-128C183,-128 12,-128 12,-128 6,-128 0,-122 0,-116 0,-116 0,-92 0,-92 0,-86 6,-80 12,-80 12,-80 183,-80 183,-80 189,-80 195,-86 195,-92 195,-92 195,-116 195,-116 195,-122 189,-128 183,-128"/>
+<text text-anchor="middle" x="97.5" y="-109" font-family="Georgia" font-size="15.00">AND · min</text>
+<text text-anchor="middle" x="97.5" y="-92" font-family="Georgia" font-size="15.00">min(0.40, 0.60) = 0.40</text>
+</g>
+<!-- root&#45;&gt;and -->
+<g id="fuzzy-systems-figure-1-fuzzy-systems-rule-tree-01-edge1" class="edge">
+<title>root&#45;&gt;and</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M152.8,-159.6C144.28,-151.19 134.6,-141.63 125.74,-132.88"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="127.14,-131.07 120.91,-128.12 123.94,-134.3 127.14,-131.07"/>
+</g>
+<!-- a3 -->
+<g id="fuzzy-systems-figure-1-fuzzy-systems-rule-tree-01-node5" class="node">
+<title>a3</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M282,-128C282,-128 229,-128 229,-128 223,-128 217,-122 217,-116 217,-116 217,-92 217,-92 217,-86 223,-80 229,-80 229,-80 282,-80 282,-80 288,-80 294,-86 294,-92 294,-92 294,-116 294,-116 294,-122 288,-128 282,-128"/>
+<text text-anchor="middle" x="255.5" y="-109" font-family="Georgia" font-size="15.00">A₃ at x₃</text>
+<text text-anchor="middle" x="255.5" y="-92" font-family="Georgia" font-size="15.00">0.80</text>
+</g>
+<!-- root&#45;&gt;a3 -->
+<g id="fuzzy-systems-figure-1-fuzzy-systems-rule-tree-01-edge2" class="edge">
+<title>root&#45;&gt;a3</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M200.2,-159.6C208.72,-151.19 218.4,-141.63 227.26,-132.88"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="229.06,-134.3 232.09,-128.12 225.86,-131.07 229.06,-134.3"/>
+</g>
+<!-- a1 -->
+<g id="fuzzy-systems-figure-1-fuzzy-systems-rule-tree-01-node3" class="node">
+<title>a1</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M75,-48C75,-48 22,-48 22,-48 16,-48 10,-42 10,-36 10,-36 10,-12 10,-12 10,-6 16,0 22,0 22,0 75,0 75,0 81,0 87,-6 87,-12 87,-12 87,-36 87,-36 87,-42 81,-48 75,-48"/>
+<text text-anchor="middle" x="48.5" y="-29" font-family="Georgia" font-size="15.00">A₁ at x₁</text>
+<text text-anchor="middle" x="48.5" y="-12" font-family="Georgia" font-size="15.00">0.40</text>
+</g>
+<!-- and&#45;&gt;a1 -->
+<g id="fuzzy-systems-figure-1-fuzzy-systems-rule-tree-01-edge3" class="edge">
+<title>and&#45;&gt;a1</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M82.8,-79.6C77.71,-71.5 71.95,-62.34 66.63,-53.86"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="68.41,-52.41 63.02,-48.12 64.55,-54.83 68.41,-52.41"/>
+</g>
+<!-- a2 -->
+<g id="fuzzy-systems-figure-1-fuzzy-systems-rule-tree-01-node4" class="node">
+<title>a2</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M174,-48C174,-48 121,-48 121,-48 115,-48 109,-42 109,-36 109,-36 109,-12 109,-12 109,-6 115,0 121,0 121,0 174,0 174,0 180,0 186,-6 186,-12 186,-12 186,-36 186,-36 186,-42 180,-48 174,-48"/>
+<text text-anchor="middle" x="147.5" y="-29" font-family="Georgia" font-size="15.00">A₂ at x₂</text>
+<text text-anchor="middle" x="147.5" y="-12" font-family="Georgia" font-size="15.00">0.60</text>
+</g>
+<!-- and&#45;&gt;a2 -->
+<g id="fuzzy-systems-figure-1-fuzzy-systems-rule-tree-01-edge4" class="edge">
+<title>and&#45;&gt;a2</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M112.5,-79.6C117.69,-71.5 123.57,-62.34 129,-53.86"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="131.09,-54.82 132.68,-48.12 127.26,-52.36 131.09,-54.82"/>
+</g>
+</g>
+</svg>
+</div><figcaption>The source rule groups (A1 AND A2) OR A3: evaluate the lower min node first, then the root max node.</figcaption></figure>
+<p>The source’s mixed example parses as (A₁ AND A₂) OR A₃. Its completed tree gives 0.80; the alternate grouping A₁ AND (A₂ OR A₃) gives 0.40. The following viewer shows every node and keeps the original grades visible.</p>
+
+<details class="worked"><summary>Example 7.4: preserve the source grouping</summary><section class="walk" tabindex="0" aria-label="Mixed antecedent: bottom-up rule evaluation"><h3>Mixed antecedent: bottom-up rule evaluation</h3><div class="example-input"><strong>Source rule:</strong> IF (x₁ is A₁ AND x₂ is A₂) OR x₃ is A₃ THEN y is B.<br>
+<strong>Grades:</strong> μ<sub>A₁</sub>(x₁)=0.40, μ<sub>A₂</sub>(x₂)=0.60, μ<sub>A₃</sub>(x₃)=0.80.<br>
+<strong>Chosen operators:</strong> AND=min; OR=max; Mamdani implication=min.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Read the grouping before calculating</h4><p><strong>Rule:</strong> (A₁ AND A₂) OR A₃. The lecture convention gives AND higher precedence, so the root is OR and its left child is AND. Keep the parentheses; they determine the tree.</p></section><section class="step"><h4>2. Evaluate the AND child</h4><p><strong>Rule:</strong> AND uses the minimum here. Substitute the two left-leaf grades: min(0.40, 0.60) = <strong>0.40</strong>. The next operation is the root OR.</p></section><section class="step"><h4>3. Evaluate the OR root</h4><p><strong>Rule:</strong> OR uses the maximum. Substitute the completed AND result and the right leaf: max(0.40, 0.80) = <strong>0.80</strong>. This is the antecedent firing grade.</p></section><section class="step"><h4>4. Apply the consequent implication</h4><p>Under Mamdani minimum implication, μ<sub>B′</sub>(y)=min(0.80, μ<sub>B</sub>(y)): clip the consequent at height 0.80. This is an output-set operation, not another antecedent connective.</p></section><section class="step"><h4>5. Change only the grouping and compare</h4><p>For A₁ AND (A₂ OR A₃), first max(0.60, 0.80)=0.80, then min(0.40, 0.80)=<strong>0.40</strong>. The distinct answer proves why the tree must be preserved. The original grouping gives 0.80; the alternate grouping gives 0.40.</p></section></section></details>
+
+<p>The source also gives a temperature-and-pressure rule: “high temperature AND high pressure → valve slightly open.” Grades 0.80 and 0.60 give a min firing grade of 0.60, so Mamdani implication clips “slightly open” at 0.60. Replacing AND with OR gives 0.80. A crisp centroid cannot be calculated from that example because the consequent membership function and output universe are not specified.</p>
+
+<h2 id="section-2">Rule aggregation is separate from antecedent logic</h2>
+<p>Antecedent connectives decide how conditions within one rule combine. <strong>Rule aggregation</strong> combines the consequents of several rules after each rule has fired. If all rules must hold jointly, intersect their output sets; with the standard min operation, the aggregate grade is the smallest rule-output grade at each output value. If at least one rule should suffice, union the sets; with max, take the largest grade at each output value. This meaning is separate from AND/OR inside a single antecedent.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x003BC;</mi><mrow><mrow><mi mathvariant="normal">j</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">t</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mo>min</mo><mi>i</mi></msub><msub><mi>&#x003BC;</mi><mrow><msub><mi>B</mi><mi>i</mi></msub></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>&#x003BC;</mi><mrow><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">t</mi><mtext>&#x000A0;</mtext><mi mathvariant="normal">l</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">t</mi><mtext>&#x000A0;</mtext><mi mathvariant="normal">o</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">e</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mo>max</mo><mi>i</mi></msub><msub><mi>&#x003BC;</mi><mrow><msub><mi>B</mi><mi>i</mi></msub></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+
+<h2 id="section-3">One inference skeleton, three consequent designs</h2>
+<p>Each system begins with crisp inputs and evaluates their membership in the antecedent sets. It then calculates rule firing strengths using the selected T-norm or S-norm and forms rule outputs. After that point the architectures diverge: Mamdani aggregates fuzzy outputs and defuzzifies; TSK and Tsukamoto produce a crisp value per rule and combine those values with normalized firing weights.</p>
+<p>Check the denominator before normalizing. A Mamdani centroid requires a positive aggregate output area; TSK and Tsukamoto require a positive total firing strength. If no rule contributes, these formulas are undefined. Report that case or use a fallback explicitly specified by the system.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>&#x0222B;</mo><msub><mi>&#x003BC;</mi><mi>C</mi></msub><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mi>d</mi><mi>z</mi><mo>&#x0003E;</mo><mn>0</mn><mspace width="1em" /><mtext>(centroid)</mtext></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><munder><mo>&#x02211;</mo><mi>i</mi></munder><msub><mi>w</mi><mi>i</mi></msub><mo>&#x0003E;</mo><mn>0</mn><mo>&#x0002C;</mo><mspace width="2em" /><munder><mo>&#x02211;</mo><mi>i</mi></munder><msub><mi>&#x003B1;</mi><mi>i</mi></msub><mo>&#x0003E;</mo><mn>0</mn><mspace width="1em" /><mtext>(weighted&#x000A0;means)</mtext></mrow></math></div>
+<figure><div class="diagram-frame" style="--diagram-width:981.6px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="The models share crisp-input fuzzification and rule evaluation, then diverge by consequent type: Mamdani returns fuzzy sets; TSK and Tsukamoto return crisp rule values." width="982pt" height="210pt"
+ viewBox="0.00 0.00 981.60 209.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="fuzzy-systems-figure-2-fuzzy-systems-inference-branches-01-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 198.8)">
+<title>G</title>
+<!-- input -->
+<g id="fuzzy-systems-figure-2-fuzzy-systems-inference-branches-01-node1" class="node">
+<title>input</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M103,-112C103,-112 12,-112 12,-112 6,-112 0,-106 0,-100 0,-100 0,-88 0,-88 0,-82 6,-76 12,-76 12,-76 103,-76 103,-76 109,-76 115,-82 115,-88 115,-88 115,-100 115,-100 115,-106 109,-112 103,-112"/>
+<text text-anchor="middle" x="57.5" y="-90.5" font-family="Georgia" font-size="15.00">Crisp inputs</text>
+</g>
+<!-- fuzzify -->
+<g id="fuzzy-systems-figure-2-fuzzy-systems-inference-branches-01-node2" class="node">
+<title>fuzzify</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M311,-118C311,-118 159,-118 159,-118 153,-118 147,-112 147,-106 147,-106 147,-82 147,-82 147,-76 153,-70 159,-70 159,-70 311,-70 311,-70 317,-70 323,-76 323,-82 323,-82 323,-106 323,-106 323,-112 317,-118 311,-118"/>
+<text text-anchor="middle" x="235" y="-99" font-family="Georgia" font-size="15.00">Membership grades</text>
+<text text-anchor="middle" x="235" y="-82" font-family="Georgia" font-size="15.00">(rule antecedents)</text>
+</g>
+<!-- input&#45;&gt;fuzzify -->
+<g id="fuzzy-systems-figure-2-fuzzy-systems-inference-branches-01-edge1" class="edge">
+<title>input&#45;&gt;fuzzify</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M115.48,-94C123.3,-94 131.49,-94 139.76,-94"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="140.22,-96.28 146.72,-94 140.22,-91.73 140.22,-96.28"/>
+</g>
+<!-- fire -->
+<g id="fuzzy-systems-figure-2-fuzzy-systems-inference-branches-01-node3" class="node">
+<title>fire</title>
+<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2" d="M490,-118C490,-118 367,-118 367,-118 361,-118 355,-112 355,-106 355,-106 355,-82 355,-82 355,-76 361,-70 367,-70 367,-70 490,-70 490,-70 496,-70 502,-76 502,-82 502,-82 502,-106 502,-106 502,-112 496,-118 490,-118"/>
+<text text-anchor="middle" x="428.5" y="-99" font-family="Georgia" font-size="15.00">Rule firing</text>
+<text text-anchor="middle" x="428.5" y="-82" font-family="Georgia" font-size="15.00">T&#45;norm / S&#45;norm</text>
+</g>
+<!-- fuzzify&#45;&gt;fire -->
+<g id="fuzzy-systems-figure-2-fuzzy-systems-inference-branches-01-edge2" class="edge">
+<title>fuzzify&#45;&gt;fire</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M323.06,-94C331.4,-94 339.83,-94 348.08,-94"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="348.48,-96.28 354.98,-94 348.48,-91.73 348.48,-96.28"/>
+</g>
+<!-- mamdani -->
+<g id="fuzzy-systems-figure-2-fuzzy-systems-inference-branches-01-node4" class="node">
+<title>mamdani</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M734,-188C734,-188 546,-188 546,-188 540,-188 534,-182 534,-176 534,-176 534,-152 534,-152 534,-146 540,-140 546,-140 546,-140 734,-140 734,-140 740,-140 746,-146 746,-152 746,-152 746,-176 746,-176 746,-182 740,-188 734,-188"/>
+<text text-anchor="middle" x="640" y="-169" font-family="Georgia" font-size="15.00">Mamdani</text>
+<text text-anchor="middle" x="640" y="-152" font-family="Georgia" font-size="15.00">shape fuzzy consequents</text>
+</g>
+<!-- fire&#45;&gt;mamdani -->
+<g id="fuzzy-systems-figure-2-fuzzy-systems-inference-branches-01-edge3" class="edge">
+<title>fire&#45;&gt;mamdani</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M501.17,-118.02C512.16,-121.7 523.38,-125.45 534,-129 542.59,-131.87 551.57,-134.87 560.52,-137.85"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="559.81,-140.02 566.7,-139.91 561.25,-135.7 559.81,-140.02"/>
+</g>
+<!-- tsk -->
+<g id="fuzzy-systems-figure-2-fuzzy-systems-inference-branches-01-node5" class="node">
+<title>tsk</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M708.5,-118C708.5,-118 571.5,-118 571.5,-118 565.5,-118 559.5,-112 559.5,-106 559.5,-106 559.5,-82 559.5,-82 559.5,-76 565.5,-70 571.5,-70 571.5,-70 708.5,-70 708.5,-70 714.5,-70 720.5,-76 720.5,-82 720.5,-82 720.5,-106 720.5,-106 720.5,-112 714.5,-118 708.5,-118"/>
+<text text-anchor="middle" x="640" y="-99" font-family="Georgia" font-size="15.00">TSK</text>
+<text text-anchor="middle" x="640" y="-82" font-family="Georgia" font-size="15.00">evaluate functions</text>
+</g>
+<!-- fire&#45;&gt;tsk -->
+<g id="fuzzy-systems-figure-2-fuzzy-systems-inference-branches-01-edge4" class="edge">
+<title>fire&#45;&gt;tsk</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M502.18,-94C518.46,-94 535.88,-94 552.65,-94"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="552.79,-96.28 559.29,-94 552.79,-91.73 552.79,-96.28"/>
+</g>
+<!-- tsukamoto -->
+<g id="fuzzy-systems-figure-2-fuzzy-systems-inference-branches-01-node6" class="node">
+<title>tsukamoto</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M719,-48C719,-48 561,-48 561,-48 555,-48 549,-42 549,-36 549,-36 549,-12 549,-12 549,-6 555,0 561,0 561,0 719,0 719,0 725,0 731,-6 731,-12 731,-12 731,-36 731,-36 731,-42 725,-48 719,-48"/>
+<text text-anchor="middle" x="640" y="-29" font-family="Georgia" font-size="15.00">Tsukamoto</text>
+<text text-anchor="middle" x="640" y="-12" font-family="Georgia" font-size="15.00">invert monotone sets</text>
+</g>
+<!-- fire&#45;&gt;tsukamoto -->
+<g id="fuzzy-systems-figure-2-fuzzy-systems-inference-branches-01-edge5" class="edge">
+<title>fire&#45;&gt;tsukamoto</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M501.17,-69.98C512.16,-66.3 523.38,-62.55 534,-59 542.59,-56.13 551.57,-53.13 560.52,-50.15"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="561.25,-52.3 566.7,-48.09 559.81,-47.98 561.25,-52.3"/>
+</g>
+<!-- centroid -->
+<g id="fuzzy-systems-figure-2-fuzzy-systems-inference-branches-01-node7" class="node">
+<title>centroid</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M948,-188C948,-188 790,-188 790,-188 784,-188 778,-182 778,-176 778,-176 778,-152 778,-152 778,-146 784,-140 790,-140 790,-140 948,-140 948,-140 954,-140 960,-146 960,-152 960,-152 960,-176 960,-176 960,-182 954,-188 948,-188"/>
+<text text-anchor="middle" x="869" y="-169" font-family="Georgia" font-size="15.00">Aggregate fuzzy sets</text>
+<text text-anchor="middle" x="869" y="-152" font-family="Georgia" font-size="15.00">then centroid</text>
+</g>
+<!-- mamdani&#45;&gt;centroid -->
+<g id="fuzzy-systems-figure-2-fuzzy-systems-inference-branches-01-edge6" class="edge">
+<title>mamdani&#45;&gt;centroid</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M746.19,-164C754.44,-164 762.74,-164 770.93,-164"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="771.28,-166.28 777.78,-164 771.28,-161.73 771.28,-166.28"/>
+</g>
+<!-- weighted -->
+<g id="fuzzy-systems-figure-2-fuzzy-systems-inference-branches-01-node8" class="node">
+<title>weighted</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M929.5,-83C929.5,-83 808.5,-83 808.5,-83 802.5,-83 796.5,-77 796.5,-71 796.5,-71 796.5,-47 796.5,-47 796.5,-41 802.5,-35 808.5,-35 808.5,-35 929.5,-35 929.5,-35 935.5,-35 941.5,-41 941.5,-47 941.5,-47 941.5,-71 941.5,-71 941.5,-77 935.5,-83 929.5,-83"/>
+<text text-anchor="middle" x="869" y="-64" font-family="Georgia" font-size="15.00">Firing&#45;weighted</text>
+<text text-anchor="middle" x="869" y="-47" font-family="Georgia" font-size="15.00">crisp average</text>
+</g>
+<!-- tsk&#45;&gt;weighted -->
+<g id="fuzzy-systems-figure-2-fuzzy-systems-inference-branches-01-edge7" class="edge">
+<title>tsk&#45;&gt;weighted</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M720.71,-81.71C743.15,-78.25 767.53,-74.49 789.88,-71.05"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="790.36,-73.27 796.43,-70.03 789.66,-68.78 790.36,-73.27"/>
+</g>
+<!-- tsukamoto&#45;&gt;weighted -->
+<g id="fuzzy-systems-figure-2-fuzzy-systems-inference-branches-01-edge8" class="edge">
+<title>tsukamoto&#45;&gt;weighted</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M731.04,-37.88C750.34,-40.86 770.57,-43.98 789.39,-46.88"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="789.49,-49.2 796.26,-47.94 790.18,-44.7 789.49,-49.2"/>
+</g>
+</g>
+</svg>
+</div><figcaption>The models share crisp-input fuzzification and rule evaluation, then diverge by consequent type: Mamdani returns fuzzy sets; TSK and Tsukamoto return crisp rule values.</figcaption></figure>
+<table><thead><tr><th>Model</th><th>Rule consequent</th><th>Per-rule result</th><th>Final combination</th></tr></thead><tbody><tr><td>Mamdani</td><td>Fuzzy output set</td><td>Clipped or scaled set</td><td>Aggregate sets, then defuzzify</td></tr><tr><td>Sugeno / TSK</td><td>Constant or affine function</td><td>Crisp function value</td><td>Normalized firing-weighted average</td></tr><tr><td>Tsukamoto</td><td>Strictly monotonic fuzzy set</td><td>Inverse-mapped crisp value</td><td>Normalized firing-weighted average</td></tr></tbody></table>
+<p>The lecture’s Mamdani overview enumerates four named stages: fuzzification, rule evaluation/implication, aggregation, and defuzzification. Its restaurant prompt calls the process “five-stage”; firing-strength calculation can be split out from implication to count five operations, but it is part of rule evaluation in the four-stage description. Both counts describe the same calculation.</p>
+
+<h2 id="section-4">Mamdani: fuzzy consequents, clipping or scaling, then centroid</h2>
+<p>In a Mamdani rule, antecedent grades combine to give a firing strength α. Minimum implication clips the consequent at α; product implication scales every point on the curve by α. These operations produce different shapes and must not be confused. After each rule has been modified, a selected S-norm (usually max) aggregates the sets. A scalar defuzzifier then returns the output.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x003B1;</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mo>min</mo><mo stretchy="false">&#x0007B;</mo><msub><mi>&#x003BC;</mi><mrow><msub><mi>A</mi><mi>i</mi></msub></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mi>x</mi><mn>0</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><msub><mi>&#x003BC;</mi><mrow><msub><mi>B</mi><mi>i</mi></msub></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mi>y</mi><mn>0</mn></msub><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x0007D;</mo></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x003BC;</mi><mrow><msub><mi>C</mi><mi>i</mi></msub><mi>&#x02032;</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>min</mo><mo stretchy="false">&#x0007B;</mo><msub><mi>&#x003B1;</mi><mi>i</mi></msub><mo>&#x0002C;</mo><msub><mi>&#x003BC;</mi><mrow><msub><mi>C</mi><mi>i</mi></msub></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x0007D;</mo><mspace width="1em" /><mtext>(minimum&#x000A0;clipping)</mtext></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x003BC;</mi><mrow><msub><mi>C</mi><mi>i</mi></msub><mi>&#x02032;</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mi>&#x003B1;</mi><mi>i</mi></msub><msub><mi>&#x003BC;</mi><mrow><msub><mi>C</mi><mi>i</mi></msub></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo stretchy="false">&#x00029;</mo><mspace width="1em" /><mtext>(product&#x000A0;scaling)</mtext></mrow></math></div>
+<p>Clipping replaces every membership above α with the same flat height; scaling multiplies the original membership at every z by α. In both cases the output set remains in [0,1], but the area, shape, and later centroid can differ. Use max aggregation only when that is the stated rule-combination operator.</p>
+<table><thead><tr><th>Operation</th><th>Pointwise rule</th><th>Visible effect</th></tr></thead><tbody><tr><td>Minimum implication</td><td>min(α, μ<sub>C</sub>(z))</td><td>Top is cut to a horizontal plateau at α</td></tr><tr><td>Product implication</td><td>α μ<sub>C</sub>(z)</td><td>Every grade is multiplied by α; no flat cut is introduced</td></tr><tr><td>Max aggregation</td><td>max<sub>i</sub> μ<sub>Cᵢ′</sub>(z)</td><td>At each z, retain the largest rule-output grade</td></tr></tbody></table>
+<p>The six scalar defuzzification methods and their derivations belong on the earlier <a href="membership.html">membership and defuzzification page</a>. The restaurant example below uses just the continuous centroid requested by the rule system: area under the aggregated output curve supplies the denominator and its first moment supplies the numerator.</p>
+
+<h3>Restaurant tip: source functions, rules, and inputs</h3>
+<p>The source sets food x=7.5, service y=4.0, and tip z∈[0,20] percent. It defines a rising-then-falling Delicious membership, its standard complement, Poor and Good service grades, and Low and High tip ramps. R₁ is Delicious OR Good → High; R₂ is NOT Delicious AND Poor → Low. The full functions and every exact integral breakpoint stay visible in the collapsible worked calculation.</p>
+
+<details class="worked"><summary>Example 7.7: complete restaurant functions and continuous centroid</summary><section class="walk" tabindex="0" aria-label="Restaurant tip: exact continuous Mamdani centroid"><h3>Restaurant tip: exact continuous Mamdani centroid</h3><div class="example-input"><strong>Inputs and ranges:</strong> food x=7.5 on [0,10]; service y=4 on [0,10]; tip z∈[0,20] percent.<br>
+<strong>Food:</strong> μ<sub>Del</sub>(x)=(x−5)/3 for 5≤x≤8; (10−x)/2 for 8&lt;x≤10; otherwise 0. μ<sub>Not Del</sub>=1−μ<sub>Del</sub>.<br>
+<strong>Service:</strong> μ<sub>Poor</sub>(y)=1−y/5 for 0≤y≤5, else 0; μ<sub>Good</sub>(y)=y/5 for 0≤y≤5 and 1 for y&gt;5.<br>
+<strong>Tip:</strong> μ<sub>Low</sub>(z)=1−z/10 on 0≤z≤10, else 0; μ<sub>High</sub>(z)=(z−10)/10 on 10≤z≤20, else 0.<br>
+<strong>Rules/operators:</strong> R₁: Del OR Good → High; R₂: NOT Del AND Poor → Low. Use max for OR, min for AND, min clipping, max aggregation, and the continuous centroid.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Fuzzify food and service</h4><p><strong>Food at x=7.5:</strong> it lies on the rising Delicious branch, so μ<sub>Del</sub>=(7.5−5)/3=2.5/3=<strong>5/6</strong> and μ<sub>Not Del</sub>=1−5/6=<strong>1/6</strong>.<br><strong>Service at y=4:</strong> μ<sub>Poor</sub>=1−4/5=<strong>1/5</strong> and μ<sub>Good</sub>=4/5=<strong>4/5</strong>. These four grades are the only input values needed by the rules.</p></section><section class="step"><h4>2. Find both rule firing strengths</h4><p>R₁ uses OR: α₁=max(5/6,4/5)=max(25/30,24/30)=<strong>5/6</strong>. R₂ uses AND: α₂=min(1/6,1/5)=min(5/30,6/30)=<strong>1/6</strong>. These strengths set the heights of High and Low under minimum implication.</p></section><section class="step"><h4>3. Clip both consequents and locate every breakpoint</h4><p>Low is clipped at 1/6. Its descending line 1−z/10 reaches that height when 1−z/10=1/6, so z=10(5/6)=<strong>25/3</strong>. Thus its pieces change at z=0, 25/3, and 10.<br>High is clipped at 5/6. Its rising line (z−10)/10 reaches that height when z=10+10(5/6)=<strong>55/3</strong>. Thus its pieces change at z=10, 55/3, and 20. The complete ordered breakpoint list is <strong>0, 25/3, 10, 55/3, 20</strong>.</p></section><section class="step"><h4>4. Write the aggregated curve interval by interval</h4><p>The two supports meet only at z=10, where both have grade 0, so max aggregation does not create an overlap with positive area. The exact aggregate is:<br>0≤z≤25/3: 1/6; 25/3&lt;z≤10: 1−z/10; 10≤z&lt;55/3: (z−10)/10; 55/3≤z≤20: 5/6; 0 outside [0,20]. At each endpoint the adjacent formulas agree.</p></section><section class="step"><h4>5. Low-tip area and first moment</h4><p>Split at 25/3. <strong>Area:</strong> A<sub>L</sub>=(25/3)(1/6)+∫<sub>25/3</sub><sup>10</sup>(1−z/10)dz=25/18+5/36=<strong>55/36</strong>. The second term is the triangle with base 5/3 and height 1/6.<br><strong>First moment:</strong> M<sub>L</sub>=∫<sub>0</sub><sup>25/3</sup>z/6 dz+∫<sub>25/3</sub><sup>10</sup>z(1−z/10)dz=625/108+100/81=1875/324+400/324=<strong>2275/324</strong>. The antiderivative for the second integral is z²/2−z³/30.</p></section><section class="step"><h4>6. High-tip area and first moment</h4><p>Split at 55/3. <strong>Area:</strong> A<sub>H</sub>=∫<sub>10</sub><sup>55/3</sup>(z−10)/10 dz+(20−55/3)(5/6)=125/36+25/18=<strong>175/36</strong>. The ramp triangle has base 25/3 and height 5/6; the last piece is a plateau rectangle.<br><strong>First moment:</strong> M<sub>H</sub>=∫<sub>10</sub><sup>55/3</sup>z(z−10)/10 dz+∫<sub>55/3</sub><sup>20</sup>(5/6)z dz=4375/81+2875/108=17500/324+8625/324=<strong>26125/324</strong>. Antiderivatives are z³/30−z²/2 and 5z²/12, respectively.</p></section><section class="step"><h4>7. Add moments and areas, then take the centroid</h4><p>Because the two clipped supports overlap only at a zero-height point, max aggregation adds the two areas and moments: A=55/36+175/36=230/36=<strong>115/18</strong>; M=2275/324+26125/324=28400/324=<strong>7100/81</strong>.<br>Therefore z*=M/A=(7100/81)/(115/18)=<strong>14200/1035=2840/207≈13.7198068%</strong>, or about <strong>13.72%</strong>.</p></section><section class="step"><h4>8. Check the result independently</h4><p>Area check: 115/18≈6.38889; moment check: 7100/81≈87.65432. Their ratio is 13.7198. The result lies inside [0,20] and above 10, consistent with the larger high-tip area (175/36 versus 55/36).</p></section></section></details>
+
+<p>Four stages are named in the general Mamdani pipeline; the worked viewer separates the input-grade evaluation, each rule firing, clipping, aggregation, and defuzzification to make every decision inspectable. Its result is 13.72%. The inputs, two original rules, and all membership branches are included in the viewer’s pinned givens.</p>
+
+<h2 id="section-5">Sugeno / TSK: crisp constant or input-function consequents</h2>
+<p>TSK rules keep fuzzy antecedents but conclude with a crisp function. A zero-order model uses a constant cᵢ. A first-order model uses an affine function of the inputs. Each rule first gets a firing strength; its function is then evaluated at the crisp inputs. Normalizing the strengths makes the final result a weighted average. Unlike Mamdani, TSK does not aggregate output membership curves or compute their centroid.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>f</mi><mi>i</mi></msub><mo stretchy="false">&#x00028;</mo><mi>&#x1D431;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mi>c</mi><mi>i</mi></msub><mspace width="1em" /><mtext>(zero&#x000A0;order)</mtext><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>f</mi><mi>i</mi></msub><mo stretchy="false">&#x00028;</mo><mi>&#x1D431;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mi>p</mi><mrow><mi>i</mi><mn>0</mn></mrow></msub><mo>&#x0002B;</mo><munderover><mo>&#x02211;</mo><mrow><mi>j</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>n</mi></mrow></munderover><msub><mi>p</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>x</mi><mi>j</mi></msub><mspace width="1em" /><mtext>(first&#x000A0;order)</mtext></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mover><mrow><mi>w</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mi>i</mi></msub><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>w</mi><mi>i</mi></msub></mrow><mrow><msub><mo>&#x02211;</mo><mi>k</mi></msub><msub><mi>w</mi><mi>k</mi></msub></mrow></mfrac><mo>&#x0002C;</mo><mspace width="2em" /><msup><mi>y</mi><mo>&#x0002A;</mo></msup><mo>&#x0003D;</mo><munder><mo>&#x02211;</mo><mi>i</mi></munder><msub><mover><mrow><mi>w</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mi>i</mi></msub><msub><mi>f</mi><mi>i</mi></msub><mo stretchy="false">&#x00028;</mo><mi>&#x1D431;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><msub><mo>&#x02211;</mo><mi>i</mi></msub><msub><mi>w</mi><mi>i</mi></msub><msub><mi>f</mi><mi>i</mi></msub><mo stretchy="false">&#x00028;</mo><mi>&#x1D431;</mi><mo stretchy="false">&#x00029;</mo></mrow><mrow><msub><mo>&#x02211;</mo><mi>i</mi></msub><msub><mi>w</mi><mi>i</mi></msub></mrow></mfrac></mrow></math></div>
+<p>For nonnegative firing strengths with a positive total, normalized weights sum to one and the answer lies between the smallest and largest active rule outputs. If all firing strengths are zero, the denominator is zero; a default action or better rule coverage must be designed rather than hidden in the formula.</p>
+<p>Example 7.8 supplies x=4, y=2; consequents z₁=3x+2y+4 and z₂=2x+5y+12; and grade pairs (0.6,0.8) and (0.5,0.4). It names minimum and product as common AND operators but does not select one for that example. Using minimum gives the requested 24. Product produces a different value, so the T-norm is part of the stated calculation assumption.</p>
+
+<details class="worked"><summary>Example 7.8: exact TSK values and all five ANFIS inference layers</summary><section class="walk" tabindex="0" aria-label="Two-rule first-order TSK example through the ANFIS layers"><h3>Two-rule first-order TSK example through the ANFIS layers</h3><div class="example-input"><strong>Source inputs:</strong> x=4, y=2.<br><strong>Rule consequents:</strong> z₁=3x+2y+4; z₂=2x+5y+12.<br><strong>Membership grades:</strong> Rule 1 (0.6,0.8); Rule 2 (0.5,0.4).<br><strong>Main calculation convention:</strong> min T-norm; product alternative shown in the final step.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Declare the AND operator and retain the givens</h4><p>The source lists min and product T-norms but does not specify one for Example 7.8. Use the standard <strong>minimum AND</strong> for the requested source result. Inputs are x=4, y=2. Rule 1 grades are (0.6,0.8); Rule 2 grades are (0.5,0.4). Consequents: z₁=3x+2y+4 and z₂=2x+5y+12.</p></section><section class="step"><h4>2. Layer 1: evaluate memberships</h4><p>The crisp values have already been fuzzified by the supplied grades: Rule 1 receives 0.6 for A₁ and 0.8 for B₁; Rule 2 receives 0.5 for A₂ and 0.4 for B₂. A full ANFIS would compute these from adaptive membership functions; this source example gives the grades directly.</p></section><section class="step"><h4>3. Layer 2: calculate firing strengths</h4><p>With minimum AND: w₁=min(0.6,0.8)=<strong>0.6</strong> and w₂=min(0.5,0.4)=<strong>0.4</strong>. These nonnegative strengths are the two rule activations.</p></section><section class="step"><h4>4. Layer 3: normalize the strengths</h4><p>Their sum is 0.6+0.4=1. Therefore w̄₁=0.6/1=<strong>0.6</strong> and w̄₂=0.4/1=<strong>0.4</strong>. The normalized values sum to 1, as required for a weighted average.</p></section><section class="step"><h4>5. Layer 4: evaluate and weight each consequent</h4><p>Substitute x=4,y=2: z₁=3(4)+2(2)+4=12+4+4=<strong>20</strong>; z₂=2(4)+5(2)+12=8+10+12=<strong>30</strong>. Weighted contributions are w̄₁z₁=0.6(20)=<strong>12</strong> and w̄₂z₂=0.4(30)=<strong>12</strong>.</p></section><section class="step"><h4>6. Layer 5: sum the contributions and check</h4><p>z*=12+12=<strong>24</strong>. Independent check: normalized weights total 1, and 20≤24≤30, so the result is a valid convex combination of the two rule outputs.</p></section><section class="step"><h4>7. Compare the other stated T-norm</h4><p>If product AND is chosen instead, w₁=0.6(0.8)=0.48 and w₂=0.5(0.4)=0.20. Then z*=[0.48(20)+0.20(30)]/(0.48+0.20)=15.6/0.68=<strong>390/17≈22.9412</strong>. The method is unchanged, but the numeric result changes. State the T-norm whenever a problem does not specify it.</p></section></section></details>
+
+<h2 id="section-6">ANFIS: five TSK layers and hybrid parameter fitting</h2>
+<p>ANFIS (Adaptive Neuro-Fuzzy Inference System) embeds a first-order TSK model in a five-layer feedforward network. Its first three layers make memberships and normalized rule weights; Layer 4 evaluates each weighted linear consequent; Layer 5 sums the contributions. Thus, the TSK example above already supplies numerical states for all five layers: grades (0.6,0.8)/(0.5,0.4), firing weights 0.6/0.4, normalized weights 0.6/0.4, weighted terms 12/12, and total 24 under minimum AND.</p>
+<figure><div class="diagram-frame" style="--diagram-width:829.6px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="ANFIS implements first-order TSK in five layers: fuzzify, fire rules, normalize, weight each linear consequent, and sum." width="830pt" height="70pt"
+ viewBox="0.00 0.00 829.60 69.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="fuzzy-systems-figure-3-fuzzy-systems-anfis-layers-01-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 58.8)">
+<title>G</title>
+<!-- l1 -->
+<g id="fuzzy-systems-figure-3-fuzzy-systems-anfis-layers-01-node1" class="node">
+<title>l1</title>
+<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2" d="M164,-48C164,-48 12,-48 12,-48 6,-48 0,-42 0,-36 0,-36 0,-12 0,-12 0,-6 6,0 12,0 12,0 164,0 164,0 170,0 176,-6 176,-12 176,-12 176,-36 176,-36 176,-42 170,-48 164,-48"/>
+<text text-anchor="middle" x="88" y="-29" font-family="Georgia" font-size="15.00">Layer 1</text>
+<text text-anchor="middle" x="88" y="-12" font-family="Georgia" font-size="15.00">Membership grades</text>
+</g>
+<!-- l2 -->
+<g id="fuzzy-systems-figure-3-fuzzy-systems-anfis-layers-01-node2" class="node">
+<title>l2</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M319,-48C319,-48 220,-48 220,-48 214,-48 208,-42 208,-36 208,-36 208,-12 208,-12 208,-6 214,0 220,0 220,0 319,0 319,0 325,0 331,-6 331,-12 331,-12 331,-36 331,-36 331,-42 325,-48 319,-48"/>
+<text text-anchor="middle" x="269.5" y="-29" font-family="Georgia" font-size="15.00">Layer 2</text>
+<text text-anchor="middle" x="269.5" y="-12" font-family="Georgia" font-size="15.00">Rule firing wᵢ</text>
+</g>
+<!-- l1&#45;&gt;l2 -->
+<g id="fuzzy-systems-figure-3-fuzzy-systems-anfis-layers-01-edge1" class="edge">
+<title>l1&#45;&gt;l2</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M176.12,-24C184.5,-24 192.9,-24 201.04,-24"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="201.32,-26.28 207.82,-24 201.32,-21.73 201.32,-26.28"/>
+</g>
+<!-- l3 -->
+<g id="fuzzy-systems-figure-3-fuzzy-systems-anfis-layers-01-node3" class="node">
+<title>l3</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M473,-48C473,-48 375,-48 375,-48 369,-48 363,-42 363,-36 363,-36 363,-12 363,-12 363,-6 369,0 375,0 375,0 473,0 473,0 479,0 485,-6 485,-12 485,-12 485,-36 485,-36 485,-42 479,-48 473,-48"/>
+<text text-anchor="middle" x="424" y="-29" font-family="Georgia" font-size="15.00">Layer 3</text>
+<text text-anchor="middle" x="424" y="-12" font-family="Georgia" font-size="15.00">Normalize w̄ᵢ</text>
+</g>
+<!-- l2&#45;&gt;l3 -->
+<g id="fuzzy-systems-figure-3-fuzzy-systems-anfis-layers-01-edge2" class="edge">
+<title>l2&#45;&gt;l3</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M331.21,-24C339.39,-24 347.81,-24 356.09,-24"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="356.5,-26.28 363,-24 356.5,-21.73 356.5,-26.28"/>
+</g>
+<!-- l4 -->
+<g id="fuzzy-systems-figure-3-fuzzy-systems-anfis-layers-01-node4" class="node">
+<title>l4</title>
+<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2" d="M667,-48C667,-48 529,-48 529,-48 523,-48 517,-42 517,-36 517,-36 517,-12 517,-12 517,-6 523,0 529,0 529,0 667,0 667,0 673,0 679,-6 679,-12 679,-12 679,-36 679,-36 679,-42 673,-48 667,-48"/>
+<text text-anchor="middle" x="598" y="-29" font-family="Georgia" font-size="15.00">Layer 4</text>
+<text text-anchor="middle" x="598" y="-12" font-family="Georgia" font-size="15.00">Consequent terms</text>
+</g>
+<!-- l3&#45;&gt;l4 -->
+<g id="fuzzy-systems-figure-3-fuzzy-systems-anfis-layers-01-edge3" class="edge">
+<title>l3&#45;&gt;l4</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M485.16,-24C493.34,-24 501.87,-24 510.4,-24"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="510.42,-26.28 516.92,-24 510.42,-21.73 510.42,-26.28"/>
+</g>
+<!-- l5 -->
+<g id="fuzzy-systems-figure-3-fuzzy-systems-anfis-layers-01-node5" class="node">
+<title>l5</title>
+<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M796,-48C796,-48 723,-48 723,-48 717,-48 711,-42 711,-36 711,-36 711,-12 711,-12 711,-6 717,0 723,0 723,0 796,0 796,0 802,0 808,-6 808,-12 808,-12 808,-36 808,-36 808,-42 802,-48 796,-48"/>
+<text text-anchor="middle" x="759.5" y="-29" font-family="Georgia" font-size="15.00">Layer 5</text>
+<text text-anchor="middle" x="759.5" y="-12" font-family="Georgia" font-size="15.00">Sum to y*</text>
+</g>
+<!-- l4&#45;&gt;l5 -->
+<g id="fuzzy-systems-figure-3-fuzzy-systems-anfis-layers-01-edge4" class="edge">
+<title>l4&#45;&gt;l5</title>
+<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M679.22,-24C687.7,-24 696.18,-24 704.27,-24"/>
+<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="704.46,-26.28 710.96,-24 704.46,-21.73 704.46,-26.28"/>
+</g>
+</g>
+</svg>
+</div><figcaption>ANFIS implements first-order TSK in five layers: fuzzify, fire rules, normalize, weight each linear consequent, and sum.</figcaption></figure>
+<table><thead><tr><th>Layer</th><th>Operation</th><th>What adapts</th><th>TSK example state</th></tr></thead><tbody><tr><td>1</td><td>Fuzzify inputs</td><td>Premise membership parameters</td><td>0.6, 0.8; 0.5, 0.4</td></tr><tr><td>2</td><td>Compute rule firing</td><td>Selected T-norm</td><td>w₁=0.6; w₂=0.4</td></tr><tr><td>3</td><td>Normalize firing values</td><td>No new parameter</td><td>w̄₁=0.6; w̄₂=0.4</td></tr><tr><td>4</td><td>Evaluate each weighted consequent</td><td>Linear consequent coefficients</td><td>12 and 12</td></tr><tr><td>5</td><td>Sum the weighted values</td><td>No new parameter</td><td>z*=24</td></tr></tbody></table>
+<p>Hybrid learning separates two parameter groups. In the forward pass, hold premise parameters fixed and solve the linear consequent parameters by least squares (the source describes recursive least-squares estimation). In the backward pass, hold the consequents fixed and update nonlinear premise parameters, such as membership centers and widths, by gradient descent. Least squares is exact for the fixed-premise linear consequent subproblem; it does not make the full nonlinear model a single global linear fit. See the course’s <a href="lms.html">least-squares/LMS notes</a> and <a href="backpropagation.html">backpropagation derivations</a> for the shared learning ideas.</p>
+
+<details class="worked"><summary>Optional Teaching example: two epochs of hybrid ANFIS updates</summary><section class="walk" tabindex="0" aria-label="Teaching example: two hybrid-learning epochs"><h3>Teaching example: two hybrid-learning epochs</h3><div class="example-input"><strong>Constructed model:</strong> three targets (2,4,4); normalized rows (1,0), (0,1), (a,1−a); a=σ(q).<br><strong>Initial values:</strong> q=0, c₁=c₂=0; premise rate 0.1.<br><strong>Learning split:</strong> forward pass holds premise weights fixed and solves consequents by least squares; backward pass holds consequents fixed and uses the premise gradient.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Teaching example · 1. Set up the small two-rule model</h4><p>This optional learning illustration is a constructed Teaching example, not one of the lecture’s numerical examples. The target vector is (2,4,4). Example 1 uses normalized rule weights (1,0), Example 2 uses (0,1), and Example 3 uses (a,1−a), where a=σ(q)=1/(1+e<sup>−q</sup>). Start q=0, so a=0.5; start consequent constants c₁=c₂=0. Use premise learning rate 0.1. This illustration uses zero-order constants and a logistic premise grade; those values and a training schedule are not supplied by the lecture.</p></section><section class="step"><h4>Teaching example · 2. Epoch 1 forward pass: fit consequents</h4><p>Hold a=0.5 fixed. The design rows are (1,0), (0,1), and (0.5,0.5), so least squares gives the normal equations [[1.25,0.25],[0.25,1.25]][c₁,c₂]ᵀ=[4,6]ᵀ. Their determinant is 1.5; solving gives c₁=7/3 and c₂=13/3. Predictions are 7/3, 13/3, 10/3. Prediction-minus-target residuals are 1/3, 1/3, −2/3; the half-squared loss is 1/2(1/9+1/9+4/9)=<strong>1/3</strong>. This pass changes only consequent parameters.</p></section><section class="step"><h4>Teaching example · 3. Epoch 1 backward pass: update premise</h4><p>Keep c₁,c₂ fixed and update q from the third example. Its prediction is y₃=ac₁+(1−a)c₂. At q=0, dy₃/dq=(c₁−c₂)a(1−a)=(-2)(1/4)=−1/2. Thus ∂E/∂q=(y₃−4)dy₃/dq=(-2/3)(-1/2)=<strong>1/3</strong>. Gradient descent gives q←0−0.1(1/3)=−0.0333333 and a=σ(q)≈<strong>0.4916674</strong>. With the fitted consequents still fixed, y₃≈<strong>3.3500</strong>, closer to 4. Only the premise parameter changes in this pass.</p></section><section class="step"><h4>Teaching example · 4. Epoch 2 forward pass: refit after the premise change</h4><p>Rebuild the third design row using a≈0.4916674; do not reuse the old weight row. With q fixed, least squares now gives c₁≈<strong>2.322286</strong>, c₂≈<strong>4.333210</strong>. Predictions are 2.322286, 4.333210, and 3.344504; half-squared loss is approximately <strong>0.322286</strong>. The consequent parameters have changed because the premise-dependent design matrix changed.</p></section><section class="step"><h4>Teaching example · 5. Epoch 2 backward pass and scope check</h4><p>Hold the new consequents fixed. For the third point, ∂E/∂q=(3.344504−4)(2.322286−4.333210)(0.4916674)(1−0.4916674)≈<strong>0.329447</strong>. Update q≈−0.0333333−0.1(0.329447)=<strong>−0.0662780</strong>, so a≈<strong>0.4834366</strong> and the third prediction with fixed c₁,c₂ becomes about <strong>3.361056</strong>. This is a teaching trace, not a claim that the supplied lecture sets two epochs, these targets, these values, or this membership design. For course learning-rule detail, see <a href="lms.html">LMS</a> and <a href="backpropagation.html">backpropagation</a>.</p></section></section></details>
+
+<p>The optional two-epoch trace is labeled a Teaching example because the supplied lecture provides the five-layer architecture and parameter split, but no numerical training set, initial parameters, learning rate, or epoch schedule. The source-based TSK layer example above remains the numerical inference example.</p>
+
+<h2 id="section-7">Tsukamoto: monotonic consequents map firing grades to crisp values</h2>
+<p>Every Tsukamoto consequent membership function must be strictly monotonic over its output range so the firing grade selects exactly one crisp output by inverse mapping. The rule outputs are then averaged with their firing strengths. This avoids Mamdani’s aggregate-and-centroid step, but the monotonic-consequent constraint is essential; a non-monotonic set may have multiple outputs for one grade.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>y</mi><mi>i</mi></msub><mo>&#x0003D;</mo><msubsup><mi>&#x003BC;</mi><mrow><msub><mi>C</mi><mi>i</mi></msub></mrow><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msubsup><mo stretchy="false">&#x00028;</mo><msub><mi>&#x003B1;</mi><mi>i</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><msup><mi>y</mi><mo>&#x0002A;</mo></msup><mo>&#x0003D;</mo><mfrac><mrow><msub><mo>&#x02211;</mo><mi>i</mi></msub><msub><mi>&#x003B1;</mi><mi>i</mi></msub><msub><mi>y</mi><mi>i</mi></msub></mrow><mrow><msub><mo>&#x02211;</mo><mi>i</mi></msub><msub><mi>&#x003B1;</mi><mi>i</mi></msub></mrow></mfrac></mrow></math></div>
+<p>Example 7.9 reuses the restaurant’s food and service inputs and the same two antecedents. Its High consequent is μ<sub>High</sub>(y)=y/20, so inverse mapping gives y₁=20α₁. Its Low consequent is μ<sub>Low</sub>(y)=(20−y)/20, so y₂=20(1−α₂). Keep these crisp inverse outputs separate from Mamdani’s clipped fuzzy sets.</p>
+
+<details class="worked"><summary>Example 7.9: inverse consequent outputs and weighted tip</summary><section class="walk" tabindex="0" aria-label="Tsukamoto restaurant: fire, invert, average"><h3>Tsukamoto restaurant: fire, invert, average</h3><div class="example-input"><strong>Inputs:</strong> food 7.5, service 4.0; [0,10] scales. Food grades 5/6 and 1/6; service grades Good=4/5 and Poor=1/5.<br><strong>Rules:</strong> Del OR Good → High; NOT Del AND Poor → Low.<br><strong>Consequents:</strong> μ<sub>High</sub>(y)=y/20; μ<sub>Low</sub>(y)=(20−y)/20 on [0,20].</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Reuse the source membership grades</h4><p>At x₁=7.5, μ<sub>Del</sub>=5/6 and μ<sub>Not Del</sub>=1/6. At x₂=4, μ<sub>Good</sub>=4/5 and μ<sub>Poor</sub>=1/5. The antecedent functions are the same ones used in the Mamdani restaurant example.</p></section><section class="step"><h4>2. Fire both rules with their own connective</h4><p>Rule 1 uses OR, so α₁=max(5/6,4/5)=<strong>5/6</strong>. Rule 2 uses AND, so α₂=min(1/6,1/5)=<strong>1/6</strong>. These grades become inverse-mapping levels for the two monotonic output sets.</p></section><section class="step"><h4>3. Invert the High and Low consequents</h4><p>High: μ<sub>High</sub>(y)=y/20=α₁ gives y₁=20(5/6)=<strong>50/3</strong>. Low: μ<sub>Low</sub>(y)=(20−y)/20=α₂ gives y₂=20(1−1/6)=20(5/6)=<strong>50/3</strong>. The outputs coincide.</p></section><section class="step"><h4>4. Average and independently check</h4><p>y*=[(5/6)(50/3)+(1/6)(50/3)]/(5/6+1/6)=(50/3)(1)/(1)=<strong>50/3≈16.67%</strong>. Since both rule outputs equal 50/3 and the firing weights are positive, every normalized weighted average must return that same value.</p></section></section></details>
+
+<h2 id="section-8">Heat exchanger: calculate the physical baseline, then identify missing fuzzy data</h2>
+<p>The source’s Example 7.10 gives a heat-exchanger sizing equation and three rules. The physical crisp baseline can be calculated from the supplied operating point. A fuzzy output cannot: the source asks the reader to formulate membership functions and TSK consequents but supplies none. The correct engineering response is to report what is determined and list what must be specified before firing strengths or model outputs are unique.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>A</mi><mi>U</mi><mo>&#x0003D;</mo><mi>w</mi><msub><mi>C</mi><mi>p</mi></msub><mi>ln</mi><mspace width="negativethinmathspace" /><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mfrac><mrow><msub><mi>T</mi><mi>s</mi></msub><mo>&#x02212;</mo><msub><mi>T</mi><mn>1</mn></msub></mrow><mrow><mi>&#x00394;</mi><msub><mi>T</mi><mrow><mi>a</mi><mi>p</mi><mi>p</mi></mrow></msub></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow></mrow></math></div>
+<p>The source rules are: (1) large flow AND small approach → large exchanger; (2) small flow OR large approach → small exchanger; (3) small flow AND small approach → large exchanger. The full unit conversion, baseline arithmetic, exact rules, and missing-data boundary are shown here.</p>
+
+<details class="worked"><summary>Example 7.10: exact crisp baseline and fuzzy underdetermination</summary><section class="walk" tabindex="0" aria-label="Heat exchanger: crisp baseline and missing fuzzy design data"><h3>Heat exchanger: crisp baseline and missing fuzzy design data</h3><div class="example-input"><strong>Given:</strong> P<sub>s</sub>=68.95 kPa; T<sub>s</sub>=362.7 K; T₁=17°C=290.15 K; T<sub>s</sub>−T₁=72.55 K; C<sub>p</sub>=1.7543 kJ/(kg·K); w=1300 kg/s; ΔT<sub>app</sub>=6.5 K.<br><strong>Rules:</strong> (1) large flow AND small approach → large exchanger; (2) small flow OR large approach → small exchanger; (3) small flow AND small approach → large exchanger.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Convert the inlet temperature and find the approach difference</h4><p>Given steam saturation temperature T<sub>s</sub>=362.7 K and inlet T₁=17°C, convert with 17+273.15=<strong>290.15 K</strong>. Then T<sub>s</sub>−T₁=362.7−290.15=<strong>72.55 K</strong>, matching the source. The approach temperature is ΔT<sub>app</sub>=6.5 K.</p></section><section class="step"><h4>2. Substitute into the physical baseline equation</h4><p>AU=wC<sub>p</sub> ln((T<sub>s</sub>−T₁)/ΔT<sub>app</sub>). Substitute w=1300 kg/s, C<sub>p</sub>=1.7543 kJ/(kg·K), and the two temperature differences: AU=1300(1.7543)ln(72.55/6.5). The logarithm argument is dimensionless.</p></section><section class="step"><h4>3. Check units and evaluate the crisp result</h4><p>wC<sub>p</sub>=1300(1.7543)=<strong>2280.59 kJ/(s·K)=2280.59 kW/K</strong>. The ratio is 72.55/6.5=11.16153846 and ln(ratio)=2.412473802. Thus AU=2280.59(2.412473802)=<strong>5501.8636 kW/K</strong> (about 5501.86 kW/K). Pressure P<sub>s</sub>=68.95 kPa is given but does not occur in the supplied AU equation.</p></section><section class="step"><h4>4. Stop before inventing a fuzzy output</h4><p>The source supplies the three rules but no membership functions for large/small flow, small/large approach, or large/small exchanger, and no numeric first-order TSK consequents. Therefore the grades, firing strengths, and fuzzy AU outputs are underdetermined. To calculate them, first provide the antecedent functions and output sets for Mamdani/Tsukamoto, plus any TSK consequent constants or coefficients; also state operators. The exact baseline above is calculable, but it does not supply those missing fuzzy model choices.</p></section></section></details>
+
+<h2 id="section-9">Compact operator reference</h2>
+<p>A T-norm models AND/intersection; an S-norm (or t-conorm) models OR/union. The operator family is a modeling choice: standard minimum/maximum is used in the source examples unless another operator is stated. These axioms and bounds apply to grades a,b in [0,1].</p>
+<table><thead><tr><th>Family</th><th>Operator</th><th>Formula</th><th>Use</th></tr></thead><tbody><tr><td>T-norm</td><td>Minimum</td><td>min(a,b)</td><td>Standard AND; idempotent</td></tr><tr><td>T-norm</td><td>Algebraic product</td><td>ab</td><td>Smooth AND</td></tr><tr><td>T-norm</td><td>Łukasiewicz / bounded difference</td><td>max(0,a+b−1)</td><td>Nilpotent AND</td></tr><tr><td>T-norm</td><td>Drastic product</td><td>min(a,b) if max(a,b)=1; otherwise 0</td><td>Smallest T-norm</td></tr><tr><td>S-norm</td><td>Maximum</td><td>max(a,b)</td><td>Standard OR; idempotent</td></tr><tr><td>S-norm</td><td>Algebraic sum</td><td>a+b−ab</td><td>Probabilistic sum</td></tr><tr><td>S-norm</td><td>Łukasiewicz / bounded sum</td><td>min(1,a+b)</td><td>Bounded OR</td></tr><tr><td>S-norm</td><td>Drastic sum</td><td>max(a,b) if min(a,b)=0; otherwise 1</td><td>Largest S-norm</td></tr></tbody></table>
+<p>For a T-norm T and S-norm S, the defining conditions include commutativity, associativity, monotonicity, and the boundary identities T(a,1)=a and S(a,0)=a. Standard complement is N(a)=1−a, and De Morgan duality gives S(a,b)=1−T(1−a,1−b). The source also lists Sugeno and Yager complements and the Yager T-norm family:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>N</mi><mo stretchy="false">&#x00028;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><mi>a</mi><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>N</mi><mi>s</mi></msub><mo stretchy="false">&#x00028;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn><mo>&#x02212;</mo><mi>a</mi></mrow><mrow><mn>1</mn><mo>&#x0002B;</mo><mi>s</mi><mi>a</mi></mrow></mfrac><mtext>&#x000A0;</mtext><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0003E;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>N</mi><mi>w</mi></msub><mo stretchy="false">&#x00028;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><msup><mi>a</mi><mi>w</mi></msup><msup><mo stretchy="false">&#x00029;</mo><mrow><mn>1</mn><mo>&#x0002F;</mo><mi>w</mi></mrow></msup><mtext>&#x000A0;</mtext><mo stretchy="false">&#x00028;</mo><mi>w</mi><mo>&#x0003E;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>T</mi><mi>p</mi></msub><mo stretchy="false">&#x00028;</mo><mi>a</mi><mo>&#x0002C;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><mo>min</mo><mspace width="negativethinmathspace" /><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mi>a</mi><msup><mo stretchy="false">&#x00029;</mo><mi>p</mi></msup><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mi>b</mi><msup><mo stretchy="false">&#x00029;</mo><mi>p</mi></msup><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mrow><mn>1</mn><mo>&#x0002F;</mo><mi>p</mi></mrow></msup><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x0002C;</mo><mspace width="2em" /><mi>p</mi><mo>&#x0003E;</mo><mn>0</mn></mrow></math></div>
+<p>As p→∞, this Yager T-norm approaches minimum. The source names compensatory averages, weighted generalized means, and ordered weighted averaging (OWA), with the bound min(a,b)≤M(a,b)≤max(a,b). Its printed weighted-mean expression does not specify weight normalization or valid parameter/exception cases, so treat it as a family name until those assumptions are supplied.</p>
+
+<h3>Correct pointwise hierarchy</h3>
+<p>The Appendix’s displayed A.5 chain reverses the universal position of maximum and S(a,b), and reverses the drastic-product comparison stated elsewhere on the same page. The correct named chains, pointwise for all a,b∈[0,1], are:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>T</mi><mi>D</mi></msub><mo>&#x02264;</mo><msub><mi>T</mi><mi>L</mi></msub><mo>&#x02264;</mo><msub><mi>T</mi><mi>P</mi></msub><mo>&#x02264;</mo><msub><mi>T</mi><mi>M</mi></msub><mo>&#x0003D;</mo><mo>min</mo><mspace width="2em" /><mtext>and</mtext><mspace width="2em" /><msub><mi>S</mi><mi>M</mi></msub><mo>&#x0003D;</mo><mo>max</mo><mo>&#x02264;</mo><msub><mi>S</mi><mi>P</mi></msub><mo>&#x02264;</mo><msub><mi>S</mi><mi>L</mi></msub><mo>&#x02264;</mo><msub><mi>S</mi><mi>D</mi></msub></mrow></math></div>
+<p>Here T<sub>D</sub> is drastic product, T<sub>L</sub> Łukasiewicz, T<sub>P</sub> algebraic product, and T<sub>M</sub> minimum. S<sub>M</sub> is maximum, S<sub>P</sub> algebraic sum, S<sub>L</sub> bounded sum, and S<sub>D</sub> drastic sum. For arbitrary valid operators, the bounds are T<sub>D</sub>≤T≤min(a,b)≤max(a,b)≤S≤S<sub>D</sub>. Thus max(a,b) is a lower bound on every S-norm, not an upper bound. The correct generic T-norm and S-norm bounds do not require the two chosen operators to be dual; named dual operators pair by the standard complement.</p>
+<p>The correction follows the pointwise order in the primary treatment by Klement, Mesiar, and Pap: <a href="https://www.flll.jku.at/div/research/technical_reports/flll-tr-0208.pdf">Triangular norms, Position paper I</a>, especially its smallest/largest t-norm statement and four basic t-norm order; the bounds on min and max are also proved in <a href="https://math.nmsu.edu/people/personal-pages/files/Monograph-with-subtitle.pdf">Klement, Mesiar, and Pap, Triangular Norms and Conorms</a>. ANFIS’s hybrid split is consistent with Jang’s primary paper, <a href="https://ieeexplore.ieee.org/document/256541">ANFIS: Adaptive-Network-Based Fuzzy Inference System</a>.</p>
+
+<h2 id="section-10">Common mistakes</h2>
+<ul>
+<li>Do not flatten or regroup a mixed antecedent; evaluate its actual tree bottom-up. Here the source tree returns 0.80, while the alternate grouping returns 0.40.</li>
+<li>Do not confuse antecedent AND/OR with the later aggregation across multiple rule consequents.</li>
+<li>Do not call minimum clipping and product scaling the same Mamdani implication.</li>
+<li>Do not send a TSK function output through Mamdani centroid defuzzification; TSK uses a weighted average of crisp rule values.</li>
+<li>Do not use Tsukamoto unless every output membership is strictly monotonic over the stated range and can be inverted uniquely.</li>
+<li>Do not normalize weights without checking the total is positive.</li>
+<li>Do not claim ANFIS’s whole model is linear: only its consequent parameters are linear when premises are fixed.</li>
+<li>Do not infer heat-exchanger fuzzy outputs from the crisp AU equation alone; the required membership functions and TSK consequent data are absent.</li>
+<li>Do not repeat the Appendix’s reversed hierarchy: every T-norm is ≤ minimum, and every S-norm is ≥ maximum.</li>
+</ul>
+
+<h2 id="section-11">Exam focus</h2>
+<ul>
+<li>Define antecedent/consequent and reduce canonical fuzzy-set antecedents with the stated min/max operators.</li>
+<li>Draw the mixed connective tree, honor precedence/grouping, and show each intermediate grade.</li>
+<li>Distinguish within-rule logic from conjunctive/disjunctive rule aggregation.</li>
+<li>For Mamdani, show fuzzification, firing, clip or scale, aggregate, and apply the requested defuzzifier.</li>
+<li>For TSK, state zero-/first-order form, T-norm, raw rule values, normalized weights, weighted sum, and positive-denominator condition.</li>
+<li>For ANFIS, name all five layers and explain the fixed-premise least-squares forward pass and fixed-consequent premise-gradient backward pass.</li>
+<li>For Tsukamoto, verify strict monotonicity, invert each consequent, then calculate the firing-weighted average.</li>
+<li>For an engineering fuzzy case, separate a computable physical baseline from missing fuzzy-design inputs.</li>
+<li>Recall the correct bounds: T<sub>D</sub>≤T≤min and max≤S≤S<sub>D</sub>; named operators refine these chains.</li>
+</ul>
+
+<h2 id="section-12">Practice questions</h2>
+<p class="question">With grades 0.40, 0.60, and 0.80, evaluate (A₁ AND A₂) OR A₃ using min for AND and max for OR. What does A₁ AND (A₂ OR A₃) return?</p>
+<details class="worked"><summary>Check your answer</summary><p>First grouping: min(0.40,0.60)=0.40, then max(0.40,0.80)=0.80. Alternate grouping: max(0.60,0.80)=0.80, then min(0.40,0.80)=0.40.</p></details>
+<p class="question">At firing strength α=0.3, compare minimum implication and product implication at a consequent grade μ=0.8.</p>
+<details class="worked"><summary>Check your answer</summary><p>Minimum implication gives min(0.3,0.8)=0.3 (a clip). Product implication gives 0.3×0.8=0.24 (a scaled grade).</p></details>
+<p class="question">Why does the source TSK example return 24 under minimum AND?</p>
+<details class="worked"><summary>Check your answer</summary><p>Firing weights are 0.6 and 0.4; consequent outputs are 20 and 30. They already sum to 1, so the weighted result is 0.6(20)+0.4(30)=24.</p></details>
+<p class="question">What condition on Tsukamoto output memberships makes inverse mapping valid?</p>
+<details class="worked"><summary>Check your answer</summary><p>Each consequent membership function must be strictly monotonic over the stated output range, so a firing grade maps to a unique crisp output.</p></details>
+<p class="question">Which parameters are held fixed during each ANFIS hybrid pass?</p>
+<details class="worked"><summary>Check your answer</summary><p>Forward: premise parameters are fixed while consequent parameters are fitted by least squares. Backward: consequent parameters are fixed while nonlinear premise parameters are updated by gradient descent.</p></details>
+<p class="question">Can the source heat-exchanger rules produce unique Mamdani, TSK, or Tsukamoto outputs as printed?</p>
+<details class="worked"><summary>Check your answer</summary><p>No. Antecedent and output membership functions are not supplied, and TSK consequent coefficients/constants are missing. The crisp baseline is calculable, but the fuzzy values are underdetermined.</p></details>
+<p class="question">What is the correct universal relationship between an arbitrary S-norm and maximum?</p>
+<details class="worked"><summary>Check your answer</summary><p>For all a,b in [0,1], max(a,b)≤S(a,b)≤S_D(a,b). Maximum is the smallest S-norm; drastic sum is the largest.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="logic-language.html"><small>Previous</small>Fuzzy propositions, linguistic variables and implications <span aria-hidden="true">↗</span></a></nav><footer>Neural Networks and Fuzzy Logic · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('.example-input,.step') || expression.closest('p,li,summary,figcaption,h2,h3,h4');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 2;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Scrollable comparison table');
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    frame.setAttribute('role','region'); frame.setAttribute('aria-label','Neural network and fuzzy-system diagram, scroll to inspect wider states');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {neuron:'activation threshold weighted sum bias',perceptron:'threshold logic decision boundary learning',adaline:'lms least mean squares madaline widrow hoff',backpropagation:'gradient chain rule delta multilayer',pnn:'probabilistic pattern classification radial basis',fuzzy:'membership set relation composition fuzzification defuzzification',membership:'fuzzification defuzzification centroid',logic:'linguistic variable rule inference',anfis:'mamdani sugeno tsukamoto adaptive neuro fuzzy'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('nn-theme', themeChoice); } catch {}
+      closeTheme(true);
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.NN_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>
