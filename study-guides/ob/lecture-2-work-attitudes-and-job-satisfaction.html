@@ -1,0 +1,725 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Understand how workplace attitudes form, how satisfaction is evaluated, how people may respond to dissatisfaction, and how related job attitudes differ."><title>Work Attitudes and Job Satisfaction · OB and Management</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('ob-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">OB</span> OB <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="People, teams, leadership…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Organizational Behavior and Management</a></div><div class="nav-group"><p>Foundations</p><a class="nav-entry" data-search="" href="lecture-1-organizational-behaviour-foundations.html">Organizational Behaviour Foundations</a></div><div class="nav-group"><p>Individual behaviour</p><a class="nav-entry" data-search="" href="lecture-2-work-attitudes-and-job-satisfaction.html" aria-current="page">Work Attitudes and Job Satisfaction</a><a class="nav-entry" data-search="" href="lecture-3-personality-at-work.html">Personality at Work</a><a class="nav-entry" data-search="" href="lecture-3-values-culture-and-person-environment-fit.html">Values, Culture, and Person-Environment Fit</a><a class="nav-entry" data-search="" href="lecture-4-emotions-and-moods.html">Emotions and Moods</a><a class="nav-entry" data-search="" href="lecture-5-managing-emotions-at-work.html">Managing Emotions at Work</a><a class="nav-entry" data-search="" href="lecture-6-perception-and-individual-decision-making.html">Perception and Individual Decision Making</a></div><div class="nav-group"><p>Group behaviour</p><a class="nav-entry" data-search="" href="lecture-7-group-structure-and-behaviour.html">Group Structure and Behaviour</a><a class="nav-entry" data-search="" href="lecture-7-group-decision-making.html">Group Decision-Making</a><a class="nav-entry" data-search="" href="lecture-8-work-teams-and-effectiveness.html">Work Teams and Effectiveness</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">MN4063<br>Organizational Behavior and Management</div></aside>
+<main id="main"><div class="eyebrow">Individual behaviour <span>/</span> Lecture 2</div><h1>Work Attitudes and Job Satisfaction</h1><p class="lead">Understand how workplace attitudes form, how satisfaction is evaluated, how people may respond to dissatisfaction, and how related job attitudes differ.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">What is an attitude?</a><a href="#section-2">How workplace attitudes form</a><a href="#section-3">Attitude components: belief, feeling, intended action</a><a href="#section-4">Visible behaviour and less visible attitudes</a><a href="#section-5">Cognitive consistency and dissonance</a><a href="#section-6">Job satisfaction: an overall evaluation with several facets</a><a href="#section-7">Measuring satisfaction: what a rating scale can and cannot show</a><a href="#section-8">Responses to dissatisfaction: the EVLN framework</a><a href="#section-9">Related job attitudes and behaviour</a><a href="#section-10">Common mistakes</a><a href="#section-11">Exam focus</a><a href="#section-12">Practice questions</a><a href="#section-13">Further practice</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Work attitudes are evaluations of things that matter at work. They reflect what people believe, feel, and may intend to do, while also being shaped by personal predispositions, workplace conditions, and the meaning people make with others. Job satisfaction is one important attitude: it summarizes how a person evaluates several parts of a job. When dissatisfaction occurs, the exit–voice–loyalty–neglect model helps classify possible responses. Other job attitudes describe different aspects of a person’s relationship with their tasks and organization. These ideas connect, but they are not interchangeable.</p>
+<p>Individual differences matter throughout this lecture. The kinds named include ethnic origin, physique, gender, early family experiences, social and cultural factors, national culture, motivation, attitudes, personality traits and types, intelligence and abilities, and perception. Differences can support creativity and satisfaction, yet can also become sources of misunderstanding, conflict, or strain. These are dimensions to be aware of, not grounds for predicting a person’s attitude from ethnicity, gender, physique, culture, or any other single characteristic. During externally imposed change, managers need sensitivity to employees’ strain and should also recognize their own stress and influence on others.</p>
+<p>Recognizing individuality has practical implications for managers. They need skill in selecting and developing people whose contributions support the organization. They also need self-knowledge: their own personality and conduct affect workplace relationships. When change feels externally imposed, sensitive management can help employees develop new mindsets, attitudes, and perceptions so they can cope with and adapt to changed conditions.</p>
+<h2 id="section-1">What is an attitude?</h2>
+<p>An <strong>attitude</strong> is how a person views and evaluates an idea, object, person, or situation, together with a tendency to respond positively or negatively toward it. “I like my job” expresses an attitude about work. The evaluation is broader than a factual belief: a person may believe a condition exists, value a different standard, and hold an attitude toward the target.</p>
+<h3>Beliefs and values are related but distinct</h3>
+<p>A <strong>belief</strong> concerns what a person understands to be true about the world—what “is.” A <strong>value</strong> concerns what a person considers desirable—what “should be.” An <strong>attitude</strong> evaluates a target, often drawing on beliefs and values. For example, “the schedule changes every week” is a belief about work; “employees should have predictable hours” expresses a value; “I resent this scheduling policy” is an attitude toward it.</p>
+<details class="worked"><summary>Teaching example: separate a belief, a value, and an attitude</summary><p>A technician says, “My rota changed three times this month” (<strong>belief</strong> about what happened). She says, “People should have enough notice to plan childcare” (<strong>value</strong> about what ought to happen). She adds, “I feel the rota policy treats staff unfairly” (<strong>attitude</strong> toward the policy). The statements concern one situation, but they answer different questions: what is, what should be, and how the person evaluates it.</p></details>
+
+<h2 id="section-2">How workplace attitudes form</h2>
+<p>The lecture presents three explanations because no single one fully accounts for workplace attitudes.</p>
+<table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Main explanation</th>
+<th>What to look for in a case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dispositional</td>
+<td>Relatively stable predispositions influence how people respond, much like personality traits. The slides cite studies finding little attitude change for some people before and after changing jobs.</td>
+<td>A similar tendency appears across different work settings.</td>
+</tr>
+<tr>
+<td>Situational</td>
+<td>The uniqueness of a situation shapes attitudes, which may change when work conditions change. Boring or unrewarding work and a poor supervisor are examples.</td>
+<td>A specific feature of the job or its conditions helps explain the evaluation.</td>
+</tr>
+<tr>
+<td>Social-information-processing</td>
+<td>People form attitudes from socially constructed realities as they perceive them; social context shapes how a situation is understood.</td>
+<td>Coworkers’ accounts or group expectations influence how an employee interprets an event.</td>
+</tr>
+</tbody>
+</table>
+<p>The conclusion is that both dispositional and social-information-processing explanations have merit, and that predispositions and perceived social context interact. The situational lens remains useful for identifying work conditions that employees evaluate. Treat these as complementary lenses, not as competing labels where one must always win.</p>
+<figure><div class="diagram-frame" style="--diagram-width:474.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Social context shapes information about an event, which contributes to attitude formation." width="474pt" height="72pt"
+ viewBox="0.00 0.00 474.00 72.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-1-lecture-2-work-attitudes-and-job-satisfaction-social-information-processing-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 61.2)">
+<title>G</title>
+<!-- context -->
+<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-1-lecture-2-work-attitudes-and-job-satisfaction-social-information-processing-node1" class="node">
+<title>context</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M102.6,-43.2C102.6,-43.2 12,-43.2 12,-43.2 6,-43.2 0,-37.2 0,-31.2 0,-31.2 0,-19.2 0,-19.2 0,-13.2 6,-7.2 12,-7.2 12,-7.2 102.6,-7.2 102.6,-7.2 108.6,-7.2 114.6,-13.2 114.6,-19.2 114.6,-19.2 114.6,-31.2 114.6,-31.2 114.6,-37.2 108.6,-43.2 102.6,-43.2"/>
+<text xml:space="preserve" text-anchor="middle" x="57.3" y="-19.95" font-family="Georgia" font-size="15.00">Social context</text>
+</g>
+<!-- information -->
+<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-1-lecture-2-work-attitudes-and-job-satisfaction-social-information-processing-node2" class="node">
+<title>information</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M260.45,-50.4C260.45,-50.4 158.6,-50.4 158.6,-50.4 152.6,-50.4 146.6,-44.4 146.6,-38.4 146.6,-38.4 146.6,-12 146.6,-12 146.6,-6 152.6,0 158.6,0 158.6,0 260.45,0 260.45,0 266.45,0 272.45,-6 272.45,-12 272.45,-12 272.45,-38.4 272.45,-38.4 272.45,-44.4 266.45,-50.4 260.45,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="209.53" y="-28.95" font-family="Georgia" font-size="15.00">Information</text>
+<text xml:space="preserve" text-anchor="middle" x="209.53" y="-10.95" font-family="Georgia" font-size="15.00">about the event</text>
+</g>
+<!-- context&#45;&gt;information -->
+<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-1-lecture-2-work-attitudes-and-job-satisfaction-social-information-processing-edge1" class="edge">
+<title>context&#45;&gt;information</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M115.09,-25.2C122.7,-25.2 130.57,-25.2 138.36,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="138.11,-27.48 144.61,-25.2 138.11,-22.93 138.11,-27.48"/>
+</g>
+<!-- attitude -->
+<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-1-lecture-2-work-attitudes-and-job-satisfaction-social-information-processing-node3" class="node">
+<title>attitude</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M440.05,-43.2C440.05,-43.2 316.45,-43.2 316.45,-43.2 310.45,-43.2 304.45,-37.2 304.45,-31.2 304.45,-31.2 304.45,-19.2 304.45,-19.2 304.45,-13.2 310.45,-7.2 316.45,-7.2 316.45,-7.2 440.05,-7.2 440.05,-7.2 446.05,-7.2 452.05,-13.2 452.05,-19.2 452.05,-19.2 452.05,-31.2 452.05,-31.2 452.05,-37.2 446.05,-43.2 440.05,-43.2"/>
+<text xml:space="preserve" text-anchor="middle" x="378.25" y="-19.95" font-family="Georgia" font-size="15.00">Attitude formation</text>
+</g>
+<!-- information&#45;&gt;attitude -->
+<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-1-lecture-2-work-attitudes-and-job-satisfaction-social-information-processing-edge2" class="edge">
+<title>information&#45;&gt;attitude</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M272.61,-25.2C280.31,-25.2 288.28,-25.2 296.22,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="296.13,-27.48 302.63,-25.2 296.13,-22.93 296.13,-27.48"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Social context shapes information about an event, which contributes to attitude formation.</figcaption></figure>
+
+<p>For example, a new employee joins a work group. Coworkers describe the supervisor, pay and benefits, and acceptable output; the newcomer then forms attitudes consistent with that information. This illustrates how social context contributes to attitude formation. It does not mean every newcomer adopts the group’s view or that the information is necessarily accurate.</p>
+<details class="worked"><summary>Teaching example: explain two employees’ different reactions to the same workload</summary><p>Two analysts receive a demanding assignment. One has usually found challenging tasks energizing, while the other has often experienced them as frustrating (<strong>dispositional lens</strong>). The assignment also comes with unclear priorities and little time (<strong>situational lens</strong>). Coworkers describe the workload as evidence that management does not value the team (<strong>social-information-processing lens</strong>). These are possible influences to investigate, not diagnoses: ask what each analyst believes, feels, and has experienced before concluding why their attitudes differ.</p></details>
+
+<h2 id="section-3">Attitude components: belief, feeling, intended action</h2>
+<p>The lecture describes three closely related components:</p>
+<ul>
+<li><strong>Cognition</strong> is the belief, description, or evaluation of how things are: “My pay is low.”</li>
+<li><strong>Affect</strong> is the emotional or feeling part: “I am angry about how little I am paid.”</li>
+<li><strong>Behaviour</strong> in this model means an <strong>intention</strong> to act toward someone or something: “I’m going to look for another job that pays better.” An intention does not guarantee that the action will happen.</li>
+</ul>
+<p>The salary statements show how components can describe different sides of one attitude. The distinction is useful for analysis, but the components can be difficult to separate; cognition and affect are especially intertwined.</p>
+<h3>The promotion case and the limits of a simple sequence</h3>
+<p>In one case, an employee believes they deserved a promotion that went to a coworker, dislikes the supervisor, and complains or takes action. Cognition, affect, and behaviour are linked with one another and with the overall attitude toward the supervisor.</p>
+<figure><div class="diagram-frame" style="--diagram-width:869.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Promotion case: the three attitude components are connected, and each is linked with the employee’s overall negative attitude. Component links are two-way to avoid implying a fixed sequence." width="869pt" height="131pt"
+ viewBox="0.00 0.00 869.00 131.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 120.2)">
+<title>G</title>
+<!-- cognition -->
+<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-node1" class="node">
+<title>cognition</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M231.6,-50.4C231.6,-50.4 12,-50.4 12,-50.4 6,-50.4 0,-44.4 0,-38.4 0,-38.4 0,-12 0,-12 0,-6 6,0 12,0 12,0 231.6,0 231.6,0 237.6,0 243.6,-6 243.6,-12 243.6,-12 243.6,-38.4 243.6,-38.4 243.6,-44.4 237.6,-50.4 231.6,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="121.8" y="-28.95" font-family="Georgia" font-size="15.00">Cognition</text>
+<text xml:space="preserve" text-anchor="middle" x="121.8" y="-10.95" font-family="Georgia" font-size="15.00">Promotion decision seems unfair</text>
+</g>
+<!-- affect -->
+<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-node2" class="node">
+<title>affect</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M413.45,-109.4C413.45,-109.4 287.6,-109.4 287.6,-109.4 281.6,-109.4 275.6,-103.4 275.6,-97.4 275.6,-97.4 275.6,-71 275.6,-71 275.6,-65 281.6,-59 287.6,-59 287.6,-59 413.45,-59 413.45,-59 419.45,-59 425.45,-65 425.45,-71 425.45,-71 425.45,-97.4 425.45,-97.4 425.45,-103.4 419.45,-109.4 413.45,-109.4"/>
+<text xml:space="preserve" text-anchor="middle" x="350.52" y="-87.95" font-family="Georgia" font-size="15.00">Affect</text>
+<text xml:space="preserve" text-anchor="middle" x="350.52" y="-69.95" font-family="Georgia" font-size="15.00">Dislikes supervisor</text>
+</g>
+<!-- cognition&#45;&gt;affect -->
+<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-edge1" class="edge">
+<title>cognition&#45;&gt;affect</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M228.94,-52.82C241.95,-56.21 255.08,-59.62 267.65,-62.89"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="229.58,-50.64 222.72,-51.2 228.44,-55.04 229.58,-50.64"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="267.07,-65.09 273.93,-64.53 268.22,-60.69 267.07,-65.09"/>
+</g>
+<!-- overall -->
+<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-node4" class="node">
+<title>overall</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M835.65,-50.4C835.65,-50.4 717.3,-50.4 717.3,-50.4 711.3,-50.4 705.3,-44.4 705.3,-38.4 705.3,-38.4 705.3,-12 705.3,-12 705.3,-6 711.3,0 717.3,0 717.3,0 835.65,0 835.65,0 841.65,0 847.65,-6 847.65,-12 847.65,-12 847.65,-38.4 847.65,-38.4 847.65,-44.4 841.65,-50.4 835.65,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="776.48" y="-28.95" font-family="Georgia" font-size="15.00">Negative attitude</text>
+<text xml:space="preserve" text-anchor="middle" x="776.48" y="-10.95" font-family="Georgia" font-size="15.00">toward supervisor</text>
+</g>
+<!-- cognition&#45;&gt;overall -->
+<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-edge4" class="edge">
+<title>cognition&#45;&gt;overall</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M243.9,-22.45C355.45,-20.37 525.54,-18.31 673.3,-21.2 680.95,-21.35 688.93,-21.56 696.9,-21.81"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="696.77,-24.08 703.34,-22.03 696.92,-19.54 696.77,-24.08"/>
+</g>
+<!-- intention -->
+<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-node3" class="node">
+<title>intention</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M661.3,-109.4C661.3,-109.4 469.45,-109.4 469.45,-109.4 463.45,-109.4 457.45,-103.4 457.45,-97.4 457.45,-97.4 457.45,-71 457.45,-71 457.45,-65 463.45,-59 469.45,-59 469.45,-59 661.3,-59 661.3,-59 667.3,-59 673.3,-65 673.3,-71 673.3,-71 673.3,-97.4 673.3,-97.4 673.3,-103.4 667.3,-109.4 661.3,-109.4"/>
+<text xml:space="preserve" text-anchor="middle" x="565.38" y="-87.95" font-family="Georgia" font-size="15.00">Behavioural intention</text>
+<text xml:space="preserve" text-anchor="middle" x="565.38" y="-69.95" font-family="Georgia" font-size="15.00">Complains; seeks other work</text>
+</g>
+<!-- affect&#45;&gt;intention -->
+<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-edge2" class="edge">
+<title>affect&#45;&gt;intention</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M433.39,-84.2C438.63,-84.2 443.95,-84.2 449.3,-84.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="433.68,-81.93 427.18,-84.2 433.68,-86.48 433.68,-81.93"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="449.14,-86.48 455.64,-84.2 449.14,-81.93 449.14,-86.48"/>
+</g>
+<!-- affect&#45;&gt;overall -->
+<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-edge5" class="edge">
+<title>affect&#45;&gt;overall</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M418.63,-58.53C431.36,-54.48 444.7,-50.78 457.45,-48.2 538.13,-31.85 632.39,-26.74 697.23,-25.32"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="697.02,-27.6 703.47,-25.19 696.93,-23.05 697.02,-27.6"/>
+</g>
+<!-- intention&#45;&gt;cognition -->
+<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-edge3" class="edge">
+<title>intention&#45;&gt;cognition</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M467.13,-56.67C453.23,-53.42 439.03,-50.46 425.45,-48.2 368.84,-38.79 305.63,-33.23 251.68,-29.94"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="466.5,-58.86 473.35,-58.16 467.56,-54.44 466.5,-58.86"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="251.92,-27.67 245.3,-29.56 251.65,-32.21 251.92,-27.67"/>
+</g>
+<!-- intention&#45;&gt;overall -->
+<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-edge6" class="edge">
+<title>intention&#45;&gt;overall</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M657.18,-58.58C670.54,-54.81 684.2,-50.95 697.28,-47.26"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="697.81,-49.48 703.44,-45.52 696.57,-45.1 697.81,-49.48"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Promotion case: the three attitude components are connected, and each is linked with the employee’s overall negative attitude. Component links are two-way to avoid implying a fixed sequence.</figcaption></figure>
+
+<p>Do not turn this into a fixed chain of “thought causes feeling, then feeling causes action.” The lecture explicitly cautions that the parts are hard to separate, people may not fully understand their own attitudes or actions, and explanations given afterward may be inaccurate. A person may complain without looking for another job, feel disappointed without disliking the supervisor, or interpret the same decision differently. The case illustrates relationships, not an inevitable response.</p>
+<details class="worked"><summary>Source case: identify the components without assuming the next step</summary><p><strong>Situation:</strong> An employee expected a promotion, but it went to a coworker. <strong>Cognition:</strong> the employee thinks they deserved the role and judges the supervisor’s decision as unfair. <strong>Affect:</strong> the employee dislikes the supervisor. <strong>Behavioural response:</strong> the employee complains and looks for other work. The components are linked in the example, but neither the belief nor the feeling proves that every employee would take the same action.</p></details>
+
+<h2 id="section-4">Visible behaviour and less visible attitudes</h2>
+<p>An iceberg illustration separates observable behaviour above sea level—labelled “known to others”—from underlying factors below the waterline, labelled “unknown to others.” The submerged labels include impact, values, standards, judgments, attitude, motives, ethics, and beliefs. Its upward “impact” arrow links this underlying context with behaviour. The image is a reminder that what an observer sees may be only part of a person’s evaluative context; it does not let an observer reliably infer that context from behaviour alone.</p>
+<table>
+<thead>
+<tr>
+<th>Part of the illustration</th>
+<th>Labels shown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Above sea level; known to others</td>
+<td>Behaviour</td>
+</tr>
+<tr>
+<td>Below sea level; unknown to others</td>
+<td>Impact; values, standards, judgments; attitude; motives, ethics, beliefs</td>
+</tr>
+</tbody>
+</table>
+<details class="worked"><summary>Teaching example: the same visible behaviour can have different context</summary><p>Two employees stay quiet during a meeting. One may be considering a concern but not yet feel ready to raise it; the other may have no concern about the decision. Silence is the visible behaviour. Their beliefs, standards, motives, or feelings are not established by that behaviour alone, so a manager should ask and listen rather than assume they know the reason.</p></details>
+
+<h2 id="section-5">Cognitive consistency and dissonance</h2>
+<p>People often want their behaviour to be consistent with their attitudes; the lecture calls this <strong>cognitive consistency</strong>. <strong>Cognitive dissonance</strong> is a perceived incompatibility between two or more attitudes, or between an attitude and behaviour. When someone notices such an inconsistency, the resulting tension can motivate an attempt to restore consistency. The key condition in the lecture is that the incompatibility is perceived; a mismatch that a person does not notice is not described here as experienced dissonance.</p>
+<p>The slides do not prescribe one universal way of resolving the tension. The following are <strong>supplemental teaching illustrations</strong> of possible responses, not a fixed sequence or guaranteed result.</p>
+<details class="worked"><summary>Teaching example: an employee’s stated value and weekend work</summary><p>An employee believes staff should be able to disconnect outside scheduled hours, but agrees to work an additional weekend shift. If the employee perceives this as inconsistent, it may create tension. They might seek to change future behaviour by declining extra shifts, revise how they evaluate this particular choice (“this was a one-off emergency”), or reconsider the belief’s application in this situation. These are possible explanations and responses; the lecture does not say which one must occur. If the employee sees no inconsistency, the situation alone does not establish dissonance.</p></details>
+
+<h2 id="section-6">Job satisfaction: an overall evaluation with several facets</h2>
+<p><strong>Job satisfaction</strong> is a positive feeling about a job that results from evaluating its characteristics. A person with high satisfaction holds positive feelings about the job; a person with low satisfaction holds negative feelings. Satisfaction is an emotional response to the job situation and a complex summation: tasks, coworkers, supervisors, organizational rules, performance standards, and working conditions can all contribute.</p>
+<p>The lecture also explains satisfaction through the discrepancy between <strong>job expectations</strong> and <strong>job outcomes</strong>. When outcomes meet or exceed expectations, satisfaction and a wish to remain are more likely. When outcomes fall short, dissatisfaction is a reasonable interpretation, though a single discrepancy does not tell us which job feature matters most to that employee.</p>
+<p>The five dimensions the lecture highlights are:</p>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>What is evaluated</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Work itself</td>
+<td>Whether tasks are interesting and offer learning and responsibility.</td>
+</tr>
+<tr>
+<td>Pay</td>
+<td>Amount received, perceived equity, and method of payment.</td>
+</tr>
+<tr>
+<td>Promotional opportunities</td>
+<td>Availability of realistic opportunities for advancement.</td>
+</tr>
+<tr>
+<td>Supervision</td>
+<td>Supervisors’ technical and managerial abilities, consideration, and interest in employees.</td>
+</tr>
+<tr>
+<td>Coworkers</td>
+<td>Whether coworkers are friendly, technically competent, and supportive.</td>
+</tr>
+</tbody>
+</table>
+<p>A separate illustrative “job satisfaction components” wheel names pay and benefits, career development, respect, engagement, recognition, and job security. This list complements the five defined dimensions; it is not evidence that the wheel is a validated measurement scale.</p>
+<details class="worked"><summary>Teaching example: one employee, several satisfaction facets</summary><p>Consider an employee who enjoys solving customer problems and has supportive coworkers, but believes their pay is inequitable and sees no realistic route to advancement. The interesting work relates to <strong>work itself</strong>; pay equity relates to <strong>pay</strong>; and the blocked route relates to <strong>promotional opportunities</strong>. Supportive colleagues relate to <strong>coworkers</strong>. A single overall satisfaction rating may combine these positive and negative evaluations, so it cannot show which facet needs attention. This is a hypothetical teaching scenario.</p></details>
+
+<h2 id="section-7">Measuring satisfaction: what a rating scale can and cannot show</h2>
+<p>The lecture says rating scales are by far the most common way to assess job satisfaction. A questionnaire example uses five response points, from <strong>1 (strongly disagree)</strong> to <strong>5 (strongly agree)</strong>, across 16 statements. Examples include “I enjoy my job,” “I am encouraged to seek out new training opportunities,” “Good and bad news about what is happening at OrgCo is communicated regularly,” and “Taking everything into account, I have a high level of job satisfaction with my team.” The full questionnaire mixes topics such as organizational goals, communication, training, managerial support, interruptions, team climate, and satisfaction; not every item measures the same facet.</p>
+<p>No instrument provenance or psychometric evidence is provided, so the example should not be treated as a validated standardized scale. Two measurement caveats are explicit:</p>
+<ol>
+<li>Like any self-report inventory, a rating scale assumes respondents are both willing and able to describe their feelings accurately.</li>
+<li>It assumes questionnaire items mean the same thing to all respondents, though people may interpret a phrase differently.</li>
+</ol>
+<p>The example also shifts between the organization, the job, the team, and particular conditions. An item about team communication is not identical to an overall job-satisfaction item. Ratings are useful indicators to interpret carefully, not a complete explanation of an employee’s experience.</p>
+<details class="worked"><summary>Teaching example: why one survey item may need a follow-up</summary><p>Suppose an employee selects “2” for agreement with “My manager discusses ways I can improve my work performance.” The score indicates low agreement with that statement, but does not explain why. The employee may understand “discusses” as formal review meetings while a coworker counts informal coaching. A follow-up conversation can clarify the meaning, and other items or job facets may point to different issues. One rating alone does not identify a cause or establish the employee’s total job satisfaction.</p></details>
+
+<h2 id="section-8">Responses to dissatisfaction: the EVLN framework</h2>
+<p>The exit–voice–loyalty–neglect framework classifies responses on two separate axes: <strong>active versus passive</strong> and <strong>constructive versus destructive</strong>. The cell placements below reproduce the slide’s matrix exactly.</p>
+<table><caption>Exit–voice–loyalty–neglect responses by activity and direction</caption>
+<thead><tr><th scope="col">Response style</th><th scope="col">Constructive</th><th scope="col">Destructive</th></tr></thead>
+<tbody>
+<tr><th scope="row">Active</th><td><strong>Voice</strong><br>Raises a concern or proposes improvement. This is a standard explanatory gloss.</td><td><strong>Exit</strong><br>Leaves or prepares to leave. This is a standard explanatory gloss.</td></tr>
+<tr><th scope="row">Passive</th><td><strong>Loyalty</strong><br>Waits supportively for improvement. This is a standard explanatory gloss.</td><td><strong>Neglect</strong><br>Allows conditions or effort to deteriorate. This is a standard explanatory gloss.</td></tr>
+</tbody></table>
+
+<p>The matrix describes a way to sort responses to dissatisfaction, not four personality types. The same person could respond differently as circumstances change. Classify each response on both axes: active/passive first and constructive/destructive second. In particular, do not swap the two active cells or the two passive cells.</p>
+<details class="worked"><summary>Teaching example: classify four responses to an unfair workload</summary><p><strong>Voice:</strong> an employee raises the unfair distribution with the manager and suggests a rotation—active and constructive. <strong>Exit:</strong> the employee seeks another job and resigns—active and destructive. <strong>Loyalty:</strong> the employee stays, continues supporting colleagues, and waits for a promised review—passive and constructive. <strong>Neglect:</strong> the employee remains but starts missing deadlines and withholding effort—passive and destructive. These are concise explanatory examples for the matrix cells.</p></details>
+
+<h2 id="section-9">Related job attitudes and behaviour</h2>
+<p>Job satisfaction is among the most widely studied job attitudes, alongside job involvement and organizational commitment. Perceived organizational support and employee engagement are also important. Organizational citizenship behaviour is a related discretionary behaviour, rather than simply another name for an attitude. These constructs have some distinctiveness but overlap considerably, including because of personality. A person may, for example, feel attached to an organization and be dissatisfied with one task; one construct does not determine all the others.</p>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>What it captures</th>
+<th>Useful distinction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Job satisfaction</td>
+<td>Overall positive or negative feeling from evaluating job characteristics.</td>
+<td>A broad evaluation that can summarize several facets.</td>
+</tr>
+<tr>
+<td>Job involvement</td>
+<td>Interest in and commitment to assigned tasks; strong identification with and care about one’s work.</td>
+<td>Focuses on the work or tasks, rather than membership in the organization as a whole.</td>
+</tr>
+<tr>
+<td>Psychological empowerment</td>
+<td>Beliefs about influence over the work environment, competence, meaningfulness of the job, and perceived autonomy.</td>
+<td>Describes perceived agency and meaning in doing the work.</td>
+</tr>
+<tr>
+<td>Organizational commitment</td>
+<td>Strength of identification with and involvement in the organization: accepting its goals and values, willingness to exert effort, and desire to remain a member.</td>
+<td>Goes beyond passive loyalty; focuses on the organization.</td>
+</tr>
+<tr>
+<td>Perceived organizational support (POS)</td>
+<td>Belief that the organization values one’s contributions and cares about one’s well-being.</td>
+<td>Fair rewards, employee voice, and supportive supervisors are cues the lecture names.</td>
+</tr>
+<tr>
+<td>Employee engagement</td>
+<td>Involvement with, satisfaction with, and enthusiasm for one’s work; passion and connection versus putting in time without energy or attention.</td>
+<td>Emphasizes energy and connection in the work.</td>
+</tr>
+<tr>
+<td>Organizational citizenship behaviour (OCB)</td>
+<td>Discretionary individual actions outside the formal job description.</td>
+<td>An extra-role behaviour, not a synonym for satisfaction, commitment, or engagement.</td>
+</tr>
+</tbody>
+</table>
+<p>Strong POS has been associated with higher citizenship behaviour, lower tardiness, and better customer service. These are associations, not proof that POS alone caused those outcomes. It also describes potential OCB benefits: less need for supervision, better morale, cost-saving suggestions, and freed managerial time. Managers should be mindful of the risk of burnout when extra-role contributions become excessive. OCB refers to discretionary actions, not a feeling.</p>
+<p>A claim that 17–29% of employees are highly engaged appears without a named survey source or date, so it is not used here as a general current estimate.</p>
+<details class="worked"><summary>Teaching example: distinguish commitment, involvement, empowerment, POS, engagement, and OCB</summary><p>A software analyst cares deeply about the testing tasks (<strong>job involvement</strong>) and believes the work has meaning, that she is capable, and that she can influence how it is done (<strong>psychological empowerment</strong>). She identifies with the company’s goals and wants to remain (<strong>organizational commitment</strong>). She believes her contributions are noticed and her well-being matters to the company (<strong>POS</strong>). She brings energy and enthusiasm to the work (<strong>engagement</strong>). On one occasion she voluntarily helps a colleague outside her formal duties (<strong>OCB</strong>). She may show some of these without showing all of them; none is a substitute label for the others or for her overall job satisfaction.</p></details>
+
+<h2 id="section-10">Common mistakes</h2>
+<ul>
+<li>Treating <strong>belief</strong>, <strong>value</strong>, and <strong>attitude</strong> as synonyms: ask “what is?”, “what should be?”, and “how is the target evaluated?”</li>
+<li>Assuming one source explains every attitude: check personal predispositions, work conditions, and social information together.</li>
+<li>Forcing cognition → affect → behaviour into a fixed causal chain, or treating an intention as proof that an action occurred.</li>
+<li>Treating cognitive dissonance as any inconsistency whether or not the person perceives it, or claiming that everyone resolves it the same way.</li>
+<li>Reducing job satisfaction to pay, one pleasant event, or one overall survey item; the lecture describes a complex evaluation across facets.</li>
+<li>Calling the questionnaire example a validated scale or assuming all respondents interpret every item identically.</li>
+<li>Confusing EVLN’s cells: voice is active/constructive, exit active/destructive, loyalty passive/constructive, neglect passive/destructive.</li>
+<li>Using job involvement, empowerment, commitment, POS, engagement, and OCB as synonyms. OCB is discretionary behaviour.</li>
+<li>Treating correlations or the unsourced 17–29% engagement statement as proof of causation or a current population estimate.</li>
+<li>Turning demographic or cultural categories into predictions about an individual employee.</li>
+</ul>
+<h2 id="section-11">Exam focus</h2>
+<ul>
+<li>Compare the dispositional, situational, and social-information-processing approaches; explain why the lecture treats them as interacting lenses.</li>
+<li>Define belief (“what is”), value (“what should be”), and attitude (evaluation and response tendency).</li>
+<li>Identify cognition, affect, and intended behaviour in a case, then explain why their relation is not a guaranteed linear sequence.</li>
+<li>Define cognitive consistency and cognitive dissonance, including the role of perceived incompatibility and tension.</li>
+<li>Define job satisfaction and explain expectation–outcome discrepancy and the five dimensions: work itself, pay, promotional opportunities, supervision, and coworkers.</li>
+<li>Name both rating-scale caveats: accurate self-report and shared interpretation of items.</li>
+<li>Reconstruct EVLN with both axes and all four cells.</li>
+<li>Distinguish task-focused involvement, perceived empowerment, organizational commitment, POS, work engagement, and discretionary citizenship behaviour.</li>
+<li>Explain overlap without treating constructs as identical; keep association separate from causation.</li>
+</ul>
+<h2 id="section-12">Practice questions</h2>
+<p class="question">1. A new employee believes her supervisor ignores good work, values transparent recognition, and feels resentful about the recognition system. Identify belief, value, and attitude.</p>
+<details class="worked"><summary>Check your answer</summary><p>The belief is that the supervisor ignores good work; the value is that recognition should be transparent; the attitude is resentment toward the recognition system. The first describes what she thinks is true, the second what should be desirable, and the third evaluates a target.</p></details>
+
+<p class="question">2. A worker carries a tendency to stay optimistic into a new job, encounters a poorly organized schedule, and hears coworkers describe management as unfair. Which attitude-formation lenses might apply?</p>
+<details class="worked"><summary>Check your answer</summary><p>All three may apply: the cross-job tendency suggests a dispositional influence; the disorganized schedule is situational; coworkers’ account is social information processing. The case does not establish which influence matters most.</p></details>
+
+<p class="question">3. An employee believes a promotion decision was unfair, feels angry, and plans to complain. Identify each component and name one conclusion you cannot draw.</p>
+<details class="worked"><summary>Check your answer</summary><p>The belief/evaluation is cognition, anger is affect, and the plan to complain is behavioural intention. You cannot infer that the complaint will occur or that every employee would react this way.</p></details>
+
+<p class="question">4. An employee says she supports a policy requiring rest breaks but skips one to finish a task. What would need to be true for this to illustrate cognitive dissonance?</p>
+<details class="worked"><summary>Check your answer</summary><p>She would need to perceive an incompatibility between her attitude toward the policy and her behaviour. The lecture links perceived inconsistency to tension and an attempt to restore consistency; it does not prescribe one resolution.</p></details>
+
+<p class="question">5. A worker enjoys the tasks and coworkers but feels pay is inequitable and sees no realistic promotion path. Which satisfaction dimensions are involved?</p>
+<details class="worked"><summary>Check your answer</summary><p>Four dimensions are implicated: work itself and coworkers are positive facets, while pay and promotional opportunities are negative facets. There is no information about supervision.</p></details>
+
+<p class="question">6. A team survey asks whether “communication is positive and effective,” but staff disagree about what “effective” means. Which rating-scale caveat is illustrated?</p>
+<details class="worked"><summary>Check your answer</summary><p>Respondents may not interpret the same questionnaire item in the same way. The answer choices can be identical while the meaning assigned to the statement differs.</p></details>
+
+<p class="question">7. Classify each dissatisfaction response: (a) raise a workload concern and propose rotation; (b) resign; (c) stay and wait supportively; (d) stay while withholding effort.</p>
+<details class="worked"><summary>Check your answer</summary><p>(a) Voice: active/constructive. (b) Exit: active/destructive. (c) Loyalty: passive/constructive. (d) Neglect: passive/destructive.</p></details>
+
+<p class="question">8. An employee cares deeply about assigned work and believes she can influence how it is done, but says little about whether she wants to remain with the organization. Which constructs are supported, and which is not established?</p>
+<details class="worked"><summary>Check your answer</summary><p>Job involvement and psychological empowerment are supported by caring about the tasks and perceived influence. Organizational commitment is not established because the case gives no evidence about identification with organizational goals, effort for the organization, or desire to remain.</p></details>
+
+<p class="question">9. A company gives fair rewards, invites employees’ views, and has supportive supervisors. Which construct do these cues relate to, and what outcome claim should be made carefully?</p>
+<details class="worked"><summary>Check your answer</summary><p>They are cues associated with perceived organizational support. Research has linked POS with higher citizenship behaviour, lower tardiness, and better customer service; describe those as associations, not proven effects caused by POS alone.</p></details>
+
+<p class="question">10. A highly committed employee voluntarily mentors a colleague outside formal duties but reports low enthusiasm for daily tasks. Which concepts fit, and why is this not contradictory?</p>
+<details class="worked"><summary>Check your answer</summary><p>Commitment may fit identification with and desire to remain in the organization; mentoring outside formal duties may be OCB. Low enthusiasm suggests lower engagement. These constructs overlap but differ, so one person can show this combination.</p></details>
+
+<p class="question">11. Why should the 17–29% engagement figure not be repeated as a current general estimate?</p>
+<details class="worked"><summary>Check your answer</summary><p>The figure is not accompanied by a named survey source or date. Without that context, the range cannot be checked or generalized as a current estimate.</p></details>
+
+<p class="question">12. A manager says that a colleague’s national culture explains why she dislikes a new policy. What is the problem with this conclusion?</p>
+<details class="worked"><summary>Check your answer</summary><p>It turns a broad background category into a prediction about one individual. The lecture asks managers to recognize individual differences, but a person’s attitude should be understood from evidence about that person’s beliefs, values, conditions, and social context.</p></details>
+
+<h2 id="section-13">Further practice</h2>
+<p class="question">13. Give one plausible workplace explanation for two employees evaluating the same supervisor differently without assuming either employee is irrational.</p>
+<details class="worked"><summary>Check your answer</summary><p>Their dispositions may differ, their experiences with the supervisor may differ, or the social information and group context they encounter may differ. Several influences can interact; the case should be investigated rather than reduced to a label.</p></details>
+
+<p class="question">14. An employee rates job satisfaction highly but gives a low rating to team communication. Is this necessarily inconsistent?</p>
+<details class="worked"><summary>Check your answer</summary><p>No. The overall rating can summarize several job facets, while team communication is one particular condition. Different items can reflect different parts of a complex evaluation, and their meanings should be checked.</p></details>
+
+<p class="question">15. Explain why extra-role citizenship behaviour can benefit an organization and still require attention to employee well-being.</p>
+<details class="worked"><summary>Check your answer</summary><p>OCB can reduce supervision, improve morale, produce cost-saving suggestions, and free managerial time. If extra-role contributions become excessive, managers should consider burnout and help employees contribute sustainably.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="lecture-1-organizational-behaviour-foundations.html"><small>Previous</small>Organizational Behaviour Foundations <span aria-hidden="true">↗</span></a><a href="lecture-3-personality-at-work.html"><small>Next</small>Personality at Work <span aria-hidden="true">↗</span></a></nav><footer>Organizational Behavior and Management · Study guide <span>Understand work. Connect people, teams, and organizations.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      const caption = table.querySelector('caption')?.textContent.trim();
+      const headers = [...table.querySelectorAll('th')].map(cell => cell.textContent.trim()).filter(Boolean);
+      const name = caption || headers.slice(0, 3).join(', ');
+      region.setAttribute('aria-label', name ? `Table: ${name}` : 'Study table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Study diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const searchable = (link.textContent + ' ' + (link.dataset.search || '')).toLowerCase();
+        const match = searchable.includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('ob-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.OB_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    const mobileTopicsSelection = menu && getComputedStyle(menu).display !== 'none' && sidebar?.classList.contains('open');
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    } else if (mobileTopicsSelection && slug !== 'index') {
+      main.querySelector('h1')?.scrollIntoView({behavior:'instant', block:'start'});
+    }
+    if (mobileTopicsSelection) menu.focus({preventScroll:true});
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

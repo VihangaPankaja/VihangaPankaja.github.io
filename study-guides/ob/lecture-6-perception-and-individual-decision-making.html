@@ -1,0 +1,662 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Trace how people notice and interpret their environment, explain others’ behaviour, and decide what counts as a problem or a reasonable course of action."><title>Perception and Individual Decision Making · OB and Management</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('ob-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">OB</span> OB <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="People, teams, leadership…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Organizational Behavior and Management</a></div><div class="nav-group"><p>Foundations</p><a class="nav-entry" data-search="" href="lecture-1-organizational-behaviour-foundations.html">Organizational Behaviour Foundations</a></div><div class="nav-group"><p>Individual behaviour</p><a class="nav-entry" data-search="" href="lecture-2-work-attitudes-and-job-satisfaction.html">Work Attitudes and Job Satisfaction</a><a class="nav-entry" data-search="" href="lecture-3-personality-at-work.html">Personality at Work</a><a class="nav-entry" data-search="" href="lecture-3-values-culture-and-person-environment-fit.html">Values, Culture, and Person-Environment Fit</a><a class="nav-entry" data-search="" href="lecture-4-emotions-and-moods.html">Emotions and Moods</a><a class="nav-entry" data-search="" href="lecture-5-managing-emotions-at-work.html">Managing Emotions at Work</a><a class="nav-entry" data-search="" href="lecture-6-perception-and-individual-decision-making.html" aria-current="page">Perception and Individual Decision Making</a></div><div class="nav-group"><p>Group behaviour</p><a class="nav-entry" data-search="" href="lecture-7-group-structure-and-behaviour.html">Group Structure and Behaviour</a><a class="nav-entry" data-search="" href="lecture-7-group-decision-making.html">Group Decision-Making</a><a class="nav-entry" data-search="" href="lecture-8-work-teams-and-effectiveness.html">Work Teams and Effectiveness</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">MN4063<br>Organizational Behavior and Management</div></aside>
+<main id="main"><div class="eyebrow">Individual behaviour <span>/</span> Lecture 6</div><h1>Perception and Individual Decision Making</h1><p class="lead">Trace how people notice and interpret their environment, explain others’ behaviour, and decide what counts as a problem or a reasonable course of action.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Perception shapes behaviour</a><a href="#section-2">From stimuli to action</a><a href="#section-3">Perceptual selectivity: what gets attention</a><a href="#section-4">Social perception and attribution</a><a href="#section-5">Shortcuts when judging other people</a><a href="#section-6">Problem recognition is perceptual</a><a href="#section-7">Three approaches to individual decisions</a><a href="#section-8">Decision biases: mechanism, cue, and a check</a><a href="#section-9">Common mistakes</a><a href="#section-10">Exam focus</a><a href="#section-11">Practice questions</a></nav><article><p><a href="lecture-1-organizational-behaviour-foundations.html">← Review: Organizational Behaviour Foundations</a></p>
+
+<h2 id="section-0">Big picture</h2>
+<p>Perception is how people organize and interpret sensory impressions to give meaning to their environment. Because people act on the reality they perceive, two managers can face the same facts and still disagree about whether there is a problem, what caused it, or what to do next. This lecture links attention and interpretation to judgments about other people and to individual decisions.</p>
+<figure><div class="diagram-frame" style="--diagram-width:543.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Three distinct inputs that influence perception" width="543pt" height="270pt"
+ viewBox="0.00 0.00 543.00 270.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="lecture-6-perception-and-individual-decision-making-figure-1-lecture-6-perception-and-individual-decision-making-influences-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 259.2)">
+<title>G</title>
+<!-- situation -->
+<g id="lecture-6-perception-and-individual-decision-making-figure-1-lecture-6-perception-and-individual-decision-making-influences-node1" class="node">
+<title>situation</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M216.6,-248.4C216.6,-248.4 18.75,-248.4 18.75,-248.4 12.75,-248.4 6.75,-242.4 6.75,-236.4 6.75,-236.4 6.75,-210 6.75,-210 6.75,-204 12.75,-198 18.75,-198 18.75,-198 216.6,-198 216.6,-198 222.6,-198 228.6,-204 228.6,-210 228.6,-210 228.6,-236.4 228.6,-236.4 228.6,-242.4 222.6,-248.4 216.6,-248.4"/>
+<text xml:space="preserve" text-anchor="middle" x="117.68" y="-226.95" font-family="Georgia" font-size="15.00">Situation</text>
+<text xml:space="preserve" text-anchor="middle" x="117.68" y="-208.95" font-family="Georgia" font-size="15.00">Time · work and social setting</text>
+</g>
+<!-- perception -->
+<g id="lecture-6-perception-and-individual-decision-making-figure-1-lecture-6-perception-and-individual-decision-making-influences-node4" class="node">
+<title>perception</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M509.45,-167.4C509.45,-167.4 279.35,-167.4 279.35,-167.4 273.35,-167.4 267.35,-161.4 267.35,-155.4 267.35,-155.4 267.35,-129 267.35,-129 267.35,-123 273.35,-117 279.35,-117 279.35,-117 509.45,-117 509.45,-117 515.45,-117 521.45,-123 521.45,-129 521.45,-129 521.45,-155.4 521.45,-155.4 521.45,-161.4 515.45,-167.4 509.45,-167.4"/>
+<text xml:space="preserve" text-anchor="middle" x="394.4" y="-145.95" font-family="Georgia" font-size="15.00">Perception</text>
+<text xml:space="preserve" text-anchor="middle" x="394.4" y="-127.95" font-family="Georgia" font-size="15.00">Meaning given to the environment</text>
+</g>
+<!-- situation&#45;&gt;perception -->
+<g id="lecture-6-perception-and-individual-decision-making-figure-1-lecture-6-perception-and-individual-decision-making-influences-edge1" class="edge">
+<title>situation&#45;&gt;perception</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M205.6,-197.57C235.31,-188.81 268.67,-178.98 298.94,-170.05"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="299.53,-172.25 305.12,-168.23 298.24,-167.89 299.53,-172.25"/>
+</g>
+<!-- target -->
+<g id="lecture-6-perception-and-individual-decision-making-figure-1-lecture-6-perception-and-individual-decision-making-influences-node2" class="node">
+<title>target</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M211.35,-176.4C211.35,-176.4 24,-176.4 24,-176.4 18,-176.4 12,-170.4 12,-164.4 12,-164.4 12,-120 12,-120 12,-114 18,-108 24,-108 24,-108 211.35,-108 211.35,-108 217.35,-108 223.35,-114 223.35,-120 223.35,-120 223.35,-164.4 223.35,-164.4 223.35,-170.4 217.35,-176.4 211.35,-176.4"/>
+<text xml:space="preserve" text-anchor="middle" x="117.68" y="-154.95" font-family="Georgia" font-size="15.00">Target</text>
+<text xml:space="preserve" text-anchor="middle" x="117.68" y="-136.95" font-family="Georgia" font-size="15.00">Size · intensity · background</text>
+<text xml:space="preserve" text-anchor="middle" x="117.68" y="-118.95" font-family="Georgia" font-size="15.00">Novelty · proximity · motion</text>
+</g>
+<!-- target&#45;&gt;perception -->
+<g id="lecture-6-perception-and-individual-decision-making-figure-1-lecture-6-perception-and-individual-decision-making-influences-edge2" class="edge">
+<title>target&#45;&gt;perception</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M223.71,-142.2C235.39,-142.2 247.4,-142.2 259.38,-142.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="259.23,-144.48 265.73,-142.2 259.23,-139.93 259.23,-144.48"/>
+</g>
+<!-- perceiver -->
+<g id="lecture-6-perception-and-individual-decision-making-figure-1-lecture-6-perception-and-individual-decision-making-influences-node3" class="node">
+<title>perceiver</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M223.35,-86.4C223.35,-86.4 12,-86.4 12,-86.4 6,-86.4 0,-80.4 0,-74.4 0,-74.4 0,-12 0,-12 0,-6 6,0 12,0 12,0 223.35,0 223.35,0 229.35,0 235.35,-6 235.35,-12 235.35,-12 235.35,-74.4 235.35,-74.4 235.35,-80.4 229.35,-86.4 223.35,-86.4"/>
+<text xml:space="preserve" text-anchor="middle" x="117.68" y="-64.95" font-family="Georgia" font-size="15.00">Perceiver</text>
+<text xml:space="preserve" text-anchor="middle" x="117.68" y="-46.95" font-family="Georgia" font-size="15.00">Attitudes · personality · motives</text>
+<text xml:space="preserve" text-anchor="middle" x="117.68" y="-28.95" font-family="Georgia" font-size="15.00">Interests · past experiences</text>
+<text xml:space="preserve" text-anchor="middle" x="117.68" y="-10.95" font-family="Georgia" font-size="15.00">Expectations</text>
+</g>
+<!-- perceiver&#45;&gt;perception -->
+<g id="lecture-6-perception-and-individual-decision-making-figure-1-lecture-6-perception-and-individual-decision-making-influences-edge3" class="edge">
+<title>perceiver&#45;&gt;perception</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M235.58,-85.33C262.43,-95 290.35,-105.06 315.1,-113.98"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="314.03,-116.02 320.91,-116.08 315.57,-111.73 314.03,-116.02"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Three distinct inputs that influence perception</figcaption></figure>
+
+<p>The situation, the target, and the perceiver each influence perception. They are separate inputs, not steps in a chain. A loud voice may stand out because of a target feature; an urgent meeting may make it more noticeable; and a listener’s expectation may shape what the voice means to them.</p>
+<p>Perceiver factors include attitudes, personality, motives, interests, past experiences, and expectations.</p>
+<h2 id="section-1">Perception shapes behaviour</h2>
+<p>The lecture defines perception as the process by which people organize and interpret sensory impressions to give meaning to their environment. What someone perceives can differ substantially from objective reality. In organizational behaviour, the perceived world matters because people generally respond to what they think is happening, not to an observer’s account of conditions alone.</p>
+<p>The opening visual illustrates this with two people who call the same glass “almost full” or “almost empty,” and a ground marking that appears as a 6 to one viewer and a 9 to another. The shared stimulus is interpreted from different viewpoints; the illustration does not make either observer's reading a fact about the object.</p>
+<p>People may form different impressions of similar jobs and working conditions. The lecture also notes that people often evaluate those they see as similar to themselves more positively, and those they see as different more negatively. Similarity is therefore not neutral evidence of competence or fit.</p>
+<h2 id="section-2">From stimuli to action</h2>
+<figure><div class="diagram-frame" style="--diagram-width:599.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Perception process: stimuli are selected, organized and interpreted before action" width="599pt" height="72pt"
+ viewBox="0.00 0.00 599.00 72.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="lecture-6-perception-and-individual-decision-making-figure-2-lecture-6-perception-and-individual-decision-making-process-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 61.2)">
+<title>G</title>
+<!-- stimuli -->
+<g id="lecture-6-perception-and-individual-decision-making-figure-2-lecture-6-perception-and-individual-decision-making-process-node1" class="node">
+<title>stimuli</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M59.1,-50.4C59.1,-50.4 12,-50.4 12,-50.4 6,-50.4 0,-44.4 0,-38.4 0,-38.4 0,-12 0,-12 0,-6 6,0 12,0 12,0 59.1,0 59.1,0 65.1,0 71.1,-6 71.1,-12 71.1,-12 71.1,-38.4 71.1,-38.4 71.1,-44.4 65.1,-50.4 59.1,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="35.55" y="-28.95" font-family="Georgia" font-size="15.00">Inputs</text>
+<text xml:space="preserve" text-anchor="middle" x="35.55" y="-10.95" font-family="Georgia" font-size="15.00">Stimuli</text>
+</g>
+<!-- selection -->
+<g id="lecture-6-perception-and-individual-decision-making-figure-2-lecture-6-perception-and-individual-decision-making-process-node2" class="node">
+<title>selection</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M174.2,-43.2C174.2,-43.2 115.1,-43.2 115.1,-43.2 109.1,-43.2 103.1,-37.2 103.1,-31.2 103.1,-31.2 103.1,-19.2 103.1,-19.2 103.1,-13.2 109.1,-7.2 115.1,-7.2 115.1,-7.2 174.2,-7.2 174.2,-7.2 180.2,-7.2 186.2,-13.2 186.2,-19.2 186.2,-19.2 186.2,-31.2 186.2,-31.2 186.2,-37.2 180.2,-43.2 174.2,-43.2"/>
+<text xml:space="preserve" text-anchor="middle" x="144.65" y="-19.95" font-family="Georgia" font-size="15.00">Selection</text>
+</g>
+<!-- stimuli&#45;&gt;selection -->
+<g id="lecture-6-perception-and-individual-decision-making-figure-2-lecture-6-perception-and-individual-decision-making-process-edge1" class="edge">
+<title>stimuli&#45;&gt;selection</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M71.32,-25.2C78.84,-25.2 86.91,-25.2 94.85,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="94.7,-27.48 101.2,-25.2 94.7,-22.93 94.7,-27.48"/>
+</g>
+<!-- organization -->
+<g id="lecture-6-perception-and-individual-decision-making-figure-2-lecture-6-perception-and-individual-decision-making-process-node3" class="node">
+<title>organization</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M314.8,-43.2C314.8,-43.2 230.2,-43.2 230.2,-43.2 224.2,-43.2 218.2,-37.2 218.2,-31.2 218.2,-31.2 218.2,-19.2 218.2,-19.2 218.2,-13.2 224.2,-7.2 230.2,-7.2 230.2,-7.2 314.8,-7.2 314.8,-7.2 320.8,-7.2 326.8,-13.2 326.8,-19.2 326.8,-19.2 326.8,-31.2 326.8,-31.2 326.8,-37.2 320.8,-43.2 314.8,-43.2"/>
+<text xml:space="preserve" text-anchor="middle" x="272.5" y="-19.95" font-family="Georgia" font-size="15.00">Organization</text>
+</g>
+<!-- selection&#45;&gt;organization -->
+<g id="lecture-6-perception-and-individual-decision-making-figure-2-lecture-6-perception-and-individual-decision-making-process-edge2" class="edge">
+<title>selection&#45;&gt;organization</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M186.51,-25.2C194.05,-25.2 202.07,-25.2 210.05,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="210,-27.48 216.5,-25.2 210,-22.93 210,-27.48"/>
+</g>
+<!-- interpretation -->
+<g id="lecture-6-perception-and-individual-decision-making-figure-2-lecture-6-perception-and-individual-decision-making-process-node4" class="node">
+<title>interpretation</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M463.65,-43.2C463.65,-43.2 370.8,-43.2 370.8,-43.2 364.8,-43.2 358.8,-37.2 358.8,-31.2 358.8,-31.2 358.8,-19.2 358.8,-19.2 358.8,-13.2 364.8,-7.2 370.8,-7.2 370.8,-7.2 463.65,-7.2 463.65,-7.2 469.65,-7.2 475.65,-13.2 475.65,-19.2 475.65,-19.2 475.65,-31.2 475.65,-31.2 475.65,-37.2 469.65,-43.2 463.65,-43.2"/>
+<text xml:space="preserve" text-anchor="middle" x="417.23" y="-19.95" font-family="Georgia" font-size="15.00">Interpretation</text>
+</g>
+<!-- organization&#45;&gt;interpretation -->
+<g id="lecture-6-perception-and-individual-decision-making-figure-2-lecture-6-perception-and-individual-decision-making-process-edge3" class="edge">
+<title>organization&#45;&gt;interpretation</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M327.05,-25.2C334.76,-25.2 342.77,-25.2 350.68,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="350.54,-27.48 357.04,-25.2 350.54,-22.93 350.54,-27.48"/>
+</g>
+<!-- action -->
+<g id="lecture-6-perception-and-individual-decision-making-figure-2-lecture-6-perception-and-individual-decision-making-process-node5" class="node">
+<title>action</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M565.25,-50.4C565.25,-50.4 519.65,-50.4 519.65,-50.4 513.65,-50.4 507.65,-44.4 507.65,-38.4 507.65,-38.4 507.65,-12 507.65,-12 507.65,-6 513.65,0 519.65,0 519.65,0 565.25,0 565.25,0 571.25,0 577.25,-6 577.25,-12 577.25,-12 577.25,-38.4 577.25,-38.4 577.25,-44.4 571.25,-50.4 565.25,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="542.45" y="-28.95" font-family="Georgia" font-size="15.00">Output</text>
+<text xml:space="preserve" text-anchor="middle" x="542.45" y="-10.95" font-family="Georgia" font-size="15.00">Action</text>
+</g>
+<!-- interpretation&#45;&gt;action -->
+<g id="lecture-6-perception-and-individual-decision-making-figure-2-lecture-6-perception-and-individual-decision-making-process-edge4" class="edge">
+<title>interpretation&#45;&gt;action</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M475.87,-25.2C483.78,-25.2 491.78,-25.2 499.34,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="499.34,-27.48 505.84,-25.2 499.34,-22.93 499.34,-27.48"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Perception process: stimuli are selected, organized and interpreted before action</figcaption></figure>
+
+<p>The process begins as sensory information arrives and ends in action. The lecture groups selection, organization, and interpretation as the “throughputs” between stimulus input and action output. People receive more information than they can process, so they select some signals and screen out others. External features such as intensity, size, movement, and repetition, as well as internal qualities such as age, learning, and interests, can affect selection. They then organize selected information to form meaning.</p>
+<p>The lecture names three ways people organize information:</p>
+<table aria-label="Three ways people organize selected perceptual information">
+<caption>Organization mechanisms</caption>
+<thead><tr><th scope="col">Mechanism</th><th scope="col">What the perceiver does</th><th scope="col">Lecture illustration</th></tr></thead>
+<tbody>
+<tr><th scope="row">Grouping</th><td>Groups stimuli by similarity or proximity.</td><td>Workers from the same place may be perceived as similar because they are near one another.</td></tr>
+<tr><th scope="row">Closure</th><td>Fills gaps in incomplete information to make it meaningful.</td><td>Uses past experience, data, or a hunch to supply what is missing.</td></tr>
+<tr><th scope="row">Simplification</th><td>Identifies main features and simplifies the interpretation.</td><td>Reduces a complicated stimulus situation to a few salient features.</td></tr>
+</tbody></table>
+
+<p>Closure and simplification help people make sense of complexity, but an interpretation that feels complete may still rest on missing evidence. A hunch can fill a gap; it does not establish that the guess is true.</p>
+<p><strong>Teaching example: silence in a meeting.</strong> A manager notices that an employee says little (selection). The manager groups this with the employee’s quiet manner, fills in the missing reason as “not interested” (closure), and reduces several observations to the label “unengaged” (simplification). The employee’s silence is observed; disinterest is inferred. Checking the employee’s written contribution and asking about the meeting can change the interpretation before the manager assigns work.</p>
+
+<h2 id="section-3">Perceptual selectivity: what gets attention</h2>
+<p>Perceptual selectivity is attending to particular stimuli according to their perceived relevance, importance, and personal interests. External properties can make a signal stand out; personal influences help explain why people in the same setting notice different things.</p>
+<table aria-label="External and personal influences on perceptual selectivity">
+<caption>Influences that direct selective attention</caption>
+<thead><tr><th scope="col">Influence group</th><th scope="col">Factors</th><th scope="col">How they can shape attention</th></tr></thead>
+<tbody>
+<tr><th scope="row">External stimulus properties</th><td>Size, intensity, repetition, novelty or familiarity, contrast, motion</td><td>Large, loud, repeated, new or familiar, contrasting, and moving stimuli can draw attention.</td></tr>
+<tr><th scope="row">Personal influences</th><td>Self-concept, beliefs, expectations, inner needs, response disposition, response salience, perceptual defence</td><td>What a person believes, expects, needs, recognizes, or is disposed to notice can make one interpretation more prominent.</td></tr>
+</tbody></table>
+
+<p>External properties include size, intensity, repetition, novelty or familiarity, contrast, and motion. The slide illustrates how loud sounds and bright lights stand out, repeated messages attract attention, and movement can be more noticeable than stillness. Novelty and familiarity both matter: unusual stimuli attract attention, and familiar stimuli may be readily recognized.</p>
+<p>Personal influences include a person's self-concept, beliefs, expectations, and inner needs. The lecture gives the example of a technical manager expecting non-technical staff not to know a product’s technical features. This expectation can affect what the manager notices in their answers. A response disposition makes familiar stimuli easier to perceive; response salience comes from a person's cognitive predispositions. The same business problem may therefore appear to marketing staff as a marketing problem, to accounting staff as a control problem, and to personnel staff as a human-relations problem.</p>
+<p>Perceptual defence is screening information that creates conflict or feels threatening. It can involve denying the information, distorting it to fit an older view, or accepting it only as an unrepresentative exception. Recognizing the pattern is a reason to look again at the evidence that challenges a current interpretation.</p>
+<h2 id="section-4">Social perception and attribution</h2>
+<p>Social perception is gathering and interpreting information about people through appearance, verbal communication, and nonverbal signals. These cues help people judge characteristics, roles, and relationships, but they do not directly reveal another person's motives.</p>
+<p>Attribution theory describes how observers decide whether behaviour was caused internally or externally. An internal cause is believed to be under the person's control; an external cause is something the situation is thought to have forced. The lecture's lateness example contrasts oversleeping after partying (internal) with a traffic accident blocking the route (external).</p>
+<table aria-label="Attribution theory: three comparison questions and the lecture's high and low cues">
+<caption>Ask what is being compared before interpreting the cue</caption>
+<thead><tr><th scope="col">Cue</th><th scope="col">Question</th><th scope="col">High cue</th><th scope="col">Low cue</th></tr></thead>
+<tbody>
+<tr><th scope="row">Distinctiveness</th><td>Does this person behave differently in other situations?</td><td>Unusual in this situation; points toward an external attribution.</td><td>Similar behaviour across situations; points toward an internal attribution.</td></tr>
+<tr><th scope="row">Consensus</th><td>Do other people respond similarly to the same situation?</td><td>Others respond the same way; points toward an external attribution.</td><td>Others in the same situation do not; points toward an internal attribution.</td></tr>
+<tr><th scope="row">Consistency</th><td>Does this person respond this way over time?</td><td>Repeated behaviour; the lecture points toward an internal attribution.</td><td>Not repeated over time; points toward an external attribution.</td></tr>
+</tbody></table>
+
+<p>Keep the comparisons distinct: “other situations” is distinctiveness, “other people” is consensus, and “other times” is consistency. The source gives directional cues, not a deterministic test. Consider the combined pattern and investigate context before deciding what caused a behaviour.</p>
+<section class="walk" tabindex="0" aria-label="Teaching example: compare two lateness cases using the three attribution cues">
+<h3>Teaching example: compare two lateness cases</h3>
+<div class="example-input"><p>Two employees arrive late today. Case A is normally punctual, and several coworkers using the same route are also late after a traffic accident. Case B is late several times a week, is late to other commitments too, and coworkers on the same route arrive on time. Use the lecture's three questions; do not treat the result as proof of cause.</p></div>
+<div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div>
+<section class="step"><h4>1. Distinctiveness: compare other situations</h4><p>Case A: lateness is unusual for this person, so distinctiveness is high and the cue points outward to the situation. Case B: lateness occurs across settings, so distinctiveness is low and the cue points inward to the person.</p></section>
+<section class="step"><h4>2. Consensus: compare other people</h4><p>Case A: coworkers using the route are late too, so consensus is high and the cue points outward. Case B: other commuters arrive on time, so consensus is low and the cue points inward.</p></section>
+<section class="step"><h4>3. Consistency: compare other times</h4><p>Case A: this is not a repeated pattern, so consistency is low and the cue points outward. Case B: lateness repeats several times a week, so consistency is high and the lecture's cue points inward.</p></section>
+<section class="step"><h4>4. Combine the cues and check</h4><p>Case A's high distinctiveness, high consensus, and low consistency point toward a temporary external explanation such as the accident. Case B's low distinctiveness, low consensus, and high consistency point toward an internal explanation. These are provisional attributions: ask what happened and check the relevant circumstances before acting.</p></section>
+</section>
+
+<h2 id="section-5">Shortcuts when judging other people</h2>
+<p>Shortcuts reduce the effort of interpreting people, but they can replace individual evidence with an impression or reference point. Keep their mechanisms separate.</p>
+<table aria-label="Common social perception shortcuts and their distinct recognition cues">
+<caption>Recognize the shortcut by the source of the judgment</caption>
+<thead><tr><th scope="col">Shortcut</th><th scope="col">Recognition cue</th><th scope="col">Workplace example</th></tr></thead>
+<tbody>
+<tr><th scope="row">Selective perception</th><td>Some information is attended to while other information is screened out.</td><td><strong>Teaching example:</strong> a manager notices only behaviour that fits an existing expectation.</td></tr>
+<tr><th scope="row">Halo effect</th><td>An overall impression spills over into judgments of separate attributes.</td><td><strong>Lecture example:</strong> someone seen as attractive or likeable is also rated more favourably on skills or characteristics, regardless of actual performance.</td></tr>
+<tr><th scope="row">Contrast effect</th><td>A comparison point makes a person's qualities seem more different than they are.</td><td><strong>Lecture example:</strong> a candidate is seen as better than they are after less suitable applicants, or worse after top-tier applicants.</td></tr>
+<tr><th scope="row">Social identity effect</th><td>Group identification shapes self-definition and attitudes toward in-group and out-group members.</td><td><strong>Teaching example:</strong> a team member feels belonging and self-esteem through group membership while becoming less favourable toward an outside group; this is a possible influence, not a prediction about any member.</td></tr>
+<tr><th scope="row">Stereotyping</th><td>A generalized group belief is applied to an individual and overlooks personal differences.</td><td><strong>Teaching example:</strong> a hiring panel assumes each applicant from a professional category has the same traits instead of checking individual evidence.</td></tr>
+</tbody></table>
+
+<p>Halo is impression spillover; contrast is a reference-point effect; stereotyping applies a group expectation. Social identity concerns how group membership informs a person's self-definition and intergroup attitudes. These concepts can overlap in practice, but they are not interchangeable explanations.</p>
+<h2 id="section-6">Problem recognition is perceptual</h2>
+<p>Decision-making is a response to a problem: a discrepancy between the current state and a desired state that calls for considering alternative courses of action. Whether a discrepancy counts as a problem is itself a perceptual issue. One manager may see a division's 2% quarterly sales decline as urgent; another manager with the same decline may consider it acceptable. The observed change alone does not settle what response is warranted.</p>
+<p>The slides present an organizational schema with data or transaction processing at the base, then operational, tactical, and strategic decision levels. A second figure associates decision structure with management groups and information needs:</p>
+<table aria-label="Lecture schema connecting decision structure, management groups, and information requirements">
+<caption>Decision-level schema from the lecture</caption>
+<thead><tr><th scope="col">Decision structure</th><th scope="col">Group in the slide</th><th scope="col">Information requirements listed in the slide</th></tr></thead>
+<tbody>
+<tr><th scope="row">Unstructured</th><td>Senior management</td><td>General, broad scope, interactive, external, internal, real-time, ad hoc.</td></tr>
+<tr><th scope="row">Semi-structured</th><td>Middle management</td><td>Focused, specified, interactive, internal, real-time, scheduled.</td></tr>
+<tr><th scope="row">Structured</th><td>Operational management; individual employees and teams</td><td>Specified, scheduled, narrow, interactive, real-time, internal, detailed.</td></tr>
+</tbody></table>
+
+<p>This is the lecture's organizational schema, not a universal rule for every organization.</p>
+<h2 id="section-7">Three approaches to individual decisions</h2>
+<h3>Rational decision-making: an ideal sequence</h3>
+<p>The rational decision-making model assumes the decision-maker has complete information, can identify all relevant options without bias, and chooses the option with the highest utility. Its six steps give a useful order for analysis:</p>
+<ol>
+<li>Identify the problem.</li><li>Clarify the decision criteria.</li><li>Identify alternatives.</li><li>Calculate risks and benefits.</li><li>Evaluate alternatives.</li><li>Select the best option.</li>
+</ol>
+
+<section class="walk" tabindex="0" aria-label="Teaching example: apply the rational decision sequence to choosing a delivery supplier">
+<h3>Teaching example: choose a delivery supplier</h3>
+<div class="example-input"><p>A team needs a supplier whose delivery arrives before a planned launch. It cares about delivery reliability, timing, and total cost. Three suppliers are available. For this teaching example, assume the team can obtain complete, comparable information and evaluate every relevant option fairly; those assumptions are part of the rational model, not facts guaranteed in real decisions.</p></div>
+<div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div>
+<section class="step"><h4>1. Identify the problem</h4><p>The current supplier cannot reliably deliver before launch, while the desired state is dependable delivery in time. State the gap before choosing an alternative.</p></section>
+<section class="step"><h4>2. Clarify the decision criteria</h4><p>Use the team's stated criteria: reliability, delivery timing, and total cost. Keep them visible so the most striking feature of one offer does not silently replace them.</p></section>
+<section class="step"><h4>3. Identify alternatives</h4><p>List all relevant available suppliers, including the current arrangement if it remains a genuine option. The ideal model assumes the decision-maker can identify all relevant choices.</p></section>
+<section class="step"><h4>4. Calculate risks and benefits</h4><p>For each supplier, gather comparable evidence about delivery reliability, timing, cost, and relevant risks. The example supplies no numbers, so none should be invented.</p></section>
+<section class="step"><h4>5. Evaluate alternatives</h4><p>Compare every option against the criteria using the same evidence standard. Consider the trade-offs together rather than letting one attractive feature determine the judgment.</p></section>
+<section class="step"><h4>6. Select the best option and check</h4><p>Select the alternative with the highest utility under the criteria and available evidence. Check that the selected option meets the stated launch need and that relevant alternatives were considered. If the information is incomplete, the ideal model's assumptions are not met.</p></section>
+</section>
+
+<p>In practice, the lecture says most decisions do not follow this complete optimization sequence. People often look for an acceptable or reasonable solution, and important decisions frequently depend on judgment rather than a defined prescriptive model.</p>
+<h3>Bounded rationality: a satisfactory choice under limits</h3>
+<p>Bounded rationality recognizes limits in knowledge, cognitive capacity, time, and resources. People simplify a complicated problem to a level they can manage, then satisfice: they search for something satisfactory and sufficient rather than proving that they found the best possible option. Satisficing is an adaptation to limits, not necessarily carelessness; it also means the chosen option has not been shown to be optimal.</p>
+<p>The lecture's comparison distinguishes limited from unbounded assumptions:</p>
+<table aria-label="Lecture comparison of bounded rationality and rational choice">
+<caption>Bounded rationality and rational choice as presented in the lecture</caption>
+<thead><tr><th scope="col">Dimension</th><th scope="col">Bounded rationality</th><th scope="col">Rational choice</th></tr></thead>
+<tbody>
+<tr><th scope="row">Decision-maker capacity</th><td>Bounded mental capacity; may need assistance.</td><td>Unbounded cognitive ability.</td></tr>
+<tr><th scope="row">Available actions</th><td>Knowledge of an acceptable set.</td><td>Knowledge of all available actions.</td></tr>
+<tr><th scope="row">Consequences</th><td>Approximate and heterogeneous knowledge.</td><td>Numerical knowledge of all consequences.</td></tr>
+<tr><th scope="row">Preferences</th><td>Evolutionary and unsettled.</td><td>Stable and ordered.</td></tr>
+<tr><th scope="row">Time and cost</th><td>Temporary and cost limits affect decision quality.</td><td>Resources are unbounded or do not affect the process.</td></tr>
+<tr><th scope="row">Decision aim</th><td>Search for a satisfactory result; help the decision-maker understand what may happen.</td><td>Search for the best possible result; inform the decision-maker what to do.</td></tr>
+</tbody></table>
+
+<h3>Intuition: fast pattern recognition from experience</h3>
+<p>The lecture describes intuition as nonconscious decision-making formed through concentrated experience. It works outside conscious thought, links disparate pieces of information holistically, is fast, and is affectively charged. It is not necessarily wrong, does not always conflict with analysis, and is not presented as superstition or a magical sense. It is complex and based on years of experience and learning.</p>
+<p>The lecture's practical limit is clear: use an experienced hunch to suggest a hypothesis, not as proof. Test it with objective data and careful analysis. Intuition and analysis can complement each other.</p>
+<h2 id="section-8">Decision biases: mechanism, cue, and a check</h2>
+<p>Each bias has a different signature. The checks below are <strong>supplemental practice suggestions</strong> to help apply the lecture's distinctions. The slides do not establish each check as a tested remedy. The clearest source-based guidance is to test hunches with objective evidence and analysis; the lecture also says a felt need for accuracy is associated with less confirmation bias.</p>
+<table aria-label="Decision biases with distinct recognition cues and qualified checking suggestions">
+<caption>Distinguish the mechanism before choosing a check</caption>
+<thead><tr><th scope="col">Bias</th><th scope="col">What is happening</th><th scope="col">Recognition cue or lecture case</th><th scope="col">Supplemental check</th></tr></thead>
+<tbody>
+<tr><th scope="row">Overconfidence</th><td>Confidence about one's own or others' ability exceeds what is warranted, often without awareness.</td><td>A person is sure the plan will work and does not prepare for problems. The lecture reports that people whose intellectual and interpersonal abilities are weakest are most likely to overestimate their own performance and ability, and that entrepreneur optimism is negatively related to new-venture performance; these are slide-reported claims, not rules about an individual.</td><td>State what evidence supports confidence, identify uncertainties, and prepare a contingency plan. Do not infer incompetence from confidence alone.</td></tr>
+<tr><th scope="row">Anchoring</th><td>Initial information gets disproportionate weight and later information does not shift the judgment enough.</td><td><strong>Teaching example:</strong> in a negotiation, the first offer continues to dominate after relevant later evidence is available. The lecture notes that anchors are widely used where persuasion matters and that negotiations involve anchoring.</td><td>Make an independent estimate before seeing the first proposal, then compare it with later evidence. Treat the estimate as a prompt to review, not a guaranteed correction.</td></tr>
+<tr><th scope="row">Confirmation</th><td>People seek or accept support for past choices or views and discount contradictory information.</td><td><strong>Teaching example:</strong> a decision-maker with strong opinions and confidence in their information chooses sources that echo their view.</td><td>Ask what evidence would change the conclusion and actively seek it. The lecture notes that feeling a need for decision accuracy is associated with less confirmation bias; it does not make bias impossible.</td></tr>
+<tr><th scope="row">Availability</th><td>Judgment leans on information that is easy to recall, especially vivid, emotional, recent, or tied to direct experience.</td><td>After a vivid story, someone overestimates an unlikely event such as an aeroplane crash, medical complication, or job loss.</td><td>Compare the memorable case with relevant base-rate and longer-term records. A recalled example is not itself a frequency estimate.</td></tr>
+<tr><th scope="row">Escalation of commitment</th><td>A decision is continued despite clear evidence it is wrong, especially when the decision-maker feels personally responsible.</td><td><strong>Teaching example:</strong> a manager keeps supporting a failing choice and searches for evidence that justifies the original commitment, fearing personal failure.</td><td>Review current evidence and future costs with an independent person; ask what would justify stopping or changing course. Continuation alone is not proof of escalation if new evidence supports it.</td></tr>
+<tr><th scope="row">Loss aversion</th><td>Equivalent losses feel more painful than gains feel pleasurable.</td><td><strong>Teaching example:</strong> a possible loss dominates attention even when an equivalent gain is available. The slide says losses are typically about twice as psychologically powerful; treat that as its heuristic, not a universal coefficient.</td><td>Describe outcomes in both gain and loss terms and compare equivalent consequences. This can reveal framing; it does not eliminate individual differences.</td></tr>
+<tr><th scope="row">Hindsight</th><td>After learning the outcome, a person falsely believes they could have predicted it accurately.</td><td><strong>Teaching example:</strong> after a project fails, someone says “it was obvious” though the prediction was not recorded beforehand.</td><td>Record expectations and reasons before outcomes are known, then compare them with what happened. This supports a fairer review but cannot recover every prior belief.</td></tr>
+</tbody></table>
+
+<p>Overconfidence is not simply being confident; the cue is confidence that outruns evidence, often with limited planning for problems. Anchoring concerns the weight of early information. Confirmation concerns how supporting and conflicting evidence is searched for or evaluated. Availability concerns ease of recall. Escalation concerns continuing despite clear contrary evidence and may be reinforced by responsibility. Loss aversion concerns unequal emotional weight for equivalent losses and gains. Hindsight appears after the outcome is known.</p>
+<h2 id="section-9">Common mistakes</h2>
+<ul>
+<li>Treating perception as objective reality, or assuming observed conditions alone explain behaviour.</li>
+<li>Mixing up the situation, target, and perceiver as if they were stages or interchangeable factors.</li>
+<li>Confusing selection (what receives attention) with organization (how selected material is grouped, completed, or simplified).</li>
+<li>Treating closure or a hunch as proof rather than as an interpretation that needs checking.</li>
+<li>Mixing up distinctiveness (other situations), consensus (other people), and consistency (other times), or treating one cue as decisive.</li>
+<li>Calling halo, contrast, social identity, stereotyping, and selective perception the same shortcut.</li>
+<li>Assuming a 2% sales decline automatically is or is not a problem without considering a desired state.</li>
+<li>Describing the rational model as what people usually do; it depends on demanding assumptions.</li>
+<li>Calling satisficing careless, or claiming a satisfactory choice has been proven optimal.</li>
+<li>Treating intuition as either magic or necessarily wrong; it can suggest a hypothesis that evidence should test.</li>
+<li>Confusing confirmation (evidence sought or discounted) with availability (evidence easy to recall).</li>
+<li>Calling every persistent project effort escalation, every confident person incompetent, or the slide's “twice” loss comparison a universal rule.</li>
+<li>Claiming an outcome was predictable after it is known without checking what was recorded beforehand.</li>
+</ul>
+<h2 id="section-10">Exam focus</h2>
+<ul>
+<li>Define perception and explain why perceived reality influences behaviour in organizations.</li>
+<li>Trace stimulus input through selection, organization and interpretation to action; distinguish grouping, closure, and simplification.</li>
+<li>Classify external stimulus features and personal influences on selective attention, including response disposition, response salience, and perceptual defence.</li>
+<li>Define social perception and internal versus external attribution; state the exact question and high/low cue for distinctiveness, consensus, and consistency.</li>
+<li>Distinguish the five shortcuts by their recognition cue: selected evidence, impression spillover, comparison point, group identification, or generalized group belief.</li>
+<li>Define a problem as a current-versus-desired-state discrepancy and explain why recognizing one is perceptual.</li>
+<li>State the rational model's assumptions and six steps; contrast optimization with bounded rationality and satisficing.</li>
+<li>Describe intuition as fast, nonconscious, holistic, affectively charged, experience-based pattern recognition that can complement analysis.</li>
+<li>Diagnose each decision bias from its distinctive mechanism; qualify the lecture's reported claims and the loss-aversion heuristic.</li>
+</ul>
+<h2 id="section-11">Practice questions</h2>
+<p class="question">1. Two employees observe the same busy customer-service desk. One notices the queue, another notices a colleague struggling with the software. Name three broad influences that could help explain their different perceptions.</p>
+<details class="worked"><summary>Check your answer</summary><p>The situation (such as time pressure), target features (what stands out in the scene), and perceiver characteristics (such as interests, expectations, or experience) can each influence perception. They are separate inputs, so more detail is needed to identify which mattered most.</p></details>
+
+<p class="question">2. A supervisor observes an employee arrive late once, but the employee is usually punctual and many people were delayed by the same road accident. Apply distinctiveness, consensus, and consistency.</p>
+<details class="worked"><summary>Check your answer</summary><p>Distinctiveness is high because this is unusual for the employee across situations. Consensus is high because others faced the same delay. Consistency is low because it is not a repeated pattern. Together these cues point toward an external, temporary explanation, but the supervisor should still check what happened.</p></details>
+
+<p class="question">3. An interviewer rates a candidate immediately after a very weak candidate and gives extra credit for being personable. Which shortcuts may be operating?</p>
+<details class="worked"><summary>Check your answer</summary><p>The judgment against the previous applicant suggests contrast effect. Letting likeability shape judgments of separate qualifications suggests halo effect. Check each candidate against the same criteria and evidence.</p></details>
+
+<p class="question">4. Why can two managers disagree about whether the same 2% sales decline is a problem?</p>
+<details class="worked"><summary>Check your answer</summary><p>They may compare the observed result with different desired states or reference points. Recognizing a discrepancy that requires action is perceptual; the percentage alone does not settle the decision.</p></details>
+
+<p class="question">5. A team chooses the first supplier that meets its time and cost limits because there is not time to examine every option. Which decision approach is this, and what should the team avoid claiming?</p>
+<details class="worked"><summary>Check your answer</summary><p>This illustrates bounded rationality and satisficing: the team selects a satisfactory option within practical limits. It should not claim that the option is proven to be the best possible choice because it did not evaluate every alternative.</p></details>
+
+<p class="question">6. A manager searches mainly for reports supporting a system they already selected. After a vivid one-off failure, they also conclude the failure is now likely everywhere. Distinguish the biases.</p>
+<details class="worked"><summary>Check your answer</summary><p>The support-seeking and discounting of contradictory reports is confirmation bias. Treating an easily recalled vivid event as evidence of broad likelihood is availability bias. One concerns information search and evaluation; the other concerns ease of recall.</p></details>
+
+<p class="question">7. A project lead continues a project despite clear evidence it is failing and says after cancellation that the outcome was always obvious. Identify the two possible biases and an evidence check.</p>
+<details class="worked"><summary>Check your answer</summary><p>Continuing despite clear contrary evidence can be escalation of commitment, especially if the lead feels responsible. Claiming the failure was predictable only after it happened suggests hindsight bias. Review earlier forecasts, decision records, and the evidence available at each point; continuation alone does not prove escalation if new benefits justified it.</p></details>
+
+<p class="question">8. What role should intuition play in an important decision?</p>
+<details class="worked"><summary>Check your answer</summary><p>An experience-based hunch can suggest a hypothesis. It is not proof: test it with objective data and analysis. Intuition can complement rational analysis rather than replacing or always contradicting it.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="lecture-5-managing-emotions-at-work.html"><small>Previous</small>Managing Emotions at Work <span aria-hidden="true">↗</span></a><a href="lecture-7-group-structure-and-behaviour.html"><small>Next</small>Group Structure and Behaviour <span aria-hidden="true">↗</span></a></nav><footer>Organizational Behavior and Management · Study guide <span>Understand work. Connect people, teams, and organizations.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      const caption = table.querySelector('caption')?.textContent.trim();
+      const headers = [...table.querySelectorAll('th')].map(cell => cell.textContent.trim()).filter(Boolean);
+      const name = caption || headers.slice(0, 3).join(', ');
+      region.setAttribute('aria-label', name ? `Table: ${name}` : 'Study table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Study diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const searchable = (link.textContent + ' ' + (link.dataset.search || '')).toLowerCase();
+        const match = searchable.includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('ob-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.OB_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    const mobileTopicsSelection = menu && getComputedStyle(menu).display !== 'none' && sidebar?.classList.contains('open');
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    } else if (mobileTopicsSelection && slug !== 'index') {
+      main.querySelector('h1')?.scrollIntoView({behavior:'instant', block:'start'});
+    }
+    if (mobileTopicsSelection) menu.focus({preventScroll:true});
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

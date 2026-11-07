@@ -1,0 +1,442 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Use emotional awareness and context-sensitive response to support people and work without suppressing feelings or assuming what others feel."><title>Managing Emotions at Work · OB and Management</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('ob-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">OB</span> OB <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="People, teams, leadership…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Organizational Behavior and Management</a></div><div class="nav-group"><p>Foundations</p><a class="nav-entry" data-search="" href="lecture-1-organizational-behaviour-foundations.html">Organizational Behaviour Foundations</a></div><div class="nav-group"><p>Individual behaviour</p><a class="nav-entry" data-search="" href="lecture-2-work-attitudes-and-job-satisfaction.html">Work Attitudes and Job Satisfaction</a><a class="nav-entry" data-search="" href="lecture-3-personality-at-work.html">Personality at Work</a><a class="nav-entry" data-search="" href="lecture-3-values-culture-and-person-environment-fit.html">Values, Culture, and Person-Environment Fit</a><a class="nav-entry" data-search="" href="lecture-4-emotions-and-moods.html">Emotions and Moods</a><a class="nav-entry" data-search="" href="lecture-5-managing-emotions-at-work.html" aria-current="page">Managing Emotions at Work</a><a class="nav-entry" data-search="" href="lecture-6-perception-and-individual-decision-making.html">Perception and Individual Decision Making</a></div><div class="nav-group"><p>Group behaviour</p><a class="nav-entry" data-search="" href="lecture-7-group-structure-and-behaviour.html">Group Structure and Behaviour</a><a class="nav-entry" data-search="" href="lecture-7-group-decision-making.html">Group Decision-Making</a><a class="nav-entry" data-search="" href="lecture-8-work-teams-and-effectiveness.html">Work Teams and Effectiveness</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">MN4063<br>Organizational Behavior and Management</div></aside>
+<main id="main"><div class="eyebrow">Individual behaviour <span>/</span> Lecture 5</div><h1>Managing Emotions at Work</h1><p class="lead">Use emotional awareness and context-sensitive response to support people and work without suppressing feelings or assuming what others feel.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Why emotions matter at work</a><a href="#section-2">A leader's four practices: Notice, Name, Need, Normalize</a><a href="#section-3">Respond to another person: acknowledge, then choose the timing</a><a href="#section-4">Build a supportive emotional culture</a><a href="#section-5">Common mistakes</a><a href="#section-6">Exam focus</a><a href="#section-7">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Emotions are part of how people notice problems, connect with colleagues, and respond to pressure. Treating them as unprofessional can make a team miss useful information and leave people isolated; reacting as if every visible feeling must be fixed can also cross boundaries. Managing emotion at work means noticing without diagnosing, making room for a person's account, and choosing a proportionate response for the situation.</p>
+<p>This topic connects the previous lesson's emotion and emotional-intelligence foundations to practical leadership. The readings offer three related but distinct contributions: Dina Denham Smith's four practices for emotional awareness and a leader's climate; an HBR interview's context-sensitive guidance for responding to another person; and Sound Community's broader recommendations for workplace culture. They are not one combined research model.</p>
+<p><a href="lecture-4-emotions-and-moods.html">← Review: Emotions and Moods</a></p>
+
+<h2 id="section-1">Why emotions matter at work</h2>
+<p>Denham Smith argues that dismissing emotions as distractions or signs of weakness can encourage suppression. Her article associates prolonged ignoring or suppression with costs to wellbeing, morale, teamwork, and organizational results. It also treats emotions as information about a person's environment and as part of connection, influence, and motivation.</p>
+<p>Sound Community's article describes stress, excitement, frustration, fear, and joy as common at work. It associates positive emotional experiences with creativity, engagement, communication, and collaboration, and unmanaged negative experiences with disengagement, conflict, or lower productivity. This broad framing is a reminder to attend to team climate, not a rule that positive feelings are always useful or negative feelings should disappear.</p>
+<table aria-label="Workplace emotions, common contexts, and possible effects">
+<caption>Examples of how workplace emotions may show up</caption>
+<thead><tr><th scope="col">Emotion</th><th scope="col">Possible context</th><th scope="col">Possible workplace significance</th></tr></thead>
+<tbody>
+<tr><th scope="row">Stress</th><td>Heavy workload or a tight deadline</td><td>May signal pressure that needs attention; prolonged strain can affect wellbeing and participation.</td></tr>
+<tr><th scope="row">Excitement</th><td>A new project or promotion</td><td>Can bring energy and create an opportunity for colleagues to share in the good news.</td></tr>
+<tr><th scope="row">Frustration</th><td>Miscommunication or unmet expectations</td><td>May point to a coordination problem, though the feeling alone does not identify its cause.</td></tr>
+<tr><th scope="row">Fear</th><td>Concern about failure or judgement</td><td>May inhibit speaking up or trying an idea.</td></tr>
+<tr><th scope="row">Joy</th><td>A shared achievement</td><td>Recognizing it can strengthen connection and camaraderie.</td></tr>
+</tbody></table>
+
+<p><strong>Teaching example: frustration as a cue:</strong> A project handoff is missed twice, and two coworkers become short with each other. Frustration may signal an unmet expectation or a process problem, but the manager should ask what happened before deciding that either person is careless. The emotion is a reason to inquire, not proof of a diagnosis or a complete explanation.</p>
+
+<h2 id="section-2">A leader's four practices: Notice, Name, Need, Normalize</h2>
+<p>Denham Smith proposes a sequence for developing emotional awareness and making emotion discussable. It begins with the leader's own experience and extends to curiosity about others. The steps are a practical mnemonic, not a substitute for the separate interpersonal response choices described later.</p>
+<h3>Notice: observe cues</h3>
+<p>Emotions can show up in bodily sensations, behaviour, and energy. A leader might notice their own jaw tightening, unusually rapid speech, withdrawal, procrastination, or an unexpected drop in energy. With another person, observable cues include tone, facial expression, body language, mismatch between words and expression, or a change from that person's usual participation.</p>
+<p>These observations do not reveal an exact emotion. They create a reason to pay attention and, if appropriate, ask. A colleague who becomes quiet might be disappointed, concentrating, tired, or simply choosing not to speak.</p>
+<p><strong>Teaching example: notice without inference:</strong> In weekly planning, an analyst who is usually talkative says little after a schedule change. "I noticed you have been quieter since we changed the deadline" reports an observation. "You are angry about the deadline" turns that observation into an unsupported conclusion.</p>
+
+<h3>Name: build precision, especially about your own feeling</h3>
+<p>Emotional concepts are learned through social experience and culture. Denham Smith recommends going beyond broad words such as "mad," "sad," and "glad." More specific words, such as frustrated, resentful, provoked, joyful, relieved, or confident, can help a person describe their own experience with greater precision. A careful question can invite someone else to be more specific, but should not impose a label on them.</p>
+<p><strong>Teaching example: name your own feeling:</strong> A manager catches herself thinking "I am angry" after a tense budget meeting. On reflection, she identifies disappointment about a decision and anxiety about how to explain it to the team. That distinction helps her choose what to address, without claiming that the same vocabulary will fit every person's experience.</p>
+
+<h3>Need: ask what the feeling may be signaling</h3>
+<p>After noticing and naming an emotion in oneself, ask what message it might carry. It may point toward something important in one's needs, values, boundaries, relationships, or environment. For another person, the recommended move is gentle, open-ended inquiry rather than guessing what they need.</p>
+<p><strong>Teaching example: inquire before solving:</strong> An employee has stopped contributing to design reviews. The manager says, "I noticed you have not been joining the discussion as much lately. How have you been feeling about the work?" If the employee says the new review format feels rushed, the manager has learned something actionable. If the employee does not want to discuss it, that boundary should be respected.</p>
+
+<h3>Normalize: make room without oversharing</h3>
+<p>Denham Smith recommends that leaders model grounded, intentional honesty about both difficult and positive emotions. A brief, relevant acknowledgement can signal that emotion is allowed and can support trust and psychological safety. Normalizing does not mean disclosing everything: the article warns that oversharing can undermine credibility and destabilize a team.</p>
+<p><strong>Teaching example: normalize rather than suppress:</strong> During a demanding release week, a manager says, "This is a hectic week. I am feeling the pressure too, and we will take it one step at a time." The manager names a shared strain while staying focused on the work. If instead the manager unloads private distress and expects employees to provide comfort, the disclosure asks the team to manage the leader.</p>
+
+<h2 id="section-3">Respond to another person: acknowledge, then choose the timing</h2>
+<p>The HBR interview with Christina Bradley and Lindy Greer adds a separate decision lens: ask whether the work is time-sensitive and whether the person is coping well enough to continue. These questions help choose timing and support; they are not a diagnostic test. The person's preference for privacy also matters.</p>
+<p>The interviewees describe common reasons managers hold back: discomfort with emotional contagion, expectations about professionalism and boundaries, and concern about mental-health topics. They also discuss responding to positive emotion, such as engaging with a colleague's excitement instead of offering only a flat acknowledgement. In the interview they report figures from the research they reviewed: managers avoid engaging with emotion in conflict about 90% of the time, and people often prefer problem-solving or advice (about 80% in their account). These are the interviewees' reported figures, not universal rates or independently checked estimates.</p>
+<table aria-label="Response choices based on time pressure and whether the person is coping">
+<caption>Two context checks for choosing when and how to respond</caption>
+<thead><tr><th scope="col">Work context</th><th scope="col">If the person is coping</th><th scope="col">If the person is not coping</th></tr></thead>
+<tbody>
+<tr><th scope="row">Time-sensitive work</th><td>Avoid unnecessary interruption; check in privately when there is a suitable pause.</td><td>Intervene enough to protect the person and the task. Follow up with acknowledgement when there is time.</td></tr>
+<tr><th scope="row">Time permits</th><td>Acknowledge the situation, ask how they are experiencing it, and offer help without pressure.</td><td>Pause or move the conversation somewhere private; listen, validate, and ask what support would help.</td></tr>
+</tbody></table>
+
+<p>The interview's examples show why context matters. Surgeons described situations where a visibly rattled resident could put a critical task at risk, making immediate intervention necessary. A Navy SEAL described first regulating his own response, waiting when a teammate could cope during a high-pressure moment, and checking in during a lull. These examples support the distinction between urgent task protection and later validation; they are not a universal script for every workplace.</p>
+<p><strong>Teaching example: avoidance vs acknowledgment vs constructive follow-up:</strong> Before a time-sensitive client presentation, an employee becomes quiet after a difficult call. <em>Avoidance:</em> the manager ignores the change and assumes the employee will recover. <em>Overreach:</em> the manager announces, "You are angry," in front of the team and immediately prescribes advice. <em>Constructive follow-up:</em> the manager first checks whether the employee can proceed with the presentation. If the task is at risk, the manager helps protect it now. If the employee is coping, the manager avoids disrupting the presentation and checks in privately afterward: "That call sounded difficult. How are you doing, and would any support be useful?" The employee can correct the manager's impression, decline to talk, or ask for help.</p>
+
+<h3>Validate the experience; do not diagnose the emotion</h3>
+<p>The interview cautions that confidently naming another person's precise emotion can backfire: someone described as "frustrated" may actually feel confused. Describing a shared situation, "That meeting felt tense", or asking how it landed leaves room for the person to explain. In a public meeting, asking someone to account for a subtle emotional cue can expose them. When they are coping, a private follow-up is usually less pressuring. If they cannot participate, or safety or task performance is affected, pause and respond promptly.</p>
+<p>Acknowledgement does not require immediate advice. The interviewees describe the common impulse to solve, reframe, or make a person look on the bright side. A more useful order is to recognize what is happening, listen, and then ask whether the person wants help or advice. If they do, offer coaching questions, such as what another perspective might reveal or what a trusted mentor might suggest, rather than dictating the "correct" interpretation.</p>
+<p><strong>Teaching example: acknowledgement before advice:</strong> A teammate says they feel overlooked after a decision was made without their input. "You should just be glad the project moved forward" dismisses the experience. "It sounds like being left out of that decision mattered to you. Would you like to talk through what happened, or would you prefer help planning what to raise next time?" acknowledges first and lets the teammate choose the next step.</p>
+
+<p>The interview also applies beyond direct reports: colleagues, clients, and peers may need an appropriate offer of support. In digital communication, a manager can acknowledge the message and offer a phone call, walk, or private conversation. If a leader is emotional, brief context can help employees avoid misattributing the leader's stress to them; intentional context is different from making the team responsible for the leader's feelings. A written one-to-seven energy check is one interviewee's example for a remote team, not a required scale or universal procedure.</p>
+<h2 id="section-4">Build a supportive emotional culture</h2>
+<p>Sound Community Services offers broad practitioner recommendations for the everyday conditions around emotional wellbeing: open and thoughtful communication, recognition of achievements, regular check-ins, work-life balance, boundaries, breaks, and emotional-intelligence development. It also mentions personal awareness and brief mindfulness or breathing practices as ways to respond rather than react. These suggestions focus on routines and working conditions, not on replacing a one-to-one acknowledgement when someone is distressed.</p>
+<p>The HBR article and interview add that leaders can acknowledge positive emotions as well as difficult ones, anticipate emotionally significant events, and learn from examples of constructive responses. This does not mean a manager must make employees disclose. A supportive culture leaves room for people to speak and for people to keep private matters private.</p>
+<p><strong>Teaching example: culture practice with a boundary:</strong> After a difficult reorganization announcement, a manager schedules a check-in, explains what is known, invites questions, and recognizes the uncertainty people may be experiencing. Employees can share concerns or pass. The check-in creates a channel for communication; it does not promise that everyone will feel positive or that a single meeting resolves the underlying disruption.</p>
+
+<h2 id="section-5">Common mistakes</h2>
+<ul>
+<li>Treating emotion as unprofessional and responding with silence or suppression.</li>
+<li>Assuming that facial expression, tone, or quietness proves a particular emotion or need.</li>
+<li>Equating normalization with forced disclosure or unrestricted leader self-disclosure.</li>
+<li>Calling out a person's subtle emotion publicly when a private conversation would preserve their choice.</li>
+<li>Rushing to advice or positivity before acknowledging what the person has said.</li>
+<li>Applying one response regardless of urgency, task risk, coping, or the person's preference.</li>
+<li>Treating broad culture suggestions as a substitute for addressing workload, conflict, or other workplace conditions.</li>
+<li>Blending the three practitioner readings into one formal model or presenting their recommendations as one empirical study.</li>
+</ul>
+<h2 id="section-6">Exam focus</h2>
+<ul>
+<li>Explain why the readings challenge suppression while still recognizing privacy and professional boundaries.</li>
+<li>Recall and apply Notice → Name → Need → Normalize; distinguish observing a cue from inferring an exact feeling.</li>
+<li>Use time sensitivity and coping to reason about immediate action versus later follow-up.</li>
+<li>Distinguish acknowledging or validating an experience from diagnosing an emotion or trying to solve it immediately.</li>
+<li>Explain how grounded honesty differs from oversharing and how a private follow-up can protect dignity.</li>
+<li>Separate Denham Smith's leadership mnemonic, the interview's response guidance, and Sound Community's general culture recommendations.</li>
+<li>Attribute practitioner claims about performance, wellbeing, and emotional culture to the source making them rather than presenting them as a single proven causal model.</li>
+</ul>
+<h2 id="section-7">Practice questions</h2>
+<p class="question">1. A normally engaged employee becomes quiet in a meeting. What can a manager conclude from this cue?</p>
+<details class="worked"><summary>Check your answer</summary><p>The manager can conclude that there is a change worth noticing, but not which emotion caused it. A respectful, preferably private question gives the employee room to explain or decline.</p></details>
+
+<p class="question">2. Name the four practices in Denham Smith's leadership framework and state what "Need" asks the person to do.</p>
+<details class="worked"><summary>Check your answer</summary><p>Notice, Name, Need, Normalize. "Need" asks the person to consider what their own emotion may signal about needs, values, boundaries, relationships, or context. With someone else, ask rather than infer their need.</p></details>
+
+<p class="question">3. A person seems upset during a time-critical task but is still performing safely. What response does the interview support?</p>
+<details class="worked"><summary>Check your answer</summary><p>Avoid unnecessary interruption, then check in privately at a suitable pause. If the person is not coping or safety is at risk, intervene enough to protect the task and person, then acknowledge and follow up when possible.</p></details>
+
+<p class="question">4. Why can "You look frustrated" be less helpful than "That meeting felt tense to me" followed by an open question?</p>
+<details class="worked"><summary>Check your answer</summary><p>The first assigns a specific internal state that may be wrong. The second describes the situation and invites the other person to explain their own experience.</p></details>
+
+<p class="question">5. A colleague shares disappointment about being passed over for a project. What should come before advice?</p>
+<details class="worked"><summary>Check your answer</summary><p>Acknowledge and listen to the experience, then ask whether the colleague wants to talk, wants advice, or wants another kind of support. Reframing should be offered as coaching, not imposed.</p></details>
+
+<p class="question">6. Give one Sound Community culture recommendation and explain why it does not replace the response framework in the HBR interview.</p>
+<details class="worked"><summary>Check your answer</summary><p>For example, regular check-ins can support open communication and help surface concerns. They are a broad team routine; a specific response still depends on urgency, whether the person is coping, privacy, and what help they want.</p></details>
+
+<p class="question">7. A manager wants to normalize stress during a busy period. What makes the disclosure grounded rather than oversharing?</p>
+<details class="worked"><summary>Check your answer</summary><p>Keep it brief, relevant to the shared work, and paired with a constructive next step. Do not unload private distress or make employees responsible for reassuring the manager.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="lecture-4-emotions-and-moods.html"><small>Previous</small>Emotions and Moods <span aria-hidden="true">↗</span></a><a href="lecture-6-perception-and-individual-decision-making.html"><small>Next</small>Perception and Individual Decision Making <span aria-hidden="true">↗</span></a></nav><footer>Organizational Behavior and Management · Study guide <span>Understand work. Connect people, teams, and organizations.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      const caption = table.querySelector('caption')?.textContent.trim();
+      const headers = [...table.querySelectorAll('th')].map(cell => cell.textContent.trim()).filter(Boolean);
+      const name = caption || headers.slice(0, 3).join(', ');
+      region.setAttribute('aria-label', name ? `Table: ${name}` : 'Study table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Study diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const searchable = (link.textContent + ' ' + (link.dataset.search || '')).toLowerCase();
+        const match = searchable.includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('ob-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.OB_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    const mobileTopicsSelection = menu && getComputedStyle(menu).display !== 'none' && sidebar?.classList.contains('open');
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    } else if (mobileTopicsSelection && slug !== 'index') {
+      main.querySelector('h1')?.scrollIntoView({behavior:'instant', block:'start'});
+    }
+    if (mobileTopicsSelection) menu.focus({preventScroll:true});
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

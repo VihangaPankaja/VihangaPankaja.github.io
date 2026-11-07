@@ -1,0 +1,593 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="How the meaning of work, human behaviour, organizational context, and management fit together."><title>Organizational Behaviour Foundations · OB and Management</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('ob-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">OB</span> OB <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="People, teams, leadership…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Organizational Behavior and Management</a></div><div class="nav-group"><p>Foundations</p><a class="nav-entry" data-search="" href="lecture-1-organizational-behaviour-foundations.html" aria-current="page">Organizational Behaviour Foundations</a></div><div class="nav-group"><p>Individual behaviour</p><a class="nav-entry" data-search="" href="lecture-2-work-attitudes-and-job-satisfaction.html">Work Attitudes and Job Satisfaction</a><a class="nav-entry" data-search="" href="lecture-3-personality-at-work.html">Personality at Work</a><a class="nav-entry" data-search="" href="lecture-3-values-culture-and-person-environment-fit.html">Values, Culture, and Person-Environment Fit</a><a class="nav-entry" data-search="" href="lecture-4-emotions-and-moods.html">Emotions and Moods</a><a class="nav-entry" data-search="" href="lecture-5-managing-emotions-at-work.html">Managing Emotions at Work</a><a class="nav-entry" data-search="" href="lecture-6-perception-and-individual-decision-making.html">Perception and Individual Decision Making</a></div><div class="nav-group"><p>Group behaviour</p><a class="nav-entry" data-search="" href="lecture-7-group-structure-and-behaviour.html">Group Structure and Behaviour</a><a class="nav-entry" data-search="" href="lecture-7-group-decision-making.html">Group Decision-Making</a><a class="nav-entry" data-search="" href="lecture-8-work-teams-and-effectiveness.html">Work Teams and Effectiveness</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">MN4063<br>Organizational Behavior and Management</div></aside>
+<main id="main"><div class="eyebrow">Foundations <span>/</span> Lecture 1</div><h1>Organizational Behaviour Foundations</h1><p class="lead">How the meaning of work, human behaviour, organizational context, and management fit together.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">What work means to people</a><a href="#section-2">What organizational behaviour studies</a><a href="#section-3">Why OB draws on several disciplines</a><a href="#section-4">Hawthorne: classroom accounts and historical qualification</a><a href="#section-5">OB uses contingent explanations</a><a href="#section-6">The organizational iceberg</a><a href="#section-7">Management as integration</a><a href="#section-8">Implications for managers</a><a href="#section-9">Common mistakes</a><a href="#section-10">Exam focus</a><a href="#section-11">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Work is more than paid employment: it can provide value to other people, income, social contact, status, identity, and a sense of competence. Organizational behaviour (OB) studies how individuals, groups, and organizational structure shape behaviour at work. Because people respond to the situation around them, OB uses conditional explanations instead of universal rules. Managers integrate people, work, and organizational goals while paying attention to both visible arrangements and less visible relationships.</p>
+<h2 id="section-1">What work means to people</h2>
+<p>Work can be understood as an activity that produces something of value for other people. This definition includes paid jobs, unpaid care, volunteering, and other productive activity; wages are one important function of work, not the whole meaning.</p>
+<p>Work may provide an economic function, social connection, community status, identity, self-esteem, and for some people self-actualisation. These functions differ across people and situations. A job can provide income while offering little social contact, or support identity and mastery without high community status.</p>
+<p>Two routes connect work to self-esteem. First, a person can demonstrate competence or mastery over themselves and their environment: they discover that they can do something. Second, they can see that their activity creates value for other people and that they have something significant to offer.</p>
+<details class="worked"><summary>Teaching example: a valued contribution in a routine job</summary><p>A hospital supply worker checks that essential items reach the right ward. The work provides income, but its value is not limited to pay: reliable checks help clinicians care for patients. Mastering the ordering system can demonstrate competence, and seeing that the work helps others can support self-esteem. The worker may also gain social connection with colleagues. Which functions matter most depends on the worker and the job conditions.</p></details>
+
+<h3>Alienation</h3>
+<p>When work fails to provide functions that matter to a person, they may experience <strong>alienation</strong>, described in the lecture through feelings of powerlessness, meaninglessness, and normlessness. These are distinct clues: little control points toward powerlessness; no felt purpose points toward meaninglessness; unclear or disrupted expectations can contribute to normlessness. Alienation is not a synonym for any unpleasant task, and the same job conditions need not affect every person in the same way.</p>
+<details class="worked"><summary>Teaching example: identify what is missing before proposing a fix</summary><p>A skilled warehouse employee repeats a check but cannot see how it protects customers, has no say when the process fails, and receives contradictory instructions about what counts as a defect. The weak connection to a useful outcome may feel meaningless; lack of influence may feel powerless; conflicting expectations may create normlessness. A manager should ask the employee what they experience and examine the work process before choosing a response. A pay increase alone would not necessarily address all three problems.</p></details>
+
+<h2 id="section-2">What organizational behaviour studies</h2>
+<p>OB is the field that investigates how individuals, groups, and structure affect behaviour within organizations, then applies that knowledge to improve organizational effectiveness. In plain terms, it studies what people do at work and how that behaviour affects organizational performance. Its goals include understanding and predicting behaviour. Human behaviour is not random, but it is difficult to predict because people and situations differ.</p>
+<p>The three determinants are connected levels of analysis. Individual factors include a person's attributes and responses; group factors include relationships, roles, and collective processes; structural factors include formal arrangements and systems. A workplace outcome can involve more than one level at once.</p>
+<table aria-label="OB levels of analysis and diagnostic questions">
+<thead>
+<tr>
+<th>Level of analysis</th>
+<th>Questions an OB analysis might ask</th>
+<th>Example factors</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Individual</td>
+<td>What does a person bring to or experience in this situation?</td>
+<td>Skills, perception, motivation, attitudes</td>
+</tr>
+<tr>
+<td>Group</td>
+<td>How do interaction and shared expectations shape the behaviour?</td>
+<td>Roles, communication, group processes, influence</td>
+</tr>
+<tr>
+<td>Organization / structure</td>
+<td>How do formal arrangements and systems shape the work?</td>
+<td>Work design, rules, technology, structure, change</td>
+</tr>
+</tbody>
+</table>
+<details class="worked"><summary>Teaching example: diagnose a missed handoff at three levels</summary><p>A customer order is delayed after a shift change. At the individual level, check whether the employee had the needed information and understood the task. At the group level, check whether the incoming and outgoing teams share a reliable handoff practice. At the organizational level, check whether the schedule, record system, or work design leaves a gap. These are lines of inquiry, not competing explanations: evidence may show that several levels interact.</p></details>
+
+<p>OB's core topics include motivation; leader behaviour and power; interpersonal communication; group structure and processes; attitude development and perception; change processes; conflict and negotiation; and work design. These topics connect: for example, work design can affect communication and motivation, while leadership and power can influence how a group handles change or conflict.</p>
+<h2 id="section-3">Why OB draws on several disciplines</h2>
+<p>OB is an applied behavioural science. Psychology, social psychology, sociology, anthropology, political science, and increasingly neuroscience contribute concepts and evidence. Their contributions overlap: the lecture's map connects disciplinary contributions with individual, group, and organizational-system units of analysis, all within the study of organizational behaviour. The disciplines are not isolated boxes where each one explains only a single level.</p>
+<table aria-label="Disciplinary contributions and connected analysis levels">
+<thead>
+<tr>
+<th>Discipline</th>
+<th>Contribution areas named in the lecture</th>
+<th>Connected unit(s) in the lecture map</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Psychology</td>
+<td>Learning, motivation, personality, emotions, perception, training, leadership effectiveness, job satisfaction, individual decision making, performance appraisal, attitude measurement, employee selection, work design, work stress</td>
+<td>Individual</td>
+</tr>
+<tr>
+<td>Social psychology</td>
+<td>Behavioural and attitude change, communication, group processes, group decision making</td>
+<td>Individual and group</td>
+</tr>
+<tr>
+<td>Sociology</td>
+<td>Communication, power, conflict, intergroup behaviour; formal organization theory, organizational technology, change, and culture</td>
+<td>Group and organizational system</td>
+</tr>
+<tr>
+<td>Anthropology</td>
+<td>Comparative values and attitudes, cross-cultural analysis; organizational culture, environment, and power</td>
+<td>Group and organizational system</td>
+</tr>
+<tr>
+<td>Political science</td>
+<td>Power, conflict, ethics, communication, intergroup and intragroup behaviour</td>
+<td>Group and organizational system</td>
+</tr>
+<tr>
+<td>Neuroscience</td>
+<td>Perception, attribution, learning, motivation</td>
+<td>Individual</td>
+</tr>
+</tbody>
+</table>
+<p>The lecture explains these roots in complementary ways. Sociology emphasizes how society shapes people and why actions do not occur in a social vacuum. Psychology measures, explains, and sometimes seeks to change behaviour. Social psychology bridges psychology and sociology by studying how group influence shapes an individual's outlook. Anthropology examines the rites and rituals that shape groups and cultures. Political science contributes the study of power within organizations. The map shows where contributions connect to levels; it does not say that only one discipline can study a given question.</p>
+<details class="worked"><summary>Teaching example: use more than one discipline to understand a new reporting rule</summary><p>Employees resist a new reporting procedure. Psychology may help examine individual attitudes, learning, or perceived effort. Social psychology may help explain how team discussion changes acceptance. Sociology can direct attention to the formal structure and communication channels; political science can help examine whose influence shaped the rule. These views can overlap. A manager should use evidence from the relevant levels instead of assigning the problem to one discipline by label.</p></details>
+
+<h2 id="section-4">Hawthorne: classroom accounts and historical qualification</h2>
+<p>The lecture presents the Hawthorne studies as an important milestone in the development of management sciences and dates the series to 1924–1932 at Western Electric's Hawthorne plant in Illinois. Its relay-room illustration describes six women in a relay assembly test room in 1927. Researchers considered rest breaks, workday length, physical health, sleep, and diet; changes were discussed with the women and could be abandoned if they objected. The slide account says researchers later attributed increased output in part to changed supervision and human relations.</p>
+<p>The company was <strong>Western Electric</strong>; <strong>Hawthorne Works</strong> was its plant. The label “Hawthorne Electrical Company” mixes the company and site names. <a href="https://www.library.hbs.edu/hc/hawthorne/01.html">Baker Library’s archival exhibit</a> identifies the site as Western Electric’s Hawthorne Works.</p>
+<p>The deck distinguishes an <strong>original classroom interpretation</strong> from a <strong>later interpretation</strong>. It first says money did not cause the increased output and that employees performed better when managers treated them positively. It then says money mattered and that feeling important and group pride from being selected for the project also contributed. Keep these as different accounts of the study rather than merging them into one proven cause.</p>
+<table aria-label="Hawthorne interpretations and historical qualification">
+<thead>
+<tr>
+<th>Account</th>
+<th>What it emphasizes</th>
+<th>How to read it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Original interpretation presented in the lecture</td>
+<td>Positive managerial treatment and human relations; money was not the cause</td>
+<td>A classroom account of the researchers' interpretation, not a controlled estimate isolating one cause</td>
+</tr>
+<tr>
+<td>Later interpretation presented in the lecture</td>
+<td>Money mattered, alongside project importance and group pride</td>
+<td>An expanded interpretation; the factors are not shown as experimentally separated in the slide account</td>
+</tr>
+<tr>
+<td>Later historical analysis of the original illumination records</td>
+<td>No systematic productivity rise every time lighting changed; some evidence for more subtle responses to experimental manipulation is weak and context-dependent</td>
+<td>Qualifies the popular “attention alone always raises output” story; it does not prove that observation can never affect behaviour</td>
+</tr>
+</tbody>
+</table>
+<p>The term <strong>Hawthorne effect</strong> is used in the lecture for subjects behaving differently because researchers actively participate in a study. Treat that as a possible influence to consider, not a universal law or a settled explanation of every productivity change. The historical illumination studies and the relay-room account are distinct parts of the broader Hawthorne story; evidence about one should not be silently transferred to the other. Levitt and List's analysis of original illumination data found little evidence for the popular claim that each lighting change increased productivity, while discussing weaker patterns compatible with subtler effects. Izawa, French, and Hedge's archival analysis also examines the illumination experiments. <a href="https://www.nber.org/papers/w15016">Levitt &amp; List, NBER Working Paper 15016</a>; <a href="https://doi.org/10.1177/0018720811417968">Izawa, French &amp; Hedge, <em>Human Factors</em></a>.</p>
+<details class="worked"><summary>Teaching example: a productivity rise with several changes at once</summary><p>A team produces more units after a new break schedule, extra supervisor contact, and a team bonus begin in the same week. The rise alone cannot show which change mattered: pay, rest, supervision, team pride, or another condition could be involved. A careful manager records the timing and output, checks whether product quality and workload also changed, and compares suitable periods or teams while noting other differences. This is a reasoning example, not a recreation of the historical study.</p></details>
+
+<h2 id="section-5">OB uses contingent explanations</h2>
+<p>Physical-science laws may apply consistently across many situations. OB has more limits on broad generalizations because people are complex and not all alike. This does not make OB arbitrary. It means that an explanation should specify the conditions under which a relationship is expected.</p>
+<p>The lecture expresses a contingent claim as: “X leads to Y, but only under conditions specified in Z.” Here, Z represents contingency variables. OB develops general concepts and applies them to a particular situation, person, or group. Context can include the task, group, organizational arrangements, and broader environment.</p>
+<details class="worked"><summary>Teaching example: turn “supervision always improves output” into a testable claim</summary><p><strong>Unqualified claim:</strong> More supervisor contact always improves output. <strong>Contingent version:</strong> More supervisor contact may improve output when employees need timely guidance and experience the contact as useful, but its effect may differ when work is already well understood or the contact is experienced as intrusive. To assess the claim, define output and the conditions, compare like situations where possible, and consider other changes that happened at the same time.</p></details>
+
+<h2 id="section-6">The organizational iceberg</h2>
+<p>The iceberg image separates formal, overt aspects above the water from behavioural, covert aspects below it. The visible features are only part of organizational life. Less visible behaviour and relationships can affect productivity and the quality of working life; they are not automatically negative or hidden problems.</p>
+<table aria-label="Visible and less visible organizational iceberg factors">
+<caption>Organizational iceberg: formal aspects above water and behavioural aspects below</caption>
+<thead><tr><th scope="col">Formal aspects (overt, above water)</th><th scope="col">Behavioural aspects (covert, below water)</th></tr></thead>
+<tbody>
+<tr><td>Customers</td><td>Attitudes</td></tr>
+<tr><td>Technology</td><td>Communication patterns</td></tr>
+<tr><td>Organization design</td><td>Informal team processes</td></tr>
+<tr><td>Formal goals</td><td>Personality</td></tr>
+<tr><td>Financial resources</td><td>Conflict</td></tr>
+<tr><td>Physical facilities</td><td>Political behaviour</td></tr>
+<tr><td>Rules and regulations</td><td>Underlying competencies and skills</td></tr>
+<tr><td>Surface competencies and skills</td><td></td></tr>
+</tbody></table>
+
+<details class="worked"><summary>Teaching example: a policy exists, but the informal process differs</summary><p>A company posts a formal rule that defects should be reported immediately. On one team, members quietly discourage reporting because they fear being blamed. The rule, reporting system, and formal goal are visible; attitudes, informal team pressure, and communication patterns are less visible. A manager should examine how both sides operate. The iceberg is a prompt to investigate, not a claim that covert factors are always harmful.</p></details>
+
+<h2 id="section-7">Management as integration</h2>
+<p>An organization is not simply its building or chart. It is an ambiguous social reality formed by people, relationships, goals, systems, and activity. The lecture treats this ambiguity as part of organizational and managerial work: managers and employees experience the organization through their roles and relationships rather than as one straightforward physical object.</p>
+<p>Management coordinates, directs, and guides members' efforts toward organizational goals. People are not owned resources in the way physical assets are. They bring their own perceptions, feelings, and attitudes toward the organization, management systems and styles, duties, responsibilities, and working conditions. Successful management therefore requires understanding both people and the work organization and integrating individual and organizational needs.</p>
+<p>The lecture's integration model groups influences into four related contexts:</p>
+<table aria-label="Individual, group, organization, and environment factors">
+<thead>
+<tr>
+<th>Context</th>
+<th>Examples in the lecture</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Individual</td>
+<td>Personality; skills and attributes; values and attitudes; needs and expectations</td>
+</tr>
+<tr>
+<td>Group</td>
+<td>Structure and functions; informal organization; role relationships; group influence and pressure</td>
+</tr>
+<tr>
+<td>Organization</td>
+<td>Objectives and policy; technology and work methods; formal structure; leadership styles</td>
+</tr>
+<tr>
+<td>Environment</td>
+<td>Technical and scientific; economic; social and cultural; government</td>
+</tr>
+</tbody>
+</table>
+<p>These contexts influence behaviour in organizations. The model then links four work elements through cross-links and a central effort to improve the people–organization relationship. The relationships below are reciprocal or interconnected in the lecture's figure, not a one-way chain:</p>
+<table aria-label="Reciprocal relationships in the management integration model">
+<thead>
+<tr>
+<th>Linked work elements</th>
+<th>Relationship shown in the model</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Organizational processes and execution of work ↔ coordinating members' efforts</td>
+<td>Two sides of organizing work are linked</td>
+</tr>
+<tr>
+<td>Coherent pattern of activities in the total work ↔ systems of motivation, job satisfaction, and rewards</td>
+<td>Work design and people systems are connected</td>
+</tr>
+<tr>
+<td>Each of those four elements ↔ improving the people–organization relationship</td>
+<td>The central integration task links across the work elements</td>
+</tr>
+<tr>
+<td>Satisfying people's needs at work ↔ creating a climate where people work willingly and effectively ↔ achieving organizational goals</td>
+<td>The outcomes are related in both directions; together they support improved organizational performance and effectiveness</td>
+</tr>
+</tbody>
+</table>
+<details class="worked"><summary>Teaching example: integrate employee needs with a service goal</summary><p>A service center wants shorter customer wait times, while staff report that shifts change unpredictably and difficult cases are assigned without support. Management can examine the scheduling system, team handoffs, employee skills and expectations, and customer demand. A workable approach coordinates member effort, creates a coherent way to handle difficult cases, and reviews whether recognition and support fit the work. It should then check both employee experience and service results. Meeting only the speed target may harm people; meeting only a preference without coordinating the work may miss the organizational goal.</p></details>
+
+<h2 id="section-8">Implications for managers</h2>
+<p>The lecture recommends using scientifically validated information about human behaviour to strengthen workplace interpersonal and leadership skills. Managers should use metrics and relevant situational variables rather than relying on hunches when explaining cause and effect. Technical and conceptual skills also need development through training and by staying current with OB trends such as big data.</p>
+<p>OB can help managers consider employee empowerment, change programs, customer service, and work–life conflicts. These applications require attention to context. Research findings may not transfer unchanged to international settings because cultural norms and expectations can differ. Managers should examine relevant individual, group, and organizational influences instead of focusing on only one level.</p>
+<h2 id="section-9">Common mistakes</h2>
+<ul>
+<li>Defining work only as paid employment or treating income as its only function.</li>
+<li>Assuming every dissatisfying job causes alienation or that one missing function affects everyone the same way.</li>
+<li>Defining OB without all three determinants: individuals, groups, and structure.</li>
+<li>Treating disciplines as exclusive categories, such as assuming psychology only concerns isolated people or sociology only concerns organizations.</li>
+<li>Saying the Hawthorne studies proved that attention alone always increases productivity, or blending the lecture's original and later interpretations.</li>
+<li>Confusing the relay-room story with the earlier illumination experiments.</li>
+<li>Making universal OB claims without specifying the contingency conditions.</li>
+<li>Reading the iceberg as “formal is bad, hidden is good,” or assuming covert behaviour is always negative.</li>
+<li>Treating an organization as only its structure chart, and treating people as owned resources.</li>
+<li>Turning the management model into a one-way sequence that removes its reciprocal links and cross-connections.</li>
+<li>Explaining a workplace outcome at just one level when individual, group, and structural conditions may interact.</li>
+</ul>
+<h2 id="section-10">Exam focus</h2>
+<ul>
+<li>Define work as value-producing activity for others; list its economic, social, status, identity, self-esteem, and possible self-actualisation functions.</li>
+<li>Explain the two routes from work to self-esteem and name alienation's powerlessness, meaninglessness, and normlessness.</li>
+<li>State the OB definition, its understand-and-predict aim, three determinants, and eight core topics.</li>
+<li>Match disciplinary contributions with their areas and overlapping levels; preserve the many-to-many nature of the lecture map.</li>
+<li>Distinguish the lecture's original and later Hawthorne interpretations and qualify the “Hawthorne effect” claim.</li>
+<li>State the contingent-claim pattern: X leads to Y under conditions Z.</li>
+<li>Sort the iceberg examples into overt/formal above-water and covert/behavioural below-water aspects.</li>
+<li>Explain why management integrates people and organization, identify the four context groups, and describe the model's reciprocal links and outcomes.</li>
+<li>Apply evidence, metrics, situational variables, skill development, and cross-cultural caution to a management decision.</li>
+</ul>
+<h2 id="section-11">Practice questions</h2>
+<p class="question">1. Why does the lecture define work as more than paid employment? Name four functions it can serve.</p>
+<details class="worked"><summary>Check your answer</summary><p>Work is an activity that produces value for other people, so it can include activity beyond a paid job. Four functions are economic support, social connection, community status, identity, self-esteem, or self-actualisation for some people.</p></details>
+
+<p class="question">2. How can work support self-esteem, and what three experiences are associated with alienation?</p>
+<details class="worked"><summary>Check your answer</summary><p>Work can let a person demonstrate competence or mastery and show that they create value for others. Alienation is associated with powerlessness, meaninglessness, and normlessness when work fails to provide functions that matter.</p></details>
+
+<p class="question">3. A team misses a handoff because one employee misunderstood the instructions, coworkers use different informal routines, and the system hides the latest status. Identify the levels to investigate.</p>
+<details class="worked"><summary>Check your answer</summary><p>Investigate the individual (understanding), group (shared routines and communication), and organizational or structural level (the status system and work process). Evidence may show an interaction across levels.</p></details>
+
+<p class="question">4. Why is it inaccurate to assign every OB discipline to only one level of analysis?</p>
+<details class="worked"><summary>Check your answer</summary><p>The lecture's map connects disciplines and contribution areas to overlapping individual, group, and organizational-system units. For example, social psychology bridges individual and group analysis, and contributions from several disciplines meet at the study of organizational behaviour.</p></details>
+
+<p class="question">5. What differs between the original and later Hawthorne interpretations presented in the lecture? What historical caution should accompany them?</p>
+<details class="worked"><summary>Check your answer</summary><p>The original classroom interpretation emphasizes positive managerial treatment and says money was not the cause. The later interpretation says money mattered and adds project importance and group pride. These are distinct accounts, and later analysis of the illumination data does not support the popular universal claim that every lighting change raised productivity.</p></details>
+
+<p class="question">6. Rewrite “more supervision always raises productivity” as a contingent claim.</p>
+<details class="worked"><summary>Check your answer</summary><p>One possible rewrite: “More supervision may raise productivity when employees need timely guidance and experience it as useful, under the task and team conditions being studied.” The claim should specify conditions and be checked against other possible changes.</p></details>
+
+<p class="question">7. A formal safety rule is visible, but a team informally discourages reporting near misses. Identify one iceberg factor above water and two below.</p>
+<details class="worked"><summary>Check your answer</summary><p>The formal safety rule is an overt aspect above water. Informal team processes and communication patterns or attitudes are below-water behavioural aspects. The manager should examine how they interact.</p></details>
+
+<p class="question">8. In the integration model, why should a manager consider employee needs and organizational goals together?</p>
+<details class="worked"><summary>Check your answer</summary><p>The model links employee need satisfaction, a climate where people work willingly and effectively, and achieving organizational goals. It also connects organizing work, coordinating effort, coherent activity, and motivation/reward systems through reciprocal relationships. Managing one side alone can undermine the other.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="index.html"><small>Previous</small>Organizational Behavior and Management <span aria-hidden="true">↗</span></a><a href="lecture-2-work-attitudes-and-job-satisfaction.html"><small>Next</small>Work Attitudes and Job Satisfaction <span aria-hidden="true">↗</span></a></nav><footer>Organizational Behavior and Management · Study guide <span>Understand work. Connect people, teams, and organizations.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      const caption = table.querySelector('caption')?.textContent.trim();
+      const headers = [...table.querySelectorAll('th')].map(cell => cell.textContent.trim()).filter(Boolean);
+      const name = caption || headers.slice(0, 3).join(', ');
+      region.setAttribute('aria-label', name ? `Table: ${name}` : 'Study table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Study diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const searchable = (link.textContent + ' ' + (link.dataset.search || '')).toLowerCase();
+        const match = searchable.includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('ob-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.OB_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    const mobileTopicsSelection = menu && getComputedStyle(menu).display !== 'none' && sidebar?.classList.contains('open');
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    } else if (mobileTopicsSelection && slug !== 'index') {
+      main.querySelector('h1')?.scrollIntoView({behavior:'instant', block:'start'});
+    }
+    if (mobileTopicsSelection) menu.focus({preventScroll:true});
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

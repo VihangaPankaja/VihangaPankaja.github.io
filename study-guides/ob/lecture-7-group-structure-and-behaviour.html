@@ -1,0 +1,655 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="How group development, roles, norms, status, effort, cohesion, and diversity shape workplace behaviour and performance."><title>Group Structure and Behaviour · OB and Management</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('ob-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">OB</span> OB <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="People, teams, leadership…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Organizational Behavior and Management</a></div><div class="nav-group"><p>Foundations</p><a class="nav-entry" data-search="" href="lecture-1-organizational-behaviour-foundations.html">Organizational Behaviour Foundations</a></div><div class="nav-group"><p>Individual behaviour</p><a class="nav-entry" data-search="" href="lecture-2-work-attitudes-and-job-satisfaction.html">Work Attitudes and Job Satisfaction</a><a class="nav-entry" data-search="" href="lecture-3-personality-at-work.html">Personality at Work</a><a class="nav-entry" data-search="" href="lecture-3-values-culture-and-person-environment-fit.html">Values, Culture, and Person-Environment Fit</a><a class="nav-entry" data-search="" href="lecture-4-emotions-and-moods.html">Emotions and Moods</a><a class="nav-entry" data-search="" href="lecture-5-managing-emotions-at-work.html">Managing Emotions at Work</a><a class="nav-entry" data-search="" href="lecture-6-perception-and-individual-decision-making.html">Perception and Individual Decision Making</a></div><div class="nav-group"><p>Group behaviour</p><a class="nav-entry" data-search="" href="lecture-7-group-structure-and-behaviour.html" aria-current="page">Group Structure and Behaviour</a><a class="nav-entry" data-search="" href="lecture-7-group-decision-making.html">Group Decision-Making</a><a class="nav-entry" data-search="" href="lecture-8-work-teams-and-effectiveness.html">Work Teams and Effectiveness</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">MN4063<br>Organizational Behavior and Management</div></aside>
+<main id="main"><div class="eyebrow">Group behaviour <span>/</span> Lecture 7A</div><h1>Group Structure and Behaviour</h1><p class="lead">How group development, roles, norms, status, effort, cohesion, and diversity shape workplace behaviour and performance.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">What counts as a group?</a><a href="#section-2">How groups develop</a><a href="#section-3">Roles, norms, and sanctions</a><a href="#section-4">Deviant workplace behaviour</a><a href="#section-5">Status, voice, and group size</a><a href="#section-6">Effort, cohesion, and performance</a><a href="#section-7">Diversity and faultlines</a><a href="#section-8">Common mistakes</a><a href="#section-9">Exam focus</a><a href="#section-10">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Groups shape how people coordinate, interpret expectations, share influence, and apply effort. Structure is not just a chart of positions: roles, norms, status, size, cohesion, and member differences all affect what the group can accomplish. These features can support performance or make it harder, depending on the task and on how members interact.</p>
+<p>Two development models help explain different patterns. Tuckman’s stages describe a possible path for groups working together; punctuated equilibrium describes temporary groups working toward a deadline. The remaining ideas explain how group expectations and relationships affect everyday behaviour and results.</p>
+<h2 id="section-1">What counts as a group?</h2>
+<p>A group is two or more people who interact, depend on one another, and come together to achieve particular objectives. Groups may be <strong>formal</strong> or <strong>informal</strong>. A formal group is defined by the organization: assigned work, established tasks, and behaviour directed toward organizational goals. An informal group is not created by the organization’s formal structure. It develops through social contact, yet its interactions can still affect work behaviour and performance.</p>
+<details class="worked"><summary>Teaching example: a formal project group and an informal lunch group</summary><p>A manager assigns employees from finance, operations, and sales to deliver a forecast. The assigned task and responsibilities make this a formal group. Those employees also meet for lunch because they enjoy one another’s company. That social group is informal. The informal connection may help them communicate at work, but its existence does not replace the formal group’s task or authority.</p></details>
+
+<h2 id="section-2">How groups develop</h2>
+<h3>Tuckman’s five stages</h3>
+<p>The lecture’s sequence is <strong>Forming → Storming → Norming → Performing → Adjourning</strong>.</p>
+<figure><div class="diagram-frame" style="--diagram-width:690.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Tuckman’s five-stage sequence. The stages describe a useful pattern, not a guaranteed or irreversible path." width="690pt" height="58pt"
+ viewBox="0.00 0.00 690.00 58.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 46.8)">
+<title>G</title>
+<!-- forming -->
+<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-node1" class="node">
+<title>forming</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M86.1,-36C86.1,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 86.1,0 86.1,0 92.1,0 98.1,-6 98.1,-12 98.1,-12 98.1,-24 98.1,-24 98.1,-30 92.1,-36 86.1,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="49.05" y="-12.75" font-family="Georgia" font-size="15.00">1 · Forming</text>
+</g>
+<!-- storming -->
+<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-node2" class="node">
+<title>storming</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M222.2,-36C222.2,-36 142.1,-36 142.1,-36 136.1,-36 130.1,-30 130.1,-24 130.1,-24 130.1,-12 130.1,-12 130.1,-6 136.1,0 142.1,0 142.1,0 222.2,0 222.2,0 228.2,0 234.2,-6 234.2,-12 234.2,-12 234.2,-24 234.2,-24 234.2,-30 228.2,-36 222.2,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="182.15" y="-12.75" font-family="Georgia" font-size="15.00">2 · Storming</text>
+</g>
+<!-- forming&#45;&gt;storming -->
+<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-edge1" class="edge">
+<title>forming&#45;&gt;storming</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M98.49,-18C106.15,-18 114.15,-18 122.02,-18"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="121.81,-20.28 128.31,-18 121.81,-15.73 121.81,-20.28"/>
+</g>
+<!-- norming -->
+<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-node3" class="node">
+<title>norming</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M356.05,-36C356.05,-36 278.2,-36 278.2,-36 272.2,-36 266.2,-30 266.2,-24 266.2,-24 266.2,-12 266.2,-12 266.2,-6 272.2,0 278.2,0 278.2,0 356.05,0 356.05,0 362.05,0 368.05,-6 368.05,-12 368.05,-12 368.05,-24 368.05,-24 368.05,-30 362.05,-36 356.05,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="317.12" y="-12.75" font-family="Georgia" font-size="15.00">3 · Norming</text>
+</g>
+<!-- storming&#45;&gt;norming -->
+<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-edge2" class="edge">
+<title>storming&#45;&gt;norming</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M234.56,-18C242.24,-18 250.19,-18 257.99,-18"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="257.71,-20.28 264.21,-18 257.71,-15.73 257.71,-20.28"/>
+</g>
+<!-- performing -->
+<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-node4" class="node">
+<title>performing</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M506.4,-36C506.4,-36 412.05,-36 412.05,-36 406.05,-36 400.05,-30 400.05,-24 400.05,-24 400.05,-12 400.05,-12 400.05,-6 406.05,0 412.05,0 412.05,0 506.4,0 506.4,0 512.4,0 518.4,-6 518.4,-12 518.4,-12 518.4,-24 518.4,-24 518.4,-30 512.4,-36 506.4,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="459.23" y="-12.75" font-family="Georgia" font-size="15.00">4 · Performing</text>
+</g>
+<!-- norming&#45;&gt;performing -->
+<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-edge3" class="edge">
+<title>norming&#45;&gt;performing</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M368.31,-18C375.96,-18 383.96,-18 391.9,-18"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="391.79,-20.28 398.29,-18 391.79,-15.73 391.79,-20.28"/>
+</g>
+<!-- adjourning -->
+<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-node5" class="node">
+<title>adjourning</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M656,-36C656,-36 562.4,-36 562.4,-36 556.4,-36 550.4,-30 550.4,-24 550.4,-24 550.4,-12 550.4,-12 550.4,-6 556.4,0 562.4,0 562.4,0 656,0 656,0 662,0 668,-6 668,-12 668,-12 668,-24 668,-24 668,-30 662,-36 656,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="609.2" y="-12.75" font-family="Georgia" font-size="15.00">5 · Adjourning</text>
+</g>
+<!-- performing&#45;&gt;adjourning -->
+<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-edge4" class="edge">
+<title>performing&#45;&gt;adjourning</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M518.71,-18C526.46,-18 534.46,-18 542.33,-18"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="542.13,-20.28 548.63,-18 542.13,-15.73 542.13,-20.28"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Tuckman’s five-stage sequence. The stages describe a useful pattern, not a guaranteed or irreversible path.</figcaption></figure>
+
+<p>In <strong>forming</strong>, members are often polite and reserved. They clarify purpose, goals, and tasks and may look to a leader for direction. <strong>Storming</strong> brings visible differences in views, power, and preferred direction; communication can become strained. In <strong>norming</strong>, members work through conflict, establish shared expectations, clarify roles, and build trust. During <strong>performing</strong>, coordination and efficiency improve, members use one another’s strengths, and work and decisions can become more self-managed. <strong>Adjourning</strong> occurs when the group’s work ends: members recognize contributions, reflect on the result, and prepare to move to other work.</p>
+<p>The lecture slide labels Adjourning “Stage 4,” even though the same deck labels Performing “Stage 4.” Here it is correctly presented as <strong>Stage 5</strong>: the five-stage sequence added adjourning after the original four stages in Tuckman and Jensen’s review. <a href="https://doi.org/10.1177/105960117700200404">Primary reference: Tuckman &amp; Jensen (1977)</a>.</p>
+<p>The model is a guide, not a promise that every group moves neatly forward. Groups progress at different rates; some remain in storming. Storming and performing can coexist, and a group can return to an earlier difficulty. A clear purpose and strategy, and a positive social focus, may help a group reach productive work sooner. Moving to a later stage alone does not prove the group is effective.</p>
+<details class="worked"><summary>Teaching example: diagnosing a project team’s stage without treating it as a score</summary><p>A newly assembled project team is polite, asks who owns each task, and waits for the lead to settle basic questions. These clues fit forming. Two weeks later, members openly challenge the schedule and compete over priorities: that is consistent with storming. If they agree on handoffs and resolve disagreements constructively, norming is emerging. A later return to conflict after a new member joins is possible; it does not mean the earlier progress was false.</p></details>
+
+<h3>Temporary groups and punctuated equilibrium</h3>
+<p>Temporary groups with deadlines may follow a different pattern. In the lecture’s semester-presentation example, the first meeting sets a direction. A period of inertia or slow progress follows. At the exact midpoint of the allotted time, a transition prompts major change. A second period of inertia follows, then activity accelerates at the last meeting as the deadline approaches. The model emphasizes long periods of relative stability interrupted by a brief change triggered mainly by awareness of time and deadlines.</p>
+<figure><div class="diagram-frame" style="--diagram-width:760px"><svg xmlns="http://www.w3.org/2000/svg" width="760" height="350" viewBox="0 0 760 350" role="img" aria-label="Performance over time in a temporary deadline group">
+  <defs><marker id="lecture-7-group-structure-and-behaviour-figure-2-axis-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="var(--foreground,#34304a)"/></marker></defs>
+  <g fill="var(--foreground,#34304a)" font-family="Georgia,serif" font-size="17">
+    <path d="M90 270 V32 M90 270 H725" fill="none" stroke="var(--foreground,#34304a)" stroke-width="2" marker-end="url(#lecture-7-group-structure-and-behaviour-figure-2-axis-arrow)"/>
+    <text x="48" y="44" text-anchor="middle">High</text><text x="48" y="266" text-anchor="middle">Low</text>
+    <text x="24" y="160" text-anchor="middle" transform="rotate(-90 24 160)">Performance</text>
+    <path d="M130 270 V280 M410 270 V280 M690 270 V280" stroke="var(--foreground,#34304a)" stroke-width="2"/>
+    <path d="M410 264 V77" stroke="var(--muted,#526570)" stroke-width="1.5" stroke-dasharray="5 5"/>
+    <path d="M130 220 H410 V110 H630 V90 H690" fill="none" stroke="var(--primary,#315e6a)" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M130 211 V229 M690 81 V99" stroke="var(--primary,#315e6a)" stroke-width="3"/>
+    <text x="260" y="248" text-anchor="middle">Phase 1 · Inertia</text>
+    <text x="520" y="142" text-anchor="middle">Phase 2 · Inertia</text>
+    <text x="392" y="174" text-anchor="end">Midpoint transition</text>
+    <text x="658" y="43" text-anchor="middle">Final accelerated activity</text>
+    <text x="698" y="75" text-anchor="end">Completion</text>
+    <text x="130" y="301" text-anchor="middle">A</text>
+    <text x="130" y="323" text-anchor="middle" font-size="15">First meeting</text>
+    <text x="410" y="301" text-anchor="middle">(A + B)/2</text>
+    <text x="410" y="323" text-anchor="middle" font-size="15">Exactly halfway</text>
+    <text x="690" y="301" text-anchor="middle">B</text>
+    <text x="690" y="323" text-anchor="middle" font-size="15">Deadline</text>
+    <text x="410" y="346" text-anchor="middle">Time</text>
+  </g>
+</svg>
+ </div><figcaption>Schematic performance over time: low Phase 1, a transition exactly halfway through the allotted time, higher Phase 2, and final activity before completion. The vertical scale is qualitative.</figcaption></figure>
+
+<details class="worked"><summary>Teaching example: a semester presentation at its midpoint</summary><p>A group agrees on a topic at its first meeting, then makes little visible progress during the first half of the semester. At the midpoint, members recognize that half the available time is gone, divide the remaining work, and change their plan. Some slow progress may follow while those new arrangements settle. The last meeting is intensely active as members combine the presentation before the deadline. The midpoint transition is a feature of the deadline model; it is not a sixth Tuckman stage.</p></details>
+
+<h2 id="section-3">Roles, norms, and sanctions</h2>
+<h3>Roles: position and expectations</h3>
+<p>A <strong>role</strong> is the set of behaviour patterns expected of someone in a position within a social unit. People hold several roles at work and outside it. <strong>Role perception</strong> is how a person understands the tasks, goals, and problems attached to a role. <strong>Role expectations</strong> are what the group or society expects that person to do. A <strong>role conflict</strong> occurs when simultaneous expectations are incompatible, or when responsibilities overlap with another worker or group. Greater role conflict is associated with greater work-related stress.</p>
+<details class="worked"><summary>Teaching example: overlapping responsibility creates role conflict</summary><p>A project coordinator is told by one manager to release a report immediately and by another to withhold it until confidential figures are checked. The problem is not simply a large workload: the two role expectations are incompatible. Clarifying decision authority and the release procedure addresses the conflict more directly than asking the coordinator to work faster.</p></details>
+
+<h3>Group norms and their domains</h3>
+<p><strong>Norms</strong> are shared standards about what members ought or ought not to do in particular situations. They are different from formal rules, policies, and laws, which are enforced through an organization’s legitimate hierarchy. Norms emerge more naturally and often influence behaviour with little external control. They can cover nearly any aspect of group behaviour.</p>
+<table>
+<thead>
+<tr>
+<th>Norm domain</th>
+<th>What members may expect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Performance</td>
+<td>How hard to work, how to do a task, and what level of lateness is acceptable</td>
+</tr>
+<tr>
+<td>Appearance</td>
+<td>Dress, presentation, or unspoken expectations about looking busy</td>
+</tr>
+<tr>
+<td>Social arrangements</td>
+<td>Whom to eat with, off-job friendships, or when to offer a community elder tobacco before asking advice</td>
+</tr>
+<tr>
+<td>Resource allocation</td>
+<td>How difficult jobs, pay, equipment, or other resources are assigned</td>
+</tr>
+<tr>
+<td>Communication</td>
+<td>Turn-taking and respectful language during discussion</td>
+</tr>
+<tr>
+<td>Decision-making</td>
+<td>Whether to seek consensus or use majority rule, and how members follow the outcome</td>
+</tr>
+</tbody>
+</table>
+<details class="worked"><summary>Teaching example: identify the norm and the formal rule</summary><p>A department has a written safety policy requiring eye protection in the workshop. That is a formal rule. Team members also tend to wait until the shift lead finishes before raising a concern. That turn-taking expectation is a communication norm. A group may have both at once; the norm is not a substitute for the written safety requirement.</p></details>
+
+<p><strong>Social sanctions</strong> are group responses that reinforce norms. Positive sanctions reward conformity, for example through praise, recognition, increased status, or access to group benefits. Negative sanctions express disapproval, such as ostracism, criticism, or loss of trust and support. Sanctions can promote conformity, reinforce a group’s sense of cohesion, and help members maintain order. But conformity by itself does not show that a norm is fair, useful, or consistent with formal policy.</p>
+<details class="worked"><summary>Teaching example: a sanction reinforces a harmful norm</summary><p>If coworkers praise members who stay silent about a recurring safety problem and exclude a member who raises it, praise and exclusion are positive and negative sanctions, respectively. They reinforce the group’s norm of silence, but the norm can still be harmful and conflict with formal safety expectations.</p></details>
+
+<h2 id="section-4">Deviant workplace behaviour</h2>
+<p>Deviant workplace behaviour—also called antisocial behaviour or workplace incivility in the lecture—is voluntary behaviour that violates significant organizational norms and threatens the well-being of the organization or its members. The lecture sorts examples along <strong>two separate dimensions</strong>: who or what is targeted, and how serious the act is. Its image-only diagram on slide 34 places interpersonal behaviour on the vertical axis and minor-to-serious behaviour on the horizontal axis.</p>
+<table>
+<thead>
+<tr>
+<th>Target ↓ / seriousness →</th>
+<th>Minor</th>
+<th>Serious</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Interpersonally directed</strong></td>
+<td><strong>Political deviance:</strong> spreading rumours, favouritism, backstabbing</td>
+<td><strong>Personal aggression:</strong> sexual harassment, verbal abuse, physical assault</td>
+</tr>
+<tr>
+<td><strong>Organizationally directed</strong></td>
+<td><strong>Production deviance:</strong> absenteeism, lateness, withholding effort</td>
+<td><strong>Property deviance:</strong> theft, sabotage, vandalism</td>
+</tr>
+</tbody>
+</table>
+<p>The lecture’s examples also include leaving early, intentionally working slowly, and wasting resources (production); misusing equipment and stealing from the organization (property); blaming coworkers (political); and stealing from coworkers (personal aggression). Do not sort an act by its label alone: classify its target and seriousness. The slide’s four categories summarize common patterns; a specific example may need context to judge severity.</p>
+<p>Causes described in the lecture include perceived unfairness in pay, promotion, or workload; job dissatisfaction; an unsupportive or disrespectful culture; stress or burnout; ineffective leadership; peer norms; opportunity and rationalization; and individual differences such as low conscientiousness or high impulsivity. These are possible contributors, not a diagnostic checklist. One behaviour alone does not identify its cause or establish a trait.</p>
+<p>The lecture proposes a possible group-level chain: shirking, undermining, or noncooperation can contribute to negative group moods; those moods can impair coordination and lower group performance. Prevention therefore includes respectful and inclusive culture, clear policies and expectations, open communication and feedback, employee involvement, constructive conflict-resolution processes, support systems such as counselling or employee assistance, recognition and training, monitoring the work environment, and leaders modelling appropriate conduct.</p>
+<details class="worked"><summary>Teaching example: classify and respond to two different acts</summary><p>A team member repeatedly arrives late and withholds effort. The lecture places lateness and withholding effort in production deviance: the target is organizational work, and the examples are on the minor side of the source’s seriousness axis. A supervisor discovers deliberate equipment sabotage: that is property deviance, directed at organizational property and on the serious side. For either case, first establish what happened and apply clear policy consistently; do not assume the same cause or response fits both people.</p></details>
+
+<h2 id="section-5">Status, voice, and group size</h2>
+<p><strong>Status</strong> is a socially defined position or rank assigned to a group or member by others. A perceived mismatch between the status a person believes they have and the status others give them can motivate behaviour. The lecture identifies three sources: <strong>power</strong> over people or resources; <strong>contribution</strong> that is critical to group goals; and <strong>personal characteristics</strong> valued by that group. What a group values varies by context; examples in the lecture are illustrations of local valuation, not universal traits or predictions about individuals.</p>
+<p>Status interacts with norms. Higher-status members may receive more freedom to depart from norms and may resist conformity, especially when they are valued but do not depend on group social rewards. Adding high-status members may improve performance only up to a point; they may also introduce counterproductive norms. Status also affects who speaks: high-status members tend to speak, criticize, command, and interrupt more, while lower-status members may participate less. When quieter members have relevant expertise, failing to hear them can reduce creativity and performance.</p>
+<details class="worked"><summary>Teaching example: a lower-status expert is not heard</summary><p>In a planning meeting, a junior technician notices that the proposed schedule conflicts with a maintenance window. Senior members talk over the warning. The group should distinguish speaking time and rank from the quality of the information: invite the technician to explain the constraint and check the schedule before deciding. The scenario illustrates how status can shape voice; it does not imply that lower-status members are always correct.</p></details>
+
+<p>Group size depends on the task. The lecture suggests that a dozen or more members can be useful when the aim is to gather diverse input or facts. A smaller group of about seven may be better when members must produce something concrete within a deadline. These are task-dependent lecture guidelines, not universal cutoffs.</p>
+<h2 id="section-6">Effort, cohesion, and performance</h2>
+<h3>Social loafing</h3>
+<p><strong>Social loafing</strong>, or free riding, is the tendency to exert less effort in a group than when working alone. When responsibility is shared, a person may feel less accountable for the overall result. The lecture lists diffusion of responsibility, reduced accountability, unidentifiable contributions, low perceived task importance, the presence of free riders, larger group size, and negative group culture or low cohesion as possible contributors.</p>
+<p>The lecture qualifies the pattern by culture: the studies it reports found social loafing more consistently in individualist US and Canadian settings, while the Chinese and Israeli comparison groups showed no propensity to engage in social loafing and performed better in a group than alone. Treat this as a reported group-level finding, not a rule for predicting any individual or country.</p>
+<p>The suggested remedies are to set shared group goals; use intergroup competition focused on shared outcomes; use peer evaluation; select members who are motivated and prefer group work; and, where possible, base part of group rewards on each member’s identifiable contribution. These approaches make purpose, effort, and contribution more visible.</p>
+<details class="worked"><summary>Teaching example: select a remedy that addresses the cause</summary><p>A large team’s report is late, and members cannot tell who owns which section. Because contributions are hard to identify and responsibility is diffuse, assigning named sections with peer review and a shared deadline directly improves visibility and accountability. Adding a reward without clarifying contributions may not address the problem. If low task importance is the issue, the manager should also explain how the report will be used.</p></details>
+
+<h3>Cohesion depends on performance norms</h3>
+<p><strong>Cohesion</strong> (also called cohesiveness or social cohesion) is the strength of the bonds linking members and their sense of unity. Cohesion affects productivity through the group’s performance-related norms. It does not guarantee high output by itself: a cohesive group reinforces the standards it shares.</p>
+<table>
+<thead>
+<tr>
+<th>Performance-related norms</th>
+<th>High cohesion</th>
+<th>Low cohesion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>High</strong></td>
+<td>High productivity</td>
+<td>Productivity rises, but less than when both are high</td>
+</tr>
+<tr>
+<td><strong>Low</strong></td>
+<td>Low productivity</td>
+<td>Low-to-moderate productivity</td>
+</tr>
+</tbody>
+</table>
+<p>The lecture lists ways to encourage cohesion: make the group smaller, agree on group goals, spend more time together, raise group status and the perceived difficulty of membership, stimulate competition with other groups, give rewards to the group, and physically isolate it. These are possible levers, not unconditional recommendations; choose them only when they support the group’s task and healthy norms.</p>
+<details class="worked"><summary>Teaching example: cohesion amplifies the norm a group already has</summary><p>Two teams feel equally close to one another. Team A has strong norms for quality and cooperation, so its high cohesion supports coordinated, high productivity. Team B treats low output as acceptable; its cohesion can reinforce that low standard, leaving productivity low. To improve Team B, changing the performance norm matters as well as strengthening bonds.</p></details>
+
+<h2 id="section-7">Diversity and faultlines</h2>
+<p>Group diversity means including members with varied backgrounds and perspectives, including differences such as age, gender, ethnicity, socioeconomic position, and culture. Variety can add creativity, insight, and problem-solving capacity, while also creating challenges for group dynamics. The lecture says diverse groups may experience more conflict early in their time together, with lower morale and greater dropout, and may perform better over time if initial conflict is managed. This is a qualification about group processes, not an individual prediction based on demographic identity.</p>
+<p>A <strong>group faultline</strong> is a hypothetical dividing line that can form when member attributes align and divide a group into subgroups. Slides 68–69 call the topic “Faultiness,” but slide 68’s definition itself says “group faultline”; the correct term is <strong>faultline</strong>. The concept was developed as “faultlines” in Lau and Murnighan’s primary article on how member characteristics align into potential subgroups (<a href="https://doi.org/10.5465/amr.1998.533229">Lau &amp; Murnighan, 1998</a>).</p>
+<table>
+<thead>
+<tr>
+<th>Source illustration</th>
+<th>Attribute alignment</th>
+<th>What makes the alignment strong or weak</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Strong faultline</td>
+<td>Two young female Asian members and two senior male Caucasian members</td>
+<td>Age, gender, and ethnicity align into two internally similar subgroups</td>
+</tr>
+<tr>
+<td>Weak faultline</td>
+<td>A young female Asian, a young male Caucasian, a senior female Caucasian, and a senior male Asian member</td>
+<td>The source describes the possible subgroups as diverse rather than split into two homogeneous sets</td>
+</tr>
+</tbody>
+</table>
+<p>These are hypothetical examples of <strong>attribute alignment</strong>, not claims about the abilities, preferences, or behaviour of people in any demographic category. Faultline effects arise from subgroup division and interaction. The lecture associates splits with competition that takes time from core work, slower learning, riskier decisions, lower creativity, greater conflict, and less trust between subgroups. Overall group satisfaction may be lower even while subgroup satisfaction is high.</p>
+<details class="worked"><summary>Teaching example: reduce a subgroup split by changing the work structure</summary><p>A four-person team notices that two members always consult one another while the other two are left out of decisions. Rather than infer why from anyone’s identity, the manager can rotate mixed pairs, make information visible to the full team, and give the group a shared task requiring cross-pair coordination. The aim is to reduce separation and improve trust; it does not assume that mixing people automatically removes every disagreement.</p></details>
+
+<h2 id="section-8">Common mistakes</h2>
+<ul>
+<li>Treating Tuckman’s stages as mandatory, perfectly sequential, or as a score of group effectiveness. Groups can stall, overlap stages, or regress.</li>
+<li>Calling the deadline midpoint a Tuckman stage. Punctuated equilibrium is a separate model for temporary groups.</li>
+<li>Confusing role perception (how a person understands a role) with role expectations (what others expect), or calling any busy workload role conflict.</li>
+<li>Treating norms as formal policies, or assuming that a sanctioned norm is beneficial.</li>
+<li>Classifying deviance by just one axis. Use both target and seriousness; the categories are not a single mild-to-severe list.</li>
+<li>Assuming one cause explains deviance or that an observed act diagnoses an individual trait.</li>
+<li>Assuming status equals expertise, or overlooking useful contributions because the speaker has less status.</li>
+<li>Treating the lecture’s approximate group sizes as fixed rules, or assuming social loafing occurs equally in every cultural context.</li>
+<li>Assuming cohesion alone raises output, or that diversity automatically guarantees either conflict or success.</li>
+<li>Reading the source’s demographic faultline illustration as a prediction about an individual. It demonstrates aligned attributes and hypothetical subgroup structure.</li>
+</ul>
+<h2 id="section-9">Exam focus</h2>
+<ul>
+<li>Define a group and distinguish formal from informal groups.</li>
+<li>Recall and explain the five Tuckman stages, with <strong>Adjourning as Stage 5</strong>, and state why the model is not a guaranteed path.</li>
+<li>Describe the punctuated-equilibrium timing: first meeting, phase-one inertia, midpoint transition, second inertia phase, accelerated final meeting, deadline.</li>
+<li>Distinguish role, role perception, role expectations, role conflict, norms, formal rules, and social sanctions.</li>
+<li>Classify workplace deviance by its two dimensions: interpersonal versus organizational target, and minor versus serious.</li>
+<li>Name status’s three sources; explain how status affects conformity and voice.</li>
+<li>Match group size to task; define social loafing, its causes, cultural qualification, and remedies.</li>
+<li>Reproduce all four cohesion × performance-norm outcomes; cohesion reinforces the group’s norms.</li>
+<li>Explain diversity’s early/longer-term qualification and define a faultline through aligned attributes.</li>
+</ul>
+<h2 id="section-10">Practice questions</h2>
+<ol>
+<li>A newly assigned group is polite, seeks clarity, and relies on its leader. Which Tuckman stage best fits, and what would be a useful caution?</li>
+</ol>
+<p class="question">Check your answer</p>
+<details class="worked"><summary>Check your answer</summary><p><strong>Forming.</strong> The clues are polite interaction, uncertainty about purpose, and reliance on the leader. It is a provisional description, not proof the group will follow a fixed sequence.</p></details>
+
+<ol>
+<li>A short-lived committee changes its plan exactly halfway to a deadline after a slow start. Which model explains this pattern?</li>
+</ol>
+<p class="question">Check your answer</p>
+<details class="worked"><summary>Check your answer</summary><p><strong>Punctuated equilibrium.</strong> It describes a midpoint transition in a temporary deadline group, followed by another period of inertia and accelerated activity near the final meeting.</p></details>
+
+<ol>
+<li>Classify lateness and deliberate sabotage using the lecture’s deviance axes.</li>
+</ol>
+<p class="question">Check your answer</p>
+<details class="worked"><summary>Check your answer</summary><p>Lateness is an example of <strong>minor, organizationally directed production deviance</strong>. Sabotage is <strong>serious, organizationally directed property deviance</strong>.</p></details>
+
+<ol>
+<li>A group has strong cohesion but weak performance norms. What productivity relationship should you expect?</li>
+</ol>
+<p class="question">Check your answer</p>
+<details class="worked"><summary>Check your answer</summary><p><strong>Low productivity.</strong> Cohesion reinforces the norms the group holds; high cohesion does not guarantee high output.</p></details>
+
+<ol>
+<li>Why might a lower-status member’s silence harm a group even when the meeting appears orderly?</li>
+</ol>
+<p class="question">Check your answer</p>
+<details class="worked"><summary>Check your answer</summary><p>The member may hold relevant expertise or insight. If status suppresses participation, the group can lose information and reduce its creativity or performance.</p></details>
+
+<ol>
+<li>What makes the lecture’s first faultline example strong, and what should not be inferred from it?</li>
+</ol>
+<p class="question">Check your answer</p>
+<details class="worked"><summary>Check your answer</summary><p>Several attributes align into two internally similar subgroups, creating a stronger hypothetical dividing line. Do not infer abilities or behaviour from age, gender, or ethnicity; the example illustrates alignment only.</p></details>
+
+<ol>
+<li>Name two ways to reduce social loafing and connect each to a cause.</li>
+</ol>
+<p class="question">Check your answer</p>
+<details class="worked"><summary>Check your answer</summary><p>For example, peer evaluation and identifiable contribution-based rewards address reduced accountability and unidentifiable effort. Shared group goals can address weak common purpose. Select remedies that match the actual cause.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="lecture-6-perception-and-individual-decision-making.html"><small>Previous</small>Perception and Individual Decision Making <span aria-hidden="true">↗</span></a><a href="lecture-7-group-decision-making.html"><small>Next</small>Group Decision-Making <span aria-hidden="true">↗</span></a></nav><footer>Organizational Behavior and Management · Study guide <span>Understand work. Connect people, teams, and organizations.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      const caption = table.querySelector('caption')?.textContent.trim();
+      const headers = [...table.querySelectorAll('th')].map(cell => cell.textContent.trim()).filter(Boolean);
+      const name = caption || headers.slice(0, 3).join(', ');
+      region.setAttribute('aria-label', name ? `Table: ${name}` : 'Study table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Study diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const searchable = (link.textContent + ' ' + (link.dataset.search || '')).toLowerCase();
+        const match = searchable.includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('ob-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.OB_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    const mobileTopicsSelection = menu && getComputedStyle(menu).display !== 'none' && sidebar?.classList.contains('open');
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    } else if (mobileTopicsSelection && slug !== 'index') {
+      main.querySelector('h1')?.scrollIntoView({behavior:'instant', block:'start'});
+    }
+    if (mobileTopicsSelection) menu.focus({preventScroll:true});
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

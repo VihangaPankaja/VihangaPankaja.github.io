@@ -1,0 +1,630 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Understand when teamwork fits, how teams are designed, and what the lecture model considers when discussing effectiveness."><title>Work Teams and Effectiveness · OB and Management</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('ob-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">OB</span> OB <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="People, teams, leadership…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Organizational Behavior and Management</a></div><div class="nav-group"><p>Foundations</p><a class="nav-entry" data-search="" href="lecture-1-organizational-behaviour-foundations.html">Organizational Behaviour Foundations</a></div><div class="nav-group"><p>Individual behaviour</p><a class="nav-entry" data-search="" href="lecture-2-work-attitudes-and-job-satisfaction.html">Work Attitudes and Job Satisfaction</a><a class="nav-entry" data-search="" href="lecture-3-personality-at-work.html">Personality at Work</a><a class="nav-entry" data-search="" href="lecture-3-values-culture-and-person-environment-fit.html">Values, Culture, and Person-Environment Fit</a><a class="nav-entry" data-search="" href="lecture-4-emotions-and-moods.html">Emotions and Moods</a><a class="nav-entry" data-search="" href="lecture-5-managing-emotions-at-work.html">Managing Emotions at Work</a><a class="nav-entry" data-search="" href="lecture-6-perception-and-individual-decision-making.html">Perception and Individual Decision Making</a></div><div class="nav-group"><p>Group behaviour</p><a class="nav-entry" data-search="" href="lecture-7-group-structure-and-behaviour.html">Group Structure and Behaviour</a><a class="nav-entry" data-search="" href="lecture-7-group-decision-making.html">Group Decision-Making</a><a class="nav-entry" data-search="" href="lecture-8-work-teams-and-effectiveness.html" aria-current="page">Work Teams and Effectiveness</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">MN4063<br>Organizational Behavior and Management</div></aside>
+<main id="main"><div class="eyebrow">Group behaviour <span>/</span> Lecture 8</div><h1>Work Teams and Effectiveness</h1><p class="lead">Understand when teamwork fits, how teams are designed, and what the lecture model considers when discussing effectiveness.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">What makes a team different from a work group?</a><a href="#section-2">Common forms of work teams</a><a href="#section-3">The team-effectiveness model</a><a href="#section-4">Developing team players</a><a href="#section-5">Decide whether work belongs in a team</a><a href="#section-6">A practitioner framework: New Rules for Teamwork</a><a href="#section-7">Common mistakes</a><a href="#section-8">Exam focus</a><a href="#section-9">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Work teams are useful when people must combine interdependent contributions toward a shared purpose. Simply putting people together does not create positive synergy or guarantee effectiveness. The work, team design, resources, member mix and interaction processes all matter. The lecture offers a model for thinking about those conditions and three tests for deciding whether work belongs in a team.</p>
+<p>The assigned practitioner article adds a separate operating approach: establish routines, measure how work and outcomes are going, then adapt the system. Its recommendations and company examples complement the lecture, but they are not part of the lecture’s team-effectiveness model.</p>
+<h2 id="section-1">What makes a team different from a work group?</h2>
+<p>A <strong>team</strong> is a group whose members work interdependently toward a shared goal or mission. A <strong>work team</strong> coordinates member effort so the collective performance can exceed the sum of individual inputs; this is called <strong>positive synergy</strong>. A work team is a purposeful subset of work groups. A group may still generate ideas, pool resources or coordinate logistics, but it need not depend on shared responsibility for collective performance.</p>
+<p>The lecture’s “Strong Sense of Teamwork” image uses four interlocking pieces: <strong>Goal</strong> (everyone works toward the same goal), <strong>Harmony</strong> (trust, respect and enjoyment of working together), <strong>Roles</strong> (clarity about tasks and responsibilities), and <strong>Support</strong> (helping teammates and putting team success before one’s own). These ideas describe features of teamwork; the source does not present them as a guarantee of results.</p>
+<div role="region" aria-label="Work group and work team comparison" tabindex="0">
+<table>
+<caption>Lecture comparison of work groups and work teams</caption>
+<thead><tr><th scope="col">Dimension</th><th scope="col">Work groups</th><th scope="col">Work teams</th></tr></thead>
+<tbody>
+<tr><th scope="row">Goal</th><td>Share information</td><td>Collective performance</td></tr>
+<tr><th scope="row">Synergy</th><td>Neutral, sometimes negative</td><td>Positive</td></tr>
+<tr><th scope="row">Accountability</th><td>Individual</td><td>Individual and mutual</td></tr>
+<tr><th scope="row">Skills</th><td>Random and varied</td><td>Complementary</td></tr>
+</tbody></table>
+</div>
+
+<p>The lecture’s second comparison adds typical structural differences. Groups are shown with a designated, strong leader, individual accountability, an organizationally set purpose and performance goals, individual work products, meetings organized around delegation, and work within organizational boundaries. Teams are shown with shared leadership roles, individual and mutual accountability, a specific team vision or purpose, team-set performance goals, collective work products, mutual feedback, open discussion and active problem-solving, and work not inhibited by organizational boundaries. These are source contrasts, not rules that every group lacks collaboration or every team shares leadership equally.</p>
+<details class="worked"><summary>Teaching example: when a group becomes a team</summary><p>Several analysts meet monthly to share sales updates, but each owns a separate report and is evaluated individually. They coordinate information as a work group. If they instead depend on one another to produce a single forecast, agree shared goals, coordinate complementary analyses and accept mutual responsibility for the combined result, their work has the interdependence and collective-performance orientation of a team. Calling the meeting a “team meeting” alone would not make the difference.</p></details>
+
+<h2 id="section-2">Common forms of work teams</h2>
+<p>Team types describe how work is organized. Some dimensions can overlap: for example, a cross-functional team may also be virtual.</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>How it works</th>
+<th>Useful distinction or challenge</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Problem-solving</td>
+<td>Often 5–10 people from one department meet regularly about a specific problem; a facilitator may guide discussion.</td>
+<td>The group develops and considers solutions; the format alone does not mean it has authority to implement every one.</td>
+</tr>
+<tr>
+<td>Self-managed</td>
+<td>Members organize and manage their work without traditional hierarchical supervision.</td>
+<td>Fully self-managed forms may select members and evaluate one another; former supervisor positions may become less important or disappear.</td>
+</tr>
+<tr>
+<td>Cross-functional</td>
+<td>People at a similar hierarchical level from different work areas exchange information, create ideas, solve problems and coordinate projects.</td>
+<td>Coordination is demanding and early development can take longer as members learn to work across diverse expertise. Face-to-face collaboration is a strength highlighted in the lecture.</td>
+</tr>
+<tr>
+<td>Virtual</td>
+<td>Members collaborate electronically while geographically dispersed rather than sharing one location.</td>
+<td>Trust, progress visibility and publicizing results matter. Isolation, weaker social rapport and dispersed information can create challenges.</td>
+</tr>
+<tr>
+<td>Multiteam system</td>
+<td>Two or more interdependent teams coordinate toward a higher shared goal: a “team of teams.”</td>
+<td>It links teams’ contributions across boundaries; it is not just one cross-functional team.</td>
+</tr>
+</tbody>
+</table>
+<details class="worked"><summary>Teaching example: cross-functional team or multiteam system?</summary><p>A product launch group that brings together marketing, design and engineering employees is cross-functional: individuals from multiple functions work together. If separate product, logistics and customer-support teams remain distinct but depend on coordinated handoffs to deliver the launch, the larger arrangement is a multiteam system. A boundary spanner coordinates with other subteams and can reduce the number of direct cross-team contacts each member must manage.</p></details>
+
+<p>Virtual-team findings require careful wording. The lecture reports a review of 94 studies involving more than 5,000 groups: virtual teams were better at sharing <strong>unique information</strong> (information held by individual members rather than the whole group), yet shared <strong>less information overall</strong>. It also reports that low online communication was associated with higher information sharing, while near-total online communication hindered it. These are reported research patterns, not a rule that less communication is always better. The lecture’s management suggestions are to establish trust, monitor progress so the team does not become invisible, and publicize its work and results.</p>
+<details class="worked"><summary>Teaching example: separate unique information from total sharing</summary><p>A remote project team includes a safety specialist whose concern is known only to them. The team surfaces that unique fact during its review, yet members exchange fewer updates and assumptions overall than a co-located group. Both observations can be true: finding a distinctive piece of information is different from sharing a larger volume of information. Managers should check whether essential information is being surfaced and coordinated rather than treating message count as the outcome.</p></details>
+
+<h2 id="section-3">The team-effectiveness model</h2>
+<p>The lecture combines three views of effectiveness: objective productivity measures, managers’ ratings of team performance, and aggregated member satisfaction. A fully effective team meets key stakeholder standards, has internal processes that can sustain future collaboration, and provides an experience that meets members’ personal needs.</p>
+<p>The model is a guide, not a rigid formula. Teams differ in form and structure, and work should be assigned to teams only when teamwork is preferable to individual work. The model groups considerations into <strong>Context</strong>, <strong>Composition</strong> and <strong>Process</strong>. The source diagram connects each whole category to team effectiveness; it does not draw arrows from individual items or establish guaranteed causal effects.</p>
+<figure><div class="diagram-frame" style="--diagram-width:560.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Lecture model: Context, Composition and Process are grouped inputs that converge on Team effectiveness. The diagram does not assign item-level causal arrows." width="560pt" height="450pt"
+ viewBox="0.00 0.00 560.00 450.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 439.2)">
+<title>G</title>
+<!-- context -->
+<g id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-node1" class="node">
+<title>context</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M306.6,-428.4C306.6,-428.4 12,-428.4 12,-428.4 6,-428.4 0,-422.4 0,-416.4 0,-416.4 0,-336 0,-336 0,-330 6,-324 12,-324 12,-324 306.6,-324 306.6,-324 312.6,-324 318.6,-330 318.6,-336 318.6,-336 318.6,-416.4 318.6,-416.4 318.6,-422.4 312.6,-428.4 306.6,-428.4"/>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-406.95" font-family="Georgia" font-size="15.00">CONTEXT</text>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-388.95" font-family="Georgia" font-size="15.00">Adequate resources</text>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-370.95" font-family="Georgia" font-size="15.00">Leadership and structure</text>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-352.95" font-family="Georgia" font-size="15.00">Climate of trust</text>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-334.95" font-family="Georgia" font-size="15.00">Performance evaluation and reward systems</text>
+</g>
+<!-- outcome -->
+<g id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-node4" class="node">
+<title>outcome</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M525.95,-241.2C525.95,-241.2 362.6,-241.2 362.6,-241.2 356.6,-241.2 350.6,-235.2 350.6,-229.2 350.6,-229.2 350.6,-217.2 350.6,-217.2 350.6,-211.2 356.6,-205.2 362.6,-205.2 362.6,-205.2 525.95,-205.2 525.95,-205.2 531.95,-205.2 537.95,-211.2 537.95,-217.2 537.95,-217.2 537.95,-229.2 537.95,-229.2 537.95,-235.2 531.95,-241.2 525.95,-241.2"/>
+<text xml:space="preserve" text-anchor="middle" x="444.28" y="-217.95" font-family="Georgia" font-size="15.00">TEAM EFFECTIVENESS</text>
+</g>
+<!-- context&#45;&gt;outcome -->
+<g id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-edge1" class="edge">
+<title>context&#45;&gt;outcome</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M298.53,-323.58C305.39,-320.22 312.12,-316.76 318.6,-313.2 353.98,-293.78 391.06,-265.91 415.48,-246.34"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="416.61,-248.36 420.23,-242.5 413.75,-244.82 416.61,-248.36"/>
+</g>
+<!-- composition -->
+<g id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-node2" class="node">
+<title>composition</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M227.85,-302.4C227.85,-302.4 90.75,-302.4 90.75,-302.4 84.75,-302.4 78.75,-296.4 78.75,-290.4 78.75,-290.4 78.75,-156 78.75,-156 78.75,-150 84.75,-144 90.75,-144 90.75,-144 227.85,-144 227.85,-144 233.85,-144 239.85,-150 239.85,-156 239.85,-156 239.85,-290.4 239.85,-290.4 239.85,-296.4 233.85,-302.4 227.85,-302.4"/>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-280.95" font-family="Georgia" font-size="15.00">COMPOSITION</text>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-262.95" font-family="Georgia" font-size="15.00">Abilities of members</text>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-244.95" font-family="Georgia" font-size="15.00">Personality</text>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-226.95" font-family="Georgia" font-size="15.00">Allocating roles</text>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-208.95" font-family="Georgia" font-size="15.00">Diversity</text>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-190.95" font-family="Georgia" font-size="15.00">Size of teams</text>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-172.95" font-family="Georgia" font-size="15.00">Member flexibility</text>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-154.95" font-family="Georgia" font-size="15.00">Member preferences</text>
+</g>
+<!-- composition&#45;&gt;outcome -->
+<g id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-edge2" class="edge">
+<title>composition&#45;&gt;outcome</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M240.25,-223.2C271.95,-223.2 308.77,-223.2 342.28,-223.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="342.25,-225.48 348.75,-223.2 342.25,-220.93 342.25,-225.48"/>
+</g>
+<!-- process -->
+<g id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-node3" class="node">
+<title>process</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M218.1,-122.4C218.1,-122.4 100.5,-122.4 100.5,-122.4 94.5,-122.4 88.5,-116.4 88.5,-110.4 88.5,-110.4 88.5,-12 88.5,-12 88.5,-6 94.5,0 100.5,0 100.5,0 218.1,0 218.1,0 224.1,0 230.1,-6 230.1,-12 230.1,-12 230.1,-110.4 230.1,-110.4 230.1,-116.4 224.1,-122.4 218.1,-122.4"/>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-100.95" font-family="Georgia" font-size="15.00">PROCESS</text>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-82.95" font-family="Georgia" font-size="15.00">Common purpose</text>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-64.95" font-family="Georgia" font-size="15.00">Specific goals</text>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-46.95" font-family="Georgia" font-size="15.00">Team efficacy</text>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-28.95" font-family="Georgia" font-size="15.00">Conflict levels</text>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-10.95" font-family="Georgia" font-size="15.00">Social loafing</text>
+</g>
+<!-- process&#45;&gt;outcome -->
+<g id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-edge3" class="edge">
+<title>process&#45;&gt;outcome</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M230.36,-89.49C258.42,-101.74 290.66,-116.98 318.6,-133.2 353.14,-153.26 389.9,-180.61 414.48,-199.89"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="413.07,-201.67 419.58,-203.91 415.89,-198.1 413.07,-201.67"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Lecture model: Context, Composition and Process are grouped inputs that converge on Team effectiveness. The diagram does not assign item-level causal arrows.</figcaption></figure>
+
+<h3>Context: conditions around the team</h3>
+<p><strong>Adequate resources</strong> include timely information, equipment, staffing, encouragement and administrative support. Scarcity can hinder performance because teams rely on the wider organization. <strong>Leadership and structure</strong> should clarify roles and workload while integrating skills. Leadership can be managerial or shared; the lecture notes that shared leadership and delegation may outperform a traditional single-leader structure in some settings, especially multiteam systems.</p>
+<p>A <strong>climate of trust</strong> supports cooperation and reduces the need for constant monitoring. Members can be more willing to be vulnerable, take interpersonal risks and accept a leader’s decisions. <strong>Performance evaluation and reward systems</strong> should recognize both individual contribution and team outcomes. Individual incentives alone can hinder team development; changing the reward system by itself does not instantly create trust.</p>
+<details class="worked"><summary>Teaching example: diagnose a context problem before blaming members</summary><p>A team misses handoffs because it lacks timely access to inventory data and no one knows who can approve a substitute. The first diagnosis is contextual: information and decision structure are missing. Adding a motivational speech or a team bonus does not supply the data or clarify authority. A better response is to provide the information and agree on the approval path, while still tracking individual and shared responsibilities.</p></details>
+
+<h3>Composition: who is on the team and how work is covered</h3>
+<p>Team performance depends on members’ knowledge, skills and abilities and how well these fit changing conditions; it is not a simple sum of individual ability. At the team level, higher average <strong>conscientiousness</strong> and <strong>openness to experience</strong> are linked with better performance in the lecture. Some degree of <strong>agreeableness</strong> matters too: one or more highly disagreeable members can hurt the team, with emotional contagion offered as a related explanation. These are associations and qualifications, not personality-based predictions about a particular person.</p>
+<p><strong>Role allocation</strong> should ensure that needed roles are covered. The lecture recommends putting able, experienced and conscientious members in central roles. <strong>Diversity</strong> can broaden knowledge and support creativity and innovation when members respect and communicate with one another; communication difficulties and conflict can instead make membership less attractive and contribute to turnover.</p>
+<p>Keep a team as small as the task permits. The lecture gives <strong>five to nine</strong> as a general effective range, while emphasizing that the fewest people sufficient for the work is preferable. Too many members can reduce cohesion and accountability, increase social loafing, and raise communication and coordination costs, especially under time pressure. <strong>Member flexibility</strong> helps the team respond when work changes. <strong>Member preference</strong> also matters: forcing people into group work may harm morale and satisfaction.</p>
+<details class="worked"><summary>Teaching example: choose a team size and role mix for a changing task</summary><p>A service redesign needs customer insight, process knowledge and someone who can test a new workflow. Start with the smallest group that covers these roles and can coordinate the handoffs. If the service changes frequently, members who can adapt across tasks add flexibility. A larger group may add perspectives, but it also creates more coordination and accountability needs. The five-to-nine range is a guide from the lecture, not a universal target.</p></details>
+
+<h3>Process: how members work together</h3>
+<p>A <strong>common purpose</strong> gives members a shared mission and strategy. Effective teams agree on it, then use <strong>reflexivity</strong>: they review how the plan is working and adjust when conditions change. They translate purpose into <strong>specific goals</strong> that are measurable and realistic, helping members coordinate and judge progress.</p>
+<p><strong>Team efficacy</strong> is members’ shared belief that the team can succeed; this belief can motivate effort, and training may improve it. When members share knowledge of one another’s capabilities, they can more effectively seek one another’s opinions, strengthening the link between members’ self-efficacy and individual creativity. Do not confuse efficacy with a <strong>mental model</strong>, which is the shared understanding of the work and environment. If team members have inaccurate or divergent mental models, they may disagree about methods, especially under acute stress.</p>
+<p><strong>Conflict</strong> depends on its kind and level. Relationship conflict involves tension, incompatibility or animosity and is almost always dysfunctional. Task conflict concerns the work or ideas. For non-routine work, moderate task conflict early can prompt discussion and critical assessment; very low or very high task conflict can hurt performance. Effective teams address issues explicitly, while ineffective discussions focus on personalities or how comments were said. <strong>Social loafing</strong> is reduced effort when responsibility is shared; individual and joint accountability can help counter it.</p>
+<details class="worked"><summary>Teaching example: task disagreement, relationship conflict and a shared mental model</summary><p>A team must choose a hospital handoff process. One member argues for a shorter form because staff have little time; another argues that it omits a safety check. That is task conflict and can help if they compare evidence and clarify the shared understanding of what a safe handoff requires. If the discussion shifts to personal insults or claims about someone’s motives, it becomes relationship conflict. The team can restore focus by restating the purpose, checking the workflow assumptions together and assigning clear accountability for the agreed process.</p></details>
+
+<h2 id="section-4">Developing team players</h2>
+<p>The lecture notes that teams may fit more readily in countries that score higher on collectivism, but this broad cultural comparison cannot determine whether an individual will be a good teammate. Select members for the role and technical requirements, alongside qualities that can support cross-cultural communication: openness to new experiences, comfort with ambiguity, empathy, social orientation and self-monitoring.</p>
+<p>Training can let employees experience the benefits of teamwork and build skills through workshops in problem-solving, communication, negotiation, conflict management and coaching. Reward systems should support cooperative contributions such as sharing information, training colleagues, helping resolve conflict and mastering needed skills. Balance recognition of individual contribution with team outcomes. A switch from competitive to cooperative rewards does not immediately ensure information sharing or undo rushed decisions and distrust.</p>
+<details class="worked"><summary>Teaching example: align selection, training and rewards</summary><p>A new cross-functional team needs technical coverage and frequent negotiation across departments. Select people who meet the technical requirements and can work through ambiguity; train the group in problem-solving and conflict management; and recognize both reliable individual contributions and help that improves the combined result. If members still withhold information after the reward change, investigate trust, roles and norms rather than assuming the incentive alone solved the problem.</p></details>
+
+<h2 id="section-5">Decide whether work belongs in a team</h2>
+<p>The lecture gives three tests: <strong>Can several people do the work better?</strong> Complex work may benefit from varied perspectives, while simple tasks may be better left to individuals. <strong>Does the work create a common purpose beyond the aggregate of individual goals?</strong> <strong>Are members interdependent</strong>, so the whole depends on each contribution and each member’s success depends on others? Use all three questions before choosing a team.</p>
+<section class="walk" tabindex="0" aria-label="Should this work be done by a team?"><h3>Should this work be done by a team?</h3><div class="example-input"><p>Use all three lecture questions. A “yes” to only one does not establish that teamwork is the best arrangement.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Test 1 · Better together?</h4><p>Ask whether multiple people can do this work better than one person, for example because it is complex or needs different perspectives. If it is simple and independent, one person may be the better fit.</p></section><section class="step"><h4>Test 2 · Shared purpose?</h4><p>Ask whether the work creates a common purpose that is greater than the sum of members’ separate goals. A shared label or meeting does not by itself create that purpose.</p></section><section class="step"><h4>Test 3 · Interdependent?</h4><p>Ask whether the whole depends on each member’s contribution and whether members’ success depends on one another. If each person can finish independently and combine outputs at the end, interdependence may be weak.</p></section><section class="step"><h4>Decision · Vehicle-service example</h4><p>A dealership links customer service, mechanics, parts specialists, and sales staff around meeting a customer’s service needs. Different perspectives can improve the response; the common purpose is customer service; and the linked handoffs make members interdependent. A team is therefore plausible. The tests are a decision aid, not a promise that every team will perform well.</p></section></section>
+
+<h2 id="section-6">A practitioner framework: New Rules for Teamwork</h2>
+<p>The article by Angus Dawson and Katy George presents a practitioner approach, not another version of the lecture model. It proposes three connected practices: build an operating system for teamwork, actively measure practices and outcomes, and use feedback to improve the system.</p>
+<figure><div class="diagram-frame" style="--diagram-width:874.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Article authors’ proposed operating logic: routines make work visible, measures inform learning, and adaptations update routines; this is a practitioner framework, not a causal model from the lecture." width="874pt" height="102pt"
+ viewBox="0.00 0.00 874.00 102.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 91.2)">
+<title>G</title>
+<!-- system -->
+<g id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-node1" class="node">
+<title>system</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M239.1,-50.4C239.1,-50.4 12,-50.4 12,-50.4 6,-50.4 0,-44.4 0,-38.4 0,-38.4 0,-12 0,-12 0,-6 6,0 12,0 12,0 239.1,0 239.1,0 245.1,0 251.1,-6 251.1,-12 251.1,-12 251.1,-38.4 251.1,-38.4 251.1,-44.4 245.1,-50.4 239.1,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="125.55" y="-28.95" font-family="Georgia" font-size="15.00">1 · Operating system</text>
+<text xml:space="preserve" text-anchor="middle" x="125.55" y="-10.95" font-family="Georgia" font-size="15.00">Routines, roles, norms, handovers</text>
+</g>
+<!-- measure -->
+<g id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-node2" class="node">
+<title>measure</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M593.45,-80.4C593.45,-80.4 295.1,-80.4 295.1,-80.4 289.1,-80.4 283.1,-74.4 283.1,-68.4 283.1,-68.4 283.1,-42 283.1,-42 283.1,-36 289.1,-30 295.1,-30 295.1,-30 593.45,-30 593.45,-30 599.45,-30 605.45,-36 605.45,-42 605.45,-42 605.45,-68.4 605.45,-68.4 605.45,-74.4 599.45,-80.4 593.45,-80.4"/>
+<text xml:space="preserve" text-anchor="middle" x="444.27" y="-58.95" font-family="Georgia" font-size="15.00">2 · Measurement</text>
+<text xml:space="preserve" text-anchor="middle" x="444.27" y="-40.95" font-family="Georgia" font-size="15.00">Compare practices, experience and outcomes</text>
+</g>
+<!-- system&#45;&gt;measure -->
+<g id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-edge1" class="edge">
+<title>system&#45;&gt;measure</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M251.27,-37.01C259.06,-37.75 266.97,-38.5 274.9,-39.25"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="274.66,-41.51 281.34,-39.86 275.09,-36.98 274.66,-41.51"/>
+</g>
+<!-- improve -->
+<g id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-node3" class="node">
+<title>improve</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M840.55,-50.4C840.55,-50.4 649.45,-50.4 649.45,-50.4 643.45,-50.4 637.45,-44.4 637.45,-38.4 637.45,-38.4 637.45,-12 637.45,-12 637.45,-6 643.45,0 649.45,0 649.45,0 840.55,0 840.55,0 846.55,0 852.55,-6 852.55,-12 852.55,-12 852.55,-38.4 852.55,-38.4 852.55,-44.4 846.55,-50.4 840.55,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="745" y="-28.95" font-family="Georgia" font-size="15.00">3 · Continuous improvement</text>
+<text xml:space="preserve" text-anchor="middle" x="745" y="-10.95" font-family="Georgia" font-size="15.00">Test, learn and adapt</text>
+</g>
+<!-- measure&#45;&gt;improve -->
+<g id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-edge2" class="edge">
+<title>measure&#45;&gt;improve</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M605.57,-39.1C613.56,-38.3 621.51,-37.5 629.33,-36.72"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="629.35,-39 635.59,-36.09 628.9,-34.47 629.35,-39"/>
+</g>
+<!-- improve&#45;&gt;system -->
+<g id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-edge3" class="edge">
+<title>improve&#45;&gt;system</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M636.98,-20.1C626.33,-19.73 615.68,-19.42 605.45,-19.2 462.22,-16.1 426.34,-16.46 283.1,-19.2 275.27,-19.35 267.22,-19.54 259.1,-19.77"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="259.24,-17.49 252.81,-19.94 259.37,-22.03 259.24,-17.49"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Article authors’ proposed operating logic: routines make work visible, measures inform learning, and adaptations update routines; this is a practitioner framework, not a causal model from the lecture.</figcaption></figure>
+
+<h3>1. Develop an operating system</h3>
+<p>The article uses “operating system” for the building blocks that define how team members collaborate, make changes and support each other. It includes what value the team creates, what it should achieve, each member’s contribution, how work is managed, and the constructive norms that guide behaviour. The authors recommend a system that provides consistent structure while remaining flexible enough to adapt to changing conditions. They discuss the Toyota Production System and Agile as examples of approaches that connect routines and learning.</p>
+<p>In the authors’ Way We Work (WWW) approach, routines include structured kickoffs to set cadence, norms and expectations; regular one-to-one feedback; twice-monthly team retrospectives; coaching when needed; and complete handovers. Their Latin American bank case began with unclear responsibilities, long hours and little progress. The team restarted with outside consultants included in the kickoff, recorded retrospectives, regular feedback and agile coaching. The authors report that the bank launched its planned digital products and received a handover after nine months. This is the article’s case, not proof that the same routine will produce the same result elsewhere.</p>
+<details class="worked"><summary>Teaching example: connect a routine to a coordination problem</summary><p>A project has duplicated work and missing approvals. A kickoff can make responsibilities and cadence explicit; one-to-ones can surface individual blockers; retrospectives can identify repeated handoff failures; and a handover can preserve decisions for the next team. These routines create opportunities to notice and address coordination problems. They do not guarantee success without suitable resources, trust and follow-through.</p></details>
+
+<h3>2. Invest in active, real-time measurement</h3>
+<p>The authors describe three measures: a weekly anonymous but segmented employee survey asking one question about how people feel, answered on a five-emoji scale; an Engagement Team Survey (ETS) every two weeks about which WWW routines teams use and how consistently, members’ project experience and progress toward personal and professional goals; and confidential client feedback. An automated ETS report is used to identify when scores dip and leaders may need to intervene. Their article reports that teams using all WWW elements scored 10 percentage points higher on client collaboration and 23 points higher on building client capabilities and skills. It also reports findings from a study of 40 teams (217 consultants): when teams were in person about half the time, they were 10 times as likely to say collaboration was effective compared with teams above or below that level; members were 25% more likely to be satisfied with support; and 77% versus 59% of team leaders said they had built meaningful client relationships when problem-solving sessions were in person rather than remote.</p>
+<p>The article also describes tradeoffs: teams co-locating more than half the time faced greater work-life and focus challenges, while teams working remotely about half the time were twice as likely to report enough recovery and more likely to see their jobs as sustainable. These figures are the authors’ reported results from their context; they do not establish a universal ideal schedule or prove that location alone caused the differences.</p>
+<p>Other examples in the article include trauma centers tracking patient stabilization time and trying timers, and aviation organizations sharing incident reports around a common safety goal. They illustrate choosing measures connected to desired outcomes and learning across teams; they are not part of the lecture model.</p>
+<details class="worked"><summary>Teaching example: choose a measure before choosing a practice</summary><p>If a cross-functional group’s problem is slow shift handover, first define the desired outcome, such as a shorter handover while required information remains complete. Then track the outcome and test a specific change, such as assigning workstations in advance. Check both speed and information quality so improving one measure does not hide a worse result elsewhere. This follows the article’s measurement logic; it does not assume that its example will work in every workplace.</p></details>
+
+<h3>3. Create a system for continuous improvement and innovation</h3>
+<p>The article recommends giving team leaders access to feedback and authority to test adjustments while work is underway. Its Way We Work center of excellence has 14 full-time employees who examine patterns, support teams and share practices. The article also describes Bosch China using rapid prototypes and tests of digital tools, Hindustan Unilever’s Dapada factory using an app to track worker productivity, and McKinsey’s Lilli platform to search and synthesize organizational knowledge.</p>
+<p>The authors say improvement requires transparency and trust, an adaptable operating system, consideration of different perspectives, access to a shared knowledge repository, time, resources and senior accountability. They report that executives in high-performing teams are five times as productive as those in average teams. Treat this as the article’s reported comparison, not a guaranteed causal return from adopting its recommendations.</p>
+<details class="worked"><summary>Teaching example: run a small improvement cycle</summary><p>A team sees repeated delays at one approval step. It reviews the relevant measures, asks members from each affected function what happens at the handoff, tests a revised approval routine, and checks the next results. If the change does not help, the team revises it and shares what it learned. A manager needs both permission and time to make these adjustments; collecting feedback without acting on it is not continuous improvement.</p></details>
+
+<h2 id="section-7">Common mistakes</h2>
+<ul>
+<li>Calling any set of coworkers a team. Look for a shared purpose, interdependence and collective performance.</li>
+<li>Treating positive synergy as automatic. It describes a potential result of coordinated effort, not a guaranteed effect of assembling people.</li>
+<li>Confusing cross-functional teams (individuals from different work areas) with multiteam systems (two or more interdependent teams). Virtual work describes collaboration across distance and can overlap either form.</li>
+<li>Collapsing the virtual-team finding about unique information into a claim about total information sharing; the lecture reports different directions for those two outcomes.</li>
+<li>Reading the effectiveness diagram as a rigid formula or assigning its arrows to individual factors. The source groups inputs into Context, Composition and Process, which converge on effectiveness.</li>
+<li>Treating diversity as always beneficial, larger teams as always better, or five to nine members as a universal rule. Benefits and coordination costs depend on task and conditions.</li>
+<li>Mixing up team efficacy (confidence the team can succeed), mental models (shared understanding of the work) and reflexivity (reviewing and adjusting the plan).</li>
+<li>Treating task conflict and relationship conflict as equivalent. Work-focused disagreement can sometimes help; personal tension is almost always harmful.</li>
+<li>Assuming a reward change alone will build trust, stop loafing or guarantee information sharing.</li>
+<li>Treating the practitioner article’s statistics or 50% co-location finding as universal or causal advice.</li>
+</ul>
+<h2 id="section-8">Exam focus</h2>
+<ul>
+<li>Define a work team through interdependence and shared purpose; explain positive synergy as coordinated collective performance.</li>
+<li>Compare groups and teams across goal, synergy, accountability and skills, then qualify the broader lecture comparison as typical rather than absolute.</li>
+<li>Classify problem-solving, self-managed, cross-functional, virtual and multiteam arrangements; identify boundary spanners in multiteam systems.</li>
+<li>Reproduce the three effectiveness categories and their exact factors. State what effectiveness includes and why the model is a guide.</li>
+<li>Explain how context, composition and process considerations shape team design without claiming deterministic outcomes.</li>
+<li>Distinguish task from relationship conflict; efficacy from mental models; reflexivity from both.</li>
+<li>Apply all three “should this work be done in a team?” tests.</li>
+<li>Keep the article’s operating-system, measurement and continuous-improvement recommendations separate from the lecture model, and attribute its case examples and figures.</li>
+</ul>
+<h2 id="section-9">Practice questions</h2>
+<ol>
+<li>What distinguishes a work team from a work group in the lecture’s four-dimension comparison?</li>
+</ol>
+<details><summary>Answer</summary><p>Teams orient toward collective performance, positive synergy, individual and mutual accountability, and complementary skills. Work groups are described as sharing information, having neutral or sometimes negative synergy, individual accountability and random or varied skills. This is a source comparison, not a claim that every group lacks cooperation.</p></details>
+
+<ol>
+<li>A hospital’s emergency, intensive-care and recovery units remain separate teams but coordinate linked stages of treatment toward patient recovery. What structure is this, and who might act as a boundary spanner?</li>
+</ol>
+<details><summary>Answer</summary><p>This is a multiteam system because multiple interdependent teams share a higher goal. A boundary spanner coordinates with the other subteams and can reduce the number of direct cross-team communication demands.</p></details>
+
+<ol>
+<li>Put these factors in the lecture model: accurate staffing data, ability coverage, a measurable shared target, and reviewing the plan after conditions change.</li>
+</ol>
+<details><summary>Answer</summary><p>Staffing data is Context (resources); ability coverage is Composition (abilities and role allocation); a measurable shared target is Process (specific goals and common purpose); reviewing and adapting the plan is Process (reflexivity).</p></details>
+
+<ol>
+<li>A team debates two possible procedures, compares evidence, then begins criticizing one member’s personality. Distinguish the two kinds of conflict and explain what the team can do.</li>
+</ol>
+<details><summary>Answer</summary><p>Comparing procedures is task conflict and may help non-routine work if it stays moderate and focused on ideas. Personal criticism is relationship conflict and is almost always dysfunctional. The team can return to its shared purpose, make assumptions explicit and evaluate evidence rather than motives.</p></details>
+
+<ol>
+<li>Apply the three team-use tests to routine filing that each employee can complete independently and combine at the end.</li>
+</ol>
+<details><summary>Answer</summary><p>Several people may not do the task better; it may not create a common purpose beyond separate goals; and members are not strongly interdependent if each can finish independently. The lecture suggests simple work like this may be better left to individuals.</p></details>
+
+<ol>
+<li>How can virtual teams share unique information better while sharing less information overall?</li>
+</ol>
+<details><summary>Answer</summary><p>Unique information is held by individual members, while overall information sharing concerns the total exchange. A group can surface a member’s distinctive knowledge yet still exchange less information overall. The lecture reports this as a review finding, not a contradiction or universal rule.</p></details>
+
+<ol>
+<li>Identify the three principles in the article’s practitioner framework and state one evidence limit.</li>
+</ol>
+<details><summary>Answer</summary><p>Develop an operating system, invest in active real-time measurement, and create a system for continuous improvement and innovation. The article’s company examples and reported statistics are context-specific author claims; they should not be presented as guaranteed causal results or part of the lecture’s effectiveness model.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="lecture-7-group-decision-making.html"><small>Previous</small>Group Decision-Making <span aria-hidden="true">↗</span></a></nav><footer>Organizational Behavior and Management · Study guide <span>Understand work. Connect people, teams, and organizations.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      const caption = table.querySelector('caption')?.textContent.trim();
+      const headers = [...table.querySelectorAll('th')].map(cell => cell.textContent.trim()).filter(Boolean);
+      const name = caption || headers.slice(0, 3).join(', ');
+      region.setAttribute('aria-label', name ? `Table: ${name}` : 'Study table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Study diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const searchable = (link.textContent + ' ' + (link.dataset.search || '')).toLowerCase();
+        const match = searchable.includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('ob-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.OB_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    const mobileTopicsSelection = menu && getComputedStyle(menu).display !== 'none' && sidebar?.classList.contains('open');
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    } else if (mobileTopicsSelection && slug !== 'index') {
+      main.querySelector('h1')?.scrollIntoView({behavior:'instant', block:'start'});
+    }
+    if (mobileTopicsSelection) menu.focus({preventScroll:true});
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>
