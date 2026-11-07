@@ -1,0 +1,282 @@
+[
+  {
+    "slug": "index",
+    "title": "Advanced Machine Learning",
+    "group": "Start here",
+    "lecture": "CS4681 · Study route",
+    "lead": "A structured route through the methods, models, and worked calculations in Advanced Machine Learning."
+  },
+  {
+    "slug": "ml-foundations",
+    "title": "Machine learning foundations and learning paradigms",
+    "group": "Foundations and classical learning",
+    "lecture": "Lecture 1",
+    "lead": "Machine learning is useful when examples can teach a system a pattern that is hard to specify by hand. This page connects the learning problem, its data and performance goal, and the main ways a learner can receive feedback."
+  },
+  {
+    "slug": "model-representations",
+    "title": "Classifier boundaries and decision-tree representations",
+    "group": "Foundations and classical learning",
+    "lecture": "Lecture 1",
+    "lead": "How the model’s representation shapes the boundaries and regions it can learn, illustrated with Spam/Ham email examples."
+  },
+  {
+    "slug": "evaluation-generalization",
+    "title": "Evaluation, generalization and model choice",
+    "group": "Foundations and classical learning",
+    "lecture": "Lecture 1",
+    "lead": "How to judge a learner, choose an appropriate model, and interpret what a score can and cannot tell us about new cases."
+  },
+  {
+    "slug": "supervised-learning-models",
+    "title": "Supervised Learning: Evaluation, kNN, and Decision Trees",
+    "group": "Foundations and classical learning",
+    "lecture": "Lecture 1",
+    "lead": "How labeled examples support prediction, how to evaluate fairly, and how nearest neighbors and decision trees turn examples into classifications."
+  },
+  {
+    "slug": "naive-bayes",
+    "title": "Naive Bayes Classification (Supplemental Lecture Material)",
+    "group": "Foundations and classical learning",
+    "lecture": "Lecture 1",
+    "lead": "A compact probabilistic classifier that combines class priors with feature likelihoods under a class-conditional independence assumption."
+  },
+  {
+    "slug": "support-vector-machines",
+    "title": "Support vector machines, margins and kernels (supplemental)",
+    "group": "Foundations and classical learning",
+    "lecture": "Lecture 1",
+    "lead": "A maximum-margin linear classifier, extended to tolerate violations and form nonlinear boundaries through feature maps and kernels."
+  },
+  {
+    "slug": "unsupervised-clustering",
+    "title": "Unsupervised Learning: Clustering and Evaluation",
+    "group": "Foundations and classical learning",
+    "lecture": "Lecture 1",
+    "lead": "Learn how clustering discovers structure without target labels, how k-means and hierarchical methods form groups, and how to judge whether the resulting clusters are useful."
+  },
+  {
+    "slug": "neural-computation-perceptron",
+    "title": "Neural Computation and Perceptron Learning",
+    "group": "Neural networks and optimization",
+    "lecture": "Lecture 2",
+    "lead": "How a weighted neuron becomes a classifier, how the perceptron adjusts its boundary, and why XOR needs a richer representation."
+  },
+  {
+    "slug": "mlp-optimization",
+    "title": "Multilayer Networks, Gradient Descent, and Training Practice",
+    "group": "Neural networks and optimization",
+    "lecture": "Lecture 2",
+    "lead": "How multilayer networks combine affine layers and activations, and how gradients, objectives, and training schedules shape their learning."
+  },
+  {
+    "slug": "least-mean-squares",
+    "title": "Least Mean Squares and the Delta Rule",
+    "group": "Neural networks and optimization",
+    "lecture": "Lecture 2",
+    "lead": "LMS adjusts a linear filter by following the instantaneous squared-error gradient."
+  },
+  {
+    "slug": "backpropagation",
+    "title": "Backpropagation: Derivation and Layerwise Updates",
+    "group": "Neural networks and optimization",
+    "lecture": "Lecture 2",
+    "lead": "Backpropagation applies the chain rule to assign loss gradients to every MLP weight and bias."
+  },
+  {
+    "slug": "dimensionality-reduction",
+    "title": "Dimensionality Reduction, Feature Selection, and MDS",
+    "group": "Representations and transfer",
+    "lecture": "Lecture 3",
+    "lead": "Reduce feature width while deciding which geometry or task information the smaller representation should preserve."
+  },
+  {
+    "slug": "pca",
+    "title": "Principal Component Analysis",
+    "group": "Representations and transfer",
+    "lecture": "Lecture 3",
+    "lead": "PCA finds orthogonal linear directions that retain the greatest variance, then projects observations into a smaller coordinate system."
+  },
+  {
+    "slug": "fastmap-random-projection",
+    "title": "FastMap and Random Projection",
+    "group": "Representations and transfer",
+    "lecture": "Lecture 3",
+    "lead": "Two ways to reduce dimensions: recursively embed pairwise distances with FastMap, or multiply vectors by a low-dimensional random map with probabilistic distance guarantees."
+  },
+  {
+    "slug": "transfer-learning",
+    "title": "Transfer Learning, Multitask Learning, and Fine-Tuning",
+    "group": "Representations and transfer",
+    "lecture": "Lecture 3",
+    "lead": "Reuse learned representations across related tasks and domains, then choose carefully which target parameters to adapt."
+  },
+  {
+    "slug": "domain-adaptation-pretraining",
+    "title": "Domain Adaptation, Shift, and Negative Transfer",
+    "group": "Representations and transfer",
+    "lecture": "Lecture 3",
+    "lead": "Compare what transfers across domains, what labels remain available, and when transferred knowledge can hurt."
+  },
+  {
+    "slug": "deep-learning-foundations",
+    "title": "Deep Learning Foundations and Regularization",
+    "group": "Deep and generative models",
+    "lecture": "Lecture 4",
+    "lead": "How neural networks learn representations, form predictions, regularize with dropout, and choose architectures and training settings."
+  },
+  {
+    "slug": "cnn-architectures",
+    "title": "Convolutional Neural Networks",
+    "group": "Deep and generative models",
+    "lecture": "Lecture 4",
+    "lead": "Learn how local filters, shared weights, feature maps, pooling, and skip connections organize image-processing networks."
+  },
+  {
+    "slug": "sequence-models",
+    "title": "RNNs, LSTMs, and GRUs",
+    "group": "Sequences and forecasting",
+    "lecture": "Lecture 4, 5",
+    "lead": "Follow how shared recurrent state models ordered inputs, then compare LSTM and GRU gates and state outputs."
+  },
+  {
+    "slug": "seq2seq-encoder-decoder",
+    "title": "Sequence-to-Sequence and Encoder–Decoder Models",
+    "group": "Sequences and forecasting",
+    "lecture": "Lecture 5",
+    "lead": "Understand how ordered inputs map to outputs, compare sequence-task types, and trace the encoder–context–decoder flow."
+  },
+  {
+    "slug": "autoencoders",
+    "title": "Autoencoders and Learned Representations",
+    "group": "Deep and generative models",
+    "lecture": "Lecture 4",
+    "lead": "Autoencoders compress an input into a code and learn to reconstruct it, including from a corrupted view."
+  },
+  {
+    "slug": "gan-foundations-training",
+    "title": "GANs: Objective, Training, and Failure Modes",
+    "group": "Deep and generative models",
+    "lecture": "Lecture 4",
+    "lead": "Understand how an implicit generator learns through an adversarial discriminator, why the objectives differ, and where training can fail."
+  },
+  {
+    "slug": "gan-architectures-extensions",
+    "title": "GAN Architectures, Conditional Generation, and Extensions",
+    "group": "Deep and generative models",
+    "lecture": "Lecture 4",
+    "lead": "How GAN designs change when generation must preserve image structure, encode useful variation, follow a condition, or translate between domains."
+  },
+  {
+    "slug": "time-series-analysis",
+    "title": "Time Series Analysis and Forecasting",
+    "group": "Sequences and forecasting",
+    "lecture": "Lecture 6",
+    "lead": "A forecast is only as trustworthy as its time ordering, information boundary, and error measure. This guide moves from recognizing temporal structure to building and evaluating leakage-safe forecasts."
+  },
+  {
+    "slug": "xai-explainability",
+    "title": "Explainable AI: Questions, Methods, and Presentation",
+    "group": "Explainability and data quality",
+    "lecture": "Lecture 7",
+    "lead": "Choose an explanation by starting with the human question, then match its scope, model assumptions, and presentation to the person who must use it."
+  },
+  {
+    "slug": "xai-attribution-methods",
+    "title": "Integrated Gradients, SHAP, and Grad-CAM",
+    "group": "Explainability and data quality",
+    "lecture": "Lecture 7",
+    "lead": "Choose the scalar output and reference first; then read input, hidden-unit, coalition, or spatial attributions with their assumptions and limits."
+  },
+  {
+    "slug": "class-imbalance",
+    "title": "Imbalanced Data: Metrics and Resampling",
+    "group": "Explainability and data quality",
+    "lecture": "Lecture 8",
+    "lead": "Rare events can be easy to miss even when a classifier is correct on most rows. This guide connects the shape and causes of imbalance to class-aware metrics, sampling choices, threshold decisions, and leakage-safe evaluation."
+  },
+  {
+    "slug": "data-augmentation",
+    "title": "Data Augmentation for Images and Text",
+    "group": "Explainability and data quality",
+    "lecture": "Lecture 8",
+    "lead": "Augmentation creates varied training examples only when their task-relevant meaning and labels stay valid; this guide connects text strategies to a controlled image-classification assignment."
+  },
+  {
+    "slug": "machine-translation-classical",
+    "title": "Machine Translation: Rule-Based and Statistical Methods",
+    "group": "Language and self-supervision",
+    "lecture": "Lecture 9",
+    "lead": "Classical machine translation must preserve a message while changing its word order and form. This page follows the shift from hand-written linguistic rules to phrase-based statistical translation."
+  },
+  {
+    "slug": "machine-translation-neural",
+    "title": "Neural Machine Translation, Attention, and Transformers",
+    "group": "Language and self-supervision",
+    "lecture": "Lecture 9",
+    "lead": "Neural machine translation learns one sequence-to-sequence model, then uses attention to connect target predictions to source information. The Transformer replaces recurrence with masked and unmasked attention, while subword units help keep rare words representable."
+  },
+  {
+    "slug": "machine-translation-decoding-evaluation",
+    "title": "Translation Decoding, Multilingual Models, and Evaluation",
+    "group": "Language and self-supervision",
+    "lecture": "Lecture 9",
+    "lead": "Translation systems must search through possible outputs, share evidence across languages, and be evaluated for meaning as well as surface overlap."
+  },
+  {
+    "slug": "self-supervised-vision",
+    "title": "Self-Supervised Learning for Vision",
+    "group": "Language and self-supervision",
+    "lecture": "Lecture 10",
+    "lead": "Learn how vision models manufacture training targets from images, shape contrastive or masked objectives, and test whether the retained representation transfers."
+  },
+  {
+    "slug": "self-supervised-text",
+    "title": "Self-Supervised Learning for Text",
+    "group": "Language and self-supervision",
+    "lecture": "Lecture 10",
+    "lead": "Follow how text objectives evolve from static word statistics to contextual prediction, replacement detection, and sequence denoising."
+  },
+  {
+    "slug": "reinforcement-learning-foundations",
+    "title": "Reinforcement Learning: MDPs, Values, and Exploration",
+    "group": "Reinforcement learning",
+    "lecture": "Lecture 11",
+    "lead": "Follow how actions, delayed rewards, values, and exploration fit together in a finite Markov decision process."
+  },
+  {
+    "slug": "q-learning",
+    "title": "Q-Learning and Temporal-Difference Updates",
+    "group": "Reinforcement learning",
+    "lecture": "Lecture 11",
+    "lead": "Learn how Q-values are updated from sampled transitions, how terminal and stochastic cases change the target, and when convergence claims apply."
+  },
+  {
+    "slug": "aws-ai-foundations",
+    "title": "AWS Companion: AI and Generative AI Foundations",
+    "group": "AWS companion",
+    "lecture": "AWS companion",
+    "lead": "An optional companion survey of AI, machine learning, generative AI, and foundation models. It connects the data and workflow choices behind predictions to the tasks and limits of generated output."
+  },
+  {
+    "slug": "aws-prompting-foundation-models",
+    "title": "AWS Companion: Prompt Engineering and Foundation Models",
+    "group": "AWS companion",
+    "lecture": "AWS companion",
+    "lead": "Optional companion reading on prompt design, foundation-model selection and evaluation, generation controls, retrieval, and adaptation. This material is separate from the assumed CS4681 exam route."
+  },
+  {
+    "slug": "aws-responsible-security",
+    "title": "AWS Companion: Responsible AI, Security, Governance, and Compliance",
+    "group": "AWS companion",
+    "lecture": "AWS companion",
+    "lead": "An optional companion on responsible AI and security boundaries in the 2025 AWS course material; outside the assumed CS4681 exam route."
+  },
+  {
+    "slug": "aws-implementation-certification",
+    "title": "AWS Companion: Application Design and Certification Map",
+    "group": "AWS companion",
+    "lecture": "AWS companion",
+    "lead": "Optional AWS course reading on generative-AI application design and a historical 2025 certification map; outside the assumed CS4681 exam route."
+  }
+]

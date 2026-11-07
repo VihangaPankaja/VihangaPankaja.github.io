@@ -1,0 +1,814 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="How labeled examples support prediction, how to evaluate fairly, and how nearest neighbors and decision trees turn examples into classifications."><title>Supervised Learning: Evaluation, kNN, and Decision Trees · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html" aria-current="page">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Foundations and classical learning <span>/</span> Lecture 1</div><h1>Supervised Learning: Evaluation, kNN, and Decision Trees</h1><p class="lead">How labeled examples support prediction, how to evaluate fairly, and how nearest neighbors and decision trees turn examples into classifications.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">From labeled examples to a useful hypothesis</a><a href="#section-2">Evaluation: preserve an untouched final check</a><a href="#section-3">Classification measures and class imbalance</a><a href="#section-4">k-nearest neighbors: predict from nearby examples</a><a href="#section-5">Decision trees: explicit tests and class leaves</a><a href="#section-6">Node impurity and information gain</a><a href="#section-7">Common mistakes</a><a href="#section-8">Exam focus</a><a href="#section-9">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Supervised learning starts with examples that pair an input with its desired output. A learner uses those labeled examples to form a rule that can predict outputs for new cases. The goal is not merely to reproduce the training set: the learned rule should generalize to representative unseen data.</p>
+<p>This page follows that path: frame the task as classification or regression, protect a fair evaluation, choose measures that match the class balance and cost of errors, then see two contrasting classifiers. k-nearest neighbors (kNN) predicts locally from stored examples. A decision tree builds explicit tests and class leaves.</p>
+<h2 id="section-1">From labeled examples to a useful hypothesis</h2>
+<p>An example is a pair <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo>&#x0002C;</mo><mi>y</mi><mo stretchy="false">&#x00029;</mo></mrow></math>: features describe the case, while <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi></mrow></math> is its known target. In pure induction, examples are written <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo>&#x0002C;</mo><mi>f</mi><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo></mrow></math> and the learner returns a hypothesis <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>h</mi></mrow></math> that approximates the unknown target function <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>f</mi></mrow></math>. A hypothesis is <strong>consistent</strong> when it agrees with every supplied training example. Consistency alone does not promise that it will work on new cases: memorizing every training row can be consistent and still generalize poorly.</p>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>What the target represents</th>
+<th>Typical question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Classification</strong></td>
+<td>A discrete class label</td>
+<td>Is this application approved? Is this email spam?</td>
+</tr>
+<tr>
+<td><strong>Regression</strong></td>
+<td>A continuous quantity</td>
+<td>What response value should be predicted from these features?</td>
+</tr>
+</tbody>
+</table>
+<p>For binary classification, one common notation maps a feature vector <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x02208;</mo><msup><mi>&#x0211D;</mi><mi>n</mi></msup></mrow></math> to one of two labels <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x0007B;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002C;</mo><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x0007D;</mo></mrow></math>. The label is the target; positive and negative are names for the two classes. Regression instead estimates a dependent response from one or more predictors. A simple linear model is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Y</mi><mo>&#x0003D;</mo><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><msub><mi>X</mi><mn>1</mn></msub><mo>&#x0002B;</mo><mi>&#x003B5;</mi></mrow></math>; a multiple linear model is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Y</mi><mo>&#x0003D;</mo><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><msub><mi>X</mi><mn>1</mn></msub><mo>&#x0002B;</mo><mi>c</mi><msub><mi>X</mi><mn>2</mn></msub><mo>&#x0002B;</mo><mi>d</mi><msub><mi>X</mi><mn>3</mn></msub><mo>&#x0002B;</mo><mi>&#x003B5;</mi></mrow></math>.</p>
+<p>Here <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi></mrow></math> is the intercept, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi><mo>&#x0002C;</mo><mi>c</mi><mo>&#x0002C;</mo><mi>d</mi></mrow></math> are slopes, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B5;</mi></mrow></math> is the error term. Linearity concerns the modeled response relationship; it does not mean that each observed residual must be zero.</p>
+<p>The lecture’s regression-assumption slide needs a correction. An individual residual is not assumed to equal zero, and residuals do not all have one constant value. In classical regression, the <strong>error term</strong> is commonly modeled as having conditional mean zero and constant variance, with errors independent across observations; normality is an additional assumption used for some inference. Residuals are observed estimates of errors and should vary around zero. Whether predictors are treated as fixed or random depends on the model and sampling design. <a href="https://itl.nist.gov/div898/handbook/pri/section2/pri245.htm">NIST regression diagnostics</a> describes residuals as unexplained variation and lists mean zero, independence, normality, and constant variance as classical assumptions.</p>
+<p>Supervised learning is one learning setting: examples have predefined labels. Unsupervised learning begins without labels and looks for structure such as clusters; semi-supervised learning has only some labels; reinforcement learning learns from rewards and penalties while acting. These are different sources of feedback, not different names for classification.</p>
+<p>The lecture motivates classification with applications such as medical triage: measurements about a newly admitted patient support a high-risk/low-risk prediction, while the downstream decision has unequal costs. A classifier predicts a label; the application still has to decide what action to take with that prediction.</p>
+<details class="worked"><summary>Worked example: majority-class baseline</summary><p>A useful model must be compared with a simple baseline. In the lecture’s 15-loan example, the majority class is “Yes” and it occurs 9 times.</p>
+<ol>
+<li>Predict <strong>Yes</strong> for every case, without learning a feature rule.</li>
+<li>Count correct predictions: 9.</li>
+<li>Divide by all examples: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>9</mn><mo>&#x0002F;</mo><mn>15</mn><mo>&#x0003D;</mo><mn>3</mn><mo>&#x0002F;</mo><mn>5</mn><mo>&#x0003D;</mo><mn>0.60</mn><mo>&#x0003D;</mo><mn>60</mn><mi>&#x00025;</mi></mrow></math>.</li>
+<li>Check: this is the score of a no-learning majority predictor. A learned model should be compared with it; the baseline alone does not show that useful structure was learned.</li>
+</ol></details>
+<h3>Generalization depends on representative examples</h3>
+<p>The lecture assumes training and test examples come from the same distribution, including future cases. Real data can violate this assumption, and a strong shift can hurt performance. The practical requirement is that training examples represent the cases where the model will be used. A memorizing hypothesis can fit every known label but has no reason to behave well outside those examples. Occam’s razor recommends preferring the simplest hypothesis that remains consistent with the evidence; simplicity is a guide to generalization, not a guarantee.</p>
+<figure><div class="diagram-frame" style="--diagram-width:258.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Labeled examples induce a model; applying that model to unseen inputs is prediction. Test labels are used to evaluate predictions, not to fit the model." width="258pt" height="330pt"
+ viewBox="0.00 0.00 258.00 330.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="supervised-learning-models-figure-1-supervised-learning-models-learning-loop-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 318.8)">
+<title>G</title>
+<!-- labels -->
+<g id="supervised-learning-models-figure-1-supervised-learning-models-learning-loop-node1" class="node">
+<title>labels</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M205.35,-308C205.35,-308 31.5,-308 31.5,-308 25.5,-308 19.5,-302 19.5,-296 19.5,-296 19.5,-284 19.5,-284 19.5,-278 25.5,-272 31.5,-272 31.5,-272 205.35,-272 205.35,-272 211.35,-272 217.35,-278 217.35,-284 217.35,-284 217.35,-296 217.35,-296 217.35,-302 211.35,-308 205.35,-308"/>
+<text xml:space="preserve" text-anchor="middle" x="118.42" y="-284.75" font-family="Georgia" font-size="15.00">Labeled training examples</text>
+</g>
+<!-- learn -->
+<g id="supervised-learning-models-figure-1-supervised-learning-models-learning-loop-node2" class="node">
+<title>learn</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M206.47,-240C206.47,-240 30.38,-240 30.38,-240 24.38,-240 18.38,-234 18.38,-228 18.38,-228 18.38,-216 18.38,-216 18.38,-210 24.38,-204 30.38,-204 30.38,-204 206.47,-204 206.47,-204 212.47,-204 218.47,-210 218.47,-216 218.47,-216 218.47,-228 218.47,-228 218.47,-234 212.47,-240 206.47,-240"/>
+<text xml:space="preserve" text-anchor="middle" x="118.42" y="-216.75" font-family="Georgia" font-size="15.00">Induction: fit hypothesis h</text>
+</g>
+<!-- labels&#45;&gt;learn -->
+<g id="supervised-learning-models-figure-1-supervised-learning-models-learning-loop-edge1" class="edge">
+<title>labels&#45;&gt;learn</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M118.42,-271.66C118.42,-264.44 118.42,-255.92 118.42,-248.04"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="120.7,-248.47 118.43,-241.97 116.15,-248.47 120.7,-248.47"/>
+</g>
+<!-- hypothesis -->
+<g id="supervised-learning-models-figure-1-supervised-learning-models-learning-loop-node3" class="node">
+<title>hypothesis</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M182.1,-172C182.1,-172 54.75,-172 54.75,-172 48.75,-172 42.75,-166 42.75,-160 42.75,-160 42.75,-148 42.75,-148 42.75,-142 48.75,-136 54.75,-136 54.75,-136 182.1,-136 182.1,-136 188.1,-136 194.1,-142 194.1,-148 194.1,-148 194.1,-160 194.1,-160 194.1,-166 188.1,-172 182.1,-172"/>
+<text xml:space="preserve" text-anchor="middle" x="118.42" y="-148.75" font-family="Georgia" font-size="15.00">Model / hypothesis</text>
+</g>
+<!-- learn&#45;&gt;hypothesis -->
+<g id="supervised-learning-models-figure-1-supervised-learning-models-learning-loop-edge2" class="edge">
+<title>learn&#45;&gt;hypothesis</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M118.42,-203.66C118.42,-196.44 118.42,-187.92 118.42,-180.04"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="120.7,-180.47 118.43,-173.97 116.15,-180.47 120.7,-180.47"/>
+</g>
+<!-- predict -->
+<g id="supervised-learning-models-figure-1-supervised-learning-models-learning-loop-node4" class="node">
+<title>predict</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M211.35,-104C211.35,-104 25.5,-104 25.5,-104 19.5,-104 13.5,-98 13.5,-92 13.5,-92 13.5,-80 13.5,-80 13.5,-74 19.5,-68 25.5,-68 25.5,-68 211.35,-68 211.35,-68 217.35,-68 223.35,-74 223.35,-80 223.35,-80 223.35,-92 223.35,-92 223.35,-98 217.35,-104 211.35,-104"/>
+<text xml:space="preserve" text-anchor="middle" x="118.42" y="-80.75" font-family="Georgia" font-size="15.00">Deduction: predict new case</text>
+</g>
+<!-- hypothesis&#45;&gt;predict -->
+<g id="supervised-learning-models-figure-1-supervised-learning-models-learning-loop-edge3" class="edge">
+<title>hypothesis&#45;&gt;predict</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M118.42,-135.66C118.42,-128.44 118.42,-119.92 118.42,-112.04"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="120.7,-112.47 118.43,-105.97 116.15,-112.47 120.7,-112.47"/>
+</g>
+<!-- evaluation -->
+<g id="supervised-learning-models-figure-1-supervised-learning-models-learning-loop-node5" class="node">
+<title>evaluation</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M224.85,-36C224.85,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 224.85,0 224.85,0 230.85,0 236.85,-6 236.85,-12 236.85,-12 236.85,-24 236.85,-24 236.85,-30 230.85,-36 224.85,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="118.42" y="-12.75" font-family="Georgia" font-size="15.00">Compare with known test labels</text>
+</g>
+<!-- predict&#45;&gt;evaluation -->
+<g id="supervised-learning-models-figure-1-supervised-learning-models-learning-loop-edge4" class="edge">
+<title>predict&#45;&gt;evaluation</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M118.42,-67.66C118.42,-60.44 118.42,-51.92 118.42,-44.04"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="120.7,-44.47 118.43,-37.97 116.15,-44.47 120.7,-44.47"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Labeled examples induce a model; applying that model to unseen inputs is prediction. Test labels are used to evaluate predictions, not to fit the model.</figcaption></figure>
+<p>The learning workflow is: decide what examples are appropriate; collect inputs and target outputs; select a representation and learning method; fit the model; then evaluate it on separate data. Classification has two related stages: <strong>model construction</strong> learns a rule from labeled training examples, and <strong>model usage</strong> applies it to unknown cases. Do not infer predictions for the loan test rows from the lecture’s diagram: it shows the workflow, but does not give a fitted model or resulting test labels.</p>
+<h2 id="section-2">Evaluation: preserve an untouched final check</h2>
+<p>Evaluation asks how well a model performs and whether it is useful for its setting. Besides predictive accuracy, the lecture names model-building time, prediction time, robustness to noise and missing values, scalability, interpretability, and compactness (for example, tree size or rule count). The best measure depends on the task; a high score under one criterion may hide a weakness under another.</p>
+<p>The evaluation/generalization prerequisite already develops a synthetic confusion-matrix calculation. <a href="evaluation-generalization.html">Review that page</a> for that separate example. This page retains the distinctive highly imbalanced counts from this lecture and concentrates on the evaluation protocols and source-specific conclusions.</p>
+<h3>Holdout, cross-validation, and the roles of validation and test</h3>
+<p>With a <strong>holdout</strong> method, divide the labeled dataset into disjoint training and test subsets. Fit only on training data, then use the unseen test labels to estimate performance. This is most practical when the dataset is large enough for both parts to be useful.</p>
+<p>With <strong>n-fold cross-validation</strong>, divide the data into <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi></mrow></math> disjoint, roughly equal folds. Run <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi></mrow></math> rounds: each fold is the test fold once, and the other <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi><mo>&#x02212;</mo><mn>1</mn></mrow></math> folds train the model. Average the <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi></mrow></math> scores. The lecture names 5-fold and 10-fold as common choices and recommends cross-validation when the available dataset is not large. <strong>Leave-one-out cross-validation (LOOCV)</strong> is the special case with one test example per round: for <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>m</mi></mrow></math> examples, it is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>m</mi></mrow></math>-fold validation.</p>
+<p>A <strong>validation set</strong> is used during development to choose settings such as hyperparameters. A <strong>test set</strong> is reserved for a final estimate after those choices are made. Repeatedly checking the test score and changing the model turns the test set into another validation set, so it no longer gives an untouched final check.</p>
+<figure><div class="diagram-frame" style="--diagram-width:299.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Training and validation can repeat during model choice. The test set is held back for the final evaluation." width="299pt" height="262pt"
+ viewBox="0.00 0.00 299.00 262.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="supervised-learning-models-figure-2-supervised-learning-models-evaluation-protocol-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 250.8)">
+<title>G</title>
+<!-- train -->
+<g id="supervised-learning-models-figure-2-supervised-learning-models-evaluation-protocol-node1" class="node">
+<title>train</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M229.85,-240C229.85,-240 95,-240 95,-240 89,-240 83,-234 83,-228 83,-228 83,-216 83,-216 83,-210 89,-204 95,-204 95,-204 229.85,-204 229.85,-204 235.85,-204 241.85,-210 241.85,-216 241.85,-216 241.85,-228 241.85,-228 241.85,-234 235.85,-240 229.85,-240"/>
+<text xml:space="preserve" text-anchor="middle" x="162.43" y="-216.75" font-family="Georgia" font-size="15.00">Train on training set</text>
+</g>
+<!-- validate -->
+<g id="supervised-learning-models-figure-2-supervised-learning-models-evaluation-protocol-node2" class="node">
+<title>validate</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M182.85,-172C182.85,-172 12,-172 12,-172 6,-172 0,-166 0,-160 0,-160 0,-148 0,-148 0,-142 6,-136 12,-136 12,-136 182.85,-136 182.85,-136 188.85,-136 194.85,-142 194.85,-148 194.85,-148 194.85,-160 194.85,-160 194.85,-166 188.85,-172 182.85,-172"/>
+<text xml:space="preserve" text-anchor="middle" x="97.43" y="-148.75" font-family="Georgia" font-size="15.00">Measure on validation set</text>
+</g>
+<!-- train&#45;&gt;validate -->
+<g id="supervised-learning-models-figure-2-supervised-learning-models-evaluation-protocol-edge1" class="edge">
+<title>train&#45;&gt;validate</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M145.35,-203.66C137.65,-195.84 128.44,-186.49 120.16,-178.09"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="121.86,-176.57 115.68,-173.53 118.62,-179.76 121.86,-176.57"/>
+</g>
+<!-- tune -->
+<g id="supervised-learning-models-figure-2-supervised-learning-models-evaluation-protocol-node3" class="node">
+<title>tune</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M242.23,-104C242.23,-104 82.62,-104 82.62,-104 76.62,-104 70.63,-98 70.63,-92 70.63,-92 70.63,-80 70.63,-80 70.63,-74 76.63,-68 82.63,-68 82.63,-68 242.23,-68 242.23,-68 248.23,-68 254.23,-74 254.23,-80 254.23,-80 254.23,-92 254.23,-92 254.23,-98 248.23,-104 242.23,-104"/>
+<text xml:space="preserve" text-anchor="middle" x="162.43" y="-80.75" font-family="Georgia" font-size="15.00">Choose settings / model</text>
+</g>
+<!-- validate&#45;&gt;tune -->
+<g id="supervised-learning-models-figure-2-supervised-learning-models-evaluation-protocol-edge2" class="edge">
+<title>validate&#45;&gt;tune</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M114.5,-135.66C122.2,-127.84 131.41,-118.49 139.69,-110.09"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="141.23,-111.76 144.17,-105.53 137.99,-108.57 141.23,-111.76"/>
+</g>
+<!-- tune&#45;&gt;train -->
+<g id="supervised-learning-models-figure-2-supervised-learning-models-evaluation-protocol-edge3" class="edge">
+<title>tune&#45;&gt;train</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M183.24,-104.36C191.85,-112.89 200.88,-123.93 205.43,-136 211.06,-150.97 211.06,-157.03 205.43,-172 201.8,-181.62 195.34,-190.59 188.5,-198.15"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="187.14,-196.28 184.29,-202.55 190.43,-199.42 187.14,-196.28"/>
+</g>
+<!-- final -->
+<g id="supervised-learning-models-figure-2-supervised-learning-models-evaluation-protocol-node4" class="node">
+<title>final</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M265.85,-36C265.85,-36 59,-36 59,-36 53,-36 47,-30 47,-24 47,-24 47,-12 47,-12 47,-6 53,0 59,0 59,0 265.85,0 265.85,0 271.85,0 277.85,-6 277.85,-12 277.85,-12 277.85,-24 277.85,-24 277.85,-30 271.85,-36 265.85,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="162.43" y="-12.75" font-family="Georgia" font-size="15.00">One final evaluation on test set</text>
+</g>
+<!-- tune&#45;&gt;final -->
+<g id="supervised-learning-models-figure-2-supervised-learning-models-evaluation-protocol-edge4" class="edge">
+<title>tune&#45;&gt;final</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M162.43,-67.66C162.43,-60.44 162.43,-51.92 162.43,-44.04"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="164.7,-44.47 162.43,-37.97 160.15,-44.47 164.7,-44.47"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Training and validation can repeat during model choice. The test set is held back for the final evaluation.</figcaption></figure>
+<details class="worked"><summary>Worked example: 5-fold evaluation and a final test set</summary><p>Suppose a development dataset has 100 labeled cases and you choose 5-fold cross-validation to compare values of <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi></mrow></math> for kNN.</p>
+<ol>
+<li>Partition the development data into five disjoint folds of 20 cases.</li>
+<li>Round 1 trains on 80 cases and evaluates on fold 1; rounds 2–5 rotate the held-out fold.</li>
+<li>Average the five validation scores for each candidate <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi></mrow></math>; select the value with the best average under the chosen criterion.</li>
+<li>After selecting the model and settings, evaluate once on a separate test set that was not used to choose <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi></mrow></math>.</li>
+<li>Check the boundary: cross-validation supports model selection here; the separate test score is the final report. If there is no separate test set, do not describe the cross-validation score as an untouched test result.</li>
+</ol></details>
+<h2 id="section-3">Classification measures and class imbalance</h2>
+<p>The binary confusion matrix has <strong>actual classes in rows</strong> and <strong>predicted classes in columns</strong>. First decide which class is positive. Then identify each count relative to that choice.</p>
+<table>
+<thead>
+<tr>
+<th>Actual \ Predicted</th>
+<th style="text-align: right;">Negative</th>
+<th style="text-align: right;">Positive</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Negative</strong></td>
+<td style="text-align: right;">True negative (TN)</td>
+<td style="text-align: right;">False positive (FP)</td>
+</tr>
+<tr>
+<td><strong>Positive</strong></td>
+<td style="text-align: right;">False negative (FN)</td>
+<td style="text-align: right;">True positive (TP)</td>
+</tr>
+</tbody>
+</table>
+<p>Accuracy is the fraction of all cases classified correctly. Precision asks what fraction of predicted positives are truly positive. Recall asks what fraction of actual positives were found. The <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>F</mi><mn>1</mn></msub></mrow></math> score is the harmonic mean of precision and recall, so it remains low when either one is low.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mrow><mi mathvariant="normal">A</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">y</mi></mrow><mo>&#x0003D;</mo><mfrac><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">N</mi></mrow></mrow><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">N</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">P</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">N</mi></mrow></mrow></mfrac></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mrow><mi mathvariant="normal">P</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">n</mi></mrow><mo>&#x0003D;</mo><mfrac><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow></mrow><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">P</mi></mrow></mrow></mfrac><mo>&#x0002C;</mo><mspace width="2em" /><mrow><mi mathvariant="normal">R</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">l</mi></mrow><mo>&#x0003D;</mo><mfrac><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow></mrow><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">N</mi></mrow></mrow></mfrac></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>F</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mn>2</mn><mfrac><mrow><mrow><mi mathvariant="normal">P</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">n</mi></mrow><mo>&#x000B7;</mo><mrow><mi mathvariant="normal">R</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">l</mi></mrow></mrow><mrow><mrow><mi mathvariant="normal">P</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">n</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">R</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">l</mi></mrow></mrow></mfrac></mrow></math></div>
+<details class="worked"><summary>Worked example: the source’s imbalanced confusion counts</summary><p>The lecture’s confusion-matrix example has one correctly found positive, 99 missed positives, no false alarms, and 1,000 correctly rejected negatives. These counts show why accuracy alone can look reassuring on an imbalanced dataset.</p>
+<table>
+<thead>
+<tr>
+<th>Actual \ Predicted</th>
+<th style="text-align: right;">Negative</th>
+<th style="text-align: right;">Positive</th>
+<th style="text-align: right;">Row total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Negative</strong></td>
+<td style="text-align: right;">TN = 1,000</td>
+<td style="text-align: right;">FP = 0</td>
+<td style="text-align: right;">1,000</td>
+</tr>
+<tr>
+<td><strong>Positive</strong></td>
+<td style="text-align: right;">FN = 99</td>
+<td style="text-align: right;">TP = 1</td>
+<td style="text-align: right;">100</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li><strong>Precision:</strong> among predicted positives there is only TP: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>100</mn><mi>&#x00025;</mi></mrow></math>.</li>
+<li><strong>Recall:</strong> among 100 actual positives only one is found: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>99</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.01</mn><mo>&#x0003D;</mo><mn>1</mn><mi>&#x00025;</mi></mrow></math>.</li>
+<li><strong>Accuracy:</strong> total cases are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002B;</mo><mn>99</mn><mo>&#x0002B;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>1000</mn><mo>&#x0003D;</mo><mn>1100</mn></mrow></math>. Correct cases are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002B;</mo><mn>1000</mn><mo>&#x0003D;</mo><mn>1001</mn></mrow></math>, so <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1001</mn><mo>&#x0002F;</mo><mn>1100</mn><mo>&#x0003D;</mo><mn>0.91</mn><mo>&#x0003D;</mo><mn>91</mn><mi>&#x00025;</mi></mrow></math>.</li>
+<li><strong>F1:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.01</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>0.01</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.01980198</mn><mi>&#x02026;</mi><mo>&#x02248;</mo><mn>0.0198</mn></mrow></math> (about 1.98%).</li>
+<li><strong>Check:</strong> the system misses 99 of 100 positive cases despite 91% accuracy. Precision describes its positive predictions; recall exposes how few actual positives it finds. The lecture explicitly prints precision and recall; accuracy and F1 above are arithmetic consequences of its confusion counts.</li>
+</ol></details>
+<p>The lecture also gives a separate 1%-positive intrusion thought experiment: predicting every case as negative yields 99% accuracy and detects no positives. Keep it distinct from the confusion matrix above, whose counts contain 100 actual positives and 1,000 actual negatives (9.09% positives). Together, the examples show why accuracy can hide poor minority-class detection. Choose a measure that reflects the class of interest and the consequences of false positives and false negatives. The positive class is the class being sought; “positive” does not inherently mean a favorable outcome.</p>
+<h2 id="section-4">k-nearest neighbors: predict from nearby examples</h2>
+<p>kNN is an instance-based or “lazy” learner: it keeps the training examples instead of first constructing an explicit global model. For a new case, it measures distance to the stored cases, selects the <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi></mrow></math> nearest, and predicts the most frequent class among those neighbors. Equivalently, the fraction of neighbors in class <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>c</mi><mi>j</mi></msub></mrow></math> estimates <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo movablelimits="true">Pr</mo><mo stretchy="false">&#x00028;</mo><msub><mi>c</mi><mi>j</mi></msub><mo>&#x02223;</mo><mi>d</mi><mo stretchy="false">&#x00029;</mo></mrow></math> for the query <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi></mrow></math>.</p>
+<p>The distance function must suit the application. Features on very different numeric scales can dominate a distance calculation, so decide on a scaling rule using training data and apply it consistently. Select <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi></mrow></math> empirically with validation data or cross-validation. A small <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi></mrow></math> is sensitive to individual examples; a large <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi></mrow></math> smooths local differences and may wash out a small neighborhood. The source does not prescribe a tie rule: define one for an implementation, or choose a setting and data where the vote is unambiguous.</p>
+<p>Prediction requires comparing a query with the stored training examples. With <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>N</mi></mrow></math> examples and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi></mrow></math> features, direct distance calculation costs <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>O</mi><mo stretchy="false">&#x00028;</mo><mi>N</mi><mi>d</mi><mo stretchy="false">&#x00029;</mo></mrow></math> per query; selecting the nearest cases adds work (sorting all distances costs <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>O</mi><mo stretchy="false">&#x00028;</mo><mi>N</mi><mi>log</mi><mi>N</mi><mo stretchy="false">&#x00029;</mo></mrow></math>). The lecture summarizes prediction as linear in training-set size, treating feature count and neighbor selection as fixed/implementation details. This can be slow for large training sets, and the method does not produce an easily interpreted global model. Its local votes can create flexible, complex decision boundaries.</p>
+<figure class="figure"><div class="diagram-frame knn-figure" style="--diagram-width:900px;max-height:none"><svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="supervised-learning-models-figure-3-supervised-learning-models-figure-3-knn-source-title supervised-learning-models-figure-3-supervised-learning-models-figure-3-knn-source-desc">
+  <title id="supervised-learning-models-figure-3-supervised-learning-models-figure-3-knn-source-title">Qualitative redraw of the lecture's k equals six nearest-neighbor plot</title>
+  <desc id="supervised-learning-models-figure-3-supervised-learning-models-figure-3-knn-source-desc">Government cases are green circles, Science cases are red triangles, Arts cases are dark or light diamonds, and a new query is a dark blue square. An oval marks the source's qualitative six-neighbor region. No data coordinates or metric are encoded.</desc>
+  <style>
+    .knn-bg{fill:var(--background,#fff)}
+    .knn-text{fill:var(--foreground,#252334);font:22px sans-serif}
+    .knn-query-label{fill:var(--primary,#315e6a);font:22px sans-serif}
+    .knn-ring{fill:none;stroke:var(--foreground,#252334);stroke-width:2}
+    .knn-gov{fill:#62e833;stroke:#202020;stroke-width:1.5}
+    .knn-sci{fill:#f21d20;stroke:#202020;stroke-width:1.2}
+    .knn-arts{fill:var(--foreground,#111);stroke:var(--foreground,#111);stroke-width:1.2}
+    .knn-query{fill:#12156b;stroke:#fff;stroke-width:2.5;paint-order:stroke fill}
+    .knn-rule{stroke:var(--border,#777);stroke-width:2}
+  </style>
+  <rect class="knn-bg" width="900" height="520"/>
+  <text class="knn-text" x="25" y="40">Source illustration: k = 6</text>
+  <g aria-label="Class markers and qualitative neighborhood">
+    <ellipse class="knn-ring" cx="326" cy="220" rx="135" ry="105"/>
+    <circle class="knn-gov" cx="195" cy="125" r="7"/><circle class="knn-gov" cx="340" cy="125" r="7"/>
+    <circle class="knn-gov" cx="365" cy="165" r="7"/><circle class="knn-gov" cx="214" cy="185" r="7"/>
+    <circle class="knn-gov" cx="280" cy="210" r="7"/><circle class="knn-gov" cx="162" cy="238" r="7"/>
+    <circle class="knn-gov" cx="232" cy="305" r="7"/><circle class="knn-gov" cx="330" cy="305" r="7"/>
+    <polygon class="knn-sci" points="475,91 467,107 483,107"/><polygon class="knn-sci" points="505,126 497,142 513,142"/>
+    <polygon class="knn-sci" points="545,161 537,177 553,177"/><polygon class="knn-sci" points="630,146 622,162 638,162"/>
+    <polygon class="knn-sci" points="435,201 427,217 443,217"/><polygon class="knn-sci" points="500,266 492,282 508,282"/>
+    <polygon class="knn-arts" points="458,363 449,372 458,381 467,372"/><polygon class="knn-arts" points="525,351 516,360 525,369 534,360"/>
+    <polygon class="knn-arts" points="565,386 556,395 565,404 574,395"/><polygon class="knn-arts" points="505,436 496,445 505,454 514,445"/>
+    <rect class="knn-query" x="318" y="213" width="15" height="15"/>
+  </g>
+  <path class="knn-rule" d="M690 72V438"/>
+  <circle class="knn-gov" cx="730" cy="110" r="7"/><text class="knn-text" x="748" y="118">Government</text>
+  <polygon class="knn-sci" points="730,141 722,157 738,157"/><text class="knn-text" x="748" y="158">Science</text>
+  <polygon class="knn-arts" points="730,181 721,190 730,199 739,190"/><text class="knn-text" x="748" y="198">Arts</text>
+  <rect class="knn-query" x="723" y="246" width="14" height="14"/><text class="knn-query-label" x="748" y="259">New query</text>
+  <text class="knn-query-label" x="720" y="304" style="font-size:18px">Pr(Science |</text>
+  <text class="knn-query-label" x="720" y="327" style="font-size:18px">query)?</text>
+  <text class="knn-text" x="720" y="354" style="font-size:15px">Qualitative layout only;</text>
+  <text class="knn-text" x="720" y="375" style="font-size:15px">no numeric axes supplied.</text>
+</svg>
+</div><figcaption>Qualitative redraw of the source k = 6 plot: class colors, query marker, and neighborhood are shown without numeric axes. Circle, triangle, and diamond shapes additionally distinguish the classes. The slide gives no coordinates, distance metric, or ordered neighbor list, so the drawing does not support exact source distances or a claimed numeric vote.</figcaption></figure>
+<details class="worked"><summary>Worked example: source k = 6 figure, kept qualitative</summary><p>The source figure marks a new query and labels the neighborhood “k = 6.” Its legend has Government (green), Science (red), and Arts (black). The oval is a visual neighborhood cue, but the slide supplies no coordinates, distance formula, or list of six neighbors. Therefore the source does not support exact distance arithmetic or a reproducible class count from the drawing alone. The correct source-grounded procedure is: calculate distances using the chosen application metric, rank the stored examples, retain the six smallest distances, then count their labels. To predict the query’s Science probability, divide the number of Science cases among those six by 6. Do not assign a numerical probability from this picture.</p></details>
+
+<details class="worked"><summary>Teaching example: a complete kNN distance and vote calculation</summary><section class="walk" tabindex="0" aria-label="Constructed kNN calculation"><h3>Constructed kNN calculation</h3><div class="example-input"><p><strong>Query:</strong> q = (2, 2); <strong>metric:</strong> Euclidean; features on same scale; <strong>k:</strong> 3. Training set:</p><table><thead><tr><th>Row</th><th>Coordinates</th><th>Class</th></tr></thead><tbody><tr><td>A₁</td><td>(1, 2)</td><td>A</td></tr><tr><td>A₂</td><td>(2, 3)</td><td>A</td></tr><tr><td>B₁</td><td>(4, 2)</td><td>B</td></tr><tr><td>A₃</td><td>(2, 5)</td><td>A</td></tr><tr><td>B₂</td><td>(6, 2)</td><td>B</td></tr></tbody></table></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. State the constructed data and metric</h4><p><strong>Teaching example — constructed coordinates, not values from the lecture plot.</strong> The query is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>q</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. Features use the same scale, and distance is Euclidean. Training rows are A₁=(1,2), A₂=(2,3), B₁=(4,2), A₃=(2,5), B₂=(6,2). Set <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi><mo>&#x0003D;</mo><mn>3</mn></mrow></math>. The source does not give a tie policy; this example has no tie at the selected boundary.</p></section><section class="step"><h4>2. Calculate every distance</h4><p>Use <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo stretchy="false">&#x00028;</mo><mi>q</mi><mo>&#x0002C;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msqrt><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>q</mi><mn>1</mn></msub><mo>&#x02212;</mo><msub><mi>x</mi><mn>1</mn></msub><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><msub><mi>q</mi><mn>2</mn></msub><mo>&#x02212;</mo><msub><mi>x</mi><mn>2</mn></msub><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></msqrt></mrow></math>. A₁: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msqrt><mrow><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x02212;</mo><mn>1</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x02212;</mo><mn>2</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></msqrt><mo>&#x0003D;</mo><mn>1</mn></mrow></math>. A₂: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msqrt><mrow><msup><mn>0</mn><mn>2</mn></msup><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></msqrt><mo>&#x0003D;</mo><mn>1</mn></mrow></math>. B₁: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msqrt><mrow><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>2</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mn>0</mn><mn>2</mn></msup></mrow></msqrt><mo>&#x0003D;</mo><mn>2</mn></mrow></math>. A₃: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msqrt><mrow><msup><mn>0</mn><mn>2</mn></msup><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>3</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></msqrt><mo>&#x0003D;</mo><mn>3</mn></mrow></math>. B₂: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msqrt><mrow><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>4</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mn>0</mn><mn>2</mn></msup></mrow></msqrt><mo>&#x0003D;</mo><mn>4</mn></mrow></math>. Check: each squared coordinate difference is included before taking the square root.</p></section><section class="step"><h4>3. Order and select k</h4><p>Order: A₁ (1), A₂ (1), B₁ (2), A₃ (3), B₂ (4). The first three are A₁, A₂, B₁. The third and fourth distances differ, so selection at <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi><mo>&#x0003D;</mo><mn>3</mn></mrow></math> is unambiguous.</p></section><section class="step"><h4>4. Count labels and check</h4><p>Among the three selected neighbors, A has 2 votes and B has 1. Predict A. The neighbor proportion is A: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mo>&#x0002F;</mo><mn>3</mn></mrow></math>, B: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002F;</mo><mn>3</mn></mrow></math>. Check: exactly three neighbors contributed, and their counts sum to 3. This explicit toy calculation illustrates the algorithm; it is separate from the source’s k=6 drawing.</p></section></section></details>
+<h2 id="section-5">Decision trees: explicit tests and class leaves</h2>
+<p>A decision tree represents a classifier as attribute tests. Each internal node asks a question; an outgoing branch corresponds to a possible value; a leaf predicts a class. A case follows one path from root to leaf. Trees can express any function of their input attributes, but a tree that memorizes training labels may not generalize. Prefer compact trees when they explain the training data adequately.</p>
+<p>The lecture lists easy construction, fast classification, interpretability for small trees, useful accuracy on many simple datasets, no distributional assumption (nonparametric behavior), and built-in feature selection as advantages. It also warns about expensive training, over-complex trees that overfit, and limited expressivity. The restaurant example describes 12 “Wait” rows using attributes including Patrons, Type, Price, and others. Its class counts show why a good test creates purer child groups. Keep it separate from the seven-row <code>buys_computer</code> example below: they are distinct source datasets.</p>
+<h3>Greedy recursive induction and stopping cases</h3>
+<p>The lecture’s top-down procedure is greedy: choose a locally useful attribute at the current node, partition the examples by its values, and recurse. It is divide and conquer because each branch solves a smaller subproblem. The selected attribute is not reconsidered by global search; the split heuristic (such as information gain) affects the resulting tree.</p>
+<p>At each call <code>DTL(examples, attributes, default)</code>:</p>
+<ol>
+<li>If the subset is empty, return the <strong>default</strong> class supplied by the parent, commonly the parent subset’s majority class.</li>
+<li>If all examples have the same class, return that pure class leaf.</li>
+<li>If no attributes remain, return the majority class of the current examples.</li>
+<li>Otherwise choose the best attribute, make a test node, partition examples for each value, and recursively build each child with the remaining attributes and the current subset’s majority class as its default.</li>
+</ol>
+<p>These stopping cases prevent pointless splits. The empty-child case is distinct from a nonempty but mixed subset with no attributes left: the former inherits a parent default; the latter uses its own majority. When majority counts tie, the lecture does not specify a tie rule, so make the policy explicit rather than quietly assuming one.</p>
+<details class="worked"><summary>Worked example: preserve the seven numbered tree-construction states</summary><section class="walk" tabindex="0" aria-label="Seven-row buys_computer tree construction"><h3>Seven-row buys_computer tree construction</h3><div class="example-input"><p><strong>Source training rows (separate from the 12-row restaurant example)</strong></p><table><thead><tr><th>RID</th><th>age</th><th>student</th><th>credit_rating</th><th>buys_computer</th></tr></thead><tbody><tr><td>1</td><td>youth</td><td>yes</td><td>fair</td><td>yes</td></tr><tr><td>2</td><td>youth</td><td>yes</td><td>fair</td><td>yes</td></tr><tr><td>3</td><td>youth</td><td>yes</td><td>fair</td><td>no</td></tr><tr><td>4</td><td>youth</td><td>no</td><td>fair</td><td>no</td></tr><tr><td>5</td><td>middle-aged</td><td>no</td><td>excellent</td><td>yes</td></tr><tr><td>6</td><td>senior</td><td>yes</td><td>fair</td><td>no</td></tr><tr><td>7</td><td>senior</td><td>yes</td><td>excellent</td><td>yes</td></tr></tbody></table></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Begin with the seven labeled rows and choose age</h4><p>The source chooses <code>age</code> for the root. The initial class counts are 4 yes and 3 no. This choice is shown by the lecture; no gain value is printed for this dataset.</p></section><section class="step"><h4>2. Partition the root examples by age</h4><p><code>youth</code> contains RIDs 1–4: 2 yes and 2 no. <code>middle-aged</code> contains RID 5: yes. <code>senior</code> contains RIDs 6–7: one no and one yes. Check: the three disjoint branches contain all seven rows.</p></section><section class="step"><h4>3. Stop at the pure middle-aged branch; choose student for youth</h4><p>RID 5 is already pure (yes), so it becomes a yes leaf. The youth subset is mixed, so the source next tests <code>student</code>. Its no branch contains RID 4 (no); its yes branch contains RIDs 1, 2, 3 (yes, yes, no).</p></section><section class="step"><h4>4. Stop at the pure student = no branch</h4><p>The student = no child has one row, RID 4 with class no. Since every example there has the same class, return the pure no leaf.</p></section><section class="step"><h4>5. Use majority voting for student = yes</h4><p>The student = yes child has three rows: RID 1 yes, RID 2 yes, RID 3 no. These rows have identical attribute values but conflicting labels; the displayed tree uses majority voting to assign yes (2 of 3). RID 3 is therefore the one training row misclassified by this leaf. Check: the leaf prediction is a majority rule, not a claim that every training label agrees.</p></section><section class="step"><h4>6. Split senior by credit_rating</h4><p>The senior subset has two rows. The source tests <code>credit_rating</code>: fair contains RID 6, whose initial label is no; excellent contains RID 7, whose initial label is yes. Each child is pure, so return no and yes leaves respectively.</p></section><section class="step"><h4>7. Read the final tree and check every row</h4><p>Final paths: youth → student (no → no; yes → yes); middle-aged → yes; senior → credit_rating (fair → no; excellent → yes). Compare with the original labels: RID 3 is predicted yes but labeled no; the other six agree. The final-table rendering on the source’s last slides reverses senior RIDs 6 and 7, while the original rows and branch labels agree with fair → no and excellent → yes. Use those consistent rows and branches for the check.</p></section></section></details>
+<figure><div class="diagram-frame" style="--diagram-width:586.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Source construction choices and corrected senior branch labels. Youth RID 3 is a majority-vote training error; no split-gain values are supplied for this seven-row example." width="586pt" height="262pt"
+ viewBox="0.00 0.00 586.00 262.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 250.8)">
+<title>G</title>
+<!-- age -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-node1" class="node">
+<title>age</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M287.43,-240C287.43,-240 257.43,-240 257.43,-240 251.43,-240 245.43,-234 245.43,-228 245.43,-228 245.43,-216 245.43,-216 245.43,-210 251.43,-204 257.43,-204 257.43,-204 287.43,-204 287.43,-204 293.43,-204 299.43,-210 299.43,-216 299.43,-216 299.43,-228 299.43,-228 299.43,-234 293.43,-240 287.43,-240"/>
+<text xml:space="preserve" text-anchor="middle" x="272.43" y="-216.75" font-family="Georgia" font-size="15.00">age?</text>
+</g>
+<!-- youth -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-node2" class="node">
+<title>youth</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M162.73,-172C162.73,-172 126.13,-172 126.13,-172 120.13,-172 114.13,-166 114.13,-160 114.13,-160 114.13,-148 114.13,-148 114.13,-142 120.13,-136 126.13,-136 126.13,-136 162.73,-136 162.73,-136 168.73,-136 174.73,-142 174.73,-148 174.73,-148 174.73,-160 174.73,-160 174.73,-166 168.73,-172 162.73,-172"/>
+<text xml:space="preserve" text-anchor="middle" x="144.43" y="-148.75" font-family="Georgia" font-size="15.00">youth</text>
+</g>
+<!-- age&#45;&gt;youth -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-edge1" class="edge">
+<title>age&#45;&gt;youth</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M244.97,-206.84C226.57,-197.35 202.11,-184.74 181.92,-174.33"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="183.14,-172.4 176.32,-171.45 181.06,-176.45 183.14,-172.4"/>
+</g>
+<!-- middle -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-node6" class="node">
+<title>middle</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--diagram-border,#7f9da5)" d="M335.73,-172C335.73,-172 209.12,-172 209.12,-172 203.12,-172 197.12,-166 197.12,-160 197.12,-160 197.12,-148 197.12,-148 197.12,-142 203.12,-136 209.12,-136 209.12,-136 335.73,-136 335.73,-136 341.73,-136 347.73,-142 347.73,-148 347.73,-148 347.73,-160 347.73,-160 347.73,-166 341.73,-172 335.73,-172"/>
+<text xml:space="preserve" text-anchor="middle" x="272.43" y="-148.75" font-family="Georgia" font-size="15.00">middle&#45;aged → yes</text>
+</g>
+<!-- age&#45;&gt;middle -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-edge2" class="edge">
+<title>age&#45;&gt;middle</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M272.43,-203.66C272.43,-196.44 272.43,-187.92 272.43,-180.04"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="274.7,-180.47 272.43,-173.97 270.15,-180.47 274.7,-180.47"/>
+</g>
+<!-- senior -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-node7" class="node">
+<title>senior</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M421.23,-172C421.23,-172 381.62,-172 381.62,-172 375.62,-172 369.62,-166 369.62,-160 369.62,-160 369.62,-148 369.62,-148 369.62,-142 375.62,-136 381.62,-136 381.62,-136 421.23,-136 421.23,-136 427.23,-136 433.23,-142 433.23,-148 433.23,-148 433.23,-160 433.23,-160 433.23,-166 427.23,-172 421.23,-172"/>
+<text xml:space="preserve" text-anchor="middle" x="401.43" y="-148.75" font-family="Georgia" font-size="15.00">senior</text>
+</g>
+<!-- age&#45;&gt;senior -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-edge3" class="edge">
+<title>age&#45;&gt;senior</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M299.78,-207C318.04,-197.66 342.33,-185.24 362.58,-174.87"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="363.46,-176.98 368.21,-171.99 361.39,-172.93 363.46,-176.98"/>
+</g>
+<!-- student -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-node3" class="node">
+<title>student</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M172.48,-104C172.48,-104 116.38,-104 116.38,-104 110.38,-104 104.38,-98 104.38,-92 104.38,-92 104.38,-80 104.38,-80 104.38,-74 110.38,-68 116.38,-68 116.38,-68 172.48,-68 172.48,-68 178.48,-68 184.48,-74 184.48,-80 184.48,-80 184.48,-92 184.48,-92 184.48,-98 178.48,-104 172.48,-104"/>
+<text xml:space="preserve" text-anchor="middle" x="144.43" y="-80.75" font-family="Georgia" font-size="15.00">student?</text>
+</g>
+<!-- youth&#45;&gt;student -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-edge4" class="edge">
+<title>youth&#45;&gt;student</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M144.43,-135.66C144.43,-128.44 144.43,-119.92 144.43,-112.04"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="146.7,-112.47 144.43,-105.97 142.15,-112.47 146.7,-112.47"/>
+</g>
+<!-- student_no -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-node4" class="node">
+<title>student_no</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M68.85,-36C68.85,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 68.85,0 68.85,0 74.85,0 80.85,-6 80.85,-12 80.85,-12 80.85,-24 80.85,-24 80.85,-30 74.85,-36 68.85,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="40.43" y="-12.75" font-family="Georgia" font-size="15.00">no → no</text>
+</g>
+<!-- student&#45;&gt;student_no -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-edge5" class="edge">
+<title>student&#45;&gt;student_no</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M117.1,-67.66C104.07,-59.39 88.34,-49.41 74.53,-40.65"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="75.91,-38.83 69.21,-37.27 73.48,-42.67 75.91,-38.83"/>
+</g>
+<!-- student_yes -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-node5" class="node">
+<title>student_yes</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--diagram-border,#7f9da5)" d="M233.98,-36C233.98,-36 114.88,-36 114.88,-36 108.88,-36 102.88,-30 102.88,-24 102.88,-24 102.88,-12 102.88,-12 102.88,-6 108.88,0 114.88,0 114.88,0 233.98,0 233.98,0 239.98,0 245.98,-6 245.98,-12 245.98,-12 245.98,-24 245.98,-24 245.98,-30 239.98,-36 233.98,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="174.43" y="-12.75" font-family="Georgia" font-size="15.00">yes → yes (2 of 3)</text>
+</g>
+<!-- student&#45;&gt;student_yes -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-edge6" class="edge">
+<title>student&#45;&gt;student_yes</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M152.31,-67.66C155.66,-60.29 159.62,-51.57 163.26,-43.55"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="165.25,-44.69 165.87,-37.83 161.1,-42.81 165.25,-44.69"/>
+</g>
+<!-- credit -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-node8" class="node">
+<title>credit</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M447.85,-104C447.85,-104 355,-104 355,-104 349,-104 343,-98 343,-92 343,-92 343,-80 343,-80 343,-74 349,-68 355,-68 355,-68 447.85,-68 447.85,-68 453.85,-68 459.85,-74 459.85,-80 459.85,-80 459.85,-92 459.85,-92 459.85,-98 453.85,-104 447.85,-104"/>
+<text xml:space="preserve" text-anchor="middle" x="401.43" y="-80.75" font-family="Georgia" font-size="15.00">credit_rating?</text>
+</g>
+<!-- senior&#45;&gt;credit -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-edge7" class="edge">
+<title>senior&#45;&gt;credit</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M401.43,-135.66C401.43,-128.44 401.43,-119.92 401.43,-112.04"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="403.7,-112.47 401.43,-105.97 399.15,-112.47 403.7,-112.47"/>
+</g>
+<!-- fair -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-node9" class="node">
+<title>fair</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M402.85,-36C402.85,-36 340,-36 340,-36 334,-36 328,-30 328,-24 328,-24 328,-12 328,-12 328,-6 334,0 340,0 340,0 402.85,0 402.85,0 408.85,0 414.85,-6 414.85,-12 414.85,-12 414.85,-24 414.85,-24 414.85,-30 408.85,-36 402.85,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="371.43" y="-12.75" font-family="Georgia" font-size="15.00">fair → no</text>
+</g>
+<!-- credit&#45;&gt;fair -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-edge8" class="edge">
+<title>credit&#45;&gt;fair</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M393.54,-67.66C390.19,-60.29 386.23,-51.57 382.59,-43.55"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="384.75,-42.81 379.98,-37.83 380.6,-44.69 384.75,-42.81"/>
+</g>
+<!-- excellent -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-node10" class="node">
+<title>excellent</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--diagram-border,#7f9da5)" d="M552.48,-36C552.48,-36 448.38,-36 448.38,-36 442.38,-36 436.38,-30 436.38,-24 436.38,-24 436.38,-12 436.38,-12 436.38,-6 442.38,0 448.38,0 448.38,0 552.48,0 552.48,0 558.48,0 564.48,-6 564.48,-12 564.48,-12 564.48,-24 564.48,-24 564.48,-30 558.48,-36 552.48,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="500.43" y="-12.75" font-family="Georgia" font-size="15.00">excellent → yes</text>
+</g>
+<!-- credit&#45;&gt;excellent -->
+<g id="supervised-learning-models-figure-4-supervised-learning-models-buys-computer-tree-edge9" class="edge">
+<title>credit&#45;&gt;excellent</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M427.44,-67.66C439.73,-59.46 454.54,-49.59 467.6,-40.88"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="468.84,-42.79 472.98,-37.29 466.31,-39.01 468.84,-42.79"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Source construction choices and corrected senior branch labels. Youth RID 3 is a majority-vote training error; no split-gain values are supplied for this seven-row example.</figcaption></figure>
+<h2 id="section-6">Node impurity and information gain</h2>
+<p>An attribute is useful when its branches make the class labels more homogeneous. The lecture names entropy, Gini index, and misclassification error as node-impurity measures and says to seek low impurity; its ID3/C4.5 criterion selects the attribute with the <strong>highest information gain</strong>. Entropy is measured in bits here. When a class probability is zero, use the convention <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><msub><mi>log</mi><mn>2</mn></msub><mn>0</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math> so a pure child has zero entropy.</p>
+<p>For class proportions <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>p</mi><mi>i</mi></msub></mrow></math>, entropy is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><msub><mo>&#x02211;</mo><mi>i</mi></msub><msub><mi>p</mi><mi>i</mi></msub><msub><mi>log</mi><mn>2</mn></msub><msub><mi>p</mi><mi>i</mi></msub></mrow></math>. <strong>Supplemental formalizations</strong> of the other named node-impurity measures are Gini impurity, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x02212;</mo><msub><mo>&#x02211;</mo><mi>i</mi></msub><msubsup><mi>p</mi><mi>i</mi><mn>2</mn></msubsup></mrow></math>, and misclassification error, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x02212;</mo><msub><mo>max</mo><mi>i</mi></msub><msub><mi>p</mi><mi>i</mi></msub></mrow></math>, the fraction that would be wrong if the node predicted its most frequent class. Unlike the entropy split arithmetic below, the lecture does not work numerical Gini or classification-error splits. For Gini or classification error, compare the weighted post-split impurities and choose the lower value; for entropy, information gain measures the reduction and the larger value is preferred. Do not confuse weighted entropy with weighted classification error: they are different criteria.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>I</mi><mo stretchy="false">&#x00028;</mo><mi>D</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><munderover><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>m</mi></mrow></munderover><msub><mi>p</mi><mi>i</mi></msub><msub><mi>log</mi><mn>2</mn></msub><mo stretchy="false">&#x00028;</mo><msub><mi>p</mi><mi>i</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mn>0</mn><msub><mi>log</mi><mn>2</mn></msub><mn>0</mn><mi>:</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>Gini</mo><mo stretchy="false">&#x00028;</mo><mi>D</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><munder><mo>&#x02211;</mo><mi>i</mi></munder><msubsup><mi>p</mi><mi>i</mi><mn>2</mn></msubsup><mo>&#x0002C;</mo><mspace width="2em" /><mo>Err</mo><mo stretchy="false">&#x00028;</mo><mi>D</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><msub><mo>max</mo><mi>i</mi></msub><msub><mi>p</mi><mi>i</mi></msub></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mo>Info</mo><mi>A</mi></msub><mo stretchy="false">&#x00028;</mo><mi>D</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><munderover><mo>&#x02211;</mo><mrow><mi>j</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>v</mi></mrow></munderover><mfrac><mrow><mo stretchy="false">&#x0007C;</mo><msub><mi>D</mi><mi>j</mi></msub><mo stretchy="false">&#x0007C;</mo></mrow><mrow><mo stretchy="false">&#x0007C;</mo><mi>D</mi><mo stretchy="false">&#x0007C;</mo></mrow></mfrac><mi>I</mi><mo stretchy="false">&#x00028;</mo><msub><mi>D</mi><mi>j</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mo>Gain</mo><mo stretchy="false">&#x00028;</mo><mi>A</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>I</mi><mo stretchy="false">&#x00028;</mo><mi>D</mi><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><msub><mo>Info</mo><mi>A</mi></msub><mo stretchy="false">&#x00028;</mo><mi>D</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<details class="worked"><summary>Worked example: source entropy and information-gain comparison</summary><section class="walk" tabindex="0" aria-label="Restaurant split calculations"><h3>Restaurant split calculations</h3><div class="example-input"><p><strong>Restaurant Wait dataset (12 rows; counts grouped from source)</strong></p><table><thead><tr><th>Candidate split</th><th>Value</th><th>Positive</th><th>Negative</th><th>Child size</th></tr></thead><tbody><tr><td>Parent</td><td>—</td><td>6</td><td>6</td><td>12</td></tr><tr><td>Patrons</td><td>None</td><td>0</td><td>2</td><td>2</td></tr><tr><td>Patrons</td><td>Some</td><td>4</td><td>0</td><td>4</td></tr><tr><td>Patrons</td><td>Full</td><td>2</td><td>4</td><td>6</td></tr><tr><td>Type</td><td>French</td><td>1</td><td>1</td><td>2</td></tr><tr><td>Type</td><td>Italian</td><td>1</td><td>1</td><td>2</td></tr><tr><td>Type</td><td>Thai</td><td>2</td><td>2</td><td>4</td></tr><tr><td>Type</td><td>Burger</td><td>2</td><td>2</td><td>4</td></tr></tbody></table></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Compute the restaurant parent entropy</h4><p>The 12-row parent has 6 positive and 6 negative Wait labels. Thus <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>p</mi><mo>&#x0002B;</mo></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>6</mn></mrow><mrow><mn>12</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>p</mi><mo>&#x02212;</mo></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>6</mn></mrow><mrow><mn>12</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mrow></math>. <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>I</mi><mo stretchy="false">&#x00028;</mo><mi>D</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><msub><mi>log</mi><mn>2</mn></msub><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x02212;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><msub><mi>log</mi><mn>2</mn></msub><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>1</mn><mspace width="0.167em" /><mtext>bit</mtext></mrow></math>. Check: a balanced binary node has maximum binary entropy, 1 bit.</p></section><section class="step"><h4>2. Calculate each Patrons child entropy</h4><p><strong>None:</strong> 0 positive, 2 negative: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>I</mi><mo stretchy="false">&#x00028;</mo><mrow><mi mathvariant="normal">N</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">e</mi></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0</mn><msub><mi>log</mi><mn>2</mn></msub><mn>0</mn><mo>&#x02212;</mo><mn>1</mn><msub><mi>log</mi><mn>2</mn></msub><mn>1</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math>. <strong>Some:</strong> 4 positive, 0 negative: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>I</mi><mo stretchy="false">&#x00028;</mo><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">m</mi><mi mathvariant="normal">e</mi></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn><msub><mi>log</mi><mn>2</mn></msub><mn>1</mn><mo>&#x02212;</mo><mn>0</mn><msub><mi>log</mi><mn>2</mn></msub><mn>0</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math>. <strong>Full:</strong> 2 positive, 4 negative: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>I</mi><mo stretchy="false">&#x00028;</mo><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">l</mi></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mfrac><mrow><mn>2</mn></mrow><mrow><mn>6</mn></mrow></mfrac><msub><mi>log</mi><mn>2</mn></msub><mfrac><mrow><mn>2</mn></mrow><mrow><mn>6</mn></mrow></mfrac><mo>&#x02212;</mo><mfrac><mrow><mn>4</mn></mrow><mrow><mn>6</mn></mrow></mfrac><msub><mi>log</mi><mn>2</mn></msub><mfrac><mrow><mn>4</mn></mrow><mrow><mn>6</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.918295834</mn><mspace width="0.167em" /><mtext>bits</mtext></mrow></math>. Zero terms contribute 0 by convention.</p></section><section class="step"><h4>3. Weight Patrons children and compute gain</h4><p>Child sizes are None 2/12, Some 4/12, Full 6/12. Weighted entropy is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>2</mn></mrow><mrow><mn>12</mn></mrow></mfrac><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mfrac><mrow><mn>4</mn></mrow><mrow><mn>12</mn></mrow></mfrac><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mfrac><mrow><mn>6</mn></mrow><mrow><mn>12</mn></mrow></mfrac><mo stretchy="false">&#x00028;</mo><mn>0.918295834</mn><mi>&#x02026;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x02248;</mo><mn>0.459147917</mn><mspace width="0.167em" /><mtext>bits</mtext></mrow></math>. Therefore <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>Gain</mo><mo stretchy="false">&#x00028;</mo><mrow><mi mathvariant="normal">P</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">s</mi></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><mn>0.459147917</mn><mi>&#x02026;</mi><mo>&#x0003D;</mo><mn>0.540852083</mn><mi>&#x02026;</mi><mo>&#x02248;</mo><mn>0.541</mn><mspace width="0.167em" /><mtext>bits</mtext></mrow></math>. The slide prints 0.0541; the displayed counts and formula give 0.5409, so this is a misplaced decimal in the printed result.</p></section><section class="step"><h4>4. Calculate all Type child entropies</h4><p><strong>French:</strong> 1 positive, 1 negative, size 2: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>I</mi><mo>&#x0003D;</mo><mn>1</mn><mspace width="0.167em" /><mtext>bit</mtext></mrow></math>. <strong>Italian:</strong> 1/1, size 2: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>I</mi><mo>&#x0003D;</mo><mn>1</mn><mspace width="0.167em" /><mtext>bit</mtext></mrow></math>. <strong>Thai:</strong> 2/2, size 4: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>I</mi><mo>&#x0003D;</mo><mn>1</mn><mspace width="0.167em" /><mtext>bit</mtext></mrow></math>. <strong>Burger:</strong> 2/2, size 4: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>I</mi><mo>&#x0003D;</mo><mn>1</mn><mspace width="0.167em" /><mtext>bit</mtext></mrow></math>. Each child is balanced, so each has entropy 1 bit.</p></section><section class="step"><h4>5. Weight Type children and compare</h4><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mo>Info</mo><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">y</mi><mi mathvariant="normal">p</mi><mi mathvariant="normal">e</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>D</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn></mrow><mrow><mn>12</mn></mrow></mfrac><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mfrac><mrow><mn>2</mn></mrow><mrow><mn>12</mn></mrow></mfrac><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mfrac><mrow><mn>4</mn></mrow><mrow><mn>12</mn></mrow></mfrac><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mfrac><mrow><mn>4</mn></mrow><mrow><mn>12</mn></mrow></mfrac><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn><mspace width="0.167em" /><mtext>bit</mtext></mrow></math>. So <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>Gain</mo><mo stretchy="false">&#x00028;</mo><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">y</mi><mi mathvariant="normal">p</mi><mi mathvariant="normal">e</mi></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>0</mn><mspace width="0.167em" /><mtext>bits</mtext></mrow></math>. Compare gains: Patrons ≈0.541 bits, Type = 0 bits. Patrons is the better split among these two candidates because its branches reduce uncertainty. Check: all four Type branches retain a 50:50 class mix, so Type removes none of the parent entropy.</p></section></section></details>
+<h2 id="section-7">Common mistakes</h2>
+<ul>
+<li>Calling a hypothesis useful because it is consistent with the training rows; generalization is about unseen cases.</li>
+<li>Treating a test set as a tuning set. Use validation or cross-validation for choices, then reserve the test for a final check.</li>
+<li>Reporting accuracy alone on an imbalanced dataset; inspect positive-class precision and recall as well.</li>
+<li>Reversing the confusion-matrix axes or using the wrong denominator: precision uses predicted positives, recall uses actual positives.</li>
+<li>Treating kNN’s source plot as if it gave exact coordinates or a specified distance function; it does not.</li>
+<li>Comparing raw feature distances when units differ, or forgetting to choose how ties are handled.</li>
+<li>Confusing the two tree datasets: restaurant has 12 rows; <code>buys_computer</code> has 7.</li>
+<li>Treating tree induction as globally optimal. The source procedure greedily chooses a split at each node.</li>
+<li>Returning a majority of an empty child. The empty case uses the inherited default; majority voting applies to a nonempty subset.</li>
+<li>Copying the printed Patrons gain <code>0.0541</code> without checking its inputs; the shown counts yield about <code>0.541</code> bits.</li>
+<li>Using information gain, Gini impurity, and misclassification error as interchangeable names. They are distinct split criteria.</li>
+</ul>
+<h2 id="section-8">Exam focus</h2>
+<ul>
+<li>Define supervised learning, a labeled example, feature, target, hypothesis, consistency, and generalization.</li>
+<li>Distinguish classification (discrete class) from regression (continuous response); state why the slide’s “residual equals zero/constant residual” wording is not a valid general assumption.</li>
+<li>Calculate the 9/15 majority baseline and explain why a representative train/test distribution matters.</li>
+<li>Describe holdout, n-fold cross-validation, LOOCV, validation, and the untouched-test workflow.</li>
+<li>Read TP, FN, FP, TN from actual rows and predicted columns; calculate accuracy, precision, recall, and F1 from the correct denominators.</li>
+<li>Explain why the source confusion counts yield perfect precision but 1% recall, 91% accuracy, and F1 about 0.0198.</li>
+<li>Give the kNN sequence: choose a metric, compute distances, select k neighbors, majority vote; explain scaling, validation-based k choice, tie policy, and prediction cost.</li>
+<li>State every tree-induction stop case: empty subset/default, pure subset, attributes exhausted/majority; otherwise greedily split and recurse.</li>
+<li>Calculate entropy, weighted child entropy, and information gain; preserve the separate restaurant counts and seven-row tree labels.</li>
+</ul>
+<h2 id="section-9">Practice questions</h2>
+<p class="question">1. A test result has TP = 8, FP = 2, FN = 12, TN = 78. Find precision, recall, accuracy, and F1 for the stated positive class.</p>
+<details class="worked"><summary>Check your answer</summary><p>Precision = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>8</mn><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>8</mn><mo>&#x0002B;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.8</mn></mrow></math>. Recall = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>8</mn><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>8</mn><mo>&#x0002B;</mo><mn>12</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.4</mn></mrow></math>. Accuracy = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>8</mn><mo>&#x0002B;</mo><mn>78</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>100</mn><mo>&#x0003D;</mo><mn>0.86</mn></mrow></math>. F1 = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>0.8</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.4</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>0.8</mn><mo>&#x0002B;</mo><mn>0.4</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.5333</mn><mi>&#x02026;</mi></mrow></math>. Check the denominators: predicted positives are 10; actual positives are 20; total cases are 100.</p></details>
+<p class="question">2. A dataset has 30 cases: 18 positive and 12 negative. What is the accuracy of the majority-class baseline?</p>
+<details class="worked"><summary>Check your answer</summary><p>Predict positive for all 30. Correct cases = 18, so accuracy = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>18</mn><mo>&#x0002F;</mo><mn>30</mn><mo>&#x0003D;</mo><mn>0.60</mn><mo>&#x0003D;</mo><mn>60</mn><mi>&#x00025;</mi></mrow></math>. This is a baseline, not evidence of learned feature relationships.</p></details>
+<p class="question">3. In a dataset of 240 examples, how many model fits and test-fold evaluations are made by 10-fold cross-validation?</p>
+<details class="worked"><summary>Check your answer</summary><p>There are 10 rounds, so 10 model fits and 10 test-fold evaluations. Each round trains on 9 folds (216 examples) and evaluates on the remaining fold (24 examples).</p></details>
+<p class="question">4. A classifier labels 40 cases positive; 30 are truly positive. Of 50 actual positives, it detects those 30. Find precision and recall.</p>
+<details class="worked"><summary>Check your answer</summary><p>Precision = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>30</mn><mo>&#x0002F;</mo><mn>40</mn><mo>&#x0003D;</mo><mn>0.75</mn></mrow></math>. Recall = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>30</mn><mo>&#x0002F;</mo><mn>50</mn><mo>&#x0003D;</mo><mn>0.60</mn></mrow></math>. The precision denominator is the 40 predicted positives; recall’s denominator is the 50 actual positives.</p></details>
+<p class="question">5. A parent node has 8 yes and 2 no examples. One branch receives all 8 yes examples; the other receives both no examples. What are the two child entropies and the weighted child entropy?</p>
+<details class="worked"><summary>Check your answer</summary><p>Both children are pure, so each child entropy is 0 bits (using <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><msub><mi>log</mi><mn>2</mn></msub><mn>0</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math>). Their weighted sum is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>8</mn><mo>&#x0002F;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002F;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math> bits. The split has removed all parent label uncertainty.</p></details>
+<p class="question">6. Why does the source’s seven-row tree predict RID 3 incorrectly, and what happens to RIDs 6 and 7?</p>
+<details class="worked"><summary>Check your answer</summary><p>RID 3 is in the youth/student=yes leaf, where two of three training labels are yes; majority voting predicts yes although RID 3 is labeled no. Senior RID 6 (fair) follows the no branch and RID 7 (excellent) follows the yes branch, matching the original rows and tree branches.</p></details>
+<p class="question">7. A decision-tree call receives a nonempty subset containing both classes but has no remaining attributes. What should it return, and how is this different from an empty subset?</p>
+<details class="worked"><summary>Check your answer</summary><p>With no attributes left, return the current subset’s majority class. An empty subset has no local class counts, so it returns the default class inherited from its parent.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="evaluation-generalization.html"><small>Previous</small>Evaluation, generalization and model choice <span aria-hidden="true">↗</span></a><a href="naive-bayes.html"><small>Next</small>Naive Bayes Classification (Supplemental Lecture Material) <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

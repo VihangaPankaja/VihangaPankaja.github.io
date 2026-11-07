@@ -1,0 +1,713 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Machine learning is useful when examples can teach a system a pattern that is hard to specify by hand. This page connects the learning problem, its data and performance goal, and the main ways a learner can receive feedback."><title>Machine learning foundations and learning paradigms · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html" aria-current="page">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Foundations and classical learning <span>/</span> Lecture 1</div><h1>Machine learning foundations and learning paradigms</h1><p class="lead">Machine learning is useful when examples can teach a system a pattern that is hard to specify by hand. This page connects the learning problem, its data and performance goal, and the main ways a learner can receive feedback.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">What a learner is trying to approximate</a><a href="#section-2">Frame tasks with T, P, and E</a><a href="#section-3">From training to use</a><a href="#section-4">Three ways to reason from information</a><a href="#section-5">Learning families: what feedback is available?</a><a href="#section-6">Additional paradigms and task settings</a><a href="#section-7">Choosing a learning system</a><a href="#section-8">Common mistakes</a><a href="#section-9">Revision reminders</a><a href="#section-10">Study route</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Many useful tasks have no complete, stable set of hand-written rules. A system can instead use experience to build a model: a compact approximation that maps relevant inputs to useful outputs. The central design question is not simply “Which algorithm?” It is: <strong>what task should improve, what experience will teach it, and what evidence will count as success?</strong></p>
+<p>Machine learning fits tasks where patterns are difficult to program explicitly, human expertise is hard to describe, conditions change, or personalization and large datasets matter. It is unnecessary for a fully specified calculation such as payroll. Learning combines prior assumptions or model structure with empirical examples; different methods make different choices about that balance.</p>
+
+<h2 id="section-1">What a learner is trying to approximate</h2>
+<p>Learning builds a useful approximation from particular examples. Think of each candidate mapping from inputs to outputs as a <strong>hypothesis</strong>. The learner searches a <strong>hypothesis space</strong>—the functions its representation can express—for one that fits the observed experience well enough to be useful on new cases. A narrow space can rule out useful patterns; a very flexible one can fit accidental details. The representation and search method therefore shape what can be learned.</p>
+<p>Mitchell’s framing makes a learning problem explicit: experience <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>E</mi></mrow></math> is useful when it improves performance <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math> on a task <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi></mrow></math>. The measure <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math> must reflect the real objective. In spam filtering, for example, catching unwanted mail matters, but filtering legitimate mail by mistake matters too; a single vague “accuracy” goal can hide that trade-off.</p>
+<p>The lecture frames machine learning as part of artificial intelligence and places deep learning within machine learning, while showing data science and analytics as overlapping areas rather than exact, non-overlapping boxes. Statistics and machine learning share probability, calculus, linear algebra, and many algorithms. The slides contrast statistics’ emphasis on inference and interpretable conclusions with machine learning’s emphasis on predictive performance, scale, and autonomous systems; this is a broad teaching distinction, not a hard boundary between fields. In the same framing, statistics draws inference from samples, while computer science contributes efficient algorithms and model representation/evaluation.</p>
+<p>Traditional programming supplies data and an explicitly written program to produce an output. In the learning view, examples and desired outputs help a computer infer a program or model. This is useful when software rules are the bottleneck and data is more available than detailed, reliable human knowledge. Prior knowledge and empirical examples are two ends of a design spectrum; practical systems can combine both.</p>
+<h3>Spam: define the goal before choosing the learner</h3>
+<p>The lecture defines spam as email the user does not want and did not ask to receive. Its task is to identify spam emails. Its experience is a database of emails labeled by users. Its performance measures include the percentage of spam filtered and the percentage of legitimate (“ham”) emails incorrectly filtered out. These are two separate operating concerns: a filter that catches almost all spam could still be unusable if it also removes too much legitimate mail.</p>
+<p>The learning pipeline starts from the real world. Sensors or databases provide observations; preprocessing filters noise, extracts features, and normalizes values. Feature selection or projection can then prepare a representation. A learner may perform classification, regression, clustering, or description; cross-validation or bootstrap can support model testing, followed by analysis. In the spam example, possible features include recipient count, message size, attachment count, and the number of “re” occurrences in the subject. These are measurements used to represent a message, not rules that by themselves define spam.</p>
+
+<figure><div class="diagram-frame" style="--diagram-width:1239.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="A learning system turns observations into a representation, fits and checks a model, then uses it on new cases; later experience can motivate another training cycle." width="1239pt" height="102pt"
+ viewBox="0.00 0.00 1239.00 102.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="ml-foundations-figure-1-ml-foundations-learning-pipeline-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 91.2)">
+<title>G</title>
+<!-- world -->
+<g id="ml-foundations-figure-1-ml-foundations-learning-pipeline-node1" class="node">
+<title>world</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M122.1,-43.2C122.1,-43.2 12,-43.2 12,-43.2 6,-43.2 0,-37.2 0,-31.2 0,-31.2 0,-19.2 0,-19.2 0,-13.2 6,-7.2 12,-7.2 12,-7.2 122.1,-7.2 122.1,-7.2 128.1,-7.2 134.1,-13.2 134.1,-19.2 134.1,-19.2 134.1,-31.2 134.1,-31.2 134.1,-37.2 128.1,-43.2 122.1,-43.2"/>
+<text xml:space="preserve" text-anchor="middle" x="67.05" y="-19.95" font-family="Georgia" font-size="15.00">Real&#45;world cases</text>
+</g>
+<!-- prepare -->
+<g id="ml-foundations-figure-1-ml-foundations-learning-pipeline-node2" class="node">
+<title>prepare</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M323.45,-50.4C323.45,-50.4 178.1,-50.4 178.1,-50.4 172.1,-50.4 166.1,-44.4 166.1,-38.4 166.1,-38.4 166.1,-12 166.1,-12 166.1,-6 172.1,0 178.1,0 178.1,0 323.45,0 323.45,0 329.45,0 335.45,-6 335.45,-12 335.45,-12 335.45,-38.4 335.45,-38.4 335.45,-44.4 329.45,-50.4 323.45,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="250.77" y="-28.95" font-family="Georgia" font-size="15.00">Prepare data</text>
+<text xml:space="preserve" text-anchor="middle" x="250.77" y="-10.95" font-family="Georgia" font-size="15.00">noise · features · scale</text>
+</g>
+<!-- world&#45;&gt;prepare -->
+<g id="ml-foundations-figure-1-ml-foundations-learning-pipeline-edge1" class="edge">
+<title>world&#45;&gt;prepare</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M134.43,-25.2C141.96,-25.2 149.73,-25.2 157.51,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="157.28,-27.48 163.78,-25.2 157.28,-22.93 157.28,-27.48"/>
+</g>
+<!-- represent -->
+<g id="ml-foundations-figure-1-ml-foundations-learning-pipeline-node3" class="node">
+<title>represent</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M489.55,-50.4C489.55,-50.4 379.45,-50.4 379.45,-50.4 373.45,-50.4 367.45,-44.4 367.45,-38.4 367.45,-38.4 367.45,-12 367.45,-12 367.45,-6 373.45,0 379.45,0 379.45,0 489.55,0 489.55,0 495.55,0 501.55,-6 501.55,-12 501.55,-12 501.55,-38.4 501.55,-38.4 501.55,-44.4 495.55,-50.4 489.55,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="434.5" y="-28.95" font-family="Georgia" font-size="15.00">Represent cases</text>
+<text xml:space="preserve" text-anchor="middle" x="434.5" y="-10.95" font-family="Georgia" font-size="15.00">selected features</text>
+</g>
+<!-- prepare&#45;&gt;represent -->
+<g id="ml-foundations-figure-1-ml-foundations-learning-pipeline-edge2" class="edge">
+<title>prepare&#45;&gt;represent</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M336.25,-25.2C344.04,-25.2 351.89,-25.2 359.57,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="359.17,-27.48 365.67,-25.2 359.17,-22.93 359.17,-27.48"/>
+</g>
+<!-- learn -->
+<g id="ml-foundations-figure-1-ml-foundations-learning-pipeline-node4" class="node">
+<title>learn</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M651.9,-50.4C651.9,-50.4 545.55,-50.4 545.55,-50.4 539.55,-50.4 533.55,-44.4 533.55,-38.4 533.55,-38.4 533.55,-12 533.55,-12 533.55,-6 539.55,0 545.55,0 545.55,0 651.9,0 651.9,0 657.9,0 663.9,-6 663.9,-12 663.9,-12 663.9,-38.4 663.9,-38.4 663.9,-44.4 657.9,-50.4 651.9,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="598.73" y="-28.95" font-family="Georgia" font-size="15.00">Learn a model</text>
+<text xml:space="preserve" text-anchor="middle" x="598.73" y="-10.95" font-family="Georgia" font-size="15.00">from experience</text>
+</g>
+<!-- represent&#45;&gt;learn -->
+<g id="ml-foundations-figure-1-ml-foundations-learning-pipeline-edge3" class="edge">
+<title>represent&#45;&gt;learn</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M501.95,-25.2C509.56,-25.2 517.35,-25.2 525.04,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="524.67,-27.48 531.17,-25.2 524.67,-22.93 524.67,-27.48"/>
+</g>
+<!-- check -->
+<g id="ml-foundations-figure-1-ml-foundations-learning-pipeline-node5" class="node">
+<title>check</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M836,-80.4C836,-80.4 707.9,-80.4 707.9,-80.4 701.9,-80.4 695.9,-74.4 695.9,-68.4 695.9,-68.4 695.9,-42 695.9,-42 695.9,-36 701.9,-30 707.9,-30 707.9,-30 836,-30 836,-30 842,-30 848,-36 848,-42 848,-42 848,-68.4 848,-68.4 848,-74.4 842,-80.4 836,-80.4"/>
+<text xml:space="preserve" text-anchor="middle" x="771.95" y="-58.95" font-family="Georgia" font-size="15.00">Check performance</text>
+<text xml:space="preserve" text-anchor="middle" x="771.95" y="-40.95" font-family="Georgia" font-size="15.00">on held&#45;out cases</text>
+</g>
+<!-- learn&#45;&gt;check -->
+<g id="ml-foundations-figure-1-ml-foundations-learning-pipeline-edge4" class="edge">
+<title>learn&#45;&gt;check</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M664.46,-36.54C671.92,-37.85 679.6,-39.19 687.26,-40.54"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="686.62,-42.73 693.42,-41.62 687.41,-38.25 686.62,-42.73"/>
+</g>
+<!-- use -->
+<g id="ml-foundations-figure-1-ml-foundations-learning-pipeline-node6" class="node">
+<title>use</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M977.35,-80.4C977.35,-80.4 892,-80.4 892,-80.4 886,-80.4 880,-74.4 880,-68.4 880,-68.4 880,-42 880,-42 880,-36 886,-30 892,-30 892,-30 977.35,-30 977.35,-30 983.35,-30 989.35,-36 989.35,-42 989.35,-42 989.35,-68.4 989.35,-68.4 989.35,-74.4 983.35,-80.4 977.35,-80.4"/>
+<text xml:space="preserve" text-anchor="middle" x="934.67" y="-58.95" font-family="Georgia" font-size="15.00">Use model</text>
+<text xml:space="preserve" text-anchor="middle" x="934.67" y="-40.95" font-family="Georgia" font-size="15.00">on new cases</text>
+</g>
+<!-- check&#45;&gt;use -->
+<g id="ml-foundations-figure-1-ml-foundations-learning-pipeline-edge5" class="edge">
+<title>check&#45;&gt;use</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M848.61,-55.2C856.54,-55.2 864.54,-55.2 872.29,-55.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="871.94,-57.48 878.44,-55.2 871.94,-52.93 871.94,-57.48"/>
+</g>
+<!-- feedback -->
+<g id="ml-foundations-figure-1-ml-foundations-learning-pipeline-node7" class="node">
+<title>feedback</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M1204.95,-50.4C1204.95,-50.4 1033.35,-50.4 1033.35,-50.4 1027.35,-50.4 1021.35,-44.4 1021.35,-38.4 1021.35,-38.4 1021.35,-12 1021.35,-12 1021.35,-6 1027.35,0 1033.35,0 1033.35,0 1204.95,0 1204.95,0 1210.95,0 1216.95,-6 1216.95,-12 1216.95,-12 1216.95,-38.4 1216.95,-38.4 1216.95,-44.4 1210.95,-50.4 1204.95,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="1119.15" y="-28.95" font-family="Georgia" font-size="15.00">New experience</text>
+<text xml:space="preserve" text-anchor="middle" x="1119.15" y="-10.95" font-family="Georgia" font-size="15.00">may inform a later update</text>
+</g>
+<!-- use&#45;&gt;feedback -->
+<g id="ml-foundations-figure-1-ml-foundations-learning-pipeline-edge6" class="edge">
+<title>use&#45;&gt;feedback</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M989.44,-46.36C997,-45.12 1004.99,-43.8 1013.12,-42.47"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="1013.42,-44.72 1019.47,-41.42 1012.68,-40.23 1013.42,-44.72"/>
+</g>
+<!-- feedback&#45;&gt;learn -->
+<g id="ml-foundations-figure-1-ml-foundations-learning-pipeline-edge7" class="edge">
+<title>feedback&#45;&gt;learn</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M1021.11,-20.2C1010.4,-19.79 999.64,-19.44 989.35,-19.2 858.96,-16.16 826.26,-15.14 695.9,-19.2 688.38,-19.43 680.52,-19.77 672.69,-20.17"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="672.77,-17.89 666.4,-20.5 673.01,-22.43 672.77,-17.89"/>
+</g>
+</g>
+</svg>
+</div><figcaption>A learning system turns observations into a representation, fits and checks a model, then uses it on new cases; later experience can motivate another training cycle.</figcaption></figure>
+
+<h2 id="section-2">Frame tasks with T, P, and E</h2>
+<p>For each problem, state the task, its performance measure, and the experience separately. This prevents a common design mistake: collecting convenient data before deciding what improvement the system is meant to make.</p>
+<table>
+<thead>
+<tr>
+<th>Example</th>
+<th>Task <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi></mrow></math></th>
+<th>Performance <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math></th>
+<th>Experience <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>E</mi></mrow></math></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Checkers</td>
+<td>Play checkers</td>
+<td>Percentage of games won against an arbitrary opponent</td>
+<td>Practice games played against itself</td>
+</tr>
+<tr>
+<td>Handwritten words</td>
+<td>Recognize handwritten words</td>
+<td>Percentage of words correctly classified</td>
+<td>Human-labeled images of handwritten words</td>
+</tr>
+<tr>
+<td>Highway driving</td>
+<td>Drive on four-lane highways using vision sensors</td>
+<td>Average distance traveled before a human-judged error</td>
+<td>Images and steering commands recorded while observing a human driver</td>
+</tr>
+<tr>
+<td>Email</td>
+<td>Categorize messages as spam or legitimate</td>
+<td>Percentage correctly classified; the motivating spam example also tracks caught spam and ham filtered by mistake</td>
+<td>Emails, some with human-given labels</td>
+</tr>
+</tbody>
+</table>
+<p>The same three-part frame applies even when the experience is not a static labeled table. Checkers uses self-play; driving uses paired image and steering-command sequences; the spam example uses user labels. Changing any one part changes the learning problem.</p>
+
+<h3>Teaching example: a strict-threshold credit rule</h3>
+<p>The lecture’s credit-scoring illustration uses this rule: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mtext>income</mtext><mo>&#x0003E;</mo><msub><mi>&#x003B8;</mi><mn>1</mn></msub><mspace width="0.278em" /><mo>&#x02227;</mo><mspace width="0.278em" /><mtext>savings</mtext><mo>&#x0003E;</mo><msub><mi>&#x003B8;</mi><mn>2</mn></msub></mrow></math> Classify the customer as low-risk only when both comparisons hold; otherwise classify as high-risk. Both comparisons are strict.</p>
+<p>For a concrete <strong>Teaching example</strong>, choose <code>θ₁ = $60,000</code> and <code>θ₂ = $10,000</code> (these values are illustrative, not source values):</p>
+<ul>
+<li>Income <code>$70,000</code>, savings <code>$12,000</code>: both are greater than their thresholds, so the rule predicts <strong>low-risk</strong>.</li>
+<li>Income <code>$70,000</code>, savings <code>$10,000</code>: savings equals its threshold, so the second strict comparison is false; the rule predicts <strong>high-risk</strong>.</li>
+<li>Income <code>$55,000</code>, savings <code>$20,000</code>: income fails its threshold, so the rule predicts <strong>high-risk</strong> even though savings passes.</li>
+</ul>
+<p>These illustrative thresholds define a hand-written classifier. Learning the thresholds from training data would be a separate step.</p>
+
+<h2 id="section-3">From training to use</h2>
+<p>During training, a learner uses its chosen experience to construct or adjust a hypothesis. During evaluation, it is checked on examples not used to fit it. During deployment (practical use), the selected model receives a new case represented in the same feature format and returns a prediction or decision. A deployed model does not automatically learn from every prediction; that requires a later update process and suitable new experience.</p>
+<p>The lecture sketches a loss loop: input example → model hypothesis → predicted example → loss evaluation → calculated loss → update. Loss expresses how poor a prediction is under a chosen rule; the update uses that signal to change the model. A particular learning algorithm specifies the loss and update rule for this loop.</p>
+<p>Standard evaluation assumes training and test examples are independently drawn from the same underlying distribution (i.i.d.: independent and identically distributed). This assumption supports using held-out performance as evidence about future cases. The lecture points to collective classification when examples are dependent and transfer learning when test data comes from a different distribution; these are directions for handling changed assumptions, not guarantees that the issue is solved automatically. <strong>No Free Lunch is a separate idea:</strong> without assumptions or prior knowledge, there is no learner that is best for every possible problem. I.i.d. describes how samples relate; No Free Lunch describes the limits of universal algorithm rankings.</p>
+<p>As a <strong>Teaching example</strong>, suppose a spam filter is trained and tested on randomly sampled mail from the same period and user population. If the deployed mail later shifts toward a new language or a new kind of phishing message, the deployment distribution may differ. The old test score then need not describe current performance. This example illustrates distribution shift; detailed evaluation and generalization are covered in <a href="evaluation-generalization.html">Evaluation, generalization and model choice</a>.</p>
+
+<h2 id="section-4">Three ways to reason from information</h2>
+<p>The lecture distinguishes learning by whether it generalizes a rule, applies an existing rule, or predicts particular cases directly.</p>
+<table>
+<thead>
+<tr>
+<th>Reasoning style</th>
+<th>Direction and role</th>
+<th>Lecture example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Induction</strong></td>
+<td>Bottom-up: use observations to propose a general pattern or rule. The conclusion is plausible, not logically guaranteed.</td>
+<td>After repeated peanut/cough observations, infer a possible peanut allergy; from Jennifer’s usual 7 a.m. departure and punctuality, expect she may be on time today.</td>
+</tr>
+<tr>
+<td><strong>Deduction</strong></td>
+<td>Top-down: apply accepted facts or rules to reach a conclusion that follows if the premises are true.</td>
+<td>All numbers ending in 0 or 5 are divisible by 5; 35 ends in 5; therefore 35 is divisible by 5.</td>
+</tr>
+<tr>
+<td><strong>Transduction</strong></td>
+<td>Use observed examples directly to predict particular queried examples, without first requiring one global function approximation.</td>
+<td>k-nearest neighbors can compare a new case with stored cases at prediction time.</td>
+</tr>
+</tbody>
+</table>
+<p>An inductive pattern can be useful while still admitting exceptions. Deduction preserves the truth of valid premises through a valid rule. Transduction focuses computation on particular predictions rather than insisting on a general rule for every possible input.</p>
+
+<h2 id="section-5">Learning families: what feedback is available?</h2>
+<p>The available feedback determines which problem formulation makes sense. Supervised learning receives desired outputs; unsupervised learning looks for structure without those target labels; reinforcement learning receives rewards through action sequences. Semi-supervised and self-supervised setups use different sources of learning signal.</p>
+<table>
+<thead>
+<tr>
+<th>Family</th>
+<th>Signal and typical goal</th>
+<th>Cases emphasized in the lecture</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Supervised</strong></td>
+<td>Examples pair inputs <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>X</mi></mrow></math> with desired outputs <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>F</mi><mo stretchy="false">&#x00028;</mo><mi>X</mi><mo stretchy="false">&#x00029;</mo></mrow></math>; predict output for a new <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>X</mi></mrow></math>. Categorical outputs lead to classification, real-valued outputs to regression, and probability outputs to probability estimation.</td>
+<td>Cancer attributes such as clump thickness and cell uniformity; credit-risk classification from income and savings; used-car attributes predicting price.</td>
+</tr>
+<tr>
+<td><strong>Unsupervised</strong></td>
+<td>Inputs arrive without desired outputs; find useful structure or representation.</td>
+<td>The lecture lists clustering, association, probability-distribution estimation, and dimensionality reduction. Clustering groups similar observations; anomaly detection looks for departures from established normal behavior; association describes co-occurrence. The slide gives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mtext>chips</mtext><mo>&#x02223;</mo><mtext>beer</mtext><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.7</mn></mrow></math> as an association example.</td>
+</tr>
+<tr>
+<td><strong>Semi-supervised</strong></td>
+<td>A small number of labeled examples are combined with many unlabeled examples.</td>
+<td>Classification when labeling all cases is difficult but unlabeled cases are available.</td>
+</tr>
+<tr>
+<td><strong>Self-supervised</strong></td>
+<td>A model predicts one part of an input from another part of the input (also called predictive or pretext learning in the slide).</td>
+<td>Learn a signal from the structure of the input itself rather than a human-provided target label.</td>
+</tr>
+<tr>
+<td><strong>Reinforcement</strong></td>
+<td>An agent observes states, chooses actions, and receives delayed, occasional scalar rewards; it learns a policy, a mapping from states to actions.</td>
+<td>Games, robot navigation, and balancing a pole. The goal is to maximize expected future reward.</td>
+</tr>
+</tbody>
+</table>
+<p>Supervised settings also vary in their outputs and labels: multiclass classification chooses among more than two classes; multilabel classification can assign several labels to one case; one-class classification is given examples from only one class; multi-instance learning labels bags or groups while individual members are unlabeled. Regression can predict quantities such as used-car price, a car’s steering angle, or robot-arm kinematics. Supervised models may also support future prediction, knowledge extraction, compression, or outlier detection, depending on the task and representation.</p>
+<p>Across applications, the lecture groups tasks into recognizing patterns (faces, handwriting, speech, medical images), generating patterns (images or motion), detecting anomalies (unusual transactions or sensor readings), and predicting future values or preferences. It also points to retail, finance, programming, medicine, telecommunications, bioinformatics, web mining, robotics, and knowledge engineering. These are examples of where learning may help; the application label alone does not determine which learning family is suitable.</p>
+
+<p>In reinforcement learning, time matters: at step <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>t</mi></mrow></math>, the agent observes state <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>s</mi><mi>t</mi></msub></mrow></math>, chooses action <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>a</mi><mi>t</mi></msub></mrow></math>, then receives reward <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>r</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub></mrow></math> and next state <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>s</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub></mrow></math>. Delayed rewards make it difficult to identify which earlier action helped or hurt, and a scalar reward carries less detail than a direct target label. The lecture notes that a discount factor can reduce the weight placed on rewards far in the future. The policy is learned from this sequence, not from a supplied correct action for every state.</p>
+
+<h2 id="section-6">Additional paradigms and task settings</h2>
+<p>The lecture’s list extends beyond the main feedback families. These terms describe where experience comes from, how tasks relate, what outputs matter, or how data behaves; they are not all mutually exclusive categories.</p>
+<table>
+<thead>
+<tr>
+<th>Paradigm or setting</th>
+<th>Practical meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Multi-task learning</strong></td>
+<td>Learn related tasks together so shared structure can be useful across them.</td>
+</tr>
+<tr>
+<td><strong>Transfer learning</strong></td>
+<td>Reuse a model developed for one task or domain as a starting point for another. In the lecture’s taxonomy, inductive transfer has labeled target-domain data but no labeled source data; transductive transfer has labeled source data only; unsupervised transfer has no labels in either domain.</td>
+</tr>
+<tr>
+<td><strong>Active learning</strong></td>
+<td>The learner chooses which examples should receive labels from an oracle. Unlike reinforcement learning, it asks for labels rather than learning from action/reward interaction; unlike passive learning, it controls which labels to request rather than receiving examples chosen outside its control. Membership-query synthesis creates a new query; stream-based selective sampling considers examples one at a time; pool-based sampling ranks a pool and chooses a high-value query.</td>
+</tr>
+<tr>
+<td><strong>Ensemble learning</strong></td>
+<td>Combine multiple models in the hope of improving prediction over a constituent model. Boosting builds models incrementally, emphasizing examples earlier models misclassified. The lecture’s committee analogy highlights that diversity or disagreement can matter; merely repeating identical judgments adds little.</td>
+</tr>
+<tr>
+<td><strong>Online / incremental learning</strong></td>
+<td>Learn one instance at a time as examples arrive.</td>
+</tr>
+<tr>
+<td><strong>Ranking / preference learning</strong></td>
+<td>Learn to order items or represent preferences rather than only assigning a class.</td>
+</tr>
+<tr>
+<td><strong>Sequence labeling</strong></td>
+<td>Predict a label for each part of an ordered sequence, where neighboring positions may matter.</td>
+</tr>
+<tr>
+<td><strong>Cost-sensitive learning</strong></td>
+<td>Account for different costs of different outcomes or errors.</td>
+</tr>
+<tr>
+<td><strong>Concept drift</strong></td>
+<td>Account for a changing relationship between inputs and the target over time.</td>
+</tr>
+<tr>
+<td><strong>Collective classification</strong></td>
+<td>Use relationships among dependent instances; independent case-by-case assumptions may miss useful information.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Supplemental orientation from an algorithm comparison graphic:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Broad family</th>
+<th>Examples in the graphic</th>
+<th>Typical role sketched there</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linear models</td>
+<td>Linear regression, logistic regression, ridge, lasso</td>
+<td>Numeric prediction or categorical prediction with linear structure</td>
+</tr>
+<tr>
+<td>Tree-based models</td>
+<td>Decision trees, random forests, gradient boosting</td>
+<td>Rule-like splits or combinations of trees for prediction</td>
+</tr>
+<tr>
+<td>Clustering</td>
+<td>K-means, hierarchical clustering, Gaussian mixtures</td>
+<td>Grouping cases or representing cluster structure</td>
+</tr>
+<tr>
+<td>Association</td>
+<td>Apriori</td>
+<td>Finding recurring co-occurrence relationships</td>
+</tr>
+</tbody>
+</table>
+<p>These are orientation examples, not universal model-selection rules. The graphic’s listed uses and trade-offs depend on data, task, and implementation. Detailed classifiers belong to <a href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a>; detailed clustering belongs to <a href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a>.</p>
+
+<h2 id="section-7">Choosing a learning system</h2>
+<p>The lecture makes four choices explicit. First choose the <strong>training experience</strong>: what cases, labels, interactions, or feedback will be available? Then choose exactly what is to be learned—the <strong>target function</strong>. Next choose how to <strong>represent</strong> that target; the representation determines which hypotheses can be expressed. Finally choose a <strong>learning algorithm</strong> to infer it from the experience. A mismatch at any stage can limit the result: the wrong data may not reveal the pattern, the wrong target may optimize an irrelevant outcome, and an unsuitable representation may not express the needed relationship.</p>
+
+<h2 id="section-8">Common mistakes</h2>
+<ul>
+<li><strong>Treating data collection as the task definition.</strong> State <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math>, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>E</mi></mrow></math> separately; the chosen metric should reflect the cost of both useful and harmful outcomes.</li>
+<li><strong>Calling every observed pattern a proven rule.</strong> Induction proposes a generalization; examples alone do not guarantee it.</li>
+<li><strong>Confusing unsupervised learning with “no learning signal.”</strong> There may be no human target label, but structure in the input supplies the objective or representation signal.</li>
+<li><strong>Calling deployment the same thing as training.</strong> Inference applies the current model to new input; model updates require a later learning process.</li>
+<li><strong>Conflating i.i.d. with No Free Lunch.</strong> One is a sampling assumption; the other rules out universal superiority without assumptions.</li>
+<li><strong>Assuming paradigm labels are exclusive.</strong> A task may combine, for example, transfer with supervised learning or online updates with cost-sensitive decisions.</li>
+<li><strong>Treating the algorithm infographic as a universal ranking.</strong> Its descriptions are rough orientation; suitability depends on the task, data, assumptions, and costs.</li>
+</ul>
+
+<h2 id="section-9">Revision reminders</h2>
+<ul>
+<li>Define learning through improvement on <strong>task <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi></mrow></math></strong>, measured by <strong><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math></strong>, from <strong>experience <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>E</mi></mrow></math></strong>.</li>
+<li>A hypothesis is a candidate mapping; the hypothesis space is the set of mappings the representation can express.</li>
+<li>Preserve the distinction between labels, hidden structure, and rewards when identifying the learning family.</li>
+<li>Keep the training, held-out evaluation, and deployment stages distinct.</li>
+<li>I.i.d. evaluation assumptions and No Free Lunch answer different questions.</li>
+<li>Choose experience, target function, representation, and learner as connected design decisions.</li>
+</ul>
+
+<p class="question">1. A checkers program practices against itself. State <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math>, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>E</mi></mrow></math>.</p>
+<details class="worked"><summary>Check your answer</summary><p><strong>T:</strong> playing checkers. <strong>P:</strong> percentage of games won against an arbitrary opponent. <strong>E:</strong> practice games against itself.</p></details>
+
+<p class="question">2. A handwritten-word recognizer is trained on human-labeled images. What are its task, performance measure, and experience?</p>
+<details class="worked"><summary>Check your answer</summary><p><strong>T:</strong> recognize handwritten words. <strong>P:</strong> percentage of words correctly classified. <strong>E:</strong> a database of human-labeled handwritten-word images.</p></details>
+
+<p class="question">3. A customer has income $70,000 and savings $10,000 under the labeled teaching thresholds $60,000 and $10,000. What does the lecture’s strict-threshold rule predict?</p>
+<details class="worked"><summary>Check your answer</summary><p><strong>High-risk.</strong> Income passes, but savings is equal to its threshold, not greater than it. Because both conditions must be true, the conjunction fails.</p></details>
+
+<p class="question">4. A researcher infers that a new medicine may help after observing improvement in several patients. Is this induction or deduction, and why?</p>
+<details class="worked"><summary>Check your answer</summary><p><strong>Induction:</strong> specific observations are being used to propose a broader pattern. The inference can guide a hypothesis, but the observations alone do not logically prove that the medicine caused the improvement.</p></details>
+
+<p class="question">5. Which learning family fits each signal: (a) many labeled examples, (b) mostly unlabeled examples plus a few labels, (c) reward after action sequences?</p>
+<details class="worked"><summary>Check your answer</summary><p>(a) <strong>Supervised learning</strong>; (b) <strong>semi-supervised learning</strong>; (c) <strong>reinforcement learning</strong>.</p></details>
+
+<p class="question">6. A learner chooses whether to ask an expert to label a case. Which paradigm is this? How does pool-based querying differ from stream-based selective sampling?</p>
+<details class="worked"><summary>Check your answer</summary><p>This is <strong>active learning</strong>. Stream-based sampling decides one incoming example at a time; pool-based sampling ranks examples from a larger unlabeled pool and selects a query from that group.</p></details>
+
+<p class="question">7. Give one sentence distinguishing the i.i.d. assumption from No Free Lunch.</p>
+<details class="worked"><summary>Check your answer</summary><p>I.i.d. assumes training and test examples are independently drawn from the same distribution; No Free Lunch says there is no universally best learner across all possible problems without assumptions or prior knowledge.</p></details>
+
+<h2 id="section-10">Study route</h2>
+<p>Continue to <a href="model-representations.html#section-0">Classifier boundaries and decision-tree representations</a> for model boundaries and exact tree states, then <a href="evaluation-generalization.html">Evaluation, generalization and model choice</a> for evaluation criteria and generalization. Detailed procedures continue in <a href="supervised-learning-models.html">supervised learning</a>, <a href="unsupervised-clustering.html">unsupervised clustering</a>, and <a href="reinforcement-learning-foundations.html">reinforcement learning</a>.</p></article><nav class="pager" aria-label="Study sequence"><a href="index.html"><small>Previous</small>Advanced Machine Learning <span aria-hidden="true">↗</span></a><a href="model-representations.html"><small>Next</small>Classifier boundaries and decision-tree representations <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

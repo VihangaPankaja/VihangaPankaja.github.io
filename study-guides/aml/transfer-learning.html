@@ -1,0 +1,909 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Reuse learned representations across related tasks and domains, then choose carefully which target parameters to adapt."><title>Transfer Learning, Multitask Learning, and Fine-Tuning · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html" aria-current="page">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Representations and transfer <span>/</span> Lecture 3</div><h1>Transfer Learning, Multitask Learning, and Fine-Tuning</h1><p class="lead">Reuse learned representations across related tasks and domains, then choose carefully which target parameters to adapt.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">First separate domain from task</a><a href="#section-2">Transfer labels: report facts before taxonomy names</a><a href="#section-3">Why representations can transfer</a><a href="#section-4">Fine-tuning: adapt a source model with target labels</a><a href="#section-5">Multitask learning: share features, keep task outputs distinct</a><a href="#section-6">Common mistakes</a><a href="#section-7">Exam focus</a><a href="#section-8">Practice questions</a><a href="#section-9">Further reading</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Training a deep model from scratch can require many examples, while a new target task may have only a small labeled dataset. <strong>Transfer learning</strong> reuses a model or learned representation from a source problem as a starting point for a target problem. The key questions are what the source and target share, which labels are available, and which copied parameters should remain fixed or adapt.</p>
+<p>The lecture opens with a pastry-classification story illustrating how a representation learned for one visual distinction can be useful beyond its original labels. Another motivation slide says deep learning may need more than 50,000 data items. That is the lecture’s motivating claim, not a universal threshold.</p>
+<h2 id="section-1">First separate domain from task</h2>
+<p>For this guide, use a <strong>domain</strong> to mean the input feature space together with the distribution of inputs. Use a <strong>task</strong> to mean the output or label space together with the predictive objective. This is a teaching convention for reading the lecture’s examples; transfer-learning terminology is not identical across all literature.</p>
+<p>Ask two questions independently: <strong>How do the inputs differ?</strong> and <strong>What prediction is required?</strong> A new camera, speaker, or visual style can change the domain even when the target labels and prediction remain the same. Changing dog/cat labels to elephant/tiger changes the task even when the data are still animal photographs.</p>
+<table>
+<thead>
+<tr>
+<th>Case</th>
+<th>Domain relationship</th>
+<th>Task relationship</th>
+<th>Label availability and interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Elephant/tiger photos used alongside dog/cat photos</td>
+<td>Similar image domain: both are photographs of animals</td>
+<td>Different label/output spaces and class decisions</td>
+<td>Source examples can inform a related image representation; the target dog/cat classifier still needs its task labels for supervised adaptation</td>
+</tr>
+<tr>
+<td>Cartoon dog/cat images versus photographic dog/cat images</td>
+<td>Different visual domains</td>
+<td>Same dog/cat classification task</td>
+<td>The label space and prediction are shared while visual style changes</td>
+</tr>
+<tr>
+<td>Many-speaker speech versus one target speaker</td>
+<td>Different speaker/acoustic input distributions</td>
+<td>Same broad speech-to-transcript task</td>
+<td>The lecture’s speaker-adaptation case has source transcripts and a small labeled target set</td>
+</tr>
+<tr>
+<td>French, German, Spanish, Italian, and Mandarin recognition</td>
+<td>Related language/acoustic domains</td>
+<td>Related language-specific recognition tasks</td>
+<td>Each language has its own output states; shared acoustic features can support the separate tasks</td>
+</tr>
+</tbody>
+</table>
+<p>The lecture’s “Why?” slide also pairs speech recognition with data from other languages, image recognition with medical images, and text analysis with webpages from a specific domain. These examples ask whether useful input patterns can be reused; they do not imply that source and target tasks or distributions are identical.</p>
+<h2 id="section-2">Transfer labels: report facts before taxonomy names</h2>
+<p>Slides 4 and 7–8 present related but non-identical taxonomy views. Slide 4 organizes examples by label availability: target labels lead to its inductive branch; labels only in the source lead to its transductive branch; and no labels in either domain lead to its unsupervised branch. Slides 7–8 reorganize families by task/domain relationship and explicitly warn that terminology differs across literature. Slide 8 describes inductive transfer by labeled target-domain data and transductive transfer by the absence of labeled target-domain data; the slide 7 drawing also marks unlabeled source and target domains on its transductive branches.</p>
+<p>Keep those statements as the lecture’s separate framings rather than forcing them into one mutually exclusive tree. In particular, do not infer that “transductive” universally means an unlabeled source: the source’s own slides do not agree on that point. State the source/target task relationship, domain relationship, and label availability before using a family name.</p>
+<table>
+<thead>
+<tr>
+<th>Lecture family or framing</th>
+<th>Task/domain facts shown in the lecture</th>
+<th>Label facts shown in the lecture</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inductive transfer (slides 4 and 8)</td>
+<td>Target task is improved using learning from other task(s); slide 7 places it in the different-task area</td>
+<td>Target labels are available. Slide 4 shows both unlabeled-source and labeled-source cases under this branch</td>
+</tr>
+<tr>
+<td>Multitask learning (slides 7–8, 25–28)</td>
+<td>Related tasks are learned jointly with shared representation and task-specific outputs</td>
+<td>Slide 7 marks labeled source and target cases; each task uses its own labels in the teaching example below</td>
+</tr>
+<tr>
+<td>Self-taught learning (slide 7)</td>
+<td>Different-task transfer family</td>
+<td>Slide 7 marks unlabeled source; its placement under inductive transfer retains the labeled-target condition</td>
+</tr>
+<tr>
+<td>Transductive transfer (slides 4 and 7–8)</td>
+<td>Slide 7 subdivides by same versus different domain; slide 8 gives domain adaptation as an example</td>
+<td>Slide 8 says no labeled target data; slide 4 instead depicts labels only in source, while slide 7 marks some branches with both source and target unlabeled</td>
+</tr>
+<tr>
+<td>Unsupervised transfer (slides 4 and 7)</td>
+<td>A separate family in the course diagram</td>
+<td>Slide 4 and slide 7 show no labels in either target or source</td>
+</tr>
+<tr>
+<td>Traditional ML / model fine-tuning (slide 7; detailed on slides 10–24)</td>
+<td>Drawn in the same-task region of the slide 7 diagram</td>
+<td>The speaker-adaptation example has labeled source and target data</td>
+</tr>
+</tbody>
+</table>
+<p>One more wording needs care: the motivation slide says source and target distributions “must be the same,” but later slides explicitly discuss transfer across different domains. Read the former as a challenge about the usual same-distribution training assumption, not as a requirement that every transfer-learning case have identical source and target distributions.</p>
+<h2 id="section-3">Why representations can transfer</h2>
+<p>A model’s internal layers map raw input into increasingly useful features. Some features may serve more than one target prediction, so a new model can start from learned parameters rather than discovering every useful pattern from scratch. Reuse is a starting point, not a guarantee: source-specific features can be a poor match, and a small target dataset can overfit if too many parameters are changed.</p>
+<p>The dog/cat slide separates two useful relationships. The elephant/tiger photograph case illustrates <strong>similar domains with different tasks</strong>: both are animal photos, while the class labels differ. The photographic dog/cat versus cartoon dog/cat case illustrates <strong>different domains with the same task</strong>: visual style changes while the dog/cat prediction stays the same. The cases help identify what is shared before choosing a transfer method.</p>
+<h2 id="section-4">Fine-tuning: adapt a source model with target labels</h2>
+<p>The lecture’s supervised speaker-adaptation example starts with a large set of audio and transcripts from many speakers, then adapts to a very small labeled set from a specific speaker. “One-shot” is the lecture’s wording for having only a few target examples; do not read it here as a guarantee that the set has exactly one example.</p>
+<p>The source model is trained first. Its parameters initialize a target model, which is then trained using the target speaker’s audio and transcripts. The lecture calls for conservative adaptation because very little target data can make overfitting a concern. The next viewer is a <strong>teaching parameter-state example</strong> that makes the update choices visible; its head replacement, block labels, and validation decisions explain a common implementation, rather than add numerical results or a new optimization method.</p>
+<section class="walk" tabindex="0" aria-label="Fine-tuning: source fit to target adaptation"><h3>Fine-tuning: source fit to target adaptation</h3><div class="example-input"><strong>Teaching parameter-state viewer</strong><span>Source: many speakers’ audio and transcripts</span><span>Target: few labeled examples from one speaker</span><span>Source fit → copied backbone / new target head → frozen backbone / trained head → optional upper-block and head updates</span></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Fit the source model</h4><p><strong>Input:</strong> many source-speaker audio examples with their transcripts, written as <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msup><mi>x</mi><mi>s</mi></msup><mo>&#x0002C;</mo><msup><mi>y</mi><mi>s</mi></msup><mo stretchy="false">&#x00029;</mo></mrow></math>. The source task trains a feature backbone <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B8;</mi><mi>b</mi></msub></mrow></math> and a source-specific output head <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003D5;</mi><mi>s</mi></msub></mrow></math> using source labels. The source model is the starting point for adaptation.</p>
+<table><thead><tr><th>Parameter block</th><th>State after source fitting</th></tr></thead><tbody><tr><th>Backbone <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B8;</mi><mi>b</mi></msub></mrow></math></th><td>Source-fitted</td></tr><tr><th>Source head <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003D5;</mi><mi>s</mi></msub></mrow></math></th><td>Source-fitted</td></tr></tbody></table>
+<p><strong>Check:</strong> source fitting uses the many-speaker transcripts; it does not yet use the target speaker’s labels.</p></section><section class="step"><h4>2. Copy the backbone and create a target head</h4><p><strong>Input:</strong> the fitted source model. Copy its backbone parameters into the target model, then replace the source-specific head with a new target head. This viewer uses a teaching case where the target output head should be distinct; if source and target output spaces already match, a separate head may not be necessary.</p>
+<table><thead><tr><th>Target parameter block</th><th>Initialization</th><th>Updated now?</th></tr></thead><tbody><tr><th>Backbone <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B8;</mi><mi>b</mi></msub></mrow></math></th><td>Copied from source</td><td>No</td></tr><tr><th>Target head <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003D5;</mi><mi>t</mi></msub></mrow></math></th><td>New target-specific parameters</td><td>No; target fitting has not started</td></tr></tbody></table>
+<p><strong>Check:</strong> the target prediction head is associated with the target task, and the copied backbone still holds its source-fitted values.</p></section><section class="step"><h4>3. Freeze the backbone and train the target head</h4><p><strong>Input:</strong> a small labeled set from the specific target speaker: target audio and its transcripts, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msup><mi>x</mi><mi>t</mi></msup><mo>&#x0002C;</mo><msup><mi>y</mi><mi>t</mi></msup><mo stretchy="false">&#x00029;</mo></mrow></math>. The target labels provide the supervision for the target task. Keep the copied backbone frozen and update only the target head.</p>
+<table><thead><tr><th>Block</th><th>Update rule in this stage</th></tr></thead><tbody><tr><th>Backbone <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B8;</mi><mi>b</mi></msub></mrow></math></th><td>Frozen: invariant <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>&#x003B8;</mi><mi>b</mi><mrow><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi></mrow></mrow></msubsup><mo>&#x0003D;</mo><msubsup><mi>&#x003B8;</mi><mi>b</mi><mrow><mrow><mi mathvariant="normal">b</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi></mrow></mrow></msubsup></mrow></math></td></tr><tr><th>Target head <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003D5;</mi><mi>t</mi></msub></mrow></math></th><td>Train from target labeled examples and target supervised loss</td></tr></tbody></table>
+<p><strong>Check:</strong> evaluate on separate held-out target-speaker examples with transcripts. With very little target data, retain this conservative stage unless held-out evidence and the available labeled data justify a larger update.</p></section><section class="step"><h4>4. Optionally unfreeze an upper block</h4><p><strong>Decision:</strong> only consider this optional stage when there are enough labeled target examples and target validation supports the added flexibility. Unfreeze an upper backbone block and continue target-task training; keep the lower block fixed.</p>
+<table><thead><tr><th>Block</th><th>Update rule in this stage</th></tr></thead><tbody><tr><th>Lower backbone block <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B8;</mi><mrow><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">w</mi></mrow></mrow></msub></mrow></math></th><td>Frozen; unchanged during this stage</td></tr><tr><th>Upper backbone block <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B8;</mi><mrow><mrow><mi mathvariant="normal">u</mi><mi mathvariant="normal">p</mi><mi mathvariant="normal">p</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi></mrow></mrow></msub></mrow></math></th><td>Unfrozen; updated from target labels and target loss</td></tr><tr><th>Target head <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003D5;</mi><mi>t</mi></msub></mrow></math></th><td>Updated from target labels and target loss</td></tr></tbody></table>
+<p><strong>Check:</strong> compare target validation evidence before retaining the more flexible model. This is a teaching decision rule, not a promised improvement or a measured training result.</p></section></section>
+<p>The target labels are essential to this supervised speaker-adaptation example. If target labels are unavailable, this exact target-loss update cannot be performed as shown. A held-out target validation set is used here as teaching guidance for deciding whether to retain a more flexible stage.</p>
+<p>The separate conservative-training illustration on slides 11–16 shows a target model initialized from the source model, with outputs close and then parameters close. It conveys a cautious start near the source model.</p>
+<p>For the backpropagation and optimization details used inside a training stage, continue to <a href="backpropagation.html">Backpropagation</a> and <a href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a>.</p>
+<h3>Which layers should be transferred?</h3>
+<p>Slides 17–19 show copying selected parameters, training the remaining layers first, and optionally fine-tuning the whole network when enough data are available. Slides 20–22 give lecture heuristics: images usually copy the first few layers; speech usually copies the last few layers. Treat these as course-level rules of thumb, not architectural laws. The useful layer depends on the model and on which source features match the target task.</p>
+<h3>What the ImageNet transfer plots show</h3>
+<p>Slides 23–24 reproduce experiments by Yosinski and colleagues using <strong>500 source classes and another 500 target classes from ImageNet</strong>. On slide 23, the horizontal axis is the layer depth at which the network is cut and retrained; the vertical axis is top-1 accuracy, with higher values better. The lecture labels three effects: fragile co-adaptation can make a split hurt; fine-tuning can recover co-adapted interactions; and representation specificity can reduce performance when transferred features become too specialized. The slide headline summarizes its comparison as transfer plus fine-tuning improving generalization.</p>
+<p>Slide 24 keeps the same cut-depth question and plots <strong>relative top-1 accuracy</strong> (higher is better). Its legend distinguishes the reference, mean A/B random splits, mean A/B m/n split, and random features. Read the plotted trends and labels as a comparison of these transfer effects.</p>
+<table>
+<thead>
+<tr>
+<th>Figure element</th>
+<th>What to retain when reading it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Source and target</td>
+<td>Two disjoint sets of 500 ImageNet classes</td>
+</tr>
+<tr>
+<td>Horizontal axis</td>
+<td>Cut depth: layer at which the network is split and retrained</td>
+</tr>
+<tr>
+<td>Slide 23 vertical axis</td>
+<td>Top-1 accuracy; higher is better</td>
+</tr>
+<tr>
+<td>Slide 24 vertical axis</td>
+<td>Relative top-1 accuracy; higher is better</td>
+</tr>
+<tr>
+<td>Named effects</td>
+<td>Fragile co-adaptation, recovery of co-adapted interactions through fine-tuning, and representation specificity</td>
+</tr>
+<tr>
+<td>Slide 24 legend</td>
+<td>Reference; mean <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>A</mi><mi>n</mi></msub><mi>B</mi></mrow></math> for random splits; mean <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>A</mi><mi>n</mi></msub><mi>B</mi></mrow></math> for an m/n split; random features</td>
+</tr>
+<tr>
+<td>Interpretation limit</td>
+<td>Curves communicate trends; their plotted coordinates are not a numeric worked example</td>
+</tr>
+</tbody>
+</table>
+<p>Yosinski et al.’s primary paper describes both costs behind the slide’s story: higher-layer specialization and optimization difficulty when splitting co-adapted units. It also reports a general-to-specific trend across layers. The lecture plot remains the evidence for its particular cut-depth picture; the paper provides context, not a replacement dataset.</p>
+<h2 id="section-5">Multitask learning: share features, keep task outputs distinct</h2>
+<p>In multitask learning, related tasks are trained together. A shared internal representation can receive useful signals from more than one task, while each task retains its own output layer and labels. Slide 26 contrasts task-specific paths with a shared representation feeding distinct task outputs. Sharing can help when the tasks use relevant common structure, but it does not guarantee that every task will improve; check each task on its own validation data.</p>
+<p>The lecture’s multilingual speech example shares acoustic features across French, German, Spanish, Italian, and Mandarin, then uses language-specific output states. The stated motivation is that human languages share some characteristics. The accompanying plot compares character error rate against the hours of Mandarin training data for “Mandarin only” and “With European Languages.” Both curves trend downward as Mandarin data increases, and the multilingual curve is lower over the shown range. This is a qualitative reading of the lecture figure, not a table of exact measurements or a promise that adding tasks always helps.</p>
+<h3>Progressive neural networks add task columns over time</h3>
+<p>Slides 29–31 show a sequence: first a column for Task 1; then a Task 2 column with forward lateral activation links from Task 1; then a Task 3 column with links from both earlier columns. The arrows describe information flowing forward into the new task column. They are not optimizer-update arrows.</p>
+<p>The cited Rusu et al. primary paper supplies the progressive-network parameter convention: previously learned columns are frozen while a new column is trained, with lateral connections providing access to earlier features. In the diagrams, labels state which column is previous versus new, so that parameter status does not depend on color.</p>
+<section class="walk" tabindex="0" aria-label="Progressive network: add one task column at a time"><h3>Progressive network: add one task column at a time</h3><div class="example-input"><strong>What the arrows mean</strong><span>Vertical arrows: within-column forward activations</span><span>Cross-column arrows: lateral activations into the newly added task column</span><span>Only the new task column receives optimizer updates in this progressive-network convention</span></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Task 1 — fit the first column</h4><p><strong>Input:</strong> Task 1 examples. Train a column for Task 1; its arrows show activations moving from input through hidden layers to its output.</p>
+<figure><div class="diagram-frame" style="--diagram-width:245.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="State 1: one Task 1 column; arrows carry forward activations from input to output." width="245pt" height="343pt"
+ viewBox="0.00 0.00 245.00 343.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#26363a)}</style>
+<g id="transfer-learning-figure-1-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 332.05)">
+<title>G</title>
+<g id="transfer-learning-figure-1-clust1" class="cluster">
+<title>cluster_task_1</title>
+<path fill="none" stroke="var(--diagram-border,#7f9da5)" stroke-width="1.2" d="M20,-8C20,-8 203,-8 203,-8 209,-8 215,-14 215,-20 215,-20 215,-301.25 215,-301.25 215,-307.25 209,-313.25 203,-313.25 203,-313.25 20,-313.25 20,-313.25 14,-313.25 8,-307.25 8,-301.25 8,-301.25 8,-20 8,-20 8,-14 14,-8 20,-8"/>
+<text xml:space="preserve" text-anchor="middle" x="111.5" y="-15.95" font-family="Georgia" font-size="14.00">Task 1 — trainable new column</text>
+</g>
+<!-- t1_input -->
+<g id="transfer-learning-figure-1-node1" class="node">
+<title>t1_input</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" d="M126.65,-77.25C126.65,-77.25 95.35,-77.25 95.35,-77.25 89.35,-77.25 83.35,-71.25 83.35,-65.25 83.35,-65.25 83.35,-53.25 83.35,-53.25 83.35,-47.25 89.35,-41.25 95.35,-41.25 95.35,-41.25 126.65,-41.25 126.65,-41.25 132.65,-41.25 138.65,-47.25 138.65,-53.25 138.65,-53.25 138.65,-65.25 138.65,-65.25 138.65,-71.25 132.65,-77.25 126.65,-77.25"/>
+<text xml:space="preserve" text-anchor="middle" x="111" y="-54.4" font-family="Georgia" font-size="13.00" fill="#26363a">Input</text>
+</g>
+<!-- t1_h1 -->
+<g id="transfer-learning-figure-1-node2" class="node">
+<title>t1_h1</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" d="M130.77,-153.25C130.77,-153.25 91.23,-153.25 91.23,-153.25 85.23,-153.25 79.23,-147.25 79.23,-141.25 79.23,-141.25 79.23,-129.25 79.23,-129.25 79.23,-123.25 85.23,-117.25 91.23,-117.25 91.23,-117.25 130.77,-117.25 130.77,-117.25 136.77,-117.25 142.77,-123.25 142.77,-129.25 142.77,-129.25 142.77,-141.25 142.77,-141.25 142.77,-147.25 136.77,-153.25 130.77,-153.25"/>
+<text xml:space="preserve" text-anchor="middle" x="111" y="-130.4" font-family="Georgia" font-size="13.00" fill="#26363a">Layer 1</text>
+</g>
+<!-- t1_input&#45;&gt;t1_h1 -->
+<g id="transfer-learning-figure-1-edge1" class="edge">
+<title>t1_input&#45;&gt;t1_h1</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M111,-77.41C111,-86.78 111,-98.55 111,-108.95"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="108.73,-108.91 111,-115.41 113.28,-108.91 108.73,-108.91"/>
+</g>
+<!-- t1_h2 -->
+<g id="transfer-learning-figure-1-node3" class="node">
+<title>t1_h2</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" d="M131.89,-229.25C131.89,-229.25 90.1,-229.25 90.1,-229.25 84.11,-229.25 78.11,-223.25 78.11,-217.25 78.11,-217.25 78.11,-205.25 78.11,-205.25 78.11,-199.25 84.11,-193.25 90.11,-193.25 90.11,-193.25 131.89,-193.25 131.89,-193.25 137.89,-193.25 143.89,-199.25 143.89,-205.25 143.89,-205.25 143.89,-217.25 143.89,-217.25 143.89,-223.25 137.89,-229.25 131.89,-229.25"/>
+<text xml:space="preserve" text-anchor="middle" x="111" y="-206.4" font-family="Georgia" font-size="13.00" fill="#26363a">Layer 2</text>
+</g>
+<!-- t1_h1&#45;&gt;t1_h2 -->
+<g id="transfer-learning-figure-1-edge2" class="edge">
+<title>t1_h1&#45;&gt;t1_h2</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M111,-153.41C111,-162.78 111,-174.55 111,-184.95"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="108.73,-184.91 111,-191.41 113.28,-184.91 108.73,-184.91"/>
+</g>
+<!-- t1_head -->
+<g id="transfer-learning-figure-1-node4" class="node">
+<title>t1_head</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" d="M148.77,-305.25C148.77,-305.25 73.23,-305.25 73.23,-305.25 67.23,-305.25 61.23,-299.25 61.23,-293.25 61.23,-293.25 61.23,-281.25 61.23,-281.25 61.23,-275.25 67.23,-269.25 73.23,-269.25 73.23,-269.25 148.77,-269.25 148.77,-269.25 154.77,-269.25 160.77,-275.25 160.77,-281.25 160.77,-281.25 160.77,-293.25 160.77,-293.25 160.77,-299.25 154.77,-305.25 148.77,-305.25"/>
+<text xml:space="preserve" text-anchor="middle" x="111" y="-282.4" font-family="Georgia" font-size="13.00" fill="#26363a">Task 1 output</text>
+</g>
+<!-- t1_h2&#45;&gt;t1_head -->
+<g id="transfer-learning-figure-1-edge3" class="edge">
+<title>t1_h2&#45;&gt;t1_head</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M111,-229.41C111,-238.78 111,-250.55 111,-260.95"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="108.73,-260.91 111,-267.41 113.28,-260.91 108.73,-260.91"/>
+</g>
+</g>
+</svg>
+</div><figcaption>State 1: one Task 1 column; arrows carry forward activations from input to output.</figcaption></figure></section><section class="step"><h4>2. Task 2 — add a column and lateral links</h4><p><strong>Input:</strong> Task 2 examples plus forward activations from the Task 1 column. Add the Task 2 column and connect earlier Task 1 features to the next Task 2 layer in the forward computation. The primary paper confirms the earlier column is frozen; the new Task 2 column learns. Lateral arrows carry activations, not optimizer updates.</p>
+<figure><div class="diagram-frame" style="--diagram-width:475.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="State 2: add Task 2 beside the previous Task 1 column, with lateral activations into the next layer of the new column." width="475pt" height="357pt"
+ viewBox="0.00 0.00 475.00 357.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#26363a)}</style>
+<g id="transfer-learning-figure-2-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 346.05)">
+<title>G</title>
+<g id="transfer-learning-figure-2-clust1" class="cluster">
+<title>cluster_task_1</title>
+<path fill="none" stroke="var(--diagram-border,#7f9da5)" stroke-width="1.2" d="M20,-8C20,-8 216,-8 216,-8 222,-8 228,-14 228,-20 228,-20 228,-315.25 228,-315.25 228,-321.25 222,-327.25 216,-327.25 216,-327.25 20,-327.25 20,-327.25 14,-327.25 8,-321.25 8,-315.25 8,-315.25 8,-20 8,-20 8,-14 14,-8 20,-8"/>
+<text xml:space="preserve" text-anchor="middle" x="118" y="-15.95" font-family="Georgia" font-size="14.00">Task 1 — frozen previous column</text>
+</g>
+<g id="transfer-learning-figure-2-clust2" class="cluster">
+<title>cluster_task_2</title>
+<path fill="none" stroke="var(--diagram-border,#7f9da5)" stroke-width="1.2" d="M248,-8C248,-8 433,-8 433,-8 439,-8 445,-14 445,-20 445,-20 445,-315.25 445,-315.25 445,-321.25 439,-327.25 433,-327.25 433,-327.25 248,-327.25 248,-327.25 242,-327.25 236,-321.25 236,-315.25 236,-315.25 236,-20 236,-20 236,-14 242,-8 248,-8"/>
+<text xml:space="preserve" text-anchor="middle" x="340.5" y="-15.95" font-family="Georgia" font-size="14.00">Task 2 — trainable new column</text>
+</g>
+<!-- t1_input -->
+<g id="transfer-learning-figure-2-node1" class="node">
+<title>t1_input</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M109.65,-77.25C109.65,-77.25 78.35,-77.25 78.35,-77.25 72.35,-77.25 66.35,-71.25 66.35,-65.25 66.35,-65.25 66.35,-53.25 66.35,-53.25 66.35,-47.25 72.35,-41.25 78.35,-41.25 78.35,-41.25 109.65,-41.25 109.65,-41.25 115.65,-41.25 121.65,-47.25 121.65,-53.25 121.65,-53.25 121.65,-65.25 121.65,-65.25 121.65,-71.25 115.65,-77.25 109.65,-77.25"/>
+<text xml:space="preserve" text-anchor="middle" x="94" y="-54.4" font-family="Georgia" font-size="13.00" fill="#26363a">Input</text>
+</g>
+<!-- t1_h1 -->
+<g id="transfer-learning-figure-2-node2" class="node">
+<title>t1_h1</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M113.77,-154.25C113.77,-154.25 74.23,-154.25 74.23,-154.25 68.23,-154.25 62.23,-148.25 62.23,-142.25 62.23,-142.25 62.23,-130.25 62.23,-130.25 62.23,-124.25 68.23,-118.25 74.23,-118.25 74.23,-118.25 113.77,-118.25 113.77,-118.25 119.77,-118.25 125.77,-124.25 125.77,-130.25 125.77,-130.25 125.77,-142.25 125.77,-142.25 125.77,-148.25 119.77,-154.25 113.77,-154.25"/>
+<text xml:space="preserve" text-anchor="middle" x="94" y="-131.4" font-family="Georgia" font-size="13.00" fill="#26363a">Layer 1</text>
+</g>
+<!-- t1_input&#45;&gt;t1_h1 -->
+<g id="transfer-learning-figure-2-edge1" class="edge">
+<title>t1_input&#45;&gt;t1_h1</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M94,-77.65C94,-87.3 94,-99.48 94,-110.15"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="91.73,-109.94 94,-116.44 96.28,-109.94 91.73,-109.94"/>
+</g>
+<!-- t1_h2 -->
+<g id="transfer-learning-figure-2-node3" class="node">
+<title>t1_h2</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M114.89,-242.25C114.89,-242.25 73.11,-242.25 73.11,-242.25 67.11,-242.25 61.11,-236.25 61.11,-230.25 61.11,-230.25 61.11,-218.25 61.11,-218.25 61.11,-212.25 67.11,-206.25 73.11,-206.25 73.11,-206.25 114.89,-206.25 114.89,-206.25 120.89,-206.25 126.89,-212.25 126.89,-218.25 126.89,-218.25 126.89,-230.25 126.89,-230.25 126.89,-236.25 120.89,-242.25 114.89,-242.25"/>
+<text xml:space="preserve" text-anchor="middle" x="94" y="-219.4" font-family="Georgia" font-size="13.00" fill="#26363a">Layer 2</text>
+</g>
+<!-- t1_h1&#45;&gt;t1_h2 -->
+<g id="transfer-learning-figure-2-edge2" class="edge">
+<title>t1_h1&#45;&gt;t1_h2</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M94,-154.65C94,-167.13 94,-184.12 94,-198.07"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="91.73,-197.86 94,-204.36 96.28,-197.86 91.73,-197.86"/>
+</g>
+<!-- t2_h2 -->
+<g id="transfer-learning-figure-2-node7" class="node">
+<title>t2_h2</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" d="M360.89,-242.25C360.89,-242.25 319.11,-242.25 319.11,-242.25 313.11,-242.25 307.11,-236.25 307.11,-230.25 307.11,-230.25 307.11,-218.25 307.11,-218.25 307.11,-212.25 313.11,-206.25 319.11,-206.25 319.11,-206.25 360.89,-206.25 360.89,-206.25 366.89,-206.25 372.89,-212.25 372.89,-218.25 372.89,-218.25 372.89,-230.25 372.89,-230.25 372.89,-236.25 366.89,-242.25 360.89,-242.25"/>
+<text xml:space="preserve" text-anchor="middle" x="340" y="-219.4" font-family="Georgia" font-size="13.00" fill="#26363a">Layer 2</text>
+</g>
+<!-- t1_h1&#45;&gt;t2_h2 -->
+<g id="transfer-learning-figure-2-edge7" class="edge">
+<title>t1_h1&#45;&gt;t2_h2</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" stroke-width="1.5" d="M126.16,-148.49C170.36,-163.94 249.91,-191.76 298.54,-208.75"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" stroke-width="1.5" points="297.62,-210.84 304.51,-210.84 299.12,-206.55 297.62,-210.84"/>
+<text xml:space="preserve" text-anchor="middle" x="269.6" y="-176.75" font-family="Georgia" font-size="10.00">lateral activation</text>
+</g>
+<!-- t1_head -->
+<g id="transfer-learning-figure-2-node4" class="node">
+<title>t1_head</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M131.77,-319.25C131.77,-319.25 56.23,-319.25 56.23,-319.25 50.23,-319.25 44.23,-313.25 44.23,-307.25 44.23,-307.25 44.23,-295.25 44.23,-295.25 44.23,-289.25 50.23,-283.25 56.23,-283.25 56.23,-283.25 131.77,-283.25 131.77,-283.25 137.77,-283.25 143.77,-289.25 143.77,-295.25 143.77,-295.25 143.77,-307.25 143.77,-307.25 143.77,-313.25 137.77,-319.25 131.77,-319.25"/>
+<text xml:space="preserve" text-anchor="middle" x="94" y="-296.4" font-family="Georgia" font-size="13.00" fill="#26363a">Task 1 output</text>
+</g>
+<!-- t1_h2&#45;&gt;t1_head -->
+<g id="transfer-learning-figure-2-edge3" class="edge">
+<title>t1_h2&#45;&gt;t1_head</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M94,-242.65C94,-252.3 94,-264.48 94,-275.15"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="91.73,-274.94 94,-281.44 96.28,-274.94 91.73,-274.94"/>
+</g>
+<!-- t2_head -->
+<g id="transfer-learning-figure-2-node8" class="node">
+<title>t2_head</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" d="M378.89,-319.25C378.89,-319.25 301.11,-319.25 301.11,-319.25 295.11,-319.25 289.11,-313.25 289.11,-307.25 289.11,-307.25 289.11,-295.25 289.11,-295.25 289.11,-289.25 295.11,-283.25 301.11,-283.25 301.11,-283.25 378.89,-283.25 378.89,-283.25 384.89,-283.25 390.89,-289.25 390.89,-295.25 390.89,-295.25 390.89,-307.25 390.89,-307.25 390.89,-313.25 384.89,-319.25 378.89,-319.25"/>
+<text xml:space="preserve" text-anchor="middle" x="340" y="-296.4" font-family="Georgia" font-size="13.00" fill="#26363a">Task 2 output</text>
+</g>
+<!-- t1_h2&#45;&gt;t2_head -->
+<g id="transfer-learning-figure-2-edge8" class="edge">
+<title>t1_h2&#45;&gt;t2_head</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" stroke-width="1.5" d="M127.18,-235.36C166.48,-247.35 232.68,-267.53 280.83,-282.21"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" stroke-width="1.5" points="279.94,-284.32 286.82,-284.04 281.27,-279.97 279.94,-284.32"/>
+</g>
+<!-- t2_input -->
+<g id="transfer-learning-figure-2-node5" class="node">
+<title>t2_input</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" d="M355.64,-77.25C355.64,-77.25 324.36,-77.25 324.36,-77.25 318.36,-77.25 312.36,-71.25 312.36,-65.25 312.36,-65.25 312.36,-53.25 312.36,-53.25 312.36,-47.25 318.36,-41.25 324.36,-41.25 324.36,-41.25 355.64,-41.25 355.64,-41.25 361.64,-41.25 367.64,-47.25 367.64,-53.25 367.64,-53.25 367.64,-65.25 367.64,-65.25 367.64,-71.25 361.64,-77.25 355.64,-77.25"/>
+<text xml:space="preserve" text-anchor="middle" x="340" y="-54.4" font-family="Georgia" font-size="13.00" fill="#26363a">Input</text>
+</g>
+<!-- t2_h1 -->
+<g id="transfer-learning-figure-2-node6" class="node">
+<title>t2_h1</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" d="M359.77,-154.25C359.77,-154.25 320.23,-154.25 320.23,-154.25 314.23,-154.25 308.23,-148.25 308.23,-142.25 308.23,-142.25 308.23,-130.25 308.23,-130.25 308.23,-124.25 314.23,-118.25 320.23,-118.25 320.23,-118.25 359.77,-118.25 359.77,-118.25 365.77,-118.25 371.77,-124.25 371.77,-130.25 371.77,-130.25 371.77,-142.25 371.77,-142.25 371.77,-148.25 365.77,-154.25 359.77,-154.25"/>
+<text xml:space="preserve" text-anchor="middle" x="340" y="-131.4" font-family="Georgia" font-size="13.00" fill="#26363a">Layer 1</text>
+</g>
+<!-- t2_input&#45;&gt;t2_h1 -->
+<g id="transfer-learning-figure-2-edge4" class="edge">
+<title>t2_input&#45;&gt;t2_h1</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M340,-77.65C340,-87.3 340,-99.48 340,-110.15"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="337.73,-109.94 340,-116.44 342.28,-109.94 337.73,-109.94"/>
+</g>
+<!-- t2_h1&#45;&gt;t2_h2 -->
+<g id="transfer-learning-figure-2-edge5" class="edge">
+<title>t2_h1&#45;&gt;t2_h2</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M340,-154.65C340,-167.13 340,-184.12 340,-198.07"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="337.73,-197.86 340,-204.36 342.28,-197.86 337.73,-197.86"/>
+</g>
+<!-- t2_h2&#45;&gt;t2_head -->
+<g id="transfer-learning-figure-2-edge6" class="edge">
+<title>t2_h2&#45;&gt;t2_head</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M340,-242.65C340,-252.3 340,-264.48 340,-275.15"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="337.73,-274.94 340,-281.44 342.28,-274.94 337.73,-274.94"/>
+</g>
+</g>
+</svg>
+</div><figcaption>State 2: add Task 2 beside the previous Task 1 column, with lateral activations into the next layer of the new column.</figcaption></figure></section><section class="step"><h4>3. Task 3 — reuse both earlier columns</h4><p><strong>Input:</strong> Task 3 examples plus activations from Task 1 and Task 2. Add the Task 3 column and lateral activation links from both existing columns. Keep earlier learned columns frozen and train the new column. This preserves the sequence and direction of the lecture’s three-column drawing.</p>
+<figure><div class="diagram-frame" style="--diagram-width:818.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="State 3: add Task 3 and connect both previous task columns laterally to corresponding new-column layers." width="818pt" height="357pt"
+ viewBox="0.00 0.00 818.00 357.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#26363a)}</style>
+<g id="transfer-learning-figure-3-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 346.05)">
+<title>G</title>
+<g id="transfer-learning-figure-3-clust1" class="cluster">
+<title>cluster_task_1</title>
+<path fill="none" stroke="var(--diagram-border,#7f9da5)" stroke-width="1.2" d="M20,-8C20,-8 216,-8 216,-8 222,-8 228,-14 228,-20 228,-20 228,-315.25 228,-315.25 228,-321.25 222,-327.25 216,-327.25 216,-327.25 20,-327.25 20,-327.25 14,-327.25 8,-321.25 8,-315.25 8,-315.25 8,-20 8,-20 8,-14 14,-8 20,-8"/>
+<text xml:space="preserve" text-anchor="middle" x="118" y="-15.95" font-family="Georgia" font-size="14.00">Task 1 — frozen previous column</text>
+</g>
+<g id="transfer-learning-figure-3-clust2" class="cluster">
+<title>cluster_task_2</title>
+<path fill="none" stroke="var(--diagram-border,#7f9da5)" stroke-width="1.2" d="M361,-8C361,-8 559,-8 559,-8 565,-8 571,-14 571,-20 571,-20 571,-315.25 571,-315.25 571,-321.25 565,-327.25 559,-327.25 559,-327.25 361,-327.25 361,-327.25 355,-327.25 349,-321.25 349,-315.25 349,-315.25 349,-20 349,-20 349,-14 355,-8 361,-8"/>
+<text xml:space="preserve" text-anchor="middle" x="460" y="-15.95" font-family="Georgia" font-size="14.00">Task 2 — frozen previous column</text>
+</g>
+<g id="transfer-learning-figure-3-clust3" class="cluster">
+<title>cluster_task_3</title>
+<path fill="none" stroke="var(--diagram-border,#7f9da5)" stroke-width="1.2" d="M591,-8C591,-8 776,-8 776,-8 782,-8 788,-14 788,-20 788,-20 788,-315.25 788,-315.25 788,-321.25 782,-327.25 776,-327.25 776,-327.25 591,-327.25 591,-327.25 585,-327.25 579,-321.25 579,-315.25 579,-315.25 579,-20 579,-20 579,-14 585,-8 591,-8"/>
+<text xml:space="preserve" text-anchor="middle" x="683.5" y="-15.95" font-family="Georgia" font-size="14.00">Task 3 — trainable new column</text>
+</g>
+<!-- t1_input -->
+<g id="transfer-learning-figure-3-node1" class="node">
+<title>t1_input</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M133.65,-77.25C133.65,-77.25 102.35,-77.25 102.35,-77.25 96.35,-77.25 90.35,-71.25 90.35,-65.25 90.35,-65.25 90.35,-53.25 90.35,-53.25 90.35,-47.25 96.35,-41.25 102.35,-41.25 102.35,-41.25 133.65,-41.25 133.65,-41.25 139.65,-41.25 145.65,-47.25 145.65,-53.25 145.65,-53.25 145.65,-65.25 145.65,-65.25 145.65,-71.25 139.65,-77.25 133.65,-77.25"/>
+<text xml:space="preserve" text-anchor="middle" x="118" y="-54.4" font-family="Georgia" font-size="13.00" fill="#26363a">Input</text>
+</g>
+<!-- t1_h1 -->
+<g id="transfer-learning-figure-3-node2" class="node">
+<title>t1_h1</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M137.77,-154.25C137.77,-154.25 98.23,-154.25 98.23,-154.25 92.23,-154.25 86.23,-148.25 86.23,-142.25 86.23,-142.25 86.23,-130.25 86.23,-130.25 86.23,-124.25 92.23,-118.25 98.23,-118.25 98.23,-118.25 137.77,-118.25 137.77,-118.25 143.77,-118.25 149.77,-124.25 149.77,-130.25 149.77,-130.25 149.77,-142.25 149.77,-142.25 149.77,-148.25 143.77,-154.25 137.77,-154.25"/>
+<text xml:space="preserve" text-anchor="middle" x="118" y="-131.4" font-family="Georgia" font-size="13.00" fill="#26363a">Layer 1</text>
+</g>
+<!-- t1_input&#45;&gt;t1_h1 -->
+<g id="transfer-learning-figure-3-edge1" class="edge">
+<title>t1_input&#45;&gt;t1_h1</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M118,-77.65C118,-87.3 118,-99.48 118,-110.15"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="115.73,-109.94 118,-116.44 120.28,-109.94 115.73,-109.94"/>
+</g>
+<!-- t1_h2 -->
+<g id="transfer-learning-figure-3-node3" class="node">
+<title>t1_h2</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M138.89,-242.25C138.89,-242.25 97.1,-242.25 97.1,-242.25 91.11,-242.25 85.11,-236.25 85.11,-230.25 85.11,-230.25 85.11,-218.25 85.11,-218.25 85.11,-212.25 91.11,-206.25 97.11,-206.25 97.11,-206.25 138.89,-206.25 138.89,-206.25 144.89,-206.25 150.89,-212.25 150.89,-218.25 150.89,-218.25 150.89,-230.25 150.89,-230.25 150.89,-236.25 144.89,-242.25 138.89,-242.25"/>
+<text xml:space="preserve" text-anchor="middle" x="118" y="-219.4" font-family="Georgia" font-size="13.00" fill="#26363a">Layer 2</text>
+</g>
+<!-- t1_h1&#45;&gt;t1_h2 -->
+<g id="transfer-learning-figure-3-edge2" class="edge">
+<title>t1_h1&#45;&gt;t1_h2</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M118,-154.65C118,-167.13 118,-184.12 118,-198.07"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="115.73,-197.86 118,-204.36 120.28,-197.86 115.73,-197.86"/>
+</g>
+<!-- t2_h2 -->
+<g id="transfer-learning-figure-3-node7" class="node">
+<title>t2_h2</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M477.89,-242.25C477.89,-242.25 436.11,-242.25 436.11,-242.25 430.11,-242.25 424.11,-236.25 424.11,-230.25 424.11,-230.25 424.11,-218.25 424.11,-218.25 424.11,-212.25 430.11,-206.25 436.11,-206.25 436.11,-206.25 477.89,-206.25 477.89,-206.25 483.89,-206.25 489.89,-212.25 489.89,-218.25 489.89,-218.25 489.89,-230.25 489.89,-230.25 489.89,-236.25 483.89,-242.25 477.89,-242.25"/>
+<text xml:space="preserve" text-anchor="middle" x="457" y="-219.4" font-family="Georgia" font-size="13.00" fill="#26363a">Layer 2</text>
+</g>
+<!-- t1_h1&#45;&gt;t2_h2 -->
+<g id="transfer-learning-figure-3-edge10" class="edge">
+<title>t1_h1&#45;&gt;t2_h2</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" stroke-width="1.5" d="M130.17,-154.66C140.02,-168.75 152.25,-186.25 152.25,-186.25 152.25,-186.25 331.88,-208.06 415.32,-218.19"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" stroke-width="1.5" points="414.83,-220.42 421.55,-218.95 415.37,-215.9 414.83,-220.42"/>
+<text xml:space="preserve" text-anchor="middle" x="190.12" y="-176.75" font-family="Georgia" font-size="10.00">lateral activation</text>
+</g>
+<!-- t3_h2 -->
+<g id="transfer-learning-figure-3-node11" class="node">
+<title>t3_h2</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" d="M703.89,-242.25C703.89,-242.25 662.11,-242.25 662.11,-242.25 656.11,-242.25 650.11,-236.25 650.11,-230.25 650.11,-230.25 650.11,-218.25 650.11,-218.25 650.11,-212.25 656.11,-206.25 662.11,-206.25 662.11,-206.25 703.89,-206.25 703.89,-206.25 709.89,-206.25 715.89,-212.25 715.89,-218.25 715.89,-218.25 715.89,-230.25 715.89,-230.25 715.89,-236.25 709.89,-242.25 703.89,-242.25"/>
+<text xml:space="preserve" text-anchor="middle" x="683" y="-219.4" font-family="Georgia" font-size="13.00" fill="#26363a">Layer 2</text>
+</g>
+<!-- t1_h1&#45;&gt;t3_h2 -->
+<g id="transfer-learning-figure-3-edge12" class="edge">
+<title>t1_h1&#45;&gt;t3_h2</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" stroke-width="1.5" d="M149.98,-142.05C254.3,-157.69 578,-206.25 578,-206.25 578,-206.25 611.98,-211.75 641.27,-216.49"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" stroke-width="1.5" points="640.76,-218.72 647.54,-217.51 641.48,-214.22 640.76,-218.72"/>
+<text xml:space="preserve" text-anchor="middle" x="479.95" y="-176.75" font-family="Georgia" font-size="10.00">lateral activation</text>
+</g>
+<!-- t1_head -->
+<g id="transfer-learning-figure-3-node4" class="node">
+<title>t1_head</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M155.77,-319.25C155.77,-319.25 80.23,-319.25 80.23,-319.25 74.23,-319.25 68.23,-313.25 68.23,-307.25 68.23,-307.25 68.23,-295.25 68.23,-295.25 68.23,-289.25 74.23,-283.25 80.23,-283.25 80.23,-283.25 155.77,-283.25 155.77,-283.25 161.77,-283.25 167.77,-289.25 167.77,-295.25 167.77,-295.25 167.77,-307.25 167.77,-307.25 167.77,-313.25 161.77,-319.25 155.77,-319.25"/>
+<text xml:space="preserve" text-anchor="middle" x="118" y="-296.4" font-family="Georgia" font-size="13.00" fill="#26363a">Task 1 output</text>
+</g>
+<!-- t1_h2&#45;&gt;t1_head -->
+<g id="transfer-learning-figure-3-edge3" class="edge">
+<title>t1_h2&#45;&gt;t1_head</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M118,-242.65C118,-252.3 118,-264.48 118,-275.15"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="115.73,-274.94 118,-281.44 120.28,-274.94 115.73,-274.94"/>
+</g>
+<!-- t2_head -->
+<g id="transfer-learning-figure-3-node8" class="node">
+<title>t2_head</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M495.89,-319.25C495.89,-319.25 418.11,-319.25 418.11,-319.25 412.11,-319.25 406.11,-313.25 406.11,-307.25 406.11,-307.25 406.11,-295.25 406.11,-295.25 406.11,-289.25 412.11,-283.25 418.11,-283.25 418.11,-283.25 495.89,-283.25 495.89,-283.25 501.89,-283.25 507.89,-289.25 507.89,-295.25 507.89,-295.25 507.89,-307.25 507.89,-307.25 507.89,-313.25 501.89,-319.25 495.89,-319.25"/>
+<text xml:space="preserve" text-anchor="middle" x="457" y="-296.4" font-family="Georgia" font-size="13.00" fill="#26363a">Task 2 output</text>
+</g>
+<!-- t1_h2&#45;&gt;t2_head -->
+<g id="transfer-learning-figure-3-edge11" class="edge">
+<title>t1_h2&#45;&gt;t2_head</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" stroke-width="1.5" d="M151.36,-233.87C194.73,-245.08 265,-263.25 265,-263.25 265,-263.25 340.93,-277.88 397.29,-288.74"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" stroke-width="1.5" points="396.76,-290.96 403.57,-289.95 397.62,-286.49 396.76,-290.96"/>
+</g>
+<!-- t3_head -->
+<g id="transfer-learning-figure-3-node12" class="node">
+<title>t3_head</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" d="M721.89,-319.25C721.89,-319.25 644.11,-319.25 644.11,-319.25 638.11,-319.25 632.11,-313.25 632.11,-307.25 632.11,-307.25 632.11,-295.25 632.11,-295.25 632.11,-289.25 638.11,-283.25 644.11,-283.25 644.11,-283.25 721.89,-283.25 721.89,-283.25 727.89,-283.25 733.89,-289.25 733.89,-295.25 733.89,-295.25 733.89,-307.25 733.89,-307.25 733.89,-313.25 727.89,-319.25 721.89,-319.25"/>
+<text xml:space="preserve" text-anchor="middle" x="683" y="-296.4" font-family="Georgia" font-size="13.00" fill="#26363a">Task 3 output</text>
+</g>
+<!-- t1_h2&#45;&gt;t3_head -->
+<g id="transfer-learning-figure-3-edge13" class="edge">
+<title>t1_h2&#45;&gt;t3_head</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" stroke-width="1.5" d="M151.08,-229.42C256.56,-242.72 578,-283.25 578,-283.25 578,-283.25 599.67,-286.76 623.32,-290.59"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" stroke-width="1.5" points="622.71,-292.79 629.49,-291.59 623.44,-288.3 622.71,-292.79"/>
+</g>
+<!-- t2_input -->
+<g id="transfer-learning-figure-3-node5" class="node">
+<title>t2_input</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M472.64,-77.25C472.64,-77.25 441.36,-77.25 441.36,-77.25 435.36,-77.25 429.36,-71.25 429.36,-65.25 429.36,-65.25 429.36,-53.25 429.36,-53.25 429.36,-47.25 435.36,-41.25 441.36,-41.25 441.36,-41.25 472.64,-41.25 472.64,-41.25 478.64,-41.25 484.64,-47.25 484.64,-53.25 484.64,-53.25 484.64,-65.25 484.64,-65.25 484.64,-71.25 478.64,-77.25 472.64,-77.25"/>
+<text xml:space="preserve" text-anchor="middle" x="457" y="-54.4" font-family="Georgia" font-size="13.00" fill="#26363a">Input</text>
+</g>
+<!-- t2_h1 -->
+<g id="transfer-learning-figure-3-node6" class="node">
+<title>t2_h1</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M476.77,-154.25C476.77,-154.25 437.23,-154.25 437.23,-154.25 431.23,-154.25 425.23,-148.25 425.23,-142.25 425.23,-142.25 425.23,-130.25 425.23,-130.25 425.23,-124.25 431.23,-118.25 437.23,-118.25 437.23,-118.25 476.77,-118.25 476.77,-118.25 482.77,-118.25 488.77,-124.25 488.77,-130.25 488.77,-130.25 488.77,-142.25 488.77,-142.25 488.77,-148.25 482.77,-154.25 476.77,-154.25"/>
+<text xml:space="preserve" text-anchor="middle" x="457" y="-131.4" font-family="Georgia" font-size="13.00" fill="#26363a">Layer 1</text>
+</g>
+<!-- t2_input&#45;&gt;t2_h1 -->
+<g id="transfer-learning-figure-3-edge4" class="edge">
+<title>t2_input&#45;&gt;t2_h1</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M457,-77.65C457,-87.3 457,-99.48 457,-110.15"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="454.73,-109.94 457,-116.44 459.28,-109.94 454.73,-109.94"/>
+</g>
+<!-- t2_h1&#45;&gt;t2_h2 -->
+<g id="transfer-learning-figure-3-edge5" class="edge">
+<title>t2_h1&#45;&gt;t2_h2</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M457,-154.65C457,-167.13 457,-184.12 457,-198.07"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="454.73,-197.86 457,-204.36 459.28,-197.86 454.73,-197.86"/>
+</g>
+<!-- t2_h1&#45;&gt;t3_h2 -->
+<g id="transfer-learning-figure-3-edge14" class="edge">
+<title>t2_h1&#45;&gt;t3_h2</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" stroke-width="1.5" d="M488.9,-149.39C528.91,-164.61 597.58,-190.75 641.6,-207.5"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" stroke-width="1.5" points="640.79,-209.62 647.67,-209.81 642.4,-205.37 640.79,-209.62"/>
+</g>
+<!-- t2_h2&#45;&gt;t2_head -->
+<g id="transfer-learning-figure-3-edge6" class="edge">
+<title>t2_h2&#45;&gt;t2_head</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M457,-242.65C457,-252.3 457,-264.48 457,-275.15"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="454.73,-274.94 457,-281.44 459.28,-274.94 454.73,-274.94"/>
+</g>
+<!-- t2_h2&#45;&gt;t3_head -->
+<g id="transfer-learning-figure-3-edge15" class="edge">
+<title>t2_h2&#45;&gt;t3_head</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" stroke-width="1.5" d="M490.35,-236.32C525.34,-247.93 581.07,-266.42 623.61,-280.54"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" stroke-width="1.5" points="622.89,-282.7 629.77,-282.59 624.32,-278.38 622.89,-282.7"/>
+</g>
+<!-- t3_input -->
+<g id="transfer-learning-figure-3-node9" class="node">
+<title>t3_input</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" d="M698.64,-77.25C698.64,-77.25 667.36,-77.25 667.36,-77.25 661.36,-77.25 655.36,-71.25 655.36,-65.25 655.36,-65.25 655.36,-53.25 655.36,-53.25 655.36,-47.25 661.36,-41.25 667.36,-41.25 667.36,-41.25 698.64,-41.25 698.64,-41.25 704.64,-41.25 710.64,-47.25 710.64,-53.25 710.64,-53.25 710.64,-65.25 710.64,-65.25 710.64,-71.25 704.64,-77.25 698.64,-77.25"/>
+<text xml:space="preserve" text-anchor="middle" x="683" y="-54.4" font-family="Georgia" font-size="13.00" fill="#26363a">Input</text>
+</g>
+<!-- t3_h1 -->
+<g id="transfer-learning-figure-3-node10" class="node">
+<title>t3_h1</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" d="M702.77,-154.25C702.77,-154.25 663.23,-154.25 663.23,-154.25 657.23,-154.25 651.23,-148.25 651.23,-142.25 651.23,-142.25 651.23,-130.25 651.23,-130.25 651.23,-124.25 657.23,-118.25 663.23,-118.25 663.23,-118.25 702.77,-118.25 702.77,-118.25 708.77,-118.25 714.77,-124.25 714.77,-130.25 714.77,-130.25 714.77,-142.25 714.77,-142.25 714.77,-148.25 708.77,-154.25 702.77,-154.25"/>
+<text xml:space="preserve" text-anchor="middle" x="683" y="-131.4" font-family="Georgia" font-size="13.00" fill="#26363a">Layer 1</text>
+</g>
+<!-- t3_input&#45;&gt;t3_h1 -->
+<g id="transfer-learning-figure-3-edge7" class="edge">
+<title>t3_input&#45;&gt;t3_h1</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M683,-77.65C683,-87.3 683,-99.48 683,-110.15"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="680.73,-109.94 683,-116.44 685.28,-109.94 680.73,-109.94"/>
+</g>
+<!-- t3_h1&#45;&gt;t3_h2 -->
+<g id="transfer-learning-figure-3-edge8" class="edge">
+<title>t3_h1&#45;&gt;t3_h2</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M683,-154.65C683,-167.13 683,-184.12 683,-198.07"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="680.73,-197.86 683,-204.36 685.28,-197.86 680.73,-197.86"/>
+</g>
+<!-- t3_h2&#45;&gt;t3_head -->
+<g id="transfer-learning-figure-3-edge9" class="edge">
+<title>t3_h2&#45;&gt;t3_head</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M683,-242.65C683,-252.3 683,-264.48 683,-275.15"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="680.73,-274.94 683,-281.44 685.28,-274.94 680.73,-274.94"/>
+</g>
+</g>
+</svg>
+</div><figcaption>State 3: add Task 3 and connect both previous task columns laterally to corresponding new-column layers.</figcaption></figure></section></section>
+<h3>PathNet: a separate routing example</h3>
+<p>Slide 32 names PathNet and shows changing channel pathways alongside a Pong-to-Alien score display. It is distinct from the progressive columns above: PathNet is presented as an evolutionary routing approach in a super-network.</p>
+<h2 id="section-6">Common mistakes</h2>
+<ul>
+<li>A <strong>domain</strong> describes input features and their distribution; a <strong>task</strong> describes the output/label space and predictive objective. State both relations.</li>
+<li>Do not collapse the distinct slide 4 and slide 7–8 taxonomies into one universal tree. Their source-label depictions differ, and the lecture explicitly warns that terminology varies.</li>
+<li>Do not claim that transductive transfer always requires an unlabeled source. Slide 8 focuses on target-label availability; the other slide framings differ about source labels.</li>
+<li>The lecture’s “one-shot” phrase means a few target examples in this example, not exactly one.</li>
+<li>The layer-transfer speech/image statements are heuristics, not fixed rules for every architecture.</li>
+<li>A frozen backbone does not receive parameter updates during head-only target training. In progressive networks, cross-column arrows show activations; they do not mean old columns are being updated.</li>
+<li>A source trend or plot is not a source of exact data points when no table is supplied. Do not turn the ImageNet or multilingual plots into invented numeric examples.</li>
+<li>More shared tasks or transferred parameters do not guarantee improvement on every target; use task-specific validation evidence.</li>
+</ul>
+<h2 id="section-7">Exam focus</h2>
+<ul>
+<li>Transfer learning reuses a source model or learned representation to initialize learning for a target task/domain.</li>
+<li>Read domain and task as separate axes; compare feature space/distribution, label/output space, objective, and label availability.</li>
+<li>In the lecture’s supervised speaker adaptation: fit on many speakers’ audio/transcripts, initialize from the source model, adapt with the small labeled target set, and limit updates when data are scarce.</li>
+<li>Layer transfer copies selected parameters; first train remaining layers, then consider broader fine-tuning only with sufficient data. Speech/image layer choices are lecture heuristics.</li>
+<li>In multitask learning, shared representations feed separate task outputs and each task supplies its own labels.</li>
+<li>In a progressive network, add columns successively and direct earlier-column activations forward to each new column; previous learned columns stay fixed under the cited method.</li>
+<li>PathNet is a separate evolutionary-routing approach through a super-network.</li>
+</ul>
+<h2 id="section-8">Practice questions</h2>
+<p class="question">1. A target set contains dog and cat photographs, while the source set contains elephant and tiger photographs. Which axis is similar and which differs?</p>
+<details class="worked"><summary>Check your answer</summary><p>The image domain is similar because both sets contain animal photographs. The classification task differs because the label/output sets differ: dog/cat versus elephant/tiger.</p></details>
+<p class="question">2. A model sees photographic dog/cat images at source and cartoon dog/cat images at target. What changes?</p>
+<details class="worked"><summary>Check your answer</summary><p>The visual domain changes (photographs versus cartoons), while the dog/cat label space and classification objective remain the same task.</p></details>
+<p class="question">3. In the speaker-adaptation example, what data enter source fitting and target fine-tuning?</p>
+<details class="worked"><summary>Check your answer</summary><p>Source fitting uses a large amount of audio and transcripts from many speakers. Target adaptation uses a very small labeled set of audio and transcripts from a specific speaker.</p></details>
+<p class="question">4. During head-only adaptation, which parameters change and which remain invariant?</p>
+<details class="worked"><summary>Check your answer</summary><p>The target head receives updates from target labeled examples and target loss. The frozen backbone is unchanged: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>&#x003B8;</mi><mi>b</mi><mrow><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi></mrow></mrow></msubsup><mo>&#x0003D;</mo><msubsup><mi>&#x003B8;</mi><mi>b</mi><mrow><mrow><mi mathvariant="normal">b</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi></mrow></mrow></msubsup></mrow></math>.</p></details>
+<p class="question">5. What are the axes and three effects called out in the ImageNet transfer figure?</p>
+<details class="worked"><summary>Check your answer</summary><p>The slide 23 horizontal axis is the cut/retraining layer depth; its vertical axis is top-1 accuracy, higher is better. The named effects are fragile co-adaptation, recovery of co-adapted interactions by fine-tuning, and representation specificity. The source uses 500 source and 500 different target ImageNet classes.</p></details>
+<p class="question">6. How does the lecture’s multilingual speech example share knowledge?</p>
+<details class="worked"><summary>Check your answer</summary><p>It shares acoustic features across French, German, Spanish, Italian, and Mandarin while keeping language-specific output states. The chart qualitatively compares Mandarin-only training with training that includes European languages as Mandarin training hours vary.</p></details>
+<p class="question">7. In a progressive network, what does a lateral arrow from an earlier task column to a new one represent?</p>
+<details class="worked"><summary>Check your answer</summary><p>It represents forward activation information reused by the new column. Under the cited progressive-network method, earlier columns are frozen; the arrow is not an optimizer update to the old column.</p></details>
+<p class="question">8. Why should the taxonomy name be accompanied by source/target facts?</p>
+<details class="worked"><summary>Check your answer</summary><p>The lecture warns that terminology differs across literature, and its own slide 4 and slides 7–8 do not present identical source-label availability for transductive transfer. State task relation, domain relation, and source/target labels explicitly before using the family name.</p></details>
+<h2 id="section-9">Further reading</h2>
+<ul>
+<li><a href="https://papers.neurips.cc/paper_files/paper/2014/hash/532a2f85b6977104bc93f8580abbb330-Abstract.html">How transferable are features in deep neural networks? — Yosinski et al., NeurIPS 2014</a></li>
+<li><a href="https://arxiv.org/abs/1606.04671">Progressive Neural Networks — Rusu et al., 2016</a></li>
+<li><a href="https://arxiv.org/abs/1701.08734">PathNet: Evolution Channels Gradient Descent in Super Neural Networks — Fernando et al., 2017</a></li>
+</ul></article><nav class="pager" aria-label="Study sequence"><a href="fastmap-random-projection.html"><small>Previous</small>FastMap and Random Projection <span aria-hidden="true">↗</span></a><a href="domain-adaptation-pretraining.html"><small>Next</small>Domain Adaptation, Shift, and Negative Transfer <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

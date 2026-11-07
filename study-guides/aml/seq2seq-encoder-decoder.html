@@ -1,0 +1,618 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Understand how ordered inputs map to outputs, compare sequence-task types, and trace the encoder–context–decoder flow."><title>Sequence-to-Sequence and Encoder–Decoder Models · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html" aria-current="page">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Sequences and forecasting <span>/</span> Lecture 5</div><h1>Sequence-to-Sequence and Encoder–Decoder Models</h1><p class="lead">Understand how ordered inputs map to outputs, compare sequence-task types, and trace the encoder–context–decoder flow.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Ordered observations and Seq2Seq tasks</a><a href="#section-2">Two separate task taxonomies</a><a href="#section-3">Input/output mapping patterns</a><a href="#section-4">Numerical sequence representations</a><a href="#section-5">Reverse-sequence example</a><a href="#section-6">Why the MLP baseline struggles with reversal</a><a href="#section-7">Encoder–decoder and context</a><a href="#section-8">Common mistakes</a><a href="#section-9">Exam focus</a><a href="#section-10">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>A sequence is a set of observations whose order carries meaning. Sequence-to-sequence (Seq2Seq) learning maps an ordered input sequence to an ordered output sequence. The task may keep or change sequence length and representation. The reversal example makes order explicit; the encoder–decoder architecture separates reading an input sequence from generating an output sequence.</p>
+<h2 id="section-1">Ordered observations and Seq2Seq tasks</h2>
+<p>Time-series measurements and audio samples are examples of ordered data: rearranging observations changes the signal being represented. Text and video frames also form sequences. A Seq2Seq task learns a mapping from input sequence <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>X</mi></mrow></math> to output sequence <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Y</mi></mrow></math>; machine translation is a central example.</p>
+<table>
+<thead>
+<tr>
+<th>Application</th>
+<th>What the sequence mapping does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Machine translation</td>
+<td>Translate text from one language to another</td>
+</tr>
+<tr>
+<td>Image captioning</td>
+<td>Generate a textual description of an image</td>
+</tr>
+<tr>
+<td>Video captioning</td>
+<td>Generate textual descriptions for video content</td>
+</tr>
+<tr>
+<td>Text summarization</td>
+<td>Produce a concise summary that preserves the main information</td>
+</tr>
+<tr>
+<td>Question answering</td>
+<td>Generate an answer to a natural-language question</td>
+</tr>
+<tr>
+<td>Speech recognition</td>
+<td>Convert spoken language into text</td>
+</tr>
+<tr>
+<td>Time-series forecasting</td>
+<td>Predict future observations from historical sequential data</td>
+</tr>
+</tbody>
+</table>
+<h2 id="section-2">Two separate task taxonomies</h2>
+<p>The lecture classifies tasks along two different axes. <strong>Length</strong> asks whether input and output lengths are fixed or variable. <strong>Modality</strong> asks whether the input and output representations are from the same kind of data or different kinds. These labels do not determine how many outputs align with each input step; that is a separate mapping-pattern question.</p>
+<table>
+<thead>
+<tr>
+<th>Axis</th>
+<th>Case</th>
+<th>Lecture example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sequence length</td>
+<td>Fixed input and output lengths</td>
+<td>Sequence reversal</td>
+</tr>
+<tr>
+<td>Sequence length</td>
+<td>Variable input and output lengths</td>
+<td>Machine translation</td>
+</tr>
+<tr>
+<td>Sequence modality</td>
+<td>Same modality</td>
+<td>Machine translation (text to text)</td>
+</tr>
+<tr>
+<td>Sequence modality</td>
+<td>Different modalities</td>
+<td>Image captioning (image to text)</td>
+</tr>
+</tbody>
+</table>
+<p>For example, machine translation is shown as variable-length and same-modality: a text sequence maps to another text sequence. Image captioning is shown as a different-modality task: an image representation maps to a word sequence. These are two descriptions of the task, not competing categories.</p>
+<h2 id="section-3">Input/output mapping patterns</h2>
+<p>The mapping pattern describes the number and alignment of inputs and outputs. In many-to-many <strong>Type I</strong>, an output is associated with each input step. In many-to-many <strong>Type II</strong>, the model consumes an input sequence and generates an output sequence; the two sequences need not have step-by-step alignment.</p>
+<table>
+<thead>
+<tr>
+<th>Input/output mapping</th>
+<th>What is produced</th>
+<th>Lecture example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Many-to-one</td>
+<td>One output label from an input sequence</td>
+<td>Sentiment classification: a sequence of words → sentiment class</td>
+</tr>
+<tr>
+<td>One-to-many</td>
+<td>An output sequence from one input</td>
+<td>Image captioning: image → sequence of words</td>
+</tr>
+<tr>
+<td>Many-to-many, Type I</td>
+<td>One output aligned with each input step</td>
+<td>Frame-level video action recognition: video frame → action class</td>
+</tr>
+<tr>
+<td>Many-to-many, Type II</td>
+<td>An output sequence from an input sequence</td>
+<td>Video captioning: video frames → caption</td>
+</tr>
+</tbody>
+</table>
+<p>Keep the Type I and Type II distinction visible in examples: per-frame action recognition labels frames, while video captioning turns a sequence of frames into a caption. Sentiment classification instead maps many words to one class, and image captioning maps one image to many words.</p>
+<h2 id="section-4">Numerical sequence representations</h2>
+<p>Neural networks process numerical representations, so text-based symbols must be encoded before a model can use them. The lecture lists one-hot encoding, Bag-of-Words (BoW), Word2Vec, BERT, and Wav2Vec. The key sequence distinction is that a per-step representation can keep each symbol attached to its time step, while an aggregated BoW vector records token occurrences without their positions.</p>
+<table>
+<thead>
+<tr>
+<th>Representation</th>
+<th>What to remember for sequence tasks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>One-hot encoding</td>
+<td>Represents each discrete category with a vector whose active position identifies that category. The category axis is separate from the sequence/time axis.</td>
+</tr>
+<tr>
+<td>Bag-of-Words (BoW)</td>
+<td>Aggregates token occurrence counts or presence. Because it does not retain token positions, it discards word order.</td>
+</tr>
+<tr>
+<td>Word2Vec</td>
+<td>Listed by the lecture as a numerical encoding technique.</td>
+</tr>
+<tr>
+<td>BERT</td>
+<td>Listed by the lecture as a numerical encoding technique.</td>
+</tr>
+<tr>
+<td>Wav2Vec</td>
+<td>Listed by the lecture as a numerical encoding technique.</td>
+</tr>
+</tbody>
+</table>
+<details class="worked"><summary>Supplemental static worksheet cross-reference: one-hot category versus time step</summary><p>A category is represented on the category axis, separately from the six-step time axis. For category <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>3</mn></mrow></math> from the ten possible IDs <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo>&#x0002C;</mo><mi>&#x02026;</mi><mo>&#x0002C;</mo><mn>9</mn></mrow></math>, the zero-based category position is active in this ten-entry vector:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="false">[</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">]</mo></mrow></math></div>
+<p>This supplemental example makes the two dimensions distinct: the vector has ten category positions, while a sample still has six ordered time steps.</p></details>
+<h2 id="section-5">Reverse-sequence example</h2>
+<p>The lecture gives a fixed-length Seq2Seq task: the target is the input values in reverse order. To check each target position, use one-based input and target positions. If the sequence length is six, target position <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>j</mi></mrow></math> comes from input position <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>7</mn><mo>&#x02212;</mo><mi>j</mi></mrow></math>. The viewer walks all six alignments using the exact supplied sequences.</p>
+<details class="worked"><summary>Worked example: align every target position</summary><section class="walk" tabindex="0" aria-label="Six-step alignment for the reverse-sequence task"><h3>Six-step alignment for the reverse-sequence task</h3><div class="example-input"><strong>Given sequences</strong><span>Input: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>X</mi><mo>&#x0003D;</mo><mo stretchy="false">[</mo><mn>3</mn><mo>&#x0002C;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>5</mn><mo>&#x0002C;</mo><mn>4</mn><mo>&#x0002C;</mo><mn>9</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">]</mo></mrow></math></span><span>Target: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Y</mi><mo>&#x0003D;</mo><mo stretchy="false">[</mo><mn>1</mn><mo>&#x0002C;</mo><mn>9</mn><mo>&#x0002C;</mo><mn>4</mn><mo>&#x0002C;</mo><mn>5</mn><mo>&#x0002C;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>3</mn><mo stretchy="false">]</mo></mrow></math></span><span>Positions are one-based; for a length-six reversal, target position <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>j</mi></mrow></math> takes input position <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>7</mn><mo>&#x02212;</mo><mi>j</mi></mrow></math>.</span></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Align target position 1</h4><p>The reversal rule is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>Y</mi><mi>j</mi></msub><mo>&#x0003D;</mo><msub><mi>X</mi><mrow><mn>7</mn><mo>&#x02212;</mo><mi>j</mi></mrow></msub></mrow></math>. For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>j</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math>, the input position is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>7</mn><mo>&#x02212;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>6</mn></mrow></math>: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>Y</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>X</mi><mn>6</mn></msub><mo>&#x0003D;</mo><mn>1</mn></mrow></math>.</p></section><section class="step"><h4>2. Align target position 2</h4><p>For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>j</mi><mo>&#x0003D;</mo><mn>2</mn></mrow></math>, the input position is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>7</mn><mo>&#x02212;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>5</mn></mrow></math>: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>Y</mi><mn>2</mn></msub><mo>&#x0003D;</mo><msub><mi>X</mi><mn>5</mn></msub><mo>&#x0003D;</mo><mn>9</mn></mrow></math>.</p></section><section class="step"><h4>3. Align target position 3</h4><p>For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>j</mi><mo>&#x0003D;</mo><mn>3</mn></mrow></math>, the input position is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>7</mn><mo>&#x02212;</mo><mn>3</mn><mo>&#x0003D;</mo><mn>4</mn></mrow></math>: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>Y</mi><mn>3</mn></msub><mo>&#x0003D;</mo><msub><mi>X</mi><mn>4</mn></msub><mo>&#x0003D;</mo><mn>4</mn></mrow></math>.</p></section><section class="step"><h4>4. Align target position 4</h4><p>For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>j</mi><mo>&#x0003D;</mo><mn>4</mn></mrow></math>, the input position is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>7</mn><mo>&#x02212;</mo><mn>4</mn><mo>&#x0003D;</mo><mn>3</mn></mrow></math>: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>Y</mi><mn>4</mn></msub><mo>&#x0003D;</mo><msub><mi>X</mi><mn>3</mn></msub><mo>&#x0003D;</mo><mn>5</mn></mrow></math>.</p></section><section class="step"><h4>5. Align target position 5</h4><p>For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>j</mi><mo>&#x0003D;</mo><mn>5</mn></mrow></math>, the input position is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>7</mn><mo>&#x02212;</mo><mn>5</mn><mo>&#x0003D;</mo><mn>2</mn></mrow></math>: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>Y</mi><mn>5</mn></msub><mo>&#x0003D;</mo><msub><mi>X</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mn>2</mn></mrow></math>.</p></section><section class="step"><h4>6. Align target position 6 and check</h4><p>For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>j</mi><mo>&#x0003D;</mo><mn>6</mn></mrow></math>, the input position is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>7</mn><mo>&#x02212;</mo><mn>6</mn><mo>&#x0003D;</mo><mn>1</mn></mrow></math>: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>Y</mi><mn>6</mn></msub><mo>&#x0003D;</mo><msub><mi>X</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mn>3</mn></mrow></math>.</p>
+<p>The target is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><mn>1</mn><mo>&#x0002C;</mo><mn>9</mn><mo>&#x0002C;</mo><mn>4</mn><mo>&#x0002C;</mo><mn>5</mn><mo>&#x0002C;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>3</mn><mo stretchy="false">]</mo></mrow></math>, exactly the input <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><mn>3</mn><mo>&#x0002C;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>5</mn><mo>&#x0002C;</mo><mn>4</mn><mo>&#x0002C;</mo><mn>9</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">]</mo></mrow></math> in reverse order. Check: both have six entries and the same multiset of values; only their order changes.</p></section></section></details>
+<h2 id="section-6">Why the MLP baseline struggles with reversal</h2>
+<p>The lecture’s multilayer perceptron (MLP) processes each time step independently. Without a mechanism that carries information across positions, it does not model temporal dependencies and cannot learn which distant input position supplies each reversed output. This explains the slide’s poor MLP result for the reversal task; recurrent state and gate details are covered in the prerequisite topic.</p>
+<p>The slide lists Dense layers with output shapes <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mtext>None</mtext><mo>&#x0002C;</mo><mn>6</mn><mo>&#x0002C;</mo><mn>32</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mtext>None</mtext><mo>&#x0002C;</mo><mn>6</mn><mo>&#x0002C;</mo><mn>16</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mtext>None</mtext><mo>&#x0002C;</mo><mn>6</mn><mo>&#x0002C;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. Its parameter totals include weights and a bias for each output unit:</p>
+<p>Each tuple lists the batch size, number of time steps, and per-step feature width, in that order. <code>None</code> allows a variable batch size. The time axis stays at six steps while the per-step width changes from the ten-feature input through the hidden layers to the output: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>10</mn><mo>&#x02192;</mo><mn>32</mn><mo>&#x02192;</mo><mn>16</mn><mo>&#x02192;</mo><mn>10</mn></mrow></math>. Thus each parameter-count check uses the incoming and outgoing feature widths, without multiplying by the six time positions where the same Dense transformation is reused.</p>
+<table>
+<thead>
+<tr>
+<th>Dense layer</th>
+<th>Parameter-count check</th>
+<th style="text-align: right;">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hidden 1</td>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>10</mn><mo>&#x000D7;</mo><mn>32</mn><mo>&#x0002B;</mo><mn>32</mn></mrow></math></td>
+<td style="text-align: right;">352</td>
+</tr>
+<tr>
+<td>Hidden 2</td>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>32</mn><mo>&#x000D7;</mo><mn>16</mn><mo>&#x0002B;</mo><mn>16</mn></mrow></math></td>
+<td style="text-align: right;">528</td>
+</tr>
+<tr>
+<td>Output</td>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>16</mn><mo>&#x000D7;</mo><mn>10</mn><mo>&#x0002B;</mo><mn>10</mn></mrow></math></td>
+<td style="text-align: right;">170</td>
+</tr>
+</tbody>
+</table>
+<p>The slides report MLP training accuracy of 10.48% and test accuracy of 9.25%. These are slide-reported figures, not results reproduced here. The parameter arithmetic above checks the displayed layer totals; it does not reproduce model training or evaluation.</p>
+<h2 id="section-7">Encoder–decoder and context</h2>
+<p>An encoder–decoder divides Seq2Seq into two roles. The encoder converts the input sequence into a context representation. Information passes through that context to the decoder, which generates the output sequence. The input and output can have different lengths and different representations, as in translating between languages.</p>
+<figure><div class="diagram-frame" style="--diagram-width:865.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="The encoder converts the input sequence to a context representation; the decoder uses that context to generate the output sequence." width="865pt" height="72pt"
+ viewBox="0.00 0.00 865.00 72.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="seq2seq-encoder-decoder-figure-1-seq2seq-encoder-decoder-context-flow-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 61.2)">
+<title>G</title>
+<!-- input -->
+<g id="seq2seq-encoder-decoder-figure-1-seq2seq-encoder-decoder-context-flow-node1" class="node">
+<title>input</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M127.35,-43.2C127.35,-43.2 12,-43.2 12,-43.2 6,-43.2 0,-37.2 0,-31.2 0,-31.2 0,-19.2 0,-19.2 0,-13.2 6,-7.2 12,-7.2 12,-7.2 127.35,-7.2 127.35,-7.2 133.35,-7.2 139.35,-13.2 139.35,-19.2 139.35,-19.2 139.35,-31.2 139.35,-31.2 139.35,-37.2 133.35,-43.2 127.35,-43.2"/>
+<text xml:space="preserve" text-anchor="middle" x="69.67" y="-19.95" font-family="Georgia" font-size="15.00">Input sequence X</text>
+</g>
+<!-- encoder -->
+<g id="seq2seq-encoder-decoder-figure-1-seq2seq-encoder-decoder-context-flow-node2" class="node">
+<title>encoder</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M307.7,-50.4C307.7,-50.4 183.35,-50.4 183.35,-50.4 177.35,-50.4 171.35,-44.4 171.35,-38.4 171.35,-38.4 171.35,-12 171.35,-12 171.35,-6 177.35,0 183.35,0 183.35,0 307.7,0 307.7,0 313.7,0 319.7,-6 319.7,-12 319.7,-12 319.7,-38.4 319.7,-38.4 319.7,-44.4 313.7,-50.4 307.7,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="245.52" y="-28.95" font-family="Georgia" font-size="15.00">Encoder</text>
+<text xml:space="preserve" text-anchor="middle" x="245.52" y="-10.95" font-family="Georgia" font-size="15.00">sequence encoding</text>
+</g>
+<!-- input&#45;&gt;encoder -->
+<g id="seq2seq-encoder-decoder-figure-1-seq2seq-encoder-decoder-context-flow-edge1" class="edge">
+<title>input&#45;&gt;encoder</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M139.63,-25.2C147.38,-25.2 155.33,-25.2 163.22,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="163.06,-27.48 169.56,-25.2 163.06,-22.93 163.06,-27.48"/>
+</g>
+<!-- context -->
+<g id="seq2seq-encoder-decoder-figure-1-seq2seq-encoder-decoder-context-flow-node3" class="node">
+<title>context</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M459.55,-50.4C459.55,-50.4 363.7,-50.4 363.7,-50.4 357.7,-50.4 351.7,-44.4 351.7,-38.4 351.7,-38.4 351.7,-12 351.7,-12 351.7,-6 357.7,0 363.7,0 363.7,0 459.55,0 459.55,0 465.55,0 471.55,-6 471.55,-12 471.55,-12 471.55,-38.4 471.55,-38.4 471.55,-44.4 465.55,-50.4 459.55,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="411.63" y="-28.95" font-family="Georgia" font-size="15.00">Context</text>
+<text xml:space="preserve" text-anchor="middle" x="411.63" y="-10.95" font-family="Georgia" font-size="15.00">representation</text>
+</g>
+<!-- encoder&#45;&gt;context -->
+<g id="seq2seq-encoder-decoder-figure-1-seq2seq-encoder-decoder-context-flow-edge2" class="edge">
+<title>encoder&#45;&gt;context</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M319.94,-25.2C327.74,-25.2 335.66,-25.2 343.39,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="343.04,-27.48 349.54,-25.2 343.04,-22.93 343.04,-27.48"/>
+</g>
+<!-- decoder -->
+<g id="seq2seq-encoder-decoder-figure-1-seq2seq-encoder-decoder-context-flow-node4" class="node">
+<title>decoder</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M651.15,-50.4C651.15,-50.4 515.55,-50.4 515.55,-50.4 509.55,-50.4 503.55,-44.4 503.55,-38.4 503.55,-38.4 503.55,-12 503.55,-12 503.55,-6 509.55,0 515.55,0 515.55,0 651.15,0 651.15,0 657.15,0 663.15,-6 663.15,-12 663.15,-12 663.15,-38.4 663.15,-38.4 663.15,-44.4 657.15,-50.4 651.15,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="583.35" y="-28.95" font-family="Georgia" font-size="15.00">Decoder</text>
+<text xml:space="preserve" text-anchor="middle" x="583.35" y="-10.95" font-family="Georgia" font-size="15.00">sequence generation</text>
+</g>
+<!-- context&#45;&gt;decoder -->
+<g id="seq2seq-encoder-decoder-figure-1-seq2seq-encoder-decoder-context-flow-edge3" class="edge">
+<title>context&#45;&gt;decoder</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M472.46,-25.2C479.91,-25.2 487.63,-25.2 495.38,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="495.12,-27.48 501.62,-25.2 495.12,-22.93 495.12,-27.48"/>
+</g>
+<!-- output -->
+<g id="seq2seq-encoder-decoder-figure-1-seq2seq-encoder-decoder-context-flow-node5" class="node">
+<title>output</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M831.5,-43.2C831.5,-43.2 707.15,-43.2 707.15,-43.2 701.15,-43.2 695.15,-37.2 695.15,-31.2 695.15,-31.2 695.15,-19.2 695.15,-19.2 695.15,-13.2 701.15,-7.2 707.15,-7.2 707.15,-7.2 831.5,-7.2 831.5,-7.2 837.5,-7.2 843.5,-13.2 843.5,-19.2 843.5,-19.2 843.5,-31.2 843.5,-31.2 843.5,-37.2 837.5,-43.2 831.5,-43.2"/>
+<text xml:space="preserve" text-anchor="middle" x="769.33" y="-19.95" font-family="Georgia" font-size="15.00">Output sequence Y</text>
+</g>
+<!-- decoder&#45;&gt;output -->
+<g id="seq2seq-encoder-decoder-figure-1-seq2seq-encoder-decoder-context-flow-edge4" class="edge">
+<title>decoder&#45;&gt;output</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M663.44,-25.2C671.26,-25.2 679.2,-25.2 687.03,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="686.81,-27.48 693.31,-25.2 686.81,-22.93 686.81,-27.48"/>
+</g>
+</g>
+</svg>
+</div><figcaption>The encoder converts the input sequence to a context representation; the decoder uses that context to generate the output sequence.</figcaption></figure>
+<p>The lecture connects this architecture to machine translation, image and video captioning, summarization, question answering, speech recognition, and time-series forecasting. For the recurrent hidden-state transfer, RNN, LSTM, and GRU details, continue to <a href="sequence-models.html">RNNs, LSTMs, and GRUs</a>.</p>
+<h2 id="section-8">Common mistakes</h2>
+<ul>
+<li>Treating fixed/variable length and same/different modality as one taxonomy. They describe separate properties of a task.</li>
+<li>Calling all many-to-many tasks aligned. Type I has per-input-step outputs; Type II maps an input sequence to an output sequence.</li>
+<li>Treating a BoW count vector as if it preserved word positions. Aggregation loses order.</li>
+<li>Confusing the number of time steps with the number of categories in a one-hot vector. A sample may have six time steps and ten possible category IDs.</li>
+<li>Assuming the MLP parameter count or slide-reported accuracy proves that its computation tracks earlier sequence elements. The key limitation is that the MLP processes time steps independently.</li>
+<li>Confusing the encoder–decoder sequence flow with the recurrent state-transfer details; those implementation details are covered in the prerequisite topic.</li>
+</ul>
+<h2 id="section-9">Exam focus</h2>
+<ul>
+<li>Define sequence data by meaningful order, and explain why changing order changes the data.</li>
+<li>Classify length, modality, and input/output mapping independently.</li>
+<li>Distinguish many-to-many Type I frame alignment from Type II sequence generation.</li>
+<li>State why a numerical representation is needed and why BoW alone loses order.</li>
+<li>Apply the reversal position rule: target position <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>j</mi></mrow></math> receives input position <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>7</mn><mo>&#x02212;</mo><mi>j</mi></mrow></math> for the six-element example.</li>
+<li>Explain the encoder → context representation → decoder flow and why input/output lengths or representations may differ.</li>
+</ul>
+<h2 id="section-10">Practice questions</h2>
+<p class="question">1. A translation task has variable input/output lengths and maps text to text. Which two taxonomy labels describe those properties?</p>
+<details class="worked"><summary>Check your answer</summary><p>It is variable-length and same-modality. These labels describe independent axes.</p></details>
+<p class="question">2. A video system assigns one action class to every frame. Is this many-to-many Type I or Type II?</p>
+<details class="worked"><summary>Check your answer</summary><p>Many-to-many Type I: an output class is aligned with each input frame.</p></details>
+<p class="question">3. What is the difference between the reversal example’s six time steps and ten one-hot categories?</p>
+<details class="worked"><summary>Check your answer</summary><p>Six is the number of ordered positions in the sample. Ten is the number of possible category IDs, so each time step can be represented by a ten-entry one-hot vector.</p></details>
+<p class="question">4. For the supplied input, what value is aligned with target position 2, and how do you locate it?</p>
+<details class="worked"><summary>Check your answer</summary><p>Target position 2 uses input position <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>7</mn><mo>&#x02212;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>5</mn></mrow></math>. The fifth input value is 9, so <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>Y</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mn>9</mn></mrow></math>.</p></details>
+<p class="question">5. Why does the lecture say the MLP performs poorly on reversal?</p>
+<details class="worked"><summary>Check your answer</summary><p>It processes each time step independently and therefore does not model dependencies between sequence positions needed to map an input value to its reversed target position.</p></details>
+<p class="question">6. What does the context representation do in the encoder–decoder diagram?</p>
+<details class="worked"><summary>Check your answer</summary><p>It carries information from the encoder’s input-sequence representation to the decoder, which uses it to generate the output sequence.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="sequence-models.html"><small>Previous</small>RNNs, LSTMs, and GRUs <span aria-hidden="true">↗</span></a><a href="autoencoders.html"><small>Next</small>Autoencoders and Learned Representations <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

@@ -1,0 +1,493 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="How to judge a learner, choose an appropriate model, and interpret what a score can and cannot tell us about new cases."><title>Evaluation, generalization and model choice · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html" aria-current="page">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Foundations and classical learning <span>/</span> Lecture 1</div><h1>Evaluation, generalization and model choice</h1><p class="lead">How to judge a learner, choose an appropriate model, and interpret what a score can and cannot tell us about new cases.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Representation, evaluation, and optimization</a><a href="#section-2">Evaluation sits inside a larger learning loop</a><a href="#section-3">Read a confusion matrix before calculating</a><a href="#section-4">Training fit and generalization</a><a href="#section-5">Complexity, Occam, and model choice</a><a href="#section-6">No Free Lunch: a scoped result</a><a href="#section-7">Dimensionality, sparsity, and projection limits</a><a href="#section-8">Rashomon effect and explanation instability</a><a href="#section-9">Common mistakes</a><a href="#section-10">Exam focus</a><a href="#section-11">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>A learning system needs three things to become useful: a representation of the hypotheses it may express, an evaluation rule for comparing candidates, and an optimization or search method for finding a candidate. Evaluation is therefore part of the problem definition: a model that scores well under the wrong measure is still the wrong model.</p>
+<p>Even a low training error does not guarantee good predictions on new examples. Model choice balances fit with generalization, guided by evidence and assumptions about the problem. No single learner is best for every possible problem; dimensionality reduction can help or distort; and several quite different models can earn nearly the same score.</p>
+<h2 id="section-1">Representation, evaluation, and optimization</h2>
+<p>These are complementary roles, not three names for the same step.</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Question it answers</th>
+<th>What the lecture supplies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Representation</strong></td>
+<td>What forms can the learned knowledge or hypothesis take?</td>
+<td>Functions, neural networks/graphs, logic programs and rule sets, finite-state machines, grammars, and problem-solving systems.</td>
+</tr>
+<tr>
+<td><strong>Evaluation</strong></td>
+<td>What makes one candidate better for this task?</td>
+<td>Accuracy, precision/recall, squared error, likelihood, posterior probability, cost/utility, margin, entropy, KL divergence, and related criteria.</td>
+</tr>
+<tr>
+<td><strong>Optimization / search</strong></td>
+<td>How does the learner find or construct a candidate?</td>
+<td>Combinatorial, convex, and constrained optimization; gradient descent, perceptron and backpropagation; dynamic programming; divide and conquer; evolutionary computation.</td>
+</tr>
+</tbody>
+</table>
+<p>The lecture gives examples within these families: greedy search for combinatorial optimization, gradient descent for convex optimization, linear programming for constrained optimization, HMM/PCFG learning with dynamic programming, decision-tree induction and rule learning with divide and conquer, and genetic algorithms, genetic programming, and neuro-evolution within evolutionary computation. These are a map of search families, not a recipe to run one algorithm. A representation says what can be expressed; an evaluation criterion says what to prefer; a search algorithm controls how candidates are found. A learner's success depends on their fit to the task.</p>
+<h2 id="section-2">Evaluation sits inside a larger learning loop</h2>
+<p>The lecture's practice sequence begins by understanding the domain, prior knowledge, and goals; integrates, selects, cleans, and preprocesses data; learns models; interprets results; then consolidates and deploys the discovered knowledge. It loops back as the problem or evidence changes. Evaluation supports interpreting results and deciding whether the current model meets the goal; it does not replace a clear goal or careful data preparation.</p>
+<h2 id="section-3">Read a confusion matrix before calculating</h2>
+<p>The lecture's binary confusion matrix places <strong>actual classes in rows</strong> and <strong>predicted classes in columns</strong>. Pick the positive class for the question, then identify the four cells relative to that choice.</p>
+<table>
+<thead>
+<tr>
+<th>Actual \ Predicted</th>
+<th style="text-align: right;">Negative</th>
+<th style="text-align: right;">Positive</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Negative</strong></td>
+<td style="text-align: right;">True negative (TN)</td>
+<td style="text-align: right;">False positive (FP)</td>
+</tr>
+<tr>
+<td><strong>Positive</strong></td>
+<td style="text-align: right;">False negative (FN)</td>
+<td style="text-align: right;">True positive (TP)</td>
+</tr>
+</tbody>
+</table>
+<p>Precision asks: of the examples <strong>predicted positive</strong>, what fraction really is positive? Its denominator is the positive prediction column. Recall asks: of the examples <strong>actually positive</strong>, what fraction was found? Its denominator is the actual positive row.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mrow><mi mathvariant="normal">P</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">n</mi></mrow><mo>&#x0003D;</mo><mfrac><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow></mrow><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">P</mi></mrow></mrow></mfrac></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mrow><mi mathvariant="normal">R</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">l</mi></mrow><mo>&#x0003D;</mo><mfrac><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow></mrow><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">N</mi></mrow></mrow></mfrac></mrow></math></div>
+<p>The source lists accuracy but does not print its formula. The following is a <strong>Supplemental formalization</strong> used by the labeled Teaching example: accuracy is the fraction of all predictions on the diagonal.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mrow><mi mathvariant="normal">A</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">y</mi></mrow><mo>&#x0003D;</mo><mfrac><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">N</mi></mrow></mrow><mrow><mtext>all&#x000A0;cases</mtext></mrow></mfrac></mrow></math></div>
+<details class="worked"><summary>Teaching example: calculate three metrics from one confusion matrix</summary><section class="walk" tabindex="0" aria-label="Confusion-matrix metric calculation"><h3>Confusion-matrix metric calculation</h3><div class="example-input"><p><strong>Input matrix</strong> (actual rows; predicted columns)</p><table><thead><tr><th>Actual \ Predicted</th><th>Negative</th><th>Positive</th></tr></thead><tbody><tr><th>Negative</th><td>TN = 5</td><td>FP = 1</td></tr><tr><th>Positive</th><td>FN = 2</td><td>TP = 6</td></tr></tbody></table><p>Positive class: <strong>positive</strong>. Keep this input visible while stepping through the calculations.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Read cells using actual rows and predicted columns</h4><p><strong>Teaching example — constructed counts, not lecture data.</strong> Suppose rows are actual negative/positive and columns are predicted negative/positive. The matrix is <code>[[5, 1], [2, 6]]</code>. Thus TN = 5, FP = 1, FN = 2, and TP = 6. Check: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>5</mn><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>2</mn><mo>&#x0002B;</mo><mn>6</mn><mo>&#x0003D;</mo><mn>14</mn></mrow></math> cases.</p></section><section class="step"><h4>2. Calculate accuracy</h4><p>Correct predictions are the diagonal. Divide by all cases: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">N</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow></mrow><mrow><mn>14</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>5</mn><mo>&#x0002B;</mo><mn>6</mn></mrow><mrow><mn>14</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>11</mn></mrow><mrow><mn>14</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.785714</mn><mi>&#x02026;</mi><mo>&#x02248;</mo><mn>0.786</mn></mrow></math>. Independent check: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">P</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">N</mi></mrow><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>3</mn></mrow></math> are incorrect, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>14</mn><mo>&#x02212;</mo><mn>3</mn></mrow><mrow><mn>14</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>11</mn></mrow><mrow><mn>14</mn></mrow></mfrac></mrow></math>, the same result.</p></section><section class="step"><h4>3. Calculate precision for the designated positive class</h4><p>Predicted-positive cases are in the positive column: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">P</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>6</mn><mo>&#x0003D;</mo><mn>7</mn></mrow></math>. Of these, 6 are actual positive. <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mi mathvariant="normal">P</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">n</mi></mrow><mo>&#x0003D;</mo><mfrac><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow></mrow><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">P</mi></mrow></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>6</mn></mrow><mrow><mn>6</mn><mo>&#x0002B;</mo><mn>1</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>6</mn></mrow><mrow><mn>7</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.857142</mn><mi>&#x02026;</mi><mo>&#x02248;</mo><mn>0.857</mn></mrow></math>. Column check: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002B;</mo><mn>6</mn><mo>&#x0003D;</mo><mn>7</mn></mrow></math>.</p></section><section class="step"><h4>4. Calculate recall for the designated positive class</h4><p>Actually-positive cases are in the positive row: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">N</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow><mo>&#x0003D;</mo><mn>2</mn><mo>&#x0002B;</mo><mn>6</mn><mo>&#x0003D;</mo><mn>8</mn></mrow></math>. Of these, 6 were predicted positive. <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mi mathvariant="normal">R</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">l</mi></mrow><mo>&#x0003D;</mo><mfrac><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow></mrow><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">N</mi></mrow></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>6</mn></mrow><mrow><mn>6</mn><mo>&#x0002B;</mo><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>6</mn></mrow><mrow><mn>8</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.75</mn></mrow></math>. Row check: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mo>&#x0002B;</mo><mn>6</mn><mo>&#x0003D;</mo><mn>8</mn></mrow></math>.</p></section></section></details>
+<h3>Multiclass questions use one-vs-rest counts</h3>
+<p>For a chosen class in a multiclass table, treat that class as positive and all other classes together as negative. Precision still uses the chosen class's <strong>predicted column</strong>; recall still uses its <strong>actual row</strong>. The full table must be read with its stated orientation before either sum is made.</p>
+<p class="question">1. In an actual-row/predicted-column multiclass matrix, the predicted “Not a Rumour” column contains 986, 250, 474 and 105 cases; its diagonal count is 474. Treat this class as positive. Calculate precision and identify the denominator.</p>
+<details class="worked"><summary>Check your answer</summary><p>The matrix orientation is actual rows and predicted columns. For “Not a Rumour” as positive, TP = 474. The predicted “Not a Rumour” column sums to <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>986</mn><mo>&#x0002B;</mo><mn>250</mn><mo>&#x0002B;</mo><mn>474</mn><mo>&#x0002B;</mo><mn>105</mn><mo>&#x0003D;</mo><mn>1815</mn></mrow></math>. Precision = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>474</mn></mrow><mrow><mn>1815</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.261157</mn><mi>&#x02026;</mi><mo>&#x02248;</mo><mn>0.261</mn></mrow></math> to three decimals. Independent check: the class's actual row is [231, 657, 474, 635], so 474 is the diagonal cell; it is not the precision denominator.</p></details>
+<p class="question">2. In an actual-row/predicted-column multiclass matrix, the actual “True Rumour” row contains 313, 740, 953 and 898 cases; its diagonal count is 313. Treat this class as positive. Calculate recall and identify the denominator.</p>
+<details class="worked"><summary>Check your answer</summary><p>“True Rumour” is positive. Its TP is the diagonal value 313. The actual “True Rumour” row sums to <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>313</mn><mo>&#x0002B;</mo><mn>740</mn><mo>&#x0002B;</mo><mn>953</mn><mo>&#x0002B;</mo><mn>898</mn><mo>&#x0003D;</mo><mn>2904</mn></mrow></math>. Recall = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>313</mn></mrow><mrow><mn>2904</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.107782</mn><mi>&#x02026;</mi><mo>&#x02248;</mo><mn>0.108</mn></mrow></math> to three decimals. Independent check: only about 10.8% of actual True Rumour cases were found.</p></details>
+<h2 id="section-4">Training fit and generalization</h2>
+<p>Training error measures fit to the examples used in learning. Generalization error concerns performance away from that training set; the lecture labels it the off-training-set loss. In practice, a held-out test score estimates performance on new cases only under assumptions about how those cases relate to training data. The same-distribution, independent-sampling assumption is a sampling condition (often abbreviated i.i.d.); it is distinct from No Free Lunch below.</p>
+<p>Some earlier lecture wording calls the same-distribution condition a “No Free Lunch rule.” Keep the concepts distinct here: i.i.d. is a sampling assumption for evaluating new cases; No Free Lunch is the later average-risk result about comparing learning algorithms.</p>
+<p>The lecture's qualitative chart uses <strong>Loss</strong> on the vertical axis and <strong>Epochs</strong> on the horizontal axis. Curve A is generalization error and is U-shaped; curve B is training error and falls. C marks the stopping point. D marks underfitting: the model is too simple and both errors are large. E marks overtraining/overfitting: training fit keeps improving while error on test/generalization cases worsens. The sketch gives no numeric ticks or values, and epochs are not model complexity.</p>
+<figure class="figure"><div class="diagram-frame" style="max-height:none"><div style="width:680px;height:360px"><svg style="width:680px;max-width:none;max-height:none;display:block" style="width:680px;max-width:none;max-height:none;display:block" viewBox="0 0 680 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="evaluation-generalization-figure-1-evaluation-generalization-figure-1-eg-curve-title evaluation-generalization-figure-1-evaluation-generalization-figure-1-eg-curve-desc">
+  <title id="evaluation-generalization-figure-1-evaluation-generalization-figure-1-eg-curve-title">Qualitative overfitting curve from the lecture</title>
+  <desc id="evaluation-generalization-figure-1-evaluation-generalization-figure-1-eg-curve-desc">Loss increases vertically and epochs increase horizontally. Training error decreases. Generalization error falls and then rises. A vertical dotted line labeled C marks a stopping point. D marks the underfitting region to the left; E marks the overtraining region to the right.</desc>
+  <defs>
+    <marker id="evaluation-generalization-figure-1-evaluation-generalization-figure-1-axis-arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="var(--foreground,#34304a)"/></marker>
+    <marker id="evaluation-generalization-figure-1-evaluation-generalization-figure-1-range-arrow-left" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M7 0 L0 3.5 L7 7 Z" fill="var(--primary,#315e6a)"/></marker>
+    <marker id="evaluation-generalization-figure-1-evaluation-generalization-figure-1-range-arrow-right" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 Z" fill="var(--primary,#315e6a)"/></marker>
+  </defs>
+  <style>
+    .eg-axis{stroke:var(--foreground,#34304a);stroke-width:3}
+    .eg-range{stroke:var(--primary,#315e6a);stroke-width:2}
+    .eg-txt{fill:var(--foreground,#34304a);font:16px sans-serif}
+    .eg-train{fill:none;stroke:#668bc2;stroke-width:5}
+    .eg-general{fill:none;stroke:var(--node-red,#b43e4b);stroke-width:5}
+    .eg-mark{stroke:var(--primary,#315e6a);stroke-width:2;stroke-dasharray:6 5}
+  </style>
+  <path class="eg-axis" d="M80 300 V35" marker-end="url(#evaluation-generalization-figure-1-evaluation-generalization-figure-1-axis-arrow)"/>
+  <path class="eg-axis" d="M80 300 H640" marker-end="url(#evaluation-generalization-figure-1-evaluation-generalization-figure-1-axis-arrow)"/>
+  <path class="eg-range" d="M112 47 H328" marker-start="url(#evaluation-generalization-figure-1-evaluation-generalization-figure-1-range-arrow-left)" marker-end="url(#evaluation-generalization-figure-1-evaluation-generalization-figure-1-range-arrow-right)"/>
+  <path class="eg-range" d="M342 47 H565" marker-start="url(#evaluation-generalization-figure-1-evaluation-generalization-figure-1-range-arrow-left)" marker-end="url(#evaluation-generalization-figure-1-evaluation-generalization-figure-1-range-arrow-right)"/>
+  <path class="eg-train" d="M95 70 C160 155 235 220 330 255 S500 275 560 280"/>
+  <path class="eg-general" d="M110 75 C180 155 255 205 335 210 C420 214 500 160 565 92"/>
+  <path class="eg-mark" d="M335 55 V300"/>
+  <text class="eg-txt" x="44" y="42">Loss</text>
+  <text class="eg-txt" x="578" y="326">Epochs</text>
+  <text class="eg-txt" x="470" y="268">B · Training</text>
+  <text class="eg-txt" x="485" y="120">A · Generalization</text>
+  <text class="eg-txt" x="324" y="327">C · stopping point</text>
+  <text class="eg-txt" x="208" y="39">D · underfitting</text>
+  <text class="eg-txt" x="421" y="39">E · overtraining</text>
+</svg>
+</div></div><figcaption>Qualitative redraw of the source chart. Shape and labeled regions are preserved; no numeric scale is implied.</figcaption></figure>
+<p>A lower training loss alone is not enough to choose a model. Use validation evidence to select model settings or a stopping point, and reserve a separate test set for a final report when the workflow allows. A test set repeatedly consulted during tuning stops being an untouched final check.</p>
+<h2 id="section-5">Complexity, Occam, and model choice</h2>
+<p>Occam's razor (the law of parsimony) says that when explanations make equivalent predictions, prefer one with fewer assumptions. In machine learning this is a guide for comparing adequate explanations, not a command to choose the simplest possible model regardless of fit. The lecture explicitly calls out a tension: predictive accuracy and simplicity/interpretability can conflict.</p>
+<p>Model complexity and epochs describe different things. Complexity concerns how expressive or intricate a model is; epochs count passes through training data. The page 68 chart varies epochs to illustrate under/overtraining, while the later model-choice discussion concerns simple versus complex classifiers. In either case, select with evidence for the intended task and data, and explain the trade-off.</p>
+<h2 id="section-6">No Free Lunch: a scoped result</h2>
+<p>The lecture presents No Free Lunch as an <strong>average over appropriately weighted learning situations</strong>, not as a claim that all algorithms tie on every practical task. With no prior information that favors a problem family, one algorithm's advantages are balanced by disadvantages elsewhere under the theorem's stated risk setup. Page 71 defines these terms:</p>
+<table><thead><tr><th>Symbol</th><th>Meaning in the lecture</th></tr></thead><tbody><tr><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi></mrow></math></td><td>Training set</td></tr><tr><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>m</mi></mrow></math></td><td>Number of elements in the training set</td></tr><tr><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>f</mi></mrow></math></td><td>Target input-output relationship</td></tr><tr><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>h</mi></mrow></math></td><td>Hypothesis: the learner's guess for the target made in response to the training set</td></tr><tr><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>C</mi></mrow></math></td><td>Off-training-set loss associated with the target and hypothesis (generalization error)</td></tr></tbody></table>
+<p>The lecture compares expected risk under different conditioning choices:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x1D53C;</mi><mo stretchy="false">&#x00028;</mo><mi>C</mi><mo>&#x02223;</mo><mi>d</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="1em" /><mi>&#x1D53C;</mi><mo stretchy="false">&#x00028;</mo><mi>C</mi><mo>&#x02223;</mo><mi>m</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x1D53C;</mi><mo stretchy="false">&#x00028;</mo><mi>C</mi><mo>&#x02223;</mo><mi>f</mi><mo>&#x0002C;</mo><mi>d</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="1em" /><mi>&#x1D53C;</mi><mo stretchy="false">&#x00028;</mo><mi>C</mi><mo>&#x02223;</mo><mi>f</mi><mo>&#x0002C;</mo><mi>m</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>The lecture says all algorithms are equivalent on average for these listed measures in the stated setup. It then explains that performance depends on how the learner distribution aligns with the target-relation posterior:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>h</mi><mo>&#x02223;</mo><mi>d</mi><mo stretchy="false">&#x00029;</mo><mspace width="1em" /><mtext>and</mtext><mspace width="1em" /><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo>&#x02223;</mo><mi>d</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>The practical conclusion on page 72 is that prior knowledge about data distribution, prior probabilities, problem complexity, or underlying physics can make one learner a better match for a particular problem.</p>
+<p>This does <strong>not</strong> say that training and test data must be independently drawn from the same distribution. That is a separate evaluation assumption. Nor does the result say that model selection is pointless: it says the choice is justified by assumptions, evidence, and the problem class rather than a universal winner. Wolpert's primary 1996 paper describes its result as the absence of a priori distinctions in particular average off-training-set risk senses; this is the scope used here.</p>
+<h2 id="section-7">Dimensionality, sparsity, and projection limits</h2>
+<p>The curse of dimensionality is a data-coverage problem: as the number of feature dimensions grows, the combinations or regions that need examples multiply. With a fixed sample count, examples become sparse across the feature space and predictive power can decline. The slide illustrates one, two, and three dimensions as increasingly subdivided spaces; it gives no sample-count formula or numeric threshold.</p>
+<p>Dimensionality reduction can counter this by preserving useful structure in fewer dimensions, when done properly. But a projection removes or combines information. Page 74 warns that it can distort data misleadingly; pages 75–77 use a three-dimensional world and its two-dimensional view to motivate the warning. The projected picture is not automatically the full structure. Validate that the properties important to the task survive the projection.</p>
+<h2 id="section-8">Rashomon effect and explanation instability</h2>
+<p>The Rashomon effect describes a set of substantially different explanations that fit the evidence similarly. In the lecture's machine-learning example, many classifiers have about the same minimum error rate. For decision trees, a slight perturbation of training data can yield a quite different tree with almost the same test-set error.</p>
+<p>Therefore, a similar score does not imply the same reasoning or explanation. If a model is used to explain decisions, report that multiple near-equivalent explanations may exist and check whether the explanation is stable under small data changes.</p>
+<h2 id="section-9">Common mistakes</h2>
+<ul>
+<li>Swapping the confusion-matrix axes: rows are actual; columns are predicted.</li>
+<li>Using the actual-positive row for precision or the predicted-positive column for recall. Precision conditions on predicted positives; recall conditions on actual positives.</li>
+<li>Calculating a multiclass denominator from the wrong class axis. Convert the selected class to one-vs-rest, then sum its column for precision or row for recall.</li>
+<li>Treating a training score as an estimate of new-case performance without a sampling assumption or held-out evidence.</li>
+<li>Confusing the same-distribution/i.i.d. evaluation assumption with the No Free Lunch result.</li>
+<li>Reading the source's qualitative curves as measured numerical data or treating epochs as model complexity.</li>
+<li>Applying Occam's razor to discard a more complex model that materially predicts better.</li>
+<li>Treating dimensionality reduction as lossless, or treating a similar score as proof of a unique stable explanation.</li>
+</ul>
+<h2 id="section-10">Exam focus</h2>
+<ul>
+<li>Define representation, evaluation, and optimization by their roles.</li>
+<li>Read the binary confusion matrix with actual rows and predicted columns; state which class is positive.</li>
+<li>Precision uses TP over the predicted-positive column total. Recall uses TP over the actual-positive row total.</li>
+<li>In a multiclass matrix, use one-vs-rest for the chosen class.</li>
+<li>Distinguish training error from generalization error; identify A, B, C, D, E and the underfitting/overfitting regions in the qualitative loss-versus-epochs graph.</li>
+<li>Scope Occam's razor to comparably predictive explanations; state the accuracy/interpretability trade-off.</li>
+<li>State No Free Lunch as a properly scoped average result absent assumptions or prior knowledge; keep it separate from i.i.d. sampling.</li>
+<li>Explain why high-dimensional data become sparse with fixed data, how reduction can help, and why projection can distort.</li>
+<li>Define the Rashomon effect and explain why equal performance need not mean equal model structure or explanation.</li>
+</ul>
+<h2 id="section-11">Practice questions</h2>
+<p class="question">3. A screening system should miss as few actual positive cases as possible. Which confusion-matrix metric directly measures this, and which cells form its denominator?</p>
+<details class="worked"><summary>Check your answer</summary><p>Recall measures the fraction of actual positives correctly found. Its denominator is the actual-positive row total, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">N</mi></mrow></mrow></math>. Reducing false negatives tends to increase recall.</p></details>
+<p class="question">4. A learner has a very low training error but a much higher held-out error. What pattern does this suggest, and what does the training result alone establish?</p>
+<details class="worked"><summary>Check your answer</summary><p>It suggests overfitting: training fit is strong while performance away from training is worse. The training result establishes only that the learner fits those training cases; it does not establish generalization.</p></details>
+<p class="question">5. State one key difference between No Free Lunch and the i.i.d. assumption.</p>
+<details class="worked"><summary>Check your answer</summary><p>No Free Lunch concerns average comparisons between learning algorithms across appropriately weighted problems under a stated risk setup. The i.i.d. assumption concerns how training and evaluation examples are sampled from a distribution. They address different questions.</p></details>
+<p class="question">6. Two very different decision trees have almost the same test error; a small training-data change selects the other tree. What effect is illustrated?</p>
+<details class="worked"><summary>Check your answer</summary><p>The Rashomon effect: multiple distinct classifiers can perform similarly, and a small data perturbation can change the selected explanation without much changing test error.</p></details>
+<p class="question">7. Why can a useful dimensionality-reduction projection still be dangerous?</p>
+<details class="worked"><summary>Check your answer</summary><p>It may preserve useful structure in fewer dimensions, but can also remove or distort information in a misleading way. Check that properties relevant to the task remain after projection.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="model-representations.html"><small>Previous</small>Classifier boundaries and decision-tree representations <span aria-hidden="true">↗</span></a><a href="supervised-learning-models.html"><small>Next</small>Supervised Learning: Evaluation, kNN, and Decision Trees <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

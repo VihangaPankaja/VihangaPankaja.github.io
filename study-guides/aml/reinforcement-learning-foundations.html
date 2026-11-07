@@ -1,0 +1,566 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Follow how actions, delayed rewards, values, and exploration fit together in a finite Markov decision process."><title>Reinforcement Learning: MDPs, Values, and Exploration · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html" aria-current="page">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Reinforcement learning <span>/</span> Lecture 11</div><h1>Reinforcement Learning: MDPs, Values, and Exploration</h1><p class="lead">Follow how actions, delayed rewards, values, and exploration fit together in a finite Markov decision process.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">From interaction to a trajectory</a><a href="#section-2">Finite MDP: what the current state must tell us</a><a href="#section-3">Policies, discounted return, and state value</a><a href="#section-4">One-step lookahead when the model is known</a><a href="#section-5">Action values when the model is unknown</a><a href="#section-6">Exploration and exploitation</a><a href="#section-7">Common mistakes</a><a href="#section-8">Exam focus</a><a href="#section-9">Practice questions</a><a href="#section-10">Study route</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Supervised learning uses labeled examples, while unsupervised learning looks for structure in data; reinforcement learning (RL) instead learns what to do by acting and seeing what follows. The agent receives a state and chooses an action; the environment returns an immediate reward and a next state. A move can have no immediate payoff yet still be valuable because it leads toward a later reward. That delay connects interaction, return, value, policy, and exploration.</p>
+<p>The lecture motivates RL with a robot docking at a charger, factory control, games, autonomous driving, and robotic pushing. Its Atari illustration describes DeepMind use of DQN to exceed human-level performance on Atari 2600 games. In tic-tac-toe, two machines without previous knowledge learn while playing 20,000 games. TD-Gammon uses +100 for a win, −100 for a loss, 0 for intermediate states, and self-play over 1.5 million games; the lecture reports performance approximately equal to the best human player. These examples highlight delayed reward and active exploration. The lecture also notes that state may be only partially observable and that multiple tasks may share sensors and effectors.</p>
+<h2 id="section-1">From interaction to a trajectory</h2>
+<p>At discrete time t, the agent acts from its current state. One interaction produces a transition and reward; the sequence of transitions is a trajectory.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>s</mi><mi>t</mi></msub><mo>&#x0002C;</mo><msub><mi>a</mi><mi>t</mi></msub><mo>&#x0002C;</mo><msub><mi>r</mi><mi>t</mi></msub><mo>&#x0002C;</mo><msub><mi>s</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>Here, r_t is the immediate reward associated with taking a_t in s_t. The reward and next state are feedback from the environment, not supplied correct-action labels. The target is a policy π that maps states to actions. Because the best consequence may arrive later, the goal is to maximize expected return from each starting state.</p>
+<details class="worked"><summary>Worked return: an immediate reward versus a delayed one</summary><p><strong>Teaching example.</strong> Compare two choices using <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B3;</mi><mo>&#x0003D;</mo><mn>0.9</mn></mrow></math> and the lecture’s sequence convention <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>r</mi><mi>t</mi></msub><mo>&#x0002B;</mo><mi>&#x003B3;</mi><msub><mi>r</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo>&#x0002B;</mo><msup><mi>&#x003B3;</mi><mn>2</mn></msup><msub><mi>r</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>2</mn></mrow></msub><mo>&#x0002B;</mo><mo>&#x022EF;</mo></mrow></math> .</p>
+<ol><li><strong>Choice A:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>r</mi><mi>t</mi></msub><mo>&#x0003D;</mo><mn>5</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>r</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, then no more reward. Return: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>5</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>5</mn></mrow></math>.</li><li><strong>Choice B:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>r</mi><mi>t</mi></msub><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>r</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo>&#x0003D;</mo><mn>10</mn></mrow></math>, then no more reward. Return: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>9</mn></mrow></math>.</li><li>Since 9&gt;5, B is preferred under this objective, despite paying nothing immediately.</li></ol>
+<p><strong>Check:</strong> the t+1 reward is multiplied by γ once; the time-t reward is not discounted.</p></details>
+<h2 id="section-2">Finite MDP: what the current state must tell us</h2>
+<p>The lecture's Markov decision process has a finite state set S and action set A. At each time, the agent observes s_t∈S, chooses a_t∈A, receives r_t, and moves to s_{t+1}. In the deterministic case, the transition and reward are written:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>s</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo>&#x0003D;</mo><mi>&#x003B4;</mi><mo stretchy="false">&#x00028;</mo><msub><mi>s</mi><mi>t</mi></msub><mo>&#x0002C;</mo><msub><mi>a</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>r</mi><mi>t</mi></msub><mo>&#x0003D;</mo><mi>r</mi><mo stretchy="false">&#x00028;</mo><msub><mi>s</mi><mi>t</mi></msub><mo>&#x0002C;</mo><msub><mi>a</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>The Markov assumption says the next state and immediate reward depend on the current state and action, rather than needing the full earlier history. The transition δ and reward function r need not be known to the agent. In a nondeterministic environment, they describe distributions or outcomes rather than one fixed result, so values are expectations. If relevant information is hidden, the agent's observation may not be a full Markov state; partial observability is a practical complication.</p>
+<details class="worked"><summary>Worked transition: classify each part of one action</summary><p><strong>Teaching example.</strong> A robot is beside a charger, facing it, with a low battery. It chooses “move forward”; the environment returns the charger location and a positive docking reward.</p>
+<ol><li>Current state s_t: beside the charger, facing it, low battery.</li><li>Action a_t: move forward.</li><li>Next state s_{t+1}: at the charger.</li><li>Immediate reward r_t: the docking payoff.</li></ol>
+<p><strong>Check:</strong> “move forward” is the chosen action, the charger location is the next state, and the score is the reward. The state must include enough relevant facts for the Markov assumption to be reasonable.</p></details>
+<h2 id="section-3">Policies, discounted return, and state value</h2>
+<p>A policy π:S→A specifies which action to take in each state. Following it from s_t generates rewards r_t,r_{t+1},…. The lecture discounts later rewards by γ, with <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x02264;</mo><mi>&#x003B3;</mi><mo>&#x0003C;</mo><mn>1</mn></mrow></math>, and seeks a policy that maximizes expected return:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>G</mi><mi>t</mi></msub><mo>&#x0003D;</mo><munderover><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>0</mn></mrow><mrow><mo>&#x0221E;</mo></mrow></munderover><msup><mi>&#x003B3;</mi><mi>i</mi></msup><msub><mi>r</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mi>i</mi></mrow></msub><mo>&#x0003D;</mo><msub><mi>r</mi><mi>t</mi></msub><mo>&#x0002B;</mo><mi>&#x003B3;</mi><msub><mi>r</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo>&#x0002B;</mo><msup><mi>&#x003B3;</mi><mn>2</mn></msup><msub><mi>r</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>2</mn></mrow></msub><mo>&#x0002B;</mo><mo>&#x022EF;</mo></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi>V</mi><mrow><mi>&#x003C0;</mi></mrow></msup><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mi>&#x1D53C;</mi><mrow><mi>&#x003C0;</mi></mrow></msub><mspace width="negativethinmathspace" /><mrow><mo stretchy="true" fence="true" form="prefix">[</mo><msub><mi>G</mi><mi>t</mi></msub><mo>&#x02223;</mo><msub><mi>s</mi><mi>t</mi></msub><mo>&#x0003D;</mo><mi>s</mi><mo stretchy="true" fence="true" form="postfix">]</mo></mrow><mo>&#x0002C;</mo><mspace width="2em" /><msup><mi>V</mi><mo>&#x0002A;</mo></msup><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mo>max</mo><mrow><mi>&#x003C0;</mi></mrow></msub><msup><mi>V</mi><mrow><mi>&#x003C0;</mi></mrow></msup><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>γ controls how strongly future rewards count. A value is an expected discounted return from a state under a policy; it is not the immediate reward attached to one move. The lecture first discusses deterministic worlds, then extends values to expectations when outcomes are nondeterministic. The condition <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B3;</mi><mo>&#x0003C;</mo><mn>1</mn></mrow></math> makes a continuing return bounded when rewards are bounded. A finite episodic task can also have a finite return at γ=1, but that is outside the lecture's stated discounted setup.</p>
+<h3>The source grid: keep rewards, values, policy, and Q separate</h3>
+<p>The lecture's 2×3 grid has orthogonal neighboring moves only. The upper-right cell is goal G. Entering G from the top-middle or bottom-right pays 100; all other shown moves pay 0. G has a self-loop with reward 0. The following reward table records the outgoing transitions shown in the source; boundary moves that are not drawn are unavailable.</p>
+<figure class="rl-figure"><div class="diagram-frame" style="max-width:100%;overflow:auto;border:1px solid var(--diagram-border);border-radius:8px;max-height:560px"><svg style="width:720px;max-width:none;max-height:560px;display:block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 390" role="img" aria-labelledby="reinforcement-learning-foundations-figure-1-rewards-title reinforcement-learning-foundations-figure-1-rewards-desc" class="rl-grid-svg">
+<title id="reinforcement-learning-foundations-figure-1-rewards-title">Grid: immediate transition rewards</title><desc id="reinforcement-learning-foundations-figure-1-rewards-desc">Only source-shown orthogonal actions are shown; goal-entry arrows pay 100, the goal loop pays zero, and other shown moves pay zero.</desc>
+<defs><marker id="reinforcement-learning-foundations-figure-1-rewards-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--primary,#315e6a)"/></marker></defs>
+<style>.cell{fill:var(--card,#fff);stroke:var(--foreground,#26363a);stroke-width:3}.txt{font:700 22px Arial,sans-serif;fill:var(--foreground,#26363a)}.small{font:17px Arial,sans-serif;fill:var(--foreground,#26363a)}.arrow{stroke:var(--primary,#315e6a);stroke-width:3;fill:none;marker-end:url(#reinforcement-learning-foundations-figure-1-rewards-arrow)}.caption{font:16px Arial,sans-serif;fill:var(--muted,#617176)}</style>
+<rect x="30" y="30" width="660" height="300" fill="none" stroke="var(--foreground,#26363a)" stroke-width="3"/><path d="M250 30V330M470 30V330M30 180H690" stroke="var(--foreground,#26363a)" stroke-width="3"/>
+
+<g class="small"><path class="arrow" d="M95 90H205"/><text x="130" y="75">0</text><path class="arrow" d="M140 115V150"/><text x="150" y="142">0</text>
+<path class="arrow" d="M315 90H425"/><text x="345" y="75">100</text><path class="arrow" d="M385 115V150"/><text x="395" y="142">0</text><path class="arrow" d="M300 145H190"/><text x="235" y="135">0</text>
+<path class="arrow" d="M585 225V145"/><text x="600" y="200">100</text><path class="arrow" d="M620 75c45 -65 45 70 4 70"/><text x="635" y="50">0</text>
+<path class="arrow" d="M80 225V145"/><text x="55" y="200">0</text><path class="arrow" d="M90 240H200"/><text x="125" y="230">0</text>
+<path class="arrow" d="M300 225H410"/><text x="335" y="215">0</text><path class="arrow" d="M300 275H190"/><text x="235" y="265">0</text><path class="arrow" d="M335 220V145"/><text x="345" y="205">0</text>
+<path class="arrow" d="M540 240H490"/><text x="505" y="230">0</text></g><text x="580" y="105" class="txt">G</text><text x="30" y="365" class="caption">Reward labels belong to arrows (transitions), not cells.</text></svg></div><figcaption>Immediate rewards are attached to the shown transitions.</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>Source cell</th>
+<th>Available move</th>
+<th style="text-align: right;">Immediate reward</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Top-left</td>
+<td>right → top-middle</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>Top-left</td>
+<td>down → bottom-left</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>Top-middle</td>
+<td>left → top-left</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>Top-middle</td>
+<td>right → G</td>
+<td style="text-align: right;">100</td>
+</tr>
+<tr>
+<td>Top-middle</td>
+<td>down → bottom-middle</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>G</td>
+<td>stay → G</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>Bottom-left</td>
+<td>up → top-left</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>Bottom-left</td>
+<td>right → bottom-middle</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>Bottom-middle</td>
+<td>up → top-middle</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>Bottom-middle</td>
+<td>left → bottom-left</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>Bottom-middle</td>
+<td>right → bottom-right</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>Bottom-right</td>
+<td>up → G</td>
+<td style="text-align: right;">100</td>
+</tr>
+<tr>
+<td>Bottom-right</td>
+<td>left → bottom-middle</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p>The source's value view assigns values to cells, while the reward view assigns values to transitions. With <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B3;</mi><mo>&#x0003D;</mo><mn>0.9</mn></mrow></math>, the cell values are:</p>
+<figure class="rl-figure"><div class="diagram-frame" style="max-width:100%;overflow:auto;border:1px solid var(--diagram-border);border-radius:8px;max-height:560px"><svg style="width:720px;max-width:none;max-height:560px;display:block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 390" role="img" aria-labelledby="reinforcement-learning-foundations-figure-2-values-title reinforcement-learning-foundations-figure-2-values-desc" class="rl-grid-svg">
+<title id="reinforcement-learning-foundations-figure-2-values-title">Optimal state values V star</title><desc id="reinforcement-learning-foundations-figure-2-values-desc">The 2 by 3 grid values are top row 90, 100, goal zero; bottom row 81, 90, 100.</desc>
+<defs><marker id="reinforcement-learning-foundations-figure-2-values-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--primary,#315e6a)"/></marker></defs>
+<style>.cell{fill:var(--card,#fff);stroke:var(--foreground,#26363a);stroke-width:3}.txt{font:700 22px Arial,sans-serif;fill:var(--foreground,#26363a)}.small{font:17px Arial,sans-serif;fill:var(--foreground,#26363a)}.arrow{stroke:var(--primary,#315e6a);stroke-width:3;fill:none;marker-end:url(#reinforcement-learning-foundations-figure-2-values-arrow)}.caption{font:16px Arial,sans-serif;fill:var(--muted,#617176)}</style>
+<rect x="30" y="30" width="660" height="300" fill="none" stroke="var(--foreground,#26363a)" stroke-width="3"/><path d="M250 30V330M470 30V330M30 180H690" stroke="var(--foreground,#26363a)" stroke-width="3"/>
+<g class="txt"><text x="115" y="115">90</text><text x="335" y="115">100</text><text x="580" y="115">G: 0</text><text x="115" y="265">81</text><text x="335" y="265">90</text><text x="555" y="265">100</text></g><text x="30" y="365" class="caption">Values belong to cells; the goal value is zero after entry reward collection.</text></svg></div><figcaption>Optimal values by cell; the goal value is zero after entry reward collection.</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>V* by grid cell</th>
+<th style="text-align: right;">Left</th>
+<th style="text-align: right;">Middle</th>
+<th style="text-align: right;">Right</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Top row</td>
+<td style="text-align: right;">90</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">G: 0</td>
+</tr>
+<tr>
+<td>Bottom row</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">90</td>
+<td style="text-align: right;">100</td>
+</tr>
+</tbody>
+</table>
+<details class="worked"><summary>Worked grid values: calculate backward from the goal</summary><p><strong>Givens.</strong> Use <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B3;</mi><mo>&#x0003D;</mo><mn>0.9</mn></mrow></math>, entry reward 100 on top-middle → G and bottom-right → G, and 0 on all other shown moves. The goal self-loop also pays 0. The value at G after entry is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>V</mi><mo>&#x0002A;</mo></msup><mo stretchy="false">&#x00028;</mo><mi>G</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math> because the entry reward has already been collected.</p>
+<section class="walk" tabindex="0" aria-label="Derive the six-cell values in dependency order"><h3>Derive the six-cell values in dependency order</h3><div class="example-input"><strong>Givens:</strong> 2×3 grid; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B3;</mi><mo>&#x0003D;</mo><mn>0.9</mn></mrow></math>; entry reward 100 only on top-middle → G and bottom-right → G; other shown moves and G self-loop reward 0; orthogonal shown neighbors only.</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Set the goal continuation value</h4><p>The payoff is collected on entry. At G itself the only shown action is the zero-reward self-loop, so set <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>V</mi><mo>&#x0002A;</mo></msup><mo stretchy="false">&#x00028;</mo><mi>G</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math>. Do not add 100 again.</p></section><section class="step"><h4>2. Value the two entry states</h4><p>Top-middle → G and bottom-right → G each pay 100 immediately. For each, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>100</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></math>=100. These values become dependencies for neighboring cells.</p></section><section class="step"><h4>3. Compare top-left actions</h4><p>Right: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>100</mn><mo stretchy="false">&#x00029;</mo></mrow></math>=90. Down: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>81</mn><mo stretchy="false">&#x00029;</mo></mrow></math>=72.9. Therefore <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>V</mi><mo>&#x0002A;</mo></msup><mo stretchy="false">&#x00028;</mo><mtext>top-left</mtext><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>90</mn></mrow></math> and right is the shown greedy move.</p></section><section class="step"><h4>4. Compare bottom-middle actions</h4><p>Up: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>100</mn><mo stretchy="false">&#x00029;</mo></mrow></math>=90. Right: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>100</mn><mo stretchy="false">&#x00029;</mo></mrow></math>=90. Left: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>81</mn><mo stretchy="false">&#x00029;</mo></mrow></math>=72.9. Therefore <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>V</mi><mo>&#x0002A;</mo></msup><mo>&#x0003D;</mo><mn>90</mn></mrow></math> and up/right tie; the source policy chooses right.</p></section><section class="step"><h4>5. Compare bottom-left actions and check</h4><p>Up: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>90</mn><mo stretchy="false">&#x00029;</mo></mrow></math>=81. Right: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>90</mn><mo stretchy="false">&#x00029;</mo></mrow></math>=81. Therefore <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>V</mi><mo>&#x0002A;</mo></msup><mo>&#x0003D;</mo><mn>81</mn></mrow></math> and up/right tie; the source policy chooses right. Final rows are (90,100,0) and (81,90,100). Entry reward is counted exactly once.</p></section></section></details>
+<figure class="rl-figure"><div class="diagram-frame" style="max-width:100%;overflow:auto;border:1px solid var(--diagram-border);border-radius:8px;max-height:560px"><svg style="width:720px;max-width:none;max-height:560px;display:block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 390" role="img" aria-labelledby="reinforcement-learning-foundations-figure-3-policy-title reinforcement-learning-foundations-figure-3-policy-desc" class="rl-grid-svg">
+<title id="reinforcement-learning-foundations-figure-3-policy-title">One optimal policy shown by the lecture</title><desc id="reinforcement-learning-foundations-figure-3-policy-desc">One source policy on the 2 by 3 grid, with the goal at the top right.</desc>
+<defs><marker id="reinforcement-learning-foundations-figure-3-policy-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--primary,#315e6a)"/></marker></defs>
+<style>.cell{fill:var(--card,#fff);stroke:var(--foreground,#26363a);stroke-width:3}.txt{font:700 22px Arial,sans-serif;fill:var(--foreground,#26363a)}.small{font:17px Arial,sans-serif;fill:var(--foreground,#26363a)}.arrow{stroke:var(--primary,#315e6a);stroke-width:3;fill:none;marker-end:url(#reinforcement-learning-foundations-figure-3-policy-arrow)}.caption{font:16px Arial,sans-serif;fill:var(--muted,#617176)}</style>
+<rect x="30" y="30" width="660" height="300" fill="none" stroke="var(--foreground,#26363a)" stroke-width="3"/><path d="M250 30V330M470 30V330M30 180H690" stroke="var(--foreground,#26363a)" stroke-width="3"/>
+
+<g class="txt"><text x="125" y="115">→</text><text x="345" y="115">→</text><text x="580" y="115">G</text><text x="125" y="265">→</text><text x="345" y="265">→</text></g><path class="arrow" d="M580 225V145"/><text x="30" y="365" class="caption">This is one optimal policy; bottom-left and bottom-middle each have a second tied action.</text></svg>
+</div><figcaption>One optimal policy from the lecture; tied alternatives are stated in the nearby text.</figcaption></figure>
+<p>The source shows one optimal policy: top-left → right; top-middle → right; bottom-left → right; bottom-middle → right; bottom-right → up. The policy figure leaves G without an action arrow. The separate transition, value, and action-value views show its zero-reward self-loop; that transition is not drawn as a policy choice here. This policy is not unique: the verified value table also makes bottom-left up/right tie and bottom-middle up/right tie. The source's policy arrow at bottom-left points right, and at bottom-middle points right.</p>
+<h2 id="section-4">One-step lookahead when the model is known</h2>
+<p>If the agent knows the deterministic transition δ and reward r, it can evaluate each available action by adding its immediate reward to the discounted value of the resulting state:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi>&#x003C0;</mi><mo>&#x0002A;</mo></msup><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mo>argmax</mo><mrow><mi>a</mi><mo>&#x02208;</mo><mi>A</mi></mrow></msub><mrow><mo stretchy="true" fence="true" form="prefix">[</mo><mi>r</mi><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mi>&#x003B3;</mi><msup><mi>V</mi><mo>&#x0002A;</mo></msup><mo stretchy="false">&#x00028;</mo><mi>&#x003B4;</mi><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo stretchy="true" fence="true" form="postfix">]</mo></mrow></mrow></math></div>
+<p>This is one-step lookahead. It distinguishes the action now from the state value after that action. When δ or r is unknown, a value V alone does not reveal which next state or reward each action produces; the lecture therefore introduces Q(s,a), an action value.</p>
+<figure class="rl-figure"><div class="diagram-frame" style="max-width:100%;overflow:auto;border:1px solid var(--diagram-border);border-radius:8px;max-height:560px"><svg style="width:720px;max-width:none;max-height:560px;display:block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 390" role="img" aria-labelledby="reinforcement-learning-foundations-figure-4-action-values-title reinforcement-learning-foundations-figure-4-action-values-desc" class="rl-grid-svg">
+<title id="reinforcement-learning-foundations-figure-4-action-values-title">Action values on the source grid</title><desc id="reinforcement-learning-foundations-figure-4-action-values-desc">Every source-shown state-action value in a 2 by 3 grid. The source prints 72 for two labels; exact arithmetic gives 72.9.</desc>
+<defs><marker id="reinforcement-learning-foundations-figure-4-action-values-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="var(--primary,#315e6a)"/></marker></defs>
+<style>.cell{fill:var(--card,#fff);stroke:var(--foreground,#26363a);stroke-width:3}.txt{font:700 22px Arial,sans-serif;fill:var(--foreground,#26363a)}.small{font:17px Arial,sans-serif;fill:var(--foreground,#26363a)}.arrow{stroke:var(--primary,#315e6a);stroke-width:3;fill:none;marker-end:url(#reinforcement-learning-foundations-figure-4-action-values-arrow)}.caption{font:16px Arial,sans-serif;fill:var(--muted,#617176)}</style>
+<rect x="30" y="30" width="660" height="300" fill="none" stroke="var(--foreground,#26363a)" stroke-width="3"/><path d="M250 30V330M470 30V330M30 180H690" stroke="var(--foreground,#26363a)" stroke-width="3"/>
+
+<g class="small"><text x="68" y="76">→ 90</text><text x="175" y="145">↓ 72†</text><text x="235" y="76">← 81</text><text x="348" y="76">→ 100</text><text x="410" y="145">↓ 81</text><text x="525" y="145">↓ 100</text><text x="610" y="75">stay 0</text>
+<text x="40" y="218">↑ 81</text><text x="125" y="300">→ 81</text><text x="245" y="218">↑ 90</text><text x="260" y="300">← 72†</text><text x="350" y="218">↑ 90</text><text x="390" y="300">→ 90</text><text x="490" y="300">← 81</text><text x="545" y="218">↑ 100</text></g><text x="30" y="365" class="caption">†Printed 72; exact value is 72.9.</text></svg></div><figcaption>Q values on the available actions; the printed 72 discrepancy is explained in the worked comparison.</figcaption></figure>
+<details class="worked"><summary>Worked lookahead: compare every available action in the grid</summary><p><strong>Givens.</strong> Use <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B3;</mi><mo>&#x0003D;</mo><mn>0.9</mn></mrow></math>, the reward list above, and the completed V* table. For every arrow, compute <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>r</mi><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mn>0.9</mn><msup><mi>V</mi><mo>&#x0002A;</mo></msup><mo stretchy="false">&#x00028;</mo><mi>s</mi><mi>&#x02032;</mi><mo stretchy="false">&#x00029;</mo></mrow></math>.</p>
+<table><thead><tr><th>State</th><th>Action and substitution</th><th>Q(s,a)</th></tr></thead><tbody><tr><td>Top-left</td><td>right: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>100</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; down: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>81</mn><mo stretchy="false">&#x00029;</mo></mrow></math></td><td>90; 72.9</td></tr><tr><td>Top-middle</td><td>left: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>90</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; right: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>100</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; down: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>90</mn><mo stretchy="false">&#x00029;</mo></mrow></math></td><td>81; 100; 81</td></tr><tr><td>G</td><td>stay: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></math></td><td>0</td></tr><tr><td>Bottom-left</td><td>up: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>90</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; right: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>90</mn><mo stretchy="false">&#x00029;</mo></mrow></math></td><td>81; 81</td></tr><tr><td>Bottom-middle</td><td>up: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>100</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; left: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>81</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; right: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>100</mn><mo stretchy="false">&#x00029;</mo></mrow></math></td><td>90; 72.9; 90</td></tr><tr><td>Bottom-right</td><td>up: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>100</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; left: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>90</mn><mo stretchy="false">&#x00029;</mo></mrow></math></td><td>100; 81</td></tr></tbody></table>
+<p>The state value is the maximum Q in its row: for example, top-left <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>V</mi><mo>&#x0002A;</mo></msup><mo>&#x0003D;</mo><mo>max</mo><mo stretchy="false">&#x00028;</mo><mn>90</mn><mo>&#x0002C;</mo><mn>72.9</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>90</mn></mrow></math>. The grid slide prints 72 for top-left down and bottom-middle left; the exact calculation is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>81</mn><mo stretchy="false">&#x00029;</mo></mrow></math>=72.9. Keep the printed 72 visible as its printed label and use 72.9 for the arithmetic; the available evidence does not establish why the slide prints 72.</p>
+<p><strong>Check:</strong> top-middle right and bottom-right up include reward 100 exactly once, while staying at G has <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>. The maximizing actions recover the optimal value table and the verified ties above.</p></details>
+<h2 id="section-5">Action values when the model is unknown</h2>
+<p>The source defines the deterministic action value as immediate reward plus discounted optimal value at the resulting state:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>r</mi><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mi>&#x003B3;</mi><msup><mi>V</mi><mo>&#x0002A;</mo></msup><mo stretchy="false">&#x00028;</mo><mi>&#x003B4;</mi><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><msup><mi>V</mi><mo>&#x0002A;</mo></msup><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mo>max</mo><mrow><mi>a</mi><mo>&#x02208;</mo><mi>A</mi></mrow></msub><mi>Q</mi><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>Q scores a state–action pair; V scores a state under its best policy. If the agent learns Q, it can select a greedy action by maximizing Q(s,a) without explicitly knowing δ. The maximization is over actions available in the current state. This page introduces that connection; the sampled Q-learning update and its multi-transition examples belong to the linked Q-learning topic.</p>
+<h2 id="section-6">Exploration and exploitation</h2>
+<p>Exploitation chooses an action that currently has the largest estimated value. Exploration deliberately randomizes to discover whether another action may lead to better outcomes. Always exploiting can preserve a mistaken early estimate; exploring every time can waste known good choices.</p>
+<p>The lecture's ε-greedy rule uses two branches. With probability 1−ε it chooses a greedy action. With probability ε it chooses uniformly from all k available actions, including greedy actions. Thus, for one unique greedy action:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mtext>greedy</mtext><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><mi>&#x003B5;</mi><mo>&#x0002B;</mo><mfrac><mrow><mi>&#x003B5;</mi></mrow><mrow><mi>k</mi></mrow></mfrac><mo>&#x0002C;</mo><mspace width="2em" /><mi>P</mi><mo stretchy="false">&#x00028;</mo><mtext>each&#x000A0;other&#x000A0;action</mtext><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x003B5;</mi></mrow><mrow><mi>k</mi></mrow></mfrac></mrow></math></div>
+<p>For m tied greedy actions, use a uniform tie rule in the greedy branch: each maximizing action has probability (1−ε)/m+ε/k, and each nonmaximizing action has probability ε/k. This is a stated tie convention for the calculation. The ε branch is uniform over every action; it is not restricted to nongreedy moves.</p>
+<details class="worked"><summary>Worked ε-greedy choice: source values and draw convention</summary><p><strong>Source givens.</strong> There are two actions from s₁, leading to s₂ or s₃; V(s₁)=10, V(s₂)=50, V(s₃)=20; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B5;</mi><mo>&#x0003D;</mo><mn>0.2</mn></mrow></math>. Thus s₂ is the unique greedy destination. The random branch draws uniformly from both actions, including the greedy one.</p>
+<ol><li>Exploration branch probability is 0.2; within it, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><msub><mi>s</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mrow></math>, so its contribution is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.2</mn><mo>&#x000D7;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math>.</li><li>Greedy branch probability is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x02212;</mo><mn>0.2</mn><mo>&#x0003D;</mo><mn>0.8</mn></mrow></math>, and it selects s₂.</li><li>Total P(select s₂)=<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.8</mn><mo>&#x0002B;</mo><mn>0.1</mn><mo>&#x0003D;</mo><mn>0.9</mn></mrow></math>. The other action has probability <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.2</mn><mo>&#x000D7;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math>.</li><li>Check the total: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.9</mn><mo>&#x0002B;</mo><mn>0.1</mn><mo>&#x0003D;</mo><mn>1</mn></mrow></math>.</li></ol>
+<p>To illustrate the slide’s random-number implementation, take a teaching draw <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>u</mi><mo>&#x0003D;</mo><mn>0.12</mn></mrow></math>. Since <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>u</mi><mo>&#x02208;</mo><mo stretchy="false">[</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0.2</mn><mo stretchy="false">]</mo></mrow></math>, use the random branch, then draw uniformly between the two actions; either may result. For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>u</mi><mo>&#x0003D;</mo><mn>0.65</mn></mrow></math>, use the greedy branch and choose s₂. The slide includes both interval endpoints; a continuous draw has probability zero of landing exactly on a boundary, so the endpoint convention does not change these probabilities.</p></details>
+
+<details class="worked"><summary>Tied greedy actions: calculate the action probabilities</summary><p><strong>Teaching example.</strong> Let <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi><mo>&#x0003D;</mo><mn>4</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mi>m</mi><mo>&#x0003D;</mo><mn>2</mn></mrow></math> actions tie for the maximum, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B5;</mi><mo>&#x0003D;</mo><mn>0.2</mn></mrow></math>. In the greedy branch, split 0.8 evenly across the two tied actions; in exploration, split 0.2 evenly across all four.</p>
+<ol><li>Each maximizing action: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>0.8</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0002B;</mo><mfrac><mrow><mn>0.2</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.4</mn><mo>&#x0002B;</mo><mn>0.05</mn><mo>&#x0003D;</mo><mn>0.45</mn></mrow></math>.</li><li>Each other action: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>0.2</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.05</mn></mrow></math>.</li><li>Total: 2(0.45)+2(0.05)=<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.9</mn><mo>&#x0002B;</mo><mn>0.1</mn><mo>&#x0003D;</mo><mn>1</mn></mrow></math>.</li></ol>
+<p>This tie split is an explicit uniform greedy tie convention. A policy probability describes selection; it is not a state value or a Q value.</p></details>
+<h3>The lecture's simplified value update</h3>
+<p>For selected greedy moves, the lecture displays this illustrative rule:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>V</mi><mo stretchy="false">&#x00028;</mo><msub><mi>s</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x02190;</mo><mi>V</mi><mo stretchy="false">&#x00028;</mo><msub><mi>s</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mi>&#x003B1;</mi><mrow><mo stretchy="true" fence="true" form="prefix">[</mo><mi>V</mi><mo stretchy="false">&#x00028;</mo><msub><mi>s</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mi>V</mi><mo stretchy="false">&#x00028;</mo><msub><mi>s</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo><mo stretchy="true" fence="true" form="postfix">]</mo></mrow><mo>&#x0002C;</mo><mspace width="2em" /><mn>0</mn><mo>&#x0003C;</mo><mi>&#x003B1;</mi><mo>&#x0003C;</mo><mn>1</mn></mrow></math></div>
+<p>α is a learning rate: it sets how far the current estimate moves toward the next state's estimate. This displayed formula contains neither an explicit immediate reward nor a discount factor, so it is not the general reward-and-discount temporal-difference update. Do not silently substitute it for that broader rule.</p>
+<details class="worked"><summary>Worked value update: apply exactly the displayed rule</summary><p><strong>Supplemental calculation.</strong> Given <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>V</mi><mo stretchy="false">&#x00028;</mo><msub><mi>s</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>10</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>V</mi><mo stretchy="false">&#x00028;</mo><msub><mi>s</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>50</mn></mrow></math>, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math>:</p>
+<ol><li>Difference: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>50</mn><mo>&#x02212;</mo><mn>10</mn><mo>&#x0003D;</mo><mn>40</mn></mrow></math>.</li><li>Scaled correction: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.1</mn><mo>&#x000D7;</mo><mn>40</mn><mo>&#x0003D;</mo><mn>4</mn></mrow></math>.</li><li>New estimate: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>10</mn><mo>&#x0002B;</mo><mn>4</mn><mo>&#x0003D;</mo><mn>14</mn></mrow></math>.</li></ol>
+<p><strong>Check:</strong> the change is α times the difference, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>14</mn><mo>&#x02212;</mo><mn>10</mn><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>50</mn><mo>&#x02212;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>4</mn></mrow></math>, and the estimate remains between 10 and 50.</p></details>
+<h2 id="section-7">Common mistakes</h2>
+<ul>
+<li>Treating immediate reward r_t as the whole return. Future rewards enter with successive powers of γ.</li>
+<li>Treating V(s) as an immediate reward or as a state–action score. V evaluates a state under a policy; Q evaluates a particular action from a state.</li>
+<li>Requiring the whole history in a fully observed MDP. The Markov assumption uses the current state and action; a partial observation may fail to encode enough state.</li>
+<li>Counting the goal-entry reward again at G. The payoff is on a transition into G; the goal self-loop pays 0.</li>
+<li>Reading a single optimal policy as the only one. The grid has verified ties at bottom-left and bottom-middle.</li>
+<li>Repeating the printed 72 as exact arithmetic. With <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B3;</mi><mo>&#x0003D;</mo><mn>0.9</mn></mrow></math> and next value 81, the calculation is 72.9; the slide's reason for printing 72 is not specified.</li>
+<li>Assuming the ε branch means “choose nongreedy.” The source samples from all actions, including the greedy one.</li>
+<li>Confusing ε action selection with learning target construction. ε controls behavior probabilities; max Q in a later Q-learning target serves a different role.</li>
+</ul>
+<h2 id="section-8">Exam focus</h2>
+<ul>
+<li>Name each part of a transition: current state, chosen action, immediate reward, and next state.</li>
+<li>State the finite MDP and Markov assumptions; explain the partial-observation caveat.</li>
+<li>Write the source-indexed return beginning r_t+γr_{t+1}+γ²r_{t+2}, and distinguish it from the immediate reward.</li>
+<li>Define V^π(s) as expected return starting at s and following π; V* is the best policy value.</li>
+<li>With a known model, compare r(s,a)+γV*(δ(s,a)); with learned Q, choose an action maximizing Q(s,a).</li>
+<li>For the grid, keep reward-on-transition, value-on-cell, policy arrows, and Q-on-action separate. Use <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>V</mi><mo>&#x0002A;</mo></msup><mo stretchy="false">&#x00028;</mo><mi>G</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math> after entry reward collection.</li>
+<li>For ε-greedy, state the uniform random branch includes greedy actions and check the total probability sums to one.</li>
+<li>Describe the V update as the lecture's simplified displayed rule, not a general reward/discount update.</li>
+</ul>
+<h2 id="section-9">Practice questions</h2>
+<p class="question">1. A transition has <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>r</mi><mi>t</mi></msub><mo>&#x0003D;</mo><mn>2</mn></mrow></math> and the next reward is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>r</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo>&#x0003D;</mo><mn>10</mn></mrow></math>. With <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B3;</mi><mo>&#x0003D;</mo><mn>0.5</mn></mrow></math> and no later reward, what is G_t?</p>
+<details class="worked"><summary>Check your answer</summary><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>G</mi><mi>t</mi></msub><mo>&#x0003D;</mo><mn>2</mn><mo>&#x0002B;</mo><mn>0.5</mn><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>7</mn></mrow></math>. The time-t reward is undiscounted; the next reward is discounted once.</p></details>
+<p class="question">2. In a deterministic MDP, what information does the Markov assumption say is enough to determine the next-state and reward outcome?</p>
+<details class="worked"><summary>Check your answer</summary><p>The current state s_t and chosen action a_t. The full preceding history is unnecessary if the state captures all relevant information.</p></details>
+<p class="question">3. Why is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>V</mi><mo>&#x0002A;</mo></msup><mo stretchy="false">&#x00028;</mo><mi>G</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math> in the source grid even though entering G pays 100?</p>
+<details class="worked"><summary>Check your answer</summary><p>The 100 is the immediate reward on the transition into G. Once at G, the source’s self-loop reward is 0, so the entry payoff is not counted a second time.</p></details>
+<p class="question">4. From the top-left grid cell, compare right and down when <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B3;</mi><mo>&#x0003D;</mo><mn>0.9</mn></mrow></math>.</p>
+<details class="worked"><summary>Check your answer</summary><p>Right: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>100</mn><mo stretchy="false">&#x00029;</mo></mrow></math>=90. Down: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>81</mn><mo stretchy="false">&#x00029;</mo></mrow></math>=72.9. Right is greedy by value.</p></details>
+<p class="question">5. With <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B5;</mi><mo>&#x0003D;</mo><mn>0.2</mn></mrow></math> and four actions, one unique greedy action, what is its total probability under the source rule?</p>
+<details class="worked"><summary>Check your answer</summary><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x02212;</mo><mn>0.2</mn><mo>&#x0002B;</mo><mfrac><mrow><mn>0.2</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.85</mn></mrow></math>. Each other action has probability <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>0.2</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.05</mn></mrow></math>; total <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.85</mn><mo>&#x0002B;</mo><mn>3</mn><mo stretchy="false">&#x00028;</mo><mn>0.05</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn></mrow></math>.</p></details>
+<p class="question">6. With <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B5;</mi><mo>&#x0003D;</mo><mn>0.2</mn></mrow></math>, four actions, and two tied maxima under uniform tie-breaking, what is each maximizing action’s probability?</p>
+<details class="worked"><summary>Check your answer</summary><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>1</mn><mo>&#x02212;</mo><mn>0.2</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0002B;</mo><mfrac><mrow><mn>0.2</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.45</mn></mrow></math> each. The two other actions each get 0.05, and the total is 1.</p></details>
+<p class="question">7. In the lecture’s simplified V update, let V(s_t)=8, V(s_{t+1})=20, and α=0.25. What is the update?</p>
+<details class="worked"><summary>Check your answer</summary><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>8</mn><mo>&#x0002B;</mo><mn>0.25</mn><mo stretchy="false">&#x00028;</mo><mn>20</mn><mo>&#x02212;</mo><mn>8</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>8</mn><mo>&#x0002B;</mo><mn>3</mn><mo>&#x0003D;</mo><mn>11</mn></mrow></math>. This applies the displayed simplified rule only; no reward or γ term is added.</p></details>
+<h2 id="section-10">Study route</h2>
+<p>Review <a href="ml-foundations.html">Machine Learning Foundations</a> first for the learning problem and model vocabulary. Continue to <a href="q-learning.html">Q-Learning and Temporal-Difference Updates</a> for the sampled target, deterministic replacement, nondeterministic blend, and multi-transition learning traces introduced by the next lecture section.</p></article><nav class="pager" aria-label="Study sequence"><a href="self-supervised-text.html"><small>Previous</small>Self-Supervised Learning for Text <span aria-hidden="true">↗</span></a><a href="q-learning.html"><small>Next</small>Q-Learning and Temporal-Difference Updates <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

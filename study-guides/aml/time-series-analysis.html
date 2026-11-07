@@ -1,0 +1,680 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="A forecast is only as trustworthy as its time ordering, information boundary, and error measure. This guide moves from recognizing temporal structure to building and evaluating leakage-safe forecasts."><title>Time Series Analysis and Forecasting · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html" aria-current="page">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Sequences and forecasting <span>/</span> Lecture 6</div><h1>Time Series Analysis and Forecasting</h1><p class="lead">A forecast is only as trustworthy as its time ordering, information boundary, and error measure. This guide moves from recognizing temporal structure to building and evaluating leakage-safe forecasts.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Recognize the data before modeling</a><a href="#section-2">Read the four component lenses</a><a href="#section-3">Stationarity and transformations</a><a href="#section-4">Lag, autocorrelation, ACF, and PACF</a><a href="#section-5">Define the forecast and its horizon</a><a href="#section-6">Split chronologically and prevent leakage</a><a href="#section-7">Preprocess with the forecast origin in mind</a><a href="#section-8">Model families evolved; chronology is not a leaderboard</a><a href="#section-9">Evaluate forecasts with the right error lens</a><a href="#section-10">Probabilistic forecasts describe uncertainty</a><a href="#section-11">Multivariate and panel forecasting</a><a href="#section-12">Common mistakes</a><a href="#section-13">Exam focus</a><a href="#section-14">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Tomorrow’s electricity demand, exchange rate, or temperature cannot be forecast by treating observations as an unordered pile. A time series is an ordered record; past values and other information available at a forecast origin provide context for future values. The useful questions are: what pattern repeats or changes, what information was available at the time of prediction, how far ahead is the forecast, and how should uncertainty and error be described?</p>
+<p>The lecture’s motivating questions are prompts, not forecasts. A reliable workflow first identifies the kind of series, studies its components and dependence, makes preprocessing and splits respect time, forms input windows, and evaluates the resulting forecasts at the intended horizons.</p>
+<h2 id="section-1">Recognize the data before modeling</h2>
+<p>A time series is a sequence measured at successive, evenly spaced time intervals, such as hourly, daily, weekly, monthly, or yearly. Write the ordered observations as</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>Y</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><msub><mi>y</mi><mn>1</mn></msub><mo>&#x0002C;</mo><msub><mi>y</mi><mn>2</mn></msub><mo>&#x0002C;</mo><mi>&#x02026;</mi><mo>&#x0002C;</mo><msub><mi>y</mi><mi>T</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>y</mi><mi>t</mi></msub><mo>&#x0003D;</mo><mtext>the&#x000A0;value&#x000A0;observed&#x000A0;at&#x000A0;time&#x000A0;</mtext><mi>t</mi><mo>&#x0002E;</mo></mrow></math></div>
+<p>Time order matters because nearby observations may depend on one another, and the process may change through distribution shifts, concept drift, or structural breaks. The lecture’s examples span finance (prices, exchange and interest rates), meteorology (temperature, rainfall, air pressure), retail demand, economic measures, IoT sensors and electricity, traffic, and healthcare counts or measurements. Its illustrated real-world examples are an LKR/USD movement over six months (Central Bank of Sri Lanka), Sri Lankan annual inflation from 1960–2024 (World Bank), daily Sri Lankan electricity generation by source over 30 days (Ceylon Electricity Board), and monthly Sri Lankan tourism revenue over a year (Trading Economics).</p>
+<p>One variable recorded over time is <strong>univariate</strong> (for example, a stock’s daily closing price). Two or more variables recorded together are <strong>multivariate</strong> (the slide’s example is rainfall, surface temperature, and precipitation for a location). A <strong>panel time series</strong> records one or more variables for multiple entities over time, such as monthly sales for several stores. In a panel, observations have both a time index and an entity identity.</p>
+<p>The lecture also gives this eight-day electricity-consumption sample:</p>
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th style="text-align: right;">Daily energy consumption (kWh)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2024-01-01</td>
+<td style="text-align: right;">13.49</td>
+</tr>
+<tr>
+<td>2024-01-02</td>
+<td style="text-align: right;">11.59</td>
+</tr>
+<tr>
+<td>2024-01-03</td>
+<td style="text-align: right;">13.94</td>
+</tr>
+<tr>
+<td>2024-01-04</td>
+<td style="text-align: right;">16.57</td>
+</tr>
+<tr>
+<td>2024-01-05</td>
+<td style="text-align: right;">11.30</td>
+</tr>
+<tr>
+<td>2024-01-06</td>
+<td style="text-align: right;">11.30</td>
+</tr>
+<tr>
+<td>2024-01-07</td>
+<td style="text-align: right;">16.74</td>
+</tr>
+<tr>
+<td>2024-01-08</td>
+<td style="text-align: right;">14.30</td>
+</tr>
+</tbody>
+</table>
+<h3>Source exercise: identify a time series</h3>
+<p>Use the time-order and sampling-process clue: a timestamp alone does not make an otherwise unordered collection a time series.</p>
+<p class="question">1. Daily air-quality readings in Colombo for the past year: time series or not?</p>
+<details class="worked"><summary>Check your answer</summary><p>Yes. They are sequential daily readings, so temporal order can matter.</p></details>
+
+<p class="question">2. Students’ marks in one exam for a semester: time series or not?</p>
+<details class="worked"><summary>Check your answer</summary><p>No in this exercise. These are separate students’ exam results, not successive observations of one process through time.</p></details>
+
+<p class="question">3. Monthly household internet use over three years: time series or not?</p>
+<details class="worked"><summary>Check your answer</summary><p>Yes. Monthly usage is ordered through time.</p></details>
+
+<p class="question">4. Weekly hospital visits in a city over two years: time series or not?</p>
+<details class="worked"><summary>Check your answer</summary><p>Yes. The weekly counts form an ordered series.</p></details>
+
+<p class="question">5. Annual rainfall in Kandy from 2000 to 2024: time series or not?</p>
+<details class="worked"><summary>Check your answer</summary><p>Yes. The annual measurements are ordered observations.</p></details>
+
+<p class="question">6. Employee names and departments: time series or not?</p>
+<details class="worked"><summary>Check your answer</summary><p>No. This is a directory without a temporal sequence.</p></details>
+
+<p class="question">7. Hourly bus occupancy on one route over a week: time series or not?</p>
+<details class="worked"><summary>Check your answer</summary><p>Yes. Occupancy is measured at successive hourly points.</p></details>
+
+<p class="question">8. Random smartphone-use survey responses collected at different times in 2024: time series or not?</p>
+<details class="worked"><summary>Check your answer</summary><p>No in this exercise. Collection timestamps do not create a regularly sampled temporal process when the respondents are sampled independently at random.</p></details>
+
+<h2 id="section-2">Read the four component lenses</h2>
+<p>The four components describe different aspects of a temporal record. They help distinguish long-run direction, regular repetition, longer variable oscillations, and short unpredictable deviations. Use these lenses to interpret a plot before choosing a decomposition model.</p>
+<figure><div class="diagram-frame" style="--diagram-width:920px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 440" role="img" aria-labelledby="time-series-analysis-figure-1-tsa-components-title time-series-analysis-figure-1-tsa-components-desc">
+  <title id="time-series-analysis-figure-1-tsa-components-title">Schematic shapes of four time-series components</title>
+  <desc id="time-series-analysis-figure-1-tsa-components-desc">Four aligned qualitative traces show trend, fixed-period seasonality, a longer non-fixed cycle, and irregular short-term deviations. They are interpretive lenses rather than a fitted decomposition.</desc>
+  <style>
+    text{font:16px 'Segoe UI',sans-serif;fill:var(--foreground,#26363a)}
+    .muted{fill:var(--muted,#617176);font-size:13px}.axis{stroke:var(--diagram-border,#7f9da5);stroke-width:1.5}
+    .trend{stroke:var(--primary,#315e6a)}.season{stroke:#bd8b18}.cycle{stroke:#4b8c6a}.noise{stroke:#8d68a8}
+    .trace{fill:none;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.panel{fill:var(--card,#fff);stroke:var(--border,#dce5e6);stroke-width:1.5}
+  </style>
+  <rect x="1" y="1" width="918" height="438" rx="14" fill="var(--background,#f6f8f8)" stroke="var(--border,#dce5e6)"/>
+  <g transform="translate(20 24)">
+    <rect class="panel" x="0" y="0" width="880" height="84" rx="10"/><text x="18" y="30" font-weight="700">Trend</text><text class="muted" x="18" y="55">long-run direction</text>
+    <path class="axis" d="M210 67H850"/><path class="trace trend" d="M220 67 C340 61 390 54 480 49 S650 34 840 20"/>
+  </g>
+  <g transform="translate(20 125)">
+    <rect class="panel" x="0" y="0" width="880" height="84" rx="10"/><text x="18" y="30" font-weight="700">Seasonality</text><text class="muted" x="18" y="55">fixed repeat period</text>
+    <path class="axis" d="M210 44H850"/><path class="trace season" d="M220 44 C240 8 260 8 280 44 S320 80 340 44 S380 8 400 44 S440 80 460 44 S500 8 520 44 S560 80 580 44 S620 8 640 44 S680 80 700 44 S740 8 760 44 S800 80 820 44 S840 22 850 31"/>
+  </g>
+  <g transform="translate(20 226)">
+    <rect class="panel" x="0" y="0" width="880" height="84" rx="10"/><text x="18" y="30" font-weight="700">Cycle</text><text class="muted" x="18" y="55">longer, non-fixed timing</text>
+    <path class="axis" d="M210 44H850"/><path class="trace cycle" d="M220 50 C280 8 340 8 400 43 S500 82 560 46 S675 12 735 45 S820 79 850 40"/>
+  </g>
+  <g transform="translate(20 327)">
+    <rect class="panel" x="0" y="0" width="880" height="84" rx="10"/><text x="18" y="30" font-weight="700">Irregular</text><text class="muted" x="18" y="55">short, unpredictable deviations</text>
+    <path class="axis" d="M210 44H850"/><path class="trace noise" d="M220 48 L255 32 L285 54 L325 39 L360 59 L395 30 L430 50 L465 36 L500 58 L535 26 L570 48 L605 35 L640 61 L675 31 L710 52 L745 34 L780 57 L815 29 L850 44"/>
+  </g>
+  <text class="muted" x="490" y="433" text-anchor="middle">Time → · qualitative shape only · no measured values or decomposition equation</text>
+</svg>
+</div><figcaption>Schematic component shapes on a shared time axis: long-run trend, fixed-period seasonality, a longer non-fixed cycle, and irregular deviations. Shapes are illustrative and contain no measured values; no additive or multiplicative decomposition is implied.</figcaption></figure>
+<p>A <strong>trend</strong> is the long-term general direction, apart from short-term fluctuations. It may be upward, downward, roughly horizontal, or nonlinear (for example, exponential, logarithmic, or polynomial). A <strong>seasonal component</strong> repeats at a fixed period, often because of calendar or natural timing: electricity can vary by hour of day, retail sales by weekday, expenditure within a month, or tourism by season of the year. Its repeat period is fixed for the pattern being described.</p>
+<p>A <strong>cycle</strong> is a longer oscillation around the trend whose duration is not fixed and whose peak heights and trough depths may vary. Business expansions and recessions and industry cycles are examples. The slide says cycles are “typically 2–10+ years”; this is a heuristic illustration, not a universal duration rule. Cycles are hard to isolate because their timing varies, they overlap irregular variation, and long histories are needed. Seasonality is shorter, calendar-linked, and more predictable; a cycle is longer, less regular, and often tied to economic conditions.</p>
+<p>The <strong>irregular</strong> component, also called noise or residual, is the short-term unpredictable variation not attributed to the other patterns. It can reflect natural disasters, policy changes, random or measurement errors, and unexpected events. The slide says it is often assumed to have a normal distribution with mean zero; that is a simplifying modeling assumption, not a definition or guarantee. Random fluctuations and extreme event outliers are both irregular variations, though an outlier may need separate investigation.</p>
+<p>For optional practice, use the AirPassengers series to identify and describe its components.</p>
+<h2 id="section-3">Stationarity and transformations</h2>
+<p>Stationarity asks whether a process’s statistical behavior is stable through time. A useful precise version is <strong>weak (covariance) stationarity</strong>: the mean and finite variance do not change with time, and covariance depends on the separation (lag) between observations rather than their absolute dates. <strong>Strict stationarity</strong> is stronger: every finite collection’s joint distribution is unchanged by shifting all its time indices together. These definitions are related but are not interchangeable in general. A visible trend or changing seasonal pattern is a warning sign, but a plot alone cannot prove or disprove stationarity.</p>
+<p>The lecture introduces the Augmented Dickey–Fuller (ADF) test. Its null hypothesis is that a unit root is present; its alternative is no unit root. A small p-value (the slide uses 0.05) is evidence against that null under the selected test regression and lag specification. It is not proof of every stationarity condition. The regression’s deterministic terms matter: an ADF specification may include no constant/trend, a constant, a constant plus linear trend, or a constant plus linear and quadratic trend. State what was included when interpreting an ADF result. <a href="https://www.statsmodels.org/stable/generated/statsmodels.tsa.stattools.adfuller.html">Statsmodels’ ADF reference</a> documents the null, alternative, and deterministic-term choices; <a href="https://stat153.berkeley.edu/spring-2026/dependence-notes-1/">Berkeley’s dependence notes</a> distinguish weak and strict stationarity.</p>
+<h3>Transform only when the data domain and goal support it</h3>
+<p>The lecture suggests logarithm or square-root transformations to reduce large differences between values and stabilize variance. A real-valued logarithm requires positive values; the ordinary real square root requires nonnegative values. These transformations do not guarantee stationarity. Differencing subtracts one observation from its predecessor:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x00394;</mi><msub><mi>y</mi><mi>t</mi></msub><mo>&#x0003D;</mo><msub><mi>y</mi><mi>t</mi></msub><mo>&#x02212;</mo><msub><mi>y</mi><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub><mo>&#x0002C;</mo><mspace width="2em" /><msup><mi>&#x00394;</mi><mn>2</mn></msup><msub><mi>y</mi><mi>t</mi></msub><mo>&#x0003D;</mo><mi>&#x00394;</mi><msub><mi>y</mi><mi>t</mi></msub><mo>&#x02212;</mo><mi>&#x00394;</mi><msub><mi>y</mi><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub><mo>&#x0002E;</mo></mrow></math></div>
+<p>The lecture presents first differences as removing a linear trend and second differences as removing a quadratic trend. This holds for an appropriate deterministic polynomial-trend model; differencing does not guarantee stationarity and repeated differencing can remove meaningful structure. Examine the transformed series and retain the transformation needed for the intended model.</p>
+
+<details class="worked"><summary>Worked example: first and second differences</summary><p><strong>Teaching example.</strong> Let the observed values be <code>[5, 8, 13, 20]</code>. First differences: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>8</mn><mo>&#x02212;</mo><mn>5</mn><mo>&#x0003D;</mo><mn>3</mn><mo>&#x0002C;</mo><mspace width="1em" /><mn>13</mn><mo>&#x02212;</mo><mn>8</mn><mo>&#x0003D;</mo><mn>5</mn><mo>&#x0002C;</mo><mspace width="1em" /><mn>20</mn><mo>&#x02212;</mo><mn>13</mn><mo>&#x0003D;</mo><mn>7</mn></mrow></math>, giving <code>[3, 5, 7]</code>. Differencing again: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>5</mn><mo>&#x02212;</mo><mn>3</mn><mo>&#x0003D;</mo><mn>2</mn><mo>&#x0002C;</mo><mspace width="1em" /><mn>7</mn><mo>&#x02212;</mo><mn>5</mn><mo>&#x0003D;</mo><mn>2</mn></mrow></math>, giving <code>[2, 2]</code>. The constant second difference is consistent with a quadratic sequence in this example. This check illustrates the operation; it does not show that arbitrary series become stationary after two differences.</p></details>
+
+<h2 id="section-4">Lag, autocorrelation, ACF, and PACF</h2>
+<p>A lag is how many time steps we look backward. Lag 1 compares the current value with the immediately previous one; lag <code>k</code> pairs values <code>k</code> steps apart. The lecture defines autocorrelation as correlation between a series and its lagged version:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>Corr</mo><mo stretchy="false">&#x00028;</mo><msub><mi>y</mi><mi>t</mi></msub><mo>&#x0002C;</mo><msub><mi>y</mi><mrow><mi>t</mi><mo>&#x02212;</mo><mi>k</mi></mrow></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>k</mi><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>3</mn><mo>&#x0002C;</mo><mi>&#x02026;</mi></mrow></math></div>
+<p>Estimating autocorrelation from a finite sample requires choices about centering, normalization and missing observations; state those conventions when comparing computed values. The <strong>ACF</strong> summarizes overall correlation at each lag, including effects transmitted through intermediate lags. The <strong>PACF</strong> describes association at a particular lag after accounting for intermediate lags. Positive values indicate positive correlation, negative values negative correlation, and values near zero weak or no correlation in that diagnostic.</p>
+<p>The Los Angeles traffic-accident example, adapted from Ye, Hu, and Wang (2020), pairs a time-series plot with its ACF and PACF. Look for patterns across lags; an illustrative plot alone does not establish exact bar values or a model order.</p>
+<h2 id="section-5">Define the forecast and its horizon</h2>
+<p>Forecasting predicts future values from historical observations by modeling underlying patterns. It supports decisions, planning, and resource allocation. At origin time <code>t</code>, a forecast <code>h</code> steps ahead can be written as:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mrow><mi>t</mi><mo>&#x0002B;</mo><mi>h</mi></mrow></msub><mo>&#x0003D;</mo><mi>f</mi><mo stretchy="false">&#x00028;</mo><msub><mi>y</mi><mi>t</mi></msub><mo>&#x0002C;</mo><msub><mi>y</mi><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>y</mi><mrow><mi>t</mi><mo>&#x02212;</mo><mn>2</mn></mrow></msub><mo>&#x0002C;</mo><mi>&#x02026;</mi><mo>&#x0002C;</mo><msub><mi>y</mi><mn>0</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo></mrow></math></div>
+<p>where <code>h</code> is the forecast horizon, <code>f</code> is the forecasting model, the input sequence is past context, and the output is one or more future values. In practice, a finite lookback window is often used. A one-step forecast has <code>h=1</code>; a multi-step forecast predicts through horizon <code>H</code>.</p>
+<p>For multiple steps, the <strong>recursive</strong> approach repeatedly predicts one step and feeds its prediction into the next step. The <strong>direct</strong> approach fits a separate model for each horizon. A <strong>multiple-output</strong> approach fits one model to predict all requested horizons at once. These are different forecasting designs, not different names for the same evaluation procedure.</p>
+<p>Horizon labels depend on the data frequency and decision. The lecture’s examples are: short term, hours to days (up to weeks) for operations and quick response such as electricity load, traffic, daily sales, and weather; mid term, weeks to several months for tactical planning, production, inventory, or seasonal energy demand; long term, several months to years for strategy such as economic growth, infrastructure, and climate trends.</p>
+<h3>Teaching example: a fixed-origin recursive forecast</h3>
+
+<details class="worked"><summary>Two-step fixed-origin persistence: show every recursive input</summary><section class="walk" tabindex="0" aria-label="Fixed-origin two-step forecast"><h3>Fixed-origin two-step forecast</h3><div class="example-input"><strong>Teaching data</strong> [10, 12, 13, 15, 18, 20] · origin after index 4 · persistence rule: repeat last available value</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Fix the origin and observed history</h4><p>Teaching example: use the series <code>[10, 12, 13, 15, 18, 20]</code> and issue a two-step forecast immediately after index 4. The observed history ends at 15; values 18 and 20 are still future targets.</p></section><section class="step"><h4>2. Predict one step ahead</h4><p>Use the persistence baseline: predict the most recently available value. Thus <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mn>5</mn></msub><mo>&#x0003D;</mo><mn>15</mn></mrow></math>.</p></section><section class="step"><h4>3. Feed the forecast back</h4><p>At this fixed origin, index 5 actual (18) is not available to the model. Feed the first prediction 15 back as the next input, so <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mn>6</mn></msub><mo>&#x0003D;</mo><mn>15</mn></mrow></math>.</p></section><section class="step"><h4>4. Compare with the held-out targets</h4><p>Actuals are <code>[18, 20]</code>; predictions are <code>[15, 15]</code>. Absolute errors: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><mo stretchy="false">&#x0007C;</mo><mn>18</mn><mo>&#x02212;</mo><mn>15</mn><mo stretchy="false">&#x0007C;</mo><mo>&#x0002C;</mo><mo stretchy="false">&#x0007C;</mo><mn>20</mn><mo>&#x02212;</mo><mn>15</mn><mo stretchy="false">&#x0007C;</mo><mo stretchy="false">]</mo><mo>&#x0003D;</mo><mo stretchy="false">[</mo><mn>3</mn><mo>&#x0002C;</mo><mn>5</mn><mo stretchy="false">]</mo></mrow></math>; squared errors: <code>[9, 25]</code>.</p></section><section class="step"><h4>5. Summarize and check</h4><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>MAE</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x0002B;</mo><mn>5</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>4</mn></mrow></math>. <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>RMSE</mo><mo>&#x0003D;</mo><msqrt><mrow><mo stretchy="false">&#x00028;</mo><mn>9</mn><mo>&#x0002B;</mo><mn>25</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn></mrow></msqrt><mo>&#x0003D;</mo><msqrt><mrow><mn>17</mn></mrow></msqrt><mo>&#x02248;</mo><mn>4.1231</mn></mrow></math>. Check: the second prediction used the previous forecast, not the unavailable actual 18.</p></section></section></details>
+
+<h2 id="section-6">Split chronologically and prevent leakage</h2>
+<p>Time series are not split like an exchangeable bag of examples. Random shuffling can put later information into training while earlier periods appear in validation or test. Split in chronological order: <strong>train → validation → test</strong>. The lecture gives 70:10:20 as a typical ratio, not a law. Fit model choices and learned preprocessing on training data; use validation to select choices; reserve the final test period for an honest end evaluation. At a simulated forecast origin, only information available by that origin may enter a feature, imputation, smoothing, scaling, or model fit.</p>
+
+<details class="worked"><summary>Teaching example: split, fit, transform, window, forecast, and score</summary><section class="walk" tabindex="0" aria-label="Six-observation forecasting trace"><h3>Six-observation forecasting trace</h3><div class="example-input"><strong>Synthetic teaching series</strong> <code>y=[10,12,13,15,18,20]</code> · chronological indices 1–6 · window length 2 · persistence baseline</div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Split by time; do not shuffle</h4><p>Synthetic teaching series: indices 1–6 have values [10, 12, 13, 15, 18, 20]. Train indices 1–3 = [10, 12, 13]; validation index 4 = [15]; test indices 5–6 = [18, 20]. The boundaries stay in chronological order.</p></section><section class="step"><h4>2. Fit min–max parameters on train only</h4><p>Training minimum = 10 and maximum = 13; range: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>13</mn><mo>&#x02212;</mo><mn>10</mn><mo>&#x0003D;</mo><mn>3</mn></mrow></math>. Fit <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>x</mi><mo>&#x02212;</mo><mn>10</mn></mrow><mrow><mn>13</mn><mo>&#x02212;</mo><mn>10</mn></mrow></mfrac></mrow></math> from training values only. Do not inspect validation/test extrema to refit this transform.</p></section><section class="step"><h4>3. Apply the fixed transform</h4><p>Training: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>10</mn><mo>&#x021A6;</mo><mn>0</mn><mo>&#x0002C;</mo><mspace width="1em" /><mn>12</mn><mo>&#x021A6;</mo><mfrac><mrow><mn>2</mn></mrow><mrow><mn>3</mn></mrow></mfrac><mo>&#x0002C;</mo><mspace width="1em" /><mn>13</mn><mo>&#x021A6;</mo><mn>1</mn></mrow></math>. Validation: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>15</mn><mo>&#x021A6;</mo><mfrac><mrow><mn>5</mn></mrow><mrow><mn>3</mn></mrow></mfrac></mrow></math>. Test: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>18</mn><mo>&#x021A6;</mo><mfrac><mrow><mn>8</mn></mrow><mrow><mn>3</mn></mrow></mfrac><mo>&#x0002C;</mo><mspace width="1em" /><mn>20</mn><mo>&#x021A6;</mo><mfrac><mrow><mn>10</mn></mrow><mrow><mn>3</mn></mrow></mfrac></mrow></math>. Values above 1 are valid: the fixed training transform is applied unchanged, with no clipping and no refit.</p></section><section class="step"><h4>4. Make length-2 one-step windows</h4><p>For each target, use the preceding two values available at its one-step origin: train <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><mn>10</mn><mo>&#x0002C;</mo><mn>12</mn><mo stretchy="false">]</mo><mo>&#x021A6;</mo><mn>13</mn></mrow></math>; validation <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><mn>12</mn><mo>&#x0002C;</mo><mn>13</mn><mo stretchy="false">]</mo><mo>&#x021A6;</mo><mn>15</mn></mrow></math>; test <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><mn>13</mn><mo>&#x0002C;</mo><mn>15</mn><mo stretchy="false">]</mo><mo>&#x021A6;</mo><mn>18</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><mn>15</mn><mo>&#x0002C;</mo><mn>18</mn><mo stretchy="false">]</mo><mo>&#x021A6;</mo><mn>20</mn></mrow></math>. Each input ends before its target.</p></section><section class="step"><h4>5. Predict at rolling one-step test origins</h4><p>Persistence predicts the last observed value. At origin 4, input <code>[13, 15]</code> gives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mn>5</mn></msub><mo>&#x0003D;</mo><mn>15</mn></mrow></math> for index 5 (actual 18). After index 5 is observed, at origin 5 input <code>[15, 18]</code> gives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mn>6</mn></msub><mo>&#x0003D;</mo><mn>18</mn></mrow></math> for index 6 (actual 20). Predictions <code>[15, 18]</code>, actuals <code>[18, 20]</code>.</p></section><section class="step"><h4>6. Compute errors and verify</h4><p>Absolute errors <code>[3, 2]</code>; squared errors <code>[9, 4]</code>. <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>MAE</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x0002B;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>2.5</mn></mrow></math>; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>MSE</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>9</mn><mo>&#x0002B;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>6.5</mn></mrow></math>; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>RMSE</mo><mo>&#x0003D;</mo><msqrt><mrow><mn>6.5</mn></mrow></msqrt><mo>&#x02248;</mo><mn>2.5495097568</mn></mrow></math>. <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>MAPE</mo><mo>&#x0003D;</mo><mn>100</mn><mi>&#x00025;</mi><mo>&#x000D7;</mo><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x0002F;</mo><mn>18</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002F;</mo><mn>20</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>13.3333333333</mn><mi>&#x00025;</mi></mrow></math>. Source-formula <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>sMAPE</mo><mo>&#x0003D;</mo><mn>100</mn><mi>&#x00025;</mi><mo>&#x000D7;</mo><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x0002F;</mo><mn>16.5</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002F;</mo><mn>19</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>14.3540669856</mn><mi>&#x00025;</mi></mrow></math>. Check: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mo>RMSE</mo><mn>2</mn></msup><mo>&#x0003D;</mo><mo>MSE</mo></mrow></math> up to rounding; each rolling prediction uses only observations available at that origin, and the MAPE actual denominators are nonzero.</p></section></section></details>
+
+<p>For this synthetic six-observation example, MAPE is <strong>13.3333%</strong>: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>3</mn><mo>&#x0002F;</mo><mn>18</mn><mo>&#x0003D;</mo><mn>0.1667</mn><mo>&#x0002C;</mo><mspace width="1em" /><mn>2</mn><mo>&#x0002F;</mo><mn>20</mn><mo>&#x0003D;</mo><mn>0.1</mn><mo>&#x0002C;</mo><mspace width="1em" /><mo stretchy="false">&#x00028;</mo><mn>0.1667</mn><mo>&#x0002B;</mo><mn>0.1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>0.1333</mn><mo>&#x0002C;</mo><mspace width="1em" /><mn>100</mn><mi>&#x00025;</mi><mo>&#x000D7;</mo><mn>0.1333</mn><mo>&#x0003D;</mo><mn>13.3333</mn><mi>&#x00025;</mi></mrow></math>.</p>
+<p>The rolling one-step evaluation above updates its observed history after each test point arrives. That availability rule differs from the fixed-origin recursive forecast: when forecasting several steps at once from the end of index 4, the actual at index 5 is unknown and cannot replace the first prediction.</p>
+<h3>The lecture’s eight-value window example</h3>
+<p>The source’s symbolic example uses eight scalar values, an input length of three, and one next-step target per window. It shows these overlapping input-target pairs:</p>
+<div class="table-scroll"><table><thead><tr><th>Window</th><th>Input values</th><th>Next target</th></tr></thead><tbody><tr><td>1</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><msub><mi>x</mi><mrow><mn>1</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>x</mi><mrow><mn>2</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>x</mi><mrow><mn>3</mn></mrow></msub><mo stretchy="false">]</mo></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mrow><mn>4</mn></mrow></msub></mrow></math></td></tr><tr><td>2</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><msub><mi>x</mi><mrow><mn>2</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>x</mi><mrow><mn>3</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>x</mi><mrow><mn>4</mn></mrow></msub><mo stretchy="false">]</mo></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mrow><mn>5</mn></mrow></msub></mrow></math></td></tr><tr><td>3</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><msub><mi>x</mi><mrow><mn>3</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>x</mi><mrow><mn>4</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>x</mi><mrow><mn>5</mn></mrow></msub><mo stretchy="false">]</mo></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mrow><mn>6</mn></mrow></msub></mrow></math></td></tr><tr><td>4</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><msub><mi>x</mi><mrow><mn>4</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>x</mi><mrow><mn>5</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>x</mi><mrow><mn>6</mn></mrow></msub><mo stretchy="false">]</mo></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mrow><mn>7</mn></mrow></msub></mrow></math></td></tr><tr><td>5</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><msub><mi>x</mi><mrow><mn>5</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>x</mi><mrow><mn>6</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>x</mi><mrow><mn>7</mn></mrow></msub><mo stretchy="false">]</mo></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mrow><mn>8</mn></mrow></msub></mrow></math></td></tr></tbody></table></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mn>8</mn><mo>&#x02212;</mo><mn>3</mn><mo>&#x0003D;</mo><mn>5</mn><mtext>&#x000A0;windows</mtext><mo>&#x0002E;</mo></mrow></math></div>
+<p>With one scalar feature per time step, the stated shapes are:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>X</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>5</mn><mo>&#x0002C;</mo><mn>3</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>y</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>5</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002E;</mo></mrow></math></div>
+<p>The source mentions benchmark window lengths 24 (short-term) and 96 (long-term); these are example choices, not universal defaults.</p>
+<h3>Optional exercises</h3>
+<p>Use AirPassengers monthly passenger counts from 1949–1960 for three practice activities: separate trend, seasonal, cyclical, and irregular components; preprocess an example with injected missing values, noise, and outliers (including normalization, smoothing, imputation, augmentation, feature/window creation, and batch processing); then train and evaluate forecasting models.</p>
+<h2 id="section-7">Preprocess with the forecast origin in mind</h2>
+<p>Preprocessing can make records usable and patterns easier to learn, but every operation must obey the information boundary. A valid technique can still leak if it uses observations that would not yet exist at prediction time.</p>
+<h3>Missing values and smoothing</h3>
+<p>Missing observations can result from sensor failures, recording errors, or transmission loss; gaps break continuity and may bias analysis or lower forecast accuracy. The lecture lists mean, median, or mode imputation; forward fill (carry the last valid value); backward fill (use the next valid value); linear or spline interpolation; and deep approaches such as autoencoders, BRITS (bidirectional recurrent imputation for time series), and GAN-based imputation. Interpolation and bidirectional methods can use future values. Split first, then still check each simulated forecast origin: a missing input at time <code>t</code> cannot be filled using observations after <code>t</code>. Backward fill is therefore not automatically causal.</p>
+<p>Noise is unwanted random variation that can obscure patterns. Moving averages or rolling means average a sliding window; exponential smoothing gives more weight to recent observations. Centered smoothing can use future points, so it is useful for retrospective visualization but not a causal forecast-time feature unless those future points are genuinely available.</p>
+<h3>Outliers</h3>
+<p>An outlier departs strongly from the expected pattern and may come from a rare event, a measurement error, or a sudden change. It can distort a trend and mislead a forecast. The lecture lists Z-scores and the interquartile range (IQR) applied to residuals as detection approaches; handling options include imputation (mean, median, interpolation) and smoothing (moving average, exponential smoothing). Investigate what produced the point before replacing it: a genuine event may matter for future decisions. Any learned threshold or imputation parameter must be fitted without future targets.</p>
+<h3>Normalization</h3>
+<p>Scaling can improve gradient stability and keep large-range variables from dominating smaller-range predictors. The lecture gives min–max scaling and z-score standardization:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>z</mi><mrow><mo>min</mo><mo>max</mo></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mi>x</mi><mo>&#x02212;</mo><msub><mi>x</mi><mrow><mo>min</mo></mrow></msub></mrow><mrow><msub><mi>x</mi><mrow><mo>max</mo></mrow></msub><mo>&#x02212;</mo><msub><mi>x</mi><mrow><mo>min</mo></mrow></msub></mrow></mfrac><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>z</mi><mrow><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi></mrow></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mi>x</mi><mo>&#x02212;</mo><mi>&#x003BC;</mi></mrow><mrow><mi>&#x003C3;</mi></mrow></mfrac><mo>&#x0002E;</mo></mrow></math></div>
+<p>Fit a scaler using only the training portion and apply those fixed parameters to validation and test. A held-out value may transform outside <code>[0,1]</code>; clipping or refitting is an additional choice and changes the stated transform. Handle a zero training range separately because the min–max denominator would be zero.</p>
+<h3>Augmentation and feature engineering</h3>
+<p>Augmentation creates modified or synthetic training examples to increase diversity and may improve robustness. The slide gives <strong>jittering</strong> (small random value changes) and <strong>scaling</strong> (change series magnitude while preserving its temporal shape). Augmentation is optional and is usually considered when data are small or lack diversity. Generate training variants only from training data; never augment by borrowing validation or test targets.</p>
+<p>Time features can include lag values, rolling mean/standard deviation/minimum/maximum, and differences. Calendar features include weekday, month, quarter, holidays, and seasonal indicators. Domain features can include weather, promotions, or economic indicators. Deep models may learn temporal patterns from raw sequences, so feature engineering is often optional. For the Friday 2024-03-15 prompt in a daily series, the listed features are lag-1 = yesterday’s value, lag-7 = last Friday’s value, 7-day mean, weekday = Friday, and holiday indicator = 0. Rolling windows and external predictors must be aligned so they do not reach past the forecast origin.</p>
+<h2 id="section-8">Model families evolved; chronology is not a leaderboard</h2>
+<p>The lecture’s history figure groups examples by family. Use these historical examples to orient the methods; chronology alone does not rank their forecasting performance.</p>
+<table>
+<thead>
+<tr>
+<th>Family in the lecture</th>
+<th>Labels and years shown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Classic statistical models</td>
+<td>1909 moving average; 1927 autoregression; 1956 exponential smoothing</td>
+</tr>
+<tr>
+<td>Statistical models</td>
+<td>1970 autoregressive integrated moving average (ARIMA); 1980 vector autoregression; 1982 autoregressive conditional heteroskedasticity (ARCH)</td>
+</tr>
+<tr>
+<td>Machine-learning models</td>
+<td>1984 regression trees; 1995 support vector machines; 1996 LASSO; 2001 random forest; 2001 gradient boosting; 2018 categorical boosting (CatBoost)</td>
+</tr>
+<tr>
+<td>Deep-learning models</td>
+<td>1986 recurrent neural network; 1995 fuzzy networks; 1997 long short-term memory (LSTM); 2011 ensemble models; 2014 gated recurrent unit (GRU); 2017 transformer-based models</td>
+</tr>
+<tr>
+<td>Hybrid models</td>
+<td>2002 exponential smoothing state space; 2013 ARIMA + artificial neural network; 2018 Prophet; 2020 artificial neural network + evolutionary models; 2021 ARIMA + support vector machines</td>
+</tr>
+<tr>
+<td>Generative models</td>
+<td>2014 generative adversarial network (GAN); 2022 bidirectional variational auto-encoder</td>
+</tr>
+</tbody>
+</table>
+<p>The historical grouping helps orient a student among approaches. Choose a model by the forecast task, available history and predictors, assumptions, and validation evidence—not by the year or family name alone.</p>
+<h2 id="section-9">Evaluate forecasts with the right error lens</h2>
+<p>Forecasting predicts continuous numeric values, so the lecture frames evaluation as regression error. Let <code>yₜ</code> be an actual value, <code>ŷₜ</code> its forecast, and <code>n</code> the number of evaluated forecasts. The slide defines five metrics:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>MAE</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>n</mi></mrow></mfrac><munderover><mo>&#x02211;</mo><mrow><mi>t</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>n</mi></mrow></munderover><mo stretchy="false">&#x0007C;</mo><msub><mi>y</mi><mi>t</mi></msub><mo>&#x02212;</mo><msub><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mi>t</mi></msub><mo stretchy="false">&#x0007C;</mo></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>MSE</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>n</mi></mrow></mfrac><munderover><mo>&#x02211;</mo><mrow><mi>t</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>n</mi></mrow></munderover><mo stretchy="false">&#x00028;</mo><msub><mi>y</mi><mi>t</mi></msub><mo>&#x02212;</mo><msub><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mi>t</mi></msub><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>RMSE</mo><mo>&#x0003D;</mo><msqrt><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mi>n</mi></mrow></mfrac><msubsup><mo>&#x02211;</mo><mrow><mi>t</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>n</mi></mrow></msubsup><mo stretchy="false">&#x00028;</mo><msub><mi>y</mi><mi>t</mi></msub><mo>&#x02212;</mo><msub><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mi>t</mi></msub><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></msqrt></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>MAPE</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>100</mn><mi>&#x00025;</mi></mrow><mrow><mi>n</mi></mrow></mfrac><munderover><mo>&#x02211;</mo><mrow><mi>t</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>n</mi></mrow></munderover><mfrac><mrow><mo stretchy="false">&#x0007C;</mo><msub><mi>y</mi><mi>t</mi></msub><mo>&#x02212;</mo><msub><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mi>t</mi></msub><mo stretchy="false">&#x0007C;</mo></mrow><mrow><mo stretchy="false">&#x0007C;</mo><msub><mi>y</mi><mi>t</mi></msub><mo stretchy="false">&#x0007C;</mo></mrow></mfrac></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>sMAPE</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>100</mn><mi>&#x00025;</mi></mrow><mrow><mi>n</mi></mrow></mfrac><munderover><mo>&#x02211;</mo><mrow><mi>t</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>n</mi></mrow></munderover><mfrac><mrow><mo stretchy="false">&#x0007C;</mo><msub><mi>y</mi><mi>t</mi></msub><mo>&#x02212;</mo><msub><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mi>t</mi></msub><mo stretchy="false">&#x0007C;</mo></mrow><mrow><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x0007C;</mo><msub><mi>y</mi><mi>t</mi></msub><mo stretchy="false">&#x0007C;</mo><mo>&#x0002B;</mo><mo stretchy="false">&#x0007C;</mo><msub><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mi>t</mi></msub><mo stretchy="false">&#x0007C;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn></mrow></mfrac></mrow></math></div>
+<p>The source comparison is compactly summarized below. “Scale-independent” means the metric itself is a percentage/relative measure, not that it is safe for every series.</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Outlier sensitive?</th>
+<th>Scale independent?</th>
+<th>Zero-value note</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MAE</td>
+<td>No (relative to squared-error metrics)</td>
+<td>No</td>
+<td>Defined when actual is zero</td>
+<td>Same units as data</td>
+</tr>
+<tr>
+<td>MSE</td>
+<td>Yes</td>
+<td>No</td>
+<td>Defined when actual is zero</td>
+<td>Squared units</td>
+</tr>
+<tr>
+<td>RMSE</td>
+<td>Yes</td>
+<td>No</td>
+<td>Defined when actual is zero</td>
+<td>Same units as data</td>
+</tr>
+<tr>
+<td>MAPE</td>
+<td>No</td>
+<td>Yes</td>
+<td>Undefined when actual is zero; unstable near zero</td>
+<td>Percentage</td>
+</tr>
+<tr>
+<td>sMAPE (source denominator)</td>
+<td>No</td>
+<td>Yes</td>
+<td>A zero actual with nonzero forecast is defined; both zero makes the formula undefined unless a convention is stated</td>
+<td>Percentage</td>
+</tr>
+</tbody>
+</table>
+<p>“Less sensitive” does not mean immune: MAE and percentage metrics still respond to large errors. Squaring in MSE/RMSE gives large errors greater influence. The slide marks MSE and RMSE as unsuitable when the actual equals zero, but their displayed formulas do not divide by the actual and remain defined at zero. For percentage errors, MAPE is undefined at a zero actual and unstable near zero. The displayed sMAPE formula also needs a convention when actual and forecast are both zero because its term is undefined. See Hyndman and Koehler’s <a href="https://otext.robjhyndman.com/publications/another-look-at-measures-of-forecast-accuracy/">forecast accuracy discussion</a> for percentage-metric limitations.</p>
+
+<details class="worked"><summary>Metric check on the rolling teaching forecast</summary><p>Using actuals <code>[18, 20]</code> and forecasts <code>[15, 18]</code>, errors are <code>3</code> and <code>2</code>; squared errors are <code>9</code> and <code>4</code>. Therefore <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>MAE</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x0002B;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>2.5</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>MSE</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>9</mn><mo>&#x0002B;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>6.5</mn></mrow></math>, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>RMSE</mo><mo>&#x0003D;</mo><msqrt><mrow><mn>6.5</mn></mrow></msqrt><mo>&#x02248;</mo><mn>2.5495097568</mn></mrow></math>. MAPE uses actual magnitudes: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>100</mn><mi>&#x00025;</mi><mo>&#x000D7;</mo><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x0002F;</mo><mn>18</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002F;</mo><mn>20</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>13.3333333333</mn><mi>&#x00025;</mi></mrow></math>. For source-formula sMAPE, denominators are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>18</mn><mo>&#x0002B;</mo><mn>15</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>16.5</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>20</mn><mo>&#x0002B;</mo><mn>18</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>19</mn></mrow></math>, giving <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>100</mn><mi>&#x00025;</mi><mo>&#x000D7;</mo><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x0002F;</mo><mn>16.5</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002F;</mo><mn>19</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>14.3540669856</mn><mi>&#x00025;</mi></mrow></math>. Check: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mo>RMSE</mo><mn>2</mn></msup><mo>&#x0003D;</mo><mo>MSE</mo></mrow></math> apart from rounding. These hand calculations use the synthetic teaching series.</p></details>
+
+<h2 id="section-10">Probabilistic forecasts describe uncertainty</h2>
+<p>A point forecast gives one value. A probabilistic forecast represents a range or distribution of plausible future outcomes, making uncertainty visible for decisions in finance, energy, weather, inventory, and healthcare. The lecture’s figure contrasts a point forecast with a set of forecast quantiles (20th, 40th, 60th, and 80th percentiles). The curves below are schematic labels, not predicted values or a fitted interval.</p>
+<figure><div class="diagram-frame" style="--diagram-width:920px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 430" role="img" aria-labelledby="time-series-analysis-figure-2-tsa-prob-title time-series-analysis-figure-2-tsa-prob-desc">
+  <title id="time-series-analysis-figure-2-tsa-prob-title">Point and quantile forecasts around a forecast origin</title>
+  <desc id="time-series-analysis-figure-2-tsa-prob-desc">A historical line ends at the forecast origin. Beyond it, a dashed point forecast is surrounded by schematic 20th, 40th, 60th, and 80th percentile curves. No values are shown.</desc>
+  <style>
+    text{font:16px 'Segoe UI',sans-serif;fill:var(--foreground,#26363a)}.small{font-size:13px;fill:var(--muted,#617176)}
+    .axis{stroke:var(--diagram-border,#7f9da5);stroke-width:2}.actual{fill:none;stroke:var(--primary,#315e6a);stroke-width:4;stroke-linecap:round}
+    .point{fill:none;stroke:#158b9d;stroke-width:3.5;stroke-dasharray:10 7}.quantile{fill:none;stroke:#6e9ca4;stroke-width:2.5;stroke-dasharray:4 7}
+    .origin{stroke:#b36f42;stroke-width:2;stroke-dasharray:6 6}.label{font-size:14px;font-weight:600}
+  </style>
+  <rect x="1" y="1" width="918" height="428" rx="14" fill="var(--background,#f6f8f8)" stroke="var(--border,#dce5e6)"/>
+  <path class="axis" d="M92 345V50 M92 345H870"/><path class="origin" d="M475 60V345"/>
+  <text class="small" x="265" y="79" text-anchor="middle">Observed history</text><text class="small" x="670" y="79" text-anchor="middle">Forecast horizon</text>
+  <path class="actual" d="M105 268 C145 235 174 298 215 260 S286 220 325 263 S390 302 430 258 S454 246 475 235"/>
+  <path class="quantile" d="M475 235 C530 152 575 145 625 176 S720 117 850 123"/>
+  <path class="quantile" d="M475 235 C530 179 575 170 625 194 S720 148 850 154"/>
+  <path class="point" d="M475 235 C530 204 575 197 625 212 S720 180 850 188"/>
+  <path class="quantile" d="M475 235 C530 230 575 222 625 230 S720 214 850 223"/>
+  <path class="quantile" d="M475 235 C530 255 575 248 625 248 S720 253 850 269"/>
+  <text class="label" x="486" y="375">Forecast origin</text>
+  <text class="small" x="815" y="111">q80</text><text class="small" x="815" y="150">q60</text>
+  <text class="small" x="815" y="185">point</text><text class="small" x="815" y="219">q40</text><text class="small" x="815" y="266">q20</text>
+  <text class="small" x="485" y="411">Schematic curves · uncertainty illustration, not a fitted forecast</text>
+  <text class="small" x="872" y="370" text-anchor="end">Time →</text>
+</svg>
+</div><figcaption>Conceptual forecast origin and future quantile curves around a point forecast; the curves are schematic and are not fitted predictions.</figcaption></figure>
+<p>The slide lists ARIMA prediction intervals and quantile regression as statistical approaches, gradient boosting for machine learning, and DeepAR and the Temporal Fusion Transformer (TFT) for deep learning. Evaluation examples are pinball (quantile) loss, continuous ranked probability score (CRPS), and prediction interval coverage probability (PICP). A point-forecast error metric alone does not describe whether a forecast range is calibrated or appropriately sharp.</p>
+<h2 id="section-11">Multivariate and panel forecasting</h2>
+<p><strong>Multivariate forecasting</strong> predicts one or more target variables using several related time-dependent features. For electricity demand, the target may be demand while predictors include temperature, humidity, and past demand; high temperature may raise cooling demand. The target is what is forecast, and predictors are inputs. High correlation among predictors (multicollinearity) complicates interpretation or estimation; too many predictors raise complexity and overfitting risk (the curse of dimensionality); different scales call for normalization; missing values require imputation or omission. Every predictor still needs to be known at the forecast origin—future weather observations, for example, are unavailable unless represented by their own forecasts or other genuinely known information.</p>
+<p><strong>Panel forecasting</strong> predicts series for multiple entities while using time patterns and cross-entity patterns. Multiple stores’ monthly sales are one example. Entities can be heterogeneous, one entity’s values may depend on others (cross-sectional dependence), time gaps can make the panel unbalanced, and differing ranges can bias a model unless handled. A panel therefore has to preserve both entity identity and time order.</p>
+<h2 id="section-12">Common mistakes</h2>
+<ul>
+<li>Treating timestamps as enough to establish a time series: check that observations are an ordered, meaningfully sampled process.</li>
+<li>Calling the source’s 2–10+ year cycle duration a universal definition, or claiming its components were estimated by an additive decomposition.</li>
+<li>Reading an ADF p-value below 0.05 as proof of all stationarity conditions; the test targets a unit root under a chosen deterministic specification.</li>
+<li>Comparing sample ACF values without stating estimation conventions, or inferring exact values or model order from an illustrative plot.</li>
+<li>Randomly shuffling train, validation, and test periods; fitting scaling or imputation parameters on the full series; or using future observations in a feature at an earlier forecast origin.</li>
+<li>Confusing a rolling one-step evaluation, where newly observed data can enter at the next origin, with a fixed-origin recursive forecast, where prior predictions are fed back.</li>
+<li>Refitting or clipping the min–max teaching transform because later values exceed 1; the train-fitted transform remains unchanged.</li>
+<li>Using MAPE when an actual is zero or close to zero, or using the source-formula sMAPE at an actual and forecast both equal zero without specifying a convention.</li>
+<li>Choosing a model by its publication year instead of its assumptions and validation performance.</li>
+</ul>
+<h2 id="section-13">Exam focus</h2>
+<ul>
+<li>Define a time series as ordered, regularly spaced observations; distinguish univariate, multivariate, and panel structure.</li>
+<li>Identify trend direction/shape, fixed-period seasonality, non-fixed cycles, and irregular/residual variation; state component assumptions only when specified.</li>
+<li>Define weak stationarity correctly; interpret ADF as a unit-root test with specification-dependent evidence.</li>
+<li>Explain lag <code>k</code>, autocorrelation and ACF versus PACF; distinguish the population definition from sample estimation conventions.</li>
+<li>State the forecast origin and horizon; compare recursive, direct, and multiple-output multi-step forecasts.</li>
+<li>Split train → validation → test chronologically, fit learned preprocessing on training data only, and enforce availability at every forecast origin.</li>
+<li>Build overlapping windows carefully and preserve <code>X=(5,3,1)</code>, <code>y=(5,1)</code> for the lecture’s eight-point, input-three example.</li>
+<li>Choose among MAE, MSE, RMSE, MAPE, and sMAPE by units, scale, outliers, and zero behavior; verify an arithmetic result independently.</li>
+<li>Distinguish point forecasts from probabilistic forecasts, quantiles, intervals, and uncertainty metrics.</li>
+</ul>
+<h2 id="section-14">Practice questions</h2>
+<p class="question">1. A series has a gradual upward movement, weekday peaks, and an irregular two-year oscillation. Name the three components.</p>
+<details class="worked"><summary>Check your answer</summary><p>The gradual movement is trend; weekday repetition is seasonality; the non-fixed two-year oscillation is cyclical. Short unpredictable deviations are irregular variation.</p></details>
+
+<p class="question">2. What is the ADF null, and what does a small p-value support?</p>
+<details class="worked"><summary>Check your answer</summary><p>The null is that a unit root is present. A sufficiently small p-value is evidence against that null under the chosen ADF regression and lag specification; it does not prove every stationarity condition.</p></details>
+
+<p class="question">3. Explain lag 7 and the distinction between ACF and PACF.</p>
+<details class="worked"><summary>Check your answer</summary><p>Lag 7 compares observations seven time steps apart. ACF shows overall lag correlation including indirect intermediate-lag effects; PACF describes the lag’s direct association after accounting for intermediate lags.</p></details>
+
+<p class="question">4. For eight scalar observations and input length three, how many one-step windows are formed, and what shapes does the source give?</p>
+<details class="worked"><summary>Check your answer</summary><p>There are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>8</mn><mo>&#x02212;</mo><mn>3</mn><mo>&#x0003D;</mo><mn>5</mn></mrow></math> windows; with one feature per time step, shapes are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>X</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>5</mn><mo>&#x0002C;</mo><mn>3</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>y</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>5</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>.</p></details>
+
+<p class="question">5. Why can validation or test values exceed 1 after training-only min–max scaling?</p>
+<details class="worked"><summary>Check your answer</summary><p>The minimum and maximum were fitted on the training portion and are applied unchanged. A later value above the training maximum naturally maps above 1; refitting would leak held-out information.</p></details>
+
+<p class="question">6. When may a rolling one-step evaluation use the first test actual to form the next prediction?</p>
+<details class="worked"><summary>Check your answer</summary><p>Only after that observation would have arrived at the next rolling origin. It cannot be used for a fixed-origin multi-step forecast issued earlier.</p></details>
+
+<p class="question">7. Which metrics share the data unit, which is squared, and what is the MAPE zero caveat?</p>
+<details class="worked"><summary>Check your answer</summary><p>MAE and RMSE use the data unit; MSE uses squared units. MAPE divides by the actual magnitude, so it is undefined at zero and unstable near zero.</p></details>
+
+<p class="question">8. Why is the source’s sMAPE check for zero values incomplete?</p>
+<details class="worked"><summary>Check your answer</summary><p>If both actual and forecast are zero, the displayed term is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002F;</mo><mn>0</mn></mrow></math>. A zero/zero convention must be stated explicitly.</p></details>
+
+<p class="question">9. Distinguish a panel series from a multivariate series.</p>
+<details class="worked"><summary>Check your answer</summary><p>Multivariate data records several variables together over time. Panel data records one or more variables for multiple entities over time, so it also has entity structure.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="gan-architectures-extensions.html"><small>Previous</small>GAN Architectures, Conditional Generation, and Extensions <span aria-hidden="true">↗</span></a><a href="xai-explainability.html"><small>Next</small>Explainable AI: Questions, Methods, and Presentation <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

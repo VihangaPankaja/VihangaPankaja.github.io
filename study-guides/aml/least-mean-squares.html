@@ -1,0 +1,549 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="LMS adjusts a linear filter by following the instantaneous squared-error gradient."><title>Least Mean Squares and the Delta Rule · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html" aria-current="page">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Neural networks and optimization <span>/</span> Lecture 2</div><h1>Least Mean Squares and the Delta Rule</h1><p class="lead">LMS adjusts a linear filter by following the instantaneous squared-error gradient.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Linear response and residual</a><a href="#section-2">Instantaneous half-squared loss</a><a href="#section-3">From the gradient to the delta update</a><a href="#section-4">Online updates, batch conventions, and classification</a><a href="#section-5">Two-epoch worked trace</a><a href="#section-6">Common mistakes</a><a href="#section-7">Exam focus</a><a href="#section-8">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Least Mean Squares (LMS), also called the <strong>delta rule</strong>, adjusts a linear filter so its response moves toward a desired signal. It generalizes perceptron learning by leaving the hard threshold out of the learning calculation: the update follows the size and direction of a continuous residual. The slides describe filtering and adaptation as two ongoing processes: one computes output and error, and the other adjusts the coefficients.</p>
+<h2 id="section-1">Linear response and residual</h2>
+<p>The filter combines the input features with its current coefficients. For the slide's vector notation, the response is:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>y</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msup><mi>&#x1D431;</mi><mrow><mi>&#x1D5B3;</mi></mrow></msup><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mi>&#x1D430;</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><munderover><mo>&#x02211;</mo><mrow><mi>k</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>m</mi></mrow></munderover><msub><mi>x</mi><mi>k</mi></msub><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><msub><mi>w</mi><mi>k</mi></msub><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>Here, each feature contributes according to its current weight. The desired response is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo></mrow></math>, and the residual is desired minus actual response:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>e</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>d</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mi>y</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>A positive residual means the linear response is below the target; a negative residual means it is above. LMS uses this continuous difference while learning. It does not first turn the response into a class label.</p>
+<figure><div class="diagram-frame" style="--diagram-width:1062.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="The filtering process forms a linear response and residual; the adaptive process uses the current input and residual to update coefficients for later samples." width="1062pt" height="186pt"
+ viewBox="0.00 0.00 1062.00 186.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="least-mean-squares-figure-1-least-mean-squares-learning-flow-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 175)">
+<title>G</title>
+<!-- input -->
+<g id="least-mean-squares-figure-1-least-mean-squares-learning-flow-node1" class="node">
+<title>input</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M105.6,-61.2C105.6,-61.2 12,-61.2 12,-61.2 6,-61.2 0,-55.2 0,-49.2 0,-49.2 0,-37.2 0,-37.2 0,-31.2 6,-25.2 12,-25.2 12,-25.2 105.6,-25.2 105.6,-25.2 111.6,-25.2 117.6,-31.2 117.6,-37.2 117.6,-37.2 117.6,-49.2 117.6,-49.2 117.6,-55.2 111.6,-61.2 105.6,-61.2"/>
+<text xml:space="preserve" text-anchor="middle" x="58.8" y="-37.95" font-family="Georgia" font-size="15.00">Input features</text>
+</g>
+<!-- filter -->
+<g id="least-mean-squares-figure-1-least-mean-squares-learning-flow-node2" class="node">
+<title>filter</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M304.2,-164.2C304.2,-164.2 162.6,-164.2 162.6,-164.2 156.6,-164.2 150.6,-158.2 150.6,-152.2 150.6,-152.2 150.6,-140.2 150.6,-140.2 150.6,-134.2 156.6,-128.2 162.6,-128.2 162.6,-128.2 304.2,-128.2 304.2,-128.2 310.2,-128.2 316.2,-134.2 316.2,-140.2 316.2,-140.2 316.2,-152.2 316.2,-152.2 316.2,-158.2 310.2,-164.2 304.2,-164.2"/>
+<text xml:space="preserve" text-anchor="middle" x="233.4" y="-140.95" font-family="Georgia" font-size="15.00">Weighted linear filter</text>
+</g>
+<!-- input&#45;&gt;filter -->
+<g id="least-mean-squares-figure-1-least-mean-squares-learning-flow-edge1" class="edge">
+<title>input&#45;&gt;filter</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M78.22,-61.45C95.63,-77.88 123.13,-101.75 150.6,-117.2 155.01,-119.68 159.67,-122.01 164.45,-124.18"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="163.24,-126.14 170.11,-126.65 165.06,-121.97 163.24,-126.14"/>
+</g>
+<!-- adapt -->
+<g id="least-mean-squares-figure-1-least-mean-squares-learning-flow-node6" class="node">
+<title>adapt</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M739.65,-50.4C739.65,-50.4 559.8,-50.4 559.8,-50.4 553.8,-50.4 547.8,-44.4 547.8,-38.4 547.8,-38.4 547.8,-12 547.8,-12 547.8,-6 553.8,0 559.8,0 559.8,0 739.65,0 739.65,0 745.65,0 751.65,-6 751.65,-12 751.65,-12 751.65,-38.4 751.65,-38.4 751.65,-44.4 745.65,-50.4 739.65,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="649.72" y="-28.95" font-family="Georgia" font-size="15.00">Adaptive coefficient update</text>
+<text xml:space="preserve" text-anchor="middle" x="649.72" y="-10.95" font-family="Georgia" font-size="15.00">input and residual</text>
+</g>
+<!-- input&#45;&gt;adapt -->
+<g id="least-mean-squares-figure-1-least-mean-squares-learning-flow-edge7" class="edge">
+<title>input&#45;&gt;adapt</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M117.88,-41.42C215.66,-38.44 414.65,-32.35 539.28,-28.54"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="539.07,-30.83 545.5,-28.35 538.93,-26.28 539.07,-30.83"/>
+</g>
+<!-- residual -->
+<g id="least-mean-squares-figure-1-least-mean-squares-learning-flow-node4" class="node">
+<title>residual</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M502.8,-119.4C502.8,-119.4 361.2,-119.4 361.2,-119.4 355.2,-119.4 349.2,-113.4 349.2,-107.4 349.2,-107.4 349.2,-81 349.2,-81 349.2,-75 355.2,-69 361.2,-69 361.2,-69 502.8,-69 502.8,-69 508.8,-69 514.8,-75 514.8,-81 514.8,-81 514.8,-107.4 514.8,-107.4 514.8,-113.4 508.8,-119.4 502.8,-119.4"/>
+<text xml:space="preserve" text-anchor="middle" x="432" y="-97.95" font-family="Georgia" font-size="15.00">Residual comparison</text>
+<text xml:space="preserve" text-anchor="middle" x="432" y="-79.95" font-family="Georgia" font-size="15.00">desired minus output</text>
+</g>
+<!-- filter&#45;&gt;residual -->
+<g id="least-mean-squares-figure-1-least-mean-squares-learning-flow-edge3" class="edge">
+<title>filter&#45;&gt;residual</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M306.21,-127.21C317.46,-124.23 329.21,-121.12 340.8,-118.06"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="341.23,-120.3 346.93,-116.44 340.07,-115.9 341.23,-120.3"/>
+</g>
+<!-- target -->
+<g id="least-mean-squares-figure-1-least-mean-squares-learning-flow-node3" class="node">
+<title>target</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M289.95,-106.2C289.95,-106.2 176.85,-106.2 176.85,-106.2 170.85,-106.2 164.85,-100.2 164.85,-94.2 164.85,-94.2 164.85,-82.2 164.85,-82.2 164.85,-76.2 170.85,-70.2 176.85,-70.2 176.85,-70.2 289.95,-70.2 289.95,-70.2 295.95,-70.2 301.95,-76.2 301.95,-82.2 301.95,-82.2 301.95,-94.2 301.95,-94.2 301.95,-100.2 295.95,-106.2 289.95,-106.2"/>
+<text xml:space="preserve" text-anchor="middle" x="233.4" y="-82.95" font-family="Georgia" font-size="15.00">Desired response</text>
+</g>
+<!-- target&#45;&gt;residual -->
+<g id="least-mean-squares-figure-1-least-mean-squares-learning-flow-edge4" class="edge">
+<title>target&#45;&gt;residual</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M302.33,-90.27C314.65,-90.65 327.67,-91.05 340.51,-91.44"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="340.4,-93.71 346.97,-91.64 340.54,-89.16 340.4,-93.71"/>
+</g>
+<!-- loss -->
+<g id="least-mean-squares-figure-1-least-mean-squares-learning-flow-node5" class="node">
+<title>loss</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M705.9,-122.4C705.9,-122.4 593.55,-122.4 593.55,-122.4 587.55,-122.4 581.55,-116.4 581.55,-110.4 581.55,-110.4 581.55,-84 581.55,-84 581.55,-78 587.55,-72 593.55,-72 593.55,-72 705.9,-72 705.9,-72 711.9,-72 717.9,-78 717.9,-84 717.9,-84 717.9,-110.4 717.9,-110.4 717.9,-116.4 711.9,-122.4 705.9,-122.4"/>
+<text xml:space="preserve" text-anchor="middle" x="649.72" y="-100.95" font-family="Georgia" font-size="15.00">Instantaneous</text>
+<text xml:space="preserve" text-anchor="middle" x="649.72" y="-82.95" font-family="Georgia" font-size="15.00">half&#45;squared loss</text>
+</g>
+<!-- residual&#45;&gt;loss -->
+<g id="least-mean-squares-figure-1-least-mean-squares-learning-flow-edge5" class="edge">
+<title>residual&#45;&gt;loss</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M515.79,-95.35C534.71,-95.61 554.72,-95.89 573.32,-96.15"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="573.15,-98.42 579.68,-96.24 573.21,-93.87 573.15,-98.42"/>
+</g>
+<!-- residual&#45;&gt;adapt -->
+<g id="least-mean-squares-figure-1-least-mean-squares-learning-flow-edge6" class="edge">
+<title>residual&#45;&gt;adapt</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M514.86,-68.02C529.51,-63.33 544.84,-58.43 559.68,-53.68"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="559.98,-55.97 565.48,-51.83 558.59,-51.64 559.98,-55.97"/>
+</g>
+<!-- weights -->
+<g id="least-mean-squares-figure-1-least-mean-squares-learning-flow-node7" class="node">
+<title>weights</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M1028,-108.2C1028,-108.2 860.15,-108.2 860.15,-108.2 854.15,-108.2 848.15,-102.2 848.15,-96.2 848.15,-96.2 848.15,-84.2 848.15,-84.2 848.15,-78.2 854.15,-72.2 860.15,-72.2 860.15,-72.2 1028,-72.2 1028,-72.2 1034,-72.2 1040,-78.2 1040,-84.2 1040,-84.2 1040,-96.2 1040,-96.2 1040,-102.2 1034,-108.2 1028,-108.2"/>
+<text xml:space="preserve" text-anchor="middle" x="944.07" y="-84.95" font-family="Georgia" font-size="15.00">Current filter coefficients</text>
+</g>
+<!-- adapt&#45;&gt;weights -->
+<g id="least-mean-squares-figure-1-least-mean-squares-learning-flow-edge8" class="edge">
+<title>adapt&#45;&gt;weights</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M752.56,-47.84C785.06,-55.07 820.78,-63.01 852.43,-70.05"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="851.64,-72.2 858.48,-71.39 852.63,-67.76 851.64,-72.2"/>
+<text xml:space="preserve" text-anchor="middle" x="799.9" y="-68.28" font-family="Georgia" font-size="12.00">next sample</text>
+</g>
+<!-- weights&#45;&gt;filter -->
+<g id="least-mean-squares-figure-1-least-mean-squares-learning-flow-edge2" class="edge">
+<title>weights&#45;&gt;filter</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M875.87,-108.68C839.42,-117.85 793.4,-128.04 751.65,-133.2 603.07,-151.57 428.73,-151.53 325.14,-149.27"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="325.25,-147 318.7,-149.12 325.15,-151.54 325.25,-147"/>
+</g>
+</g>
+</svg>
+</div><figcaption>The filtering process forms a linear response and residual; the adaptive process uses the current input and residual to update coefficients for later samples.</figcaption></figure>
+<h3>Supplemental extension: include a bias</h3>
+<p>A linear model can include a bias by appending a constant feature equal to one. This <strong>supplemental extension</strong> lets the same vector update learn the bias:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mover><mrow><mi>&#x1D431;</mi></mrow><mo>&#x0007E;</mo></mover><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x0005B;</mo><mtable><mtr><mtd><mi>&#x1D431;</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo></mtd></mtr><mtr><mtd><mn>1</mn></mtd></mtr></mtable><mo>&#x0005D;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mover><mrow><mi>&#x1D430;</mi></mrow><mo>&#x0007E;</mo></mover><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x0005B;</mo><mtable><mtr><mtd><mi>&#x1D430;</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo></mtd></mtr><mtr><mtd><mi>b</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo></mtd></mtr></mtable><mo>&#x0005D;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>y</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msup><mover><mrow><mi>&#x1D431;</mi></mrow><mo>&#x0007E;</mo></mover><mrow><mi>&#x1D5B3;</mi></mrow></msup><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mover><mrow><mi>&#x1D430;</mi></mrow><mo>&#x0007E;</mo></mover><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msup><mi>&#x1D431;</mi><mrow><mi>&#x1D5B3;</mi></mrow></msup><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mi>&#x1D430;</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mi>b</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>The added coefficient changes like any other weight because its feature is always one. This keeps the bias rule consistent with the source's vector update.</p>
+<h2 id="section-2">Instantaneous half-squared loss</h2>
+<p>For the current sample, the slides assign the cost to the instantaneous residual. The factor one-half makes the derivative concise:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x003BE;</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><msup><mi>e</mi><mn>2</mn></msup><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>This is one sample's loss at the current parameters. “Instantaneous” matters: the slide update uses this sample's input and residual directly. It does not first add losses across the dataset or divide their sum by the number of samples.</p>
+<h2 id="section-3">From the gradient to the delta update</h2>
+<p>First consider unconstrained optimization of a continuously differentiable scalar cost: each weight vector is mapped to a real-valued cost, and the goal is to find a minimizing vector:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x003BE;</mi><mi>:</mi><msup><mi>&#x0211D;</mi><mrow><mi>m</mi></mrow></msup><mo>&#x02192;</mo><mi>&#x0211D;</mi><mo>&#x0002C;</mo><mspace width="2em" /><mi>&#x003BE;</mi><mo stretchy="false">&#x00028;</mo><msup><mi>&#x1D430;</mi><mrow><mo>&#x022C6;</mo></mrow></msup><mo stretchy="false">&#x00029;</mo><mo>&#x02264;</mo><mi>&#x003BE;</mi><mo stretchy="false">&#x00028;</mo><mi>&#x1D430;</mi><mo stretchy="false">&#x00029;</mo><mspace width="1em" /><mtext>for&#x000A0;all&#x000A0;</mtext><mi>&#x1D430;</mi></mrow></math></div>
+<p>At a differentiable unconstrained optimum, every first partial derivative must vanish. The gradient collects these derivatives:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mo>&#x02207;</mo><mrow><mi>&#x1D430;</mi></mrow></msub><mi>&#x003BE;</mi><mo>&#x0003D;</mo><mo>&#x0005B;</mo><mtable><mtr><mtd><mfrac><mrow><mo>&#x02202;</mo><mi>&#x003BE;</mi></mrow><mrow><mo>&#x02202;</mo><msub><mi>w</mi><mn>1</mn></msub></mrow></mfrac></mtd></mtr><mtr><mtd><mo>&#x022EE;</mo></mtd></mtr><mtr><mtd><mfrac><mrow><mo>&#x02202;</mo><mi>&#x003BE;</mi></mrow><mrow><mo>&#x02202;</mo><msub><mi>w</mi><mi>m</mi></msub></mrow></mfrac></mtd></mtr></mtable><mo>&#x0005D;</mo><mo>&#x0002C;</mo><mspace width="2em" /><msub><mo>&#x02207;</mo><mrow><mi>&#x1D430;</mi></mrow></msub><mi>&#x003BE;</mi><mo stretchy="false">&#x00028;</mo><msup><mi>&#x1D430;</mi><mrow><mo>&#x022C6;</mo></mrow></msup><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mrow><mn mathvariant="bold">0</mn></mrow></mrow></math></div>
+<p>Zero gradient is a necessary stationary-point condition, not by itself sufficient to establish a minimum: a maximum or saddle point can also have zero gradient.</p>
+<p>Steepest descent moves opposite the gradient of the cost. Write the gradient as <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D420;</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mo>&#x02207;</mo><mrow><mi>&#x1D430;</mi></mrow></msub><mi>&#x003BE;</mi></mrow></math> and use a positive learning rate <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi></mrow></math>. For the current sample, the chain rule gives:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mfrac><mrow><mo>&#x02202;</mo><mi>&#x003BE;</mi></mrow><mrow><mo>&#x02202;</mo><mi>e</mi></mrow></mfrac><mo>&#x0003D;</mo><mi>e</mi><mo>&#x0002C;</mo><mspace width="2em" /><mfrac><mrow><mo>&#x02202;</mo><mi>e</mi></mrow><mrow><mo>&#x02202;</mo><mi>&#x1D430;</mi></mrow></mfrac><mo>&#x0003D;</mo><mo>&#x02212;</mo><mi>&#x1D431;</mi><mo>&#x0002C;</mo><mspace width="2em" /><msub><mo>&#x02207;</mo><mrow><mi>&#x1D430;</mi></mrow></msub><mi>&#x003BE;</mi><mo>&#x0003D;</mo><mfrac><mrow><mo>&#x02202;</mo><mi>&#x003BE;</mi></mrow><mrow><mo>&#x02202;</mo><mi>e</mi></mrow></mfrac><mfrac><mrow><mo>&#x02202;</mo><mi>e</mi></mrow><mrow><mo>&#x02202;</mo><mi>&#x1D430;</mi></mrow></mfrac><mo>&#x0003D;</mo><mo>&#x02212;</mo><mi>&#x1D431;</mi><mi>e</mi></mrow></math></div>
+<p>Substituting that gradient into steepest descent reverses its sign, yielding the LMS rule:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x1D430;</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>&#x1D430;</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mi>&#x003B7;</mi><msub><mo>&#x02207;</mo><mrow><mi>&#x1D430;</mi></mrow></msub><mi>&#x003BE;</mi><mo>&#x0003D;</mo><mi>&#x1D430;</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mi>&#x003B7;</mi><mi>&#x1D431;</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mi>e</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>The derivative of <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><msup><mi>e</mi><mn>2</mn></msup></mrow></math> is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>e</mi></mrow></math>. There is no extra factor of two in the update. The residual convention is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo>&#x02212;</mo><mi>y</mi></mrow></math>; using <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi><mo>&#x02212;</mo><mi>d</mi></mrow></math> would require changing the update sign too.</p>
+<h3>What the input, weights, and learning rate do</h3>
+<p>Each component follows the same rule, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><msub><mi>w</mi><mi>k</mi></msub><mo>&#x0003D;</mo><mi>&#x003B7;</mi><msub><mi>x</mi><mi>k</mi></msub><mi>e</mi></mrow></math>: the residual is shared across the vector, while the feature value controls the change to its matching weight. A feature with value zero leaves its weight unchanged on that sample; a negative feature reverses the update direction for that coefficient. The learning rate <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi><mo>&#x0003E;</mo><mn>0</mn></mrow></math> scales every change. The source motivates steepest descent with a first-order Taylor approximation:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x003BE;</mi><mo stretchy="false">&#x00028;</mo><mi>&#x1D430;</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x02248;</mo><mi>&#x003BE;</mi><mo stretchy="false">&#x00028;</mo><mi>&#x1D430;</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mi>&#x003B7;</mi><mo>&#x02016;</mo><msub><mo>&#x02207;</mo><mrow><mi>&#x1D430;</mi></mrow></msub><mi>&#x003BE;</mi><msup><mo>&#x02016;</mo><mn>2</mn></msup></mrow></math></div>
+<p>That is a local approximation for a step from the current point. It explains the descent direction; it is not a general convergence guarantee for a sequence of changing samples.</p>
+<h2 id="section-4">Online updates, batch conventions, and classification</h2>
+<p>The LMS equation above is <strong>online</strong>: compute the response and residual for one sample, update the parameters, then use those new parameters on the next sample. A batch objective instead sums or averages losses over several samples before updating. The mean gradient is the sum gradient divided by the sample count, so the learning-rate interpretation changes with that choice.</p>
+<p>Keep the learning output separate from a later decision. The perceptron applies a hard threshold while learning and uses a thresholded output; LMS learns from the linear response and its continuous residual. A task may later apply a classification threshold to a trained score, but that decision step is separate.</p>
+<h2 id="section-5">Two-epoch worked trace</h2>
+<p>The following <strong>Teaching example</strong> completes the source rule with a separate bias, two explicitly chosen binary-coordinate inputs, a fixed sample order, and a learning rate. Every response and residual is calculated from the old state for that sample. The vector and bias changes are then applied together before moving to the next sample.</p>
+<section class="walk" tabindex="0" aria-label="Trace two online epochs"><h3>Trace two online epochs</h3><div class="example-input"><strong>Teaching example</strong><span>Samples in fixed order: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>&#x1D431;</mi><mn>1</mn></msub><mo>&#x0002C;</mo><msub><mi>d</mi><mn>1</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math> then <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>&#x1D431;</mi><mn>2</mn></msub><mo>&#x0002C;</mo><msub><mi>d</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math></span><span>Starting state: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>w</mi><mn>1</mn></msub><mo>&#x0002C;</mo><msub><mi>w</mi><mn>2</mn></msub><mo>&#x0002C;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; learning rate <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math></span><span>Teaching completion with separate bias: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi><mo>&#x0003D;</mo><mi>b</mi><mo>&#x0002B;</mo><msub><mi>w</mi><mn>1</mn></msub><msub><mi>x</mi><mn>1</mn></msub><mo>&#x0002B;</mo><msub><mi>w</mi><mn>2</mn></msub><msub><mi>x</mi><mn>2</mn></msub></mrow></math></span><span>For each sample, calculate output and residual from the old state, then update every parameter together.</span></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Epoch 1, sample 1: update from the zero start</h4><p><strong>Old state and rule.</strong> Use <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D430;</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math>, input <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D431;</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, and target <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn></mrow></math>. Calculate the response from these old parameters:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><mi>y</mi></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mi>b</mi><mo>&#x0002B;</mo><msub><mi>w</mi><mn>1</mn></msub><msub><mi>x</mi><mn>1</mn></msub><mo>&#x0002B;</mo><msub><mi>w</mi><mn>2</mn></msub><msub><mi>x</mi><mn>2</mn></msub></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>0</mn><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mn>0</mn><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0</mn></mtd></mtr></mtable></mrow></math></div>
+<p>The residual is desired minus output:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>e</mi><mo>&#x0003D;</mo><mi>d</mi><mo>&#x02212;</mo><mi>y</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x02212;</mo><mn>0</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn></mrow></math></div>
+<p>Apply the source rule <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><msub><mi>w</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mi>&#x003B7;</mi><msub><mi>x</mi><mi>i</mi></msub><mi>e</mi></mrow></math> and the bias completion <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>b</mi><mo>&#x0003D;</mo><mi>&#x003B7;</mi><mi>e</mi></mrow></math>:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><mi>&#x00394;</mi><msub><mi>w</mi><mn>1</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.1</mn></mtd></mtr><mtr><mtd columnalign="right"><mi>&#x00394;</mi><msub><mi>w</mi><mn>2</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.1</mn></mtd></mtr><mtr><mtd columnalign="right"><mi>&#x00394;</mi><mi>b</mi></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.1</mn></mtd></mtr></mtable></mrow></math></div>
+<p>Apply the complete change together. The new state, used by the next sample, is:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>w</mi><mn>1</mn></msub><mo>&#x0002C;</mo><msub><mi>w</mi><mn>2</mn></msub><mo>&#x0002C;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.1</mn><mo>&#x0002C;</mo><mn>0.1</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>0.1</mn><mo stretchy="false">&#x00029;</mo></mrow></math></div></section><section class="step"><h4>2. Epoch 1, sample 2: use the updated state</h4><p><strong>Old state and rule.</strong> Keep <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math>. The previous update left <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>w</mi><mn>1</mn></msub><mo>&#x0002C;</mo><msub><mi>w</mi><mn>2</mn></msub><mo>&#x0002C;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.1</mn><mo>&#x0002C;</mo><mn>0.1</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>0.1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; now use <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D431;</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math>:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><mi>y</mi></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mi>b</mi><mo>&#x0002B;</mo><msub><mi>w</mi><mn>1</mn></msub><msub><mi>x</mi><mn>1</mn></msub><mo>&#x0002B;</mo><msub><mi>w</mi><mn>2</mn></msub><msub><mi>x</mi><mn>2</mn></msub></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.1</mn><mo>&#x02212;</mo><mn>0.1</mn><mo>&#x0002B;</mo><mn>0.1</mn></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.1</mn></mtd></mtr></mtable></mrow></math></div>
+<p>Therefore:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>e</mi><mo>&#x0003D;</mo><mi>d</mi><mo>&#x02212;</mo><mi>y</mi><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1.1</mn></mrow></math></div>
+<p>Substitute into each parameter update:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><mi>&#x00394;</mi><msub><mi>w</mi><mn>1</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1.1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.11</mn></mtd></mtr><mtr><mtd columnalign="right"><mi>&#x00394;</mi><msub><mi>w</mi><mn>2</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1.1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.11</mn></mtd></mtr><mtr><mtd columnalign="right"><mi>&#x00394;</mi><mi>b</mi></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>1.1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.11</mn></mtd></mtr></mtable></mrow></math></div>
+<p>Replace all parameters together. Epoch 1 has presented each sample once:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>w</mi><mn>1</mn></msub><mo>&#x0002C;</mo><msub><mi>w</mi><mn>2</mn></msub><mo>&#x0002C;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.01</mn><mo>&#x0002C;</mo><mn>0.21</mn><mo>&#x0002C;</mo><mn>0.01</mn><mo stretchy="false">&#x00029;</mo></mrow></math></div></section><section class="step"><h4>3. Epoch 2, sample 1: present the first sample again</h4><p><strong>Old state and rule.</strong> Start from this state:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><msub><mi>w</mi><mn>1</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.01</mn></mtd></mtr><mtr><mtd columnalign="right"><msub><mi>w</mi><mn>2</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.21</mn></mtd></mtr><mtr><mtd columnalign="right"><mi>b</mi></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.01</mn></mtd></mtr></mtable></mrow></math></div>
+<p>Reuse <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D431;</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn></mrow></math>:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><mi>y</mi></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mi>b</mi><mo>&#x0002B;</mo><msub><mi>w</mi><mn>1</mn></msub><msub><mi>x</mi><mn>1</mn></msub><mo>&#x0002B;</mo><msub><mi>w</mi><mn>2</mn></msub><msub><mi>x</mi><mn>2</mn></msub></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.01</mn><mo>&#x0002B;</mo><mn>0.01</mn><mo>&#x02212;</mo><mn>0.21</mn></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.19</mn></mtd></mtr></mtable></mrow></math></div>
+<p>The residual is:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><mi>e</mi></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mi>d</mi><mo>&#x02212;</mo><mi>y</mi></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x02212;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.19</mn><mo stretchy="false">&#x00029;</mo></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.81</mn></mtd></mtr></mtable></mrow></math></div>
+<p>Apply the three increments from that same old state:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><mi>&#x00394;</mi><msub><mi>w</mi><mn>1</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.81</mn><mo stretchy="false">&#x00029;</mo></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.081</mn></mtd></mtr><mtr><mtd columnalign="right"><mi>&#x00394;</mi><msub><mi>w</mi><mn>2</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.81</mn><mo stretchy="false">&#x00029;</mo></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.081</mn></mtd></mtr><mtr><mtd columnalign="right"><mi>&#x00394;</mi><mi>b</mi></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.81</mn><mo stretchy="false">&#x00029;</mo></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.081</mn></mtd></mtr></mtable></mrow></math></div>
+<p>The simultaneous update gives this state for the second sample:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><msub><mi>w</mi><mn>1</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.071</mn></mtd></mtr><mtr><mtd columnalign="right"><msub><mi>w</mi><mn>2</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.291</mn></mtd></mtr><mtr><mtd columnalign="right"><mi>b</mi></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.071</mn></mtd></mtr></mtable></mrow></math></div></section><section class="step"><h4>4. Epoch 2, sample 2: complete the second pass</h4><p><strong>Old state and rule.</strong> Use this state from the previous update:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><msub><mi>w</mi><mn>1</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.071</mn></mtd></mtr><mtr><mtd columnalign="right"><msub><mi>w</mi><mn>2</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.291</mn></mtd></mtr><mtr><mtd columnalign="right"><mi>b</mi></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.071</mn></mtd></mtr></mtable></mrow></math></div>
+<p>Now use <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D431;</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math>:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><mi>y</mi></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mi>b</mi><mo>&#x0002B;</mo><msub><mi>w</mi><mn>1</mn></msub><msub><mi>x</mi><mn>1</mn></msub><mo>&#x0002B;</mo><msub><mi>w</mi><mn>2</mn></msub><msub><mi>x</mi><mn>2</mn></msub></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.071</mn><mo>&#x02212;</mo><mn>0.071</mn><mo>&#x0002B;</mo><mn>0.291</mn></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.149</mn></mtd></mtr></mtable></mrow></math></div>
+<p>Then:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>e</mi><mo>&#x0003D;</mo><mi>d</mi><mo>&#x02212;</mo><mi>y</mi><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><mn>0.149</mn><mo>&#x0003D;</mo><mn>0.851</mn></mrow></math></div>
+<p>Each input coordinate and the constant bias feature receive a change:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><mi>&#x00394;</mi><msub><mi>w</mi><mn>1</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.851</mn><mo stretchy="false">&#x00029;</mo></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.0851</mn></mtd></mtr><mtr><mtd columnalign="right"><mi>&#x00394;</mi><msub><mi>w</mi><mn>2</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.851</mn><mo stretchy="false">&#x00029;</mo></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.0851</mn></mtd></mtr><mtr><mtd columnalign="right"><mi>&#x00394;</mi><mi>b</mi></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>0.851</mn><mo stretchy="false">&#x00029;</mo></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.0851</mn></mtd></mtr></mtable></mrow></math></div>
+<p>After this final simultaneous update:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><msub><mi>w</mi><mn>1</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.0141</mn></mtd></mtr><mtr><mtd columnalign="right"><msub><mi>w</mi><mn>2</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.3761</mn></mtd></mtr><mtr><mtd columnalign="right"><mi>b</mi></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.0141</mn></mtd></mtr></mtable></mrow></math></div>
+<p>Two passes are complete. This checks the trace; it does not promise exact target outputs.</p></section><section class="step"><h4>5. Check both final predictions</h4><p>For the first input:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><msub><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mn>1</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mi>b</mi><mo>&#x0002B;</mo><msub><mi>w</mi><mn>1</mn></msub><mo>&#x02212;</mo><msub><mi>w</mi><mn>2</mn></msub></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.0141</mn><mo>&#x0002B;</mo><mn>0.0141</mn><mo>&#x02212;</mo><mn>0.3761</mn></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.0282</mn><mo>&#x02212;</mo><mn>0.3761</mn></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.3479</mn></mtd></mtr></mtable></mrow></math></div>
+<p>Against <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn></mrow></math>, the residual and half-squared loss are:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><msub><mi>e</mi><mn>1</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><msub><mi>d</mi><mn>1</mn></msub><mo>&#x02212;</mo><msub><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mn>1</mn></msub></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x02212;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.3479</mn><mo stretchy="false">&#x00029;</mo></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.6521</mn></mtd></mtr><mtr><mtd columnalign="right"><msub><mi>&#x003BE;</mi><mn>1</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><msubsup><mi>e</mi><mn>1</mn><mn>2</mn></msubsup></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.6521</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.212617205</mn></mtd></mtr></mtable></mrow></math></div>
+<p>For the second input:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><msub><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mn>2</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mi>b</mi><mo>&#x0002B;</mo><msub><mi>w</mi><mn>1</mn></msub><mo>&#x0002B;</mo><msub><mi>w</mi><mn>2</mn></msub></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.0141</mn><mo>&#x0002B;</mo><mn>0.0141</mn><mo>&#x0002B;</mo><mn>0.3761</mn></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.0282</mn><mo>&#x0002B;</mo><mn>0.3761</mn></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.4043</mn></mtd></mtr></mtable></mrow></math></div>
+<p>Against <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mn>1</mn></mrow></math>:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><msub><mi>e</mi><mn>2</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><msub><mi>d</mi><mn>2</mn></msub><mo>&#x02212;</mo><msub><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mn>2</mn></msub></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><mn>0.4043</mn></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.5957</mn></mtd></mtr><mtr><mtd columnalign="right"><msub><mi>&#x003BE;</mi><mn>2</mn></msub></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><msubsup><mi>e</mi><mn>2</mn><mn>2</mn></msubsup></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo stretchy="false">&#x00028;</mo><mn>0.5957</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0003D;</mo><mn>0.177429245</mn></mtd></mtr></mtable></mrow></math></div>
+<p>Both final residuals are nonzero, as expected for this two-pass teaching trace.</p></section></section>
+<p>The two final half-squared losses are computed from the final residuals. They are checks for these two inputs after two passes, not a claim that LMS reaches the targets or converges in two epochs.</p>
+<details class="worked"><summary>Optional arithmetic: one checked LMS update</summary><p><strong>Teaching example.</strong> Begin with <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D431;</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>w</mi><mn>1</mn></msub><mo>&#x0002C;</mo><msub><mi>w</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.2</mn><mo>&#x0002C;</mo><mn>0.1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, target <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math>, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math>. This separate bias is part of the teaching model. The initial response and residual are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>y</mi><mo>&#x0003D;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>0.2</mn><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>e</mi><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><mn>0.1</mn><mo>&#x0003D;</mo><mn>0.9</mn></mrow></math>. The source rule gives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mi>&#x00394;</mi><msub><mi>w</mi><mn>1</mn></msub><mo>&#x0002C;</mo><mi>&#x00394;</mi><msub><mi>w</mi><mn>2</mn></msub><mo>&#x0002C;</mo><mi>&#x00394;</mi><mi>b</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.9</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.9</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>0.9</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.09</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>0.09</mn><mo>&#x0002C;</mo><mn>0.09</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, so the new state is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>w</mi><mn>1</mn></msub><mo>&#x0002C;</mo><msub><mi>w</mi><mn>2</mn></msub><mo>&#x0002C;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.29</mn><mo>&#x0002C;</mo><mn>0.01</mn><mo>&#x0002C;</mo><mn>0.09</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. Re-evaluating the same input gives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mrow><mrow><mi mathvariant="normal">n</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">w</mi></mrow></mrow></msub><mo>&#x0003D;</mo><mn>0.09</mn><mo>&#x0002B;</mo><mn>0.29</mn><mo>&#x02212;</mo><mn>0.01</mn><mo>&#x0003D;</mo><mn>0.37</mn></mrow></math>. The residual magnitude falls from <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.9</mn></mrow></math> to <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x0007C;</mo><mn>1</mn><mo>&#x02212;</mo><mn>0.37</mn><mo stretchy="false">&#x0007C;</mo><mo>&#x0003D;</mo><mn>0.63</mn></mrow></math>; the half-squared loss changes from <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo stretchy="false">&#x00028;</mo><mn>0.9</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0003D;</mo><mn>0.405</mn></mrow></math> to <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo stretchy="false">&#x00028;</mo><mn>0.63</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0003D;</mo><mn>0.19845</mn></mrow></math>.</p></details>
+<h2 id="section-6">Common mistakes</h2>
+<ul>
+<li>Reversing the residual to output minus target while retaining the additive update. With <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>e</mi><mo>&#x0003D;</mo><mi>d</mi><mo>&#x02212;</mo><mi>y</mi></mrow></math>, the source's update adds <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi><mi>&#x1D431;</mi><mi>e</mi></mrow></math>.</li>
+<li>Applying the classification threshold inside the LMS residual calculation. Training uses the continuous linear response.</li>
+<li>Updating each coefficient from a partially changed vector. First calculate the response and residual from the old state, then apply the complete update together.</li>
+<li>Treating the slide's instantaneous sample loss as a batch mean or sum. State the aggregation if a batch objective is introduced.</li>
+<li>Assuming a small, positive learning rate alone proves convergence. The first-order argument is local, and the slides report that LMS may converge slowly and is sensitive to input variation.</li>
+</ul>
+<h2 id="section-7">Exam focus</h2>
+<ul>
+<li>LMS is also called the delta rule and generalizes perceptron learning by using a linear output during learning.</li>
+<li>The residual sign is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>e</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>d</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mi>y</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo></mrow></math> and the instantaneous loss is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BE;</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><msup><mi>e</mi><mn>2</mn></msup><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo></mrow></math>.</li>
+<li>Chain rule: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mo>&#x02207;</mo><mrow><mi>&#x1D430;</mi></mrow></msub><mi>&#x003BE;</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mi>&#x1D431;</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mi>e</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo></mrow></math>; update: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D430;</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>&#x1D430;</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mi>&#x003B7;</mi><mi>&#x1D431;</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo><mi>e</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mo stretchy="false">&#x00029;</mo></mrow></math>.</li>
+<li>The LMS slide equation is per-sample and online. Do not silently replace it with a batch sum or mean.</li>
+<li>Each update has cost linear in the number of parameters. LMS can converge slowly and is sensitive to input variations. A small learning rate does not by itself establish convergence or a fixed epoch count.</li>
+</ul>
+<p>The lecture also characterizes LMS as <strong>robust</strong>, meaning it does not depend on a particular model, especially for a small learning rate. Keep that stated feature distinct from convergence: the update still uses the linear filter above, and robustness does not guarantee convergence for arbitrary inputs or learning rates.</p>
+<h2 id="section-8">Practice questions</h2>
+<p class="question">1. For a linear response below its desired value, what is the sign of the LMS residual?</p>
+<details class="worked"><summary>Check your answer</summary><p>It is positive because <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>e</mi><mo>&#x0003D;</mo><mi>d</mi><mo>&#x02212;</mo><mi>y</mi></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo>&#x0003E;</mo><mi>y</mi></mrow></math>. The update adds <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi><mi>&#x1D431;</mi><mi>e</mi></mrow></math>, scaled coordinate by coordinate by the input.</p></details>
+<p class="question">2. Why does the LMS update not contain an extra factor of two?</p>
+<details class="worked"><summary>Check your answer</summary><p>The loss is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BE;</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><msup><mi>e</mi><mn>2</mn></msup></mrow></math>. Differentiating with respect to <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>e</mi></mrow></math> gives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>e</mi></mrow></math>; the factor two from the square cancels the one-half.</p></details>
+<p class="question">3. What parameters must be used to calculate a sample’s output and error?</p>
+<details class="worked"><summary>Check your answer</summary><p>Use the complete old weight vector (and the old bias if using the labeled bias completion). Calculate the output and residual first; then apply all increments together.</p></details>
+<p class="question">4. State one distinction between online LMS and a batch sum or mean.</p>
+<details class="worked"><summary>Check your answer</summary><p>Online LMS updates from one current sample at a time. A batch sum or mean aggregates multiple sample losses before an update, and the mean introduces a sample-count normalization absent from the slide equation.</p></details>
+<p class="question">5. Does the two-epoch example show that LMS reaches the exact targets or always converges?</p>
+<details class="worked"><summary>Check your answer</summary><p>No. It verifies only the displayed arithmetic on the two teaching inputs after two passes. The source lists slow convergence and sensitivity to input variation and gives no universal convergence or stopping guarantee.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="mlp-optimization.html"><small>Previous</small>Multilayer Networks, Gradient Descent, and Training Practice <span aria-hidden="true">↗</span></a><a href="backpropagation.html"><small>Next</small>Backpropagation: Derivation and Layerwise Updates <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

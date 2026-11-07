@@ -1,0 +1,653 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Autoencoders compress an input into a code and learn to reconstruct it, including from a corrupted view."><title>Autoencoders and Learned Representations · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html" aria-current="page">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Deep and generative models <span>/</span> Lecture 4</div><h1>Autoencoders and Learned Representations</h1><p class="lead">Autoencoders compress an input into a code and learn to reconstruct it, including from a corrupted view.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Encoder, code, decoder, and objective</a><a href="#section-2">Historical deep autoencoder training</a><a href="#section-3">Denoising autoencoders</a><a href="#section-4">Supplemental relationship to PCA</a><a href="#section-5">Common mistakes</a><a href="#section-6">Exam focus</a><a href="#section-7">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>An autoencoder is trained to reproduce its input. The encoder compresses an input into a code; the decoder uses that code to reconstruct the input. Training compares the reconstruction with a target derived from the input, so the network learns a representation useful for reconstruction without a separate class label. The narrow code limits capacity, but reconstruction quality alone does not guarantee that the code preserves whichever features a later task values.</p>
+<figure><div class="diagram-frame" style="--diagram-width:285.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="The same clean vector x is the forward input and the target, but the target meets the prediction only at the loss. The 20-value code is undercomplete relative to the 784-value input." width="285pt" height="555pt"
+ viewBox="0.00 0.00 285.00 555.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="autoencoders-figure-1-autoencoders-basic-reconstruction-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 544.45)">
+<title>G</title>
+<!-- input -->
+<g id="autoencoders-figure-1-autoencoders-basic-reconstruction-node1" class="node">
+<title>input</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M219.6,-533.65C219.6,-533.65 81,-533.65 81,-533.65 75,-533.65 69,-527.65 69,-521.65 69,-521.65 69,-495.25 69,-495.25 69,-489.25 75,-483.25 81,-483.25 81,-483.25 219.6,-483.25 219.6,-483.25 225.6,-483.25 231.6,-489.25 231.6,-495.25 231.6,-495.25 231.6,-521.65 231.6,-521.65 231.6,-527.65 225.6,-533.65 219.6,-533.65"/>
+<text xml:space="preserve" text-anchor="middle" x="150.3" y="-512.2" font-family="Georgia" font-size="15.00">Input / clean target x</text>
+<text xml:space="preserve" text-anchor="middle" x="150.3" y="-494.2" font-family="Georgia" font-size="15.00">784 values</text>
+</g>
+<!-- enc -->
+<g id="autoencoders-figure-1-autoencoders-basic-reconstruction-node2" class="node">
+<title>enc</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M140.22,-437C140.22,-437 68.38,-437 68.38,-437 62.38,-437 56.38,-431 56.38,-425 56.38,-425 56.38,-398.6 56.38,-398.6 56.38,-392.6 62.38,-386.6 68.38,-386.6 68.38,-386.6 140.22,-386.6 140.22,-386.6 146.22,-386.6 152.22,-392.6 152.22,-398.6 152.22,-398.6 152.22,-425 152.22,-425 152.22,-431 146.22,-437 140.22,-437"/>
+<text xml:space="preserve" text-anchor="middle" x="104.3" y="-415.55" font-family="Georgia" font-size="15.00">Encoder</text>
+<text xml:space="preserve" text-anchor="middle" x="104.3" y="-397.55" font-family="Georgia" font-size="15.00">784 → 100</text>
+</g>
+<!-- input&#45;&gt;enc -->
+<g id="autoencoders-figure-1-autoencoders-basic-reconstruction-edge1" class="edge">
+<title>input&#45;&gt;enc</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M115.95,-482.92C111.55,-478.24 107.67,-472.98 105.05,-467.25 101.96,-460.49 100.7,-452.76 100.43,-445.27"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="102.7,-445.35 100.48,-438.83 98.15,-445.31 102.7,-445.35"/>
+<text xml:space="preserve" text-anchor="middle" x="142.18" y="-455.85" font-family="Georgia" font-size="12.00">forward input</text>
+</g>
+<!-- loss -->
+<g id="autoencoders-figure-1-autoencoders-basic-reconstruction-node6" class="node">
+<title>loss</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M223.23,-50.4C223.23,-50.4 55.38,-50.4 55.38,-50.4 49.38,-50.4 43.38,-44.4 43.38,-38.4 43.38,-38.4 43.38,-12 43.38,-12 43.38,-6 49.38,0 55.38,0 55.38,0 223.23,0 223.23,0 229.23,0 235.23,-6 235.23,-12 235.23,-12 235.23,-38.4 235.23,-38.4 235.23,-44.4 229.23,-50.4 223.23,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="139.3" y="-28.95" font-family="Georgia" font-size="15.00">Mean reconstruction loss</text>
+<text xml:space="preserve" text-anchor="middle" x="139.3" y="-10.95" font-family="Georgia" font-size="15.00">over N sample vectors</text>
+</g>
+<!-- input&#45;&gt;loss -->
+<g id="autoencoders-figure-1-autoencoders-basic-reconstruction-edge6" class="edge">
+<title>input&#45;&gt;loss</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M170.79,-482.82C174.3,-477.87 177.65,-472.55 180.3,-467.25 191.58,-444.69 196.3,-438.02 196.3,-412.8 196.3,-412.8 196.3,-412.8 196.3,-120.85 196.3,-97.27 183.16,-74.52 169.5,-57.23"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="171.32,-55.86 165.43,-52.29 167.8,-58.75 171.32,-55.86"/>
+<text xml:space="preserve" text-anchor="middle" x="230.05" y="-262.55" font-family="Georgia" font-size="12.00">target x only</text>
+</g>
+<!-- code -->
+<g id="autoencoders-figure-1-autoencoders-basic-reconstruction-node3" class="node">
+<title>code</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M143.35,-340.35C143.35,-340.35 57.25,-340.35 57.25,-340.35 51.25,-340.35 45.25,-334.35 45.25,-328.35 45.25,-328.35 45.25,-301.95 45.25,-301.95 45.25,-295.95 51.25,-289.95 57.25,-289.95 57.25,-289.95 143.35,-289.95 143.35,-289.95 149.35,-289.95 155.35,-295.95 155.35,-301.95 155.35,-301.95 155.35,-328.35 155.35,-328.35 155.35,-334.35 149.35,-340.35 143.35,-340.35"/>
+<text xml:space="preserve" text-anchor="middle" x="100.3" y="-318.9" font-family="Georgia" font-size="15.00">Latent code z</text>
+<text xml:space="preserve" text-anchor="middle" x="100.3" y="-300.9" font-family="Georgia" font-size="15.00">20 values</text>
+</g>
+<!-- enc&#45;&gt;code -->
+<g id="autoencoders-figure-1-autoencoders-basic-reconstruction-edge2" class="edge">
+<title>enc&#45;&gt;code</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M103.27,-386.43C102.79,-375.01 102.21,-361.25 101.69,-348.94"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="103.97,-349.01 101.42,-342.61 99.42,-349.2 103.97,-349.01"/>
+<text xml:space="preserve" text-anchor="middle" x="121.29" y="-359.2" font-family="Georgia" font-size="12.00">encode</text>
+</g>
+<!-- dec -->
+<g id="autoencoders-figure-1-autoencoders-basic-reconstruction-node4" class="node">
+<title>dec</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M147.22,-243.7C147.22,-243.7 33.38,-243.7 33.38,-243.7 27.38,-243.7 21.38,-237.7 21.38,-231.7 21.38,-231.7 21.38,-205.3 21.38,-205.3 21.38,-199.3 27.38,-193.3 33.38,-193.3 33.38,-193.3 147.22,-193.3 147.22,-193.3 153.22,-193.3 159.22,-199.3 159.22,-205.3 159.22,-205.3 159.22,-231.7 159.22,-231.7 159.22,-237.7 153.22,-243.7 147.22,-243.7"/>
+<text xml:space="preserve" text-anchor="middle" x="90.3" y="-222.25" font-family="Georgia" font-size="15.00">Decoder</text>
+<text xml:space="preserve" text-anchor="middle" x="90.3" y="-204.25" font-family="Georgia" font-size="15.00">20 → 100 → 784</text>
+</g>
+<!-- code&#45;&gt;dec -->
+<g id="autoencoders-figure-1-autoencoders-basic-reconstruction-edge3" class="edge">
+<title>code&#45;&gt;dec</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M97.67,-289.28C96.46,-277.78 95,-263.97 93.7,-251.69"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="95.98,-251.6 93.03,-245.38 91.45,-252.08 95.98,-251.6"/>
+<text xml:space="preserve" text-anchor="middle" x="114.65" y="-262.55" font-family="Georgia" font-size="12.00">decode</text>
+</g>
+<!-- recon -->
+<g id="autoencoders-figure-1-autoencoders-basic-reconstruction-node5" class="node">
+<title>recon</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M150.6,-147.05C150.6,-147.05 12,-147.05 12,-147.05 6,-147.05 0,-141.05 0,-135.05 0,-135.05 0,-108.65 0,-108.65 0,-102.65 6,-96.65 12,-96.65 12,-96.65 150.6,-96.65 150.6,-96.65 156.6,-96.65 162.6,-102.65 162.6,-108.65 162.6,-108.65 162.6,-135.05 162.6,-135.05 162.6,-141.05 156.6,-147.05 150.6,-147.05"/>
+<text xml:space="preserve" text-anchor="middle" x="81.3" y="-125.6" font-family="Georgia" font-size="15.00">Reconstruction x&#45;hat</text>
+<text xml:space="preserve" text-anchor="middle" x="81.3" y="-107.6" font-family="Georgia" font-size="15.00">784 values</text>
+</g>
+<!-- dec&#45;&gt;recon -->
+<g id="autoencoders-figure-1-autoencoders-basic-reconstruction-edge4" class="edge">
+<title>dec&#45;&gt;recon</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M87.98,-193.13C86.9,-181.71 85.59,-167.95 84.42,-155.64"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="86.7,-155.56 83.82,-149.31 82.17,-155.99 86.7,-155.56"/>
+<text xml:space="preserve" text-anchor="middle" x="105.46" y="-165.9" font-family="Georgia" font-size="12.00">predict</text>
+</g>
+<!-- recon&#45;&gt;loss -->
+<g id="autoencoders-figure-1-autoencoders-basic-reconstruction-edge5" class="edge">
+<title>recon&#45;&gt;loss</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M96.54,-95.98C103.68,-84.34 112.26,-70.33 119.86,-57.93"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="121.71,-59.25 123.17,-52.52 117.83,-56.87 121.71,-59.25"/>
+<text xml:space="preserve" text-anchor="middle" x="137.02" y="-69.25" font-family="Georgia" font-size="12.00">compare</text>
+</g>
+</g>
+</svg>
+</div><figcaption>The same clean vector x is the forward input and the target, but the target meets the prediction only at the loss. The 20-value code is undercomplete relative to the 784-value input.</figcaption></figure>
+<h2 id="section-1">Encoder, code, decoder, and objective</h2>
+<p>For sample <em>i</em>, the feedforward network receives the input and predicts that same vector at its output. The input-to-hidden part is the <strong>encoder</strong>; the hidden-to-output part is the <strong>decoder</strong>. The latent code is the representation passed between them. The target is not an extra input to the forward network: it is compared with the prediction after the forward pass.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi>&#x1D432;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><msup><mi>&#x1D431;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0002C;</mo><mspace width="2em" /><msup><mi>&#x1D433;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><msub><mi>f</mi><mrow><mrow><mi mathvariant="normal">e</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">c</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><msup><mi>&#x1D431;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><msup><mover accent="true"><mrow><mi>&#x1D431;</mi></mrow><mo>&#x0005E;</mo></mover><mrow><mo stretchy="false">&#x00028;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><msub><mi>f</mi><mrow><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><msup><mi>&#x1D433;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>The lecture’s objective averages a squared vector reconstruction error over the <em>N sample vectors</em>. Each norm squares and sums that sample’s coordinate errors; the outer average divides by <em>N</em>. It does not add a second division by the number of input coordinates.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>L</mi><mo stretchy="false">&#x00028;</mo><mi>&#x1D431;</mi><mo>&#x0002C;</mo><mover accent="true"><mrow><mi>&#x1D431;</mi></mrow><mo>&#x0005E;</mo></mover><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>N</mi></mrow></mfrac><munderover><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>N</mi></mrow></munderover><mo>&#x02016;</mo><msub><mi>&#x1D431;</mi><mi>i</mi></msub><mo>&#x02212;</mo><msub><mover accent="true"><mrow><mi>&#x1D431;</mi></mrow><mo>&#x0005E;</mo></mover><mi>i</mi></msub><msubsup><mo>&#x02016;</mo><mn>2</mn><mn>2</mn></msubsup></mrow></math></div>
+<details class="worked"><summary>Expand the complete two-sample loss calculation</summary><section class="walk" tabindex="0" aria-label="A sample-mean squared vector-norm calculation"><h3>A sample-mean squared vector-norm calculation</h3><div class="example-input"><strong>Objective convention</strong><span>For N samples in the batch, average one squared vector norm per sample: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mi>N</mi></mrow></mfrac><msubsup><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>N</mi></mrow></msubsup><mo>&#x02016;</mo><msub><mi>&#x1D431;</mi><mi>i</mi></msub><mo>&#x02212;</mo><msub><mover accent="true"><mrow><mi>&#x1D431;</mi></mrow><mo>&#x0005E;</mo></mover><mi>i</mi></msub><msubsup><mo>&#x02016;</mo><mn>2</mn><mn>2</mn></msubsup></mrow></math>.</span><span>The source does not divide by the number of coordinates.</span></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. State the clean targets and reconstructions</h4><p><strong>Supplemental teaching calculation.</strong> Use two 3-coordinate vectors. These small values make the sample-level vector norm visible; they are not slide data.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x1D431;</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="1em" /><msub><mover accent="true"><mrow><mi>&#x1D431;</mi></mrow><mo>&#x0005E;</mo></mover><mn>1</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>2.5</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>&#x1D431;</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="1em" /><msub><mover accent="true"><mrow><mi>&#x1D431;</mi></mrow><mo>&#x0005E;</mo></mover><mn>2</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.5</mn><mo>&#x0002C;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math></div></section><section class="step"><h4>2. Subtract coordinate by coordinate and square each error</h4><p>For each sample, subtract the reconstruction from its clean target, then square every coordinate. Keep the vectors separate until each sample norm is complete.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x1D431;</mi><mn>1</mn></msub><mo>&#x02212;</mo><msub><mover accent="true"><mrow><mi>&#x1D431;</mi></mrow><mo>&#x0005E;</mo></mover><mn>1</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mn>0</mn><mo>&#x0002C;</mo><mspace width="0.167em" /><mn>2</mn><mo>&#x02212;</mo><mn>2.5</mn><mo>&#x0002C;</mo><mspace width="0.167em" /><mn>3</mn><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>0.5</mn><mo>&#x0002C;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="1em" /><mo stretchy="false">&#x00028;</mo><msub><mi>&#x1D431;</mi><mn>1</mn></msub><mo>&#x02212;</mo><msub><mover accent="true"><mrow><mi>&#x1D431;</mi></mrow><mo>&#x0005E;</mo></mover><mn>1</mn></msub><msup><mo stretchy="false">&#x00029;</mo><mrow><mo>&#x02299;</mo><mn>2</mn></mrow></msup><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>0.25</mn><mo>&#x0002C;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x1D431;</mi><mn>2</mn></msub><mo>&#x02212;</mo><msub><mover accent="true"><mrow><mi>&#x1D431;</mi></mrow><mo>&#x0005E;</mo></mover><mn>2</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x02212;</mo><mn>0.5</mn><mo>&#x0002C;</mo><mspace width="0.167em" /><mn>1</mn><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002C;</mo><mspace width="0.167em" /><mn>2</mn><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.5</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="1em" /><mo stretchy="false">&#x00028;</mo><msub><mi>&#x1D431;</mi><mn>2</mn></msub><mo>&#x02212;</mo><msub><mover accent="true"><mrow><mi>&#x1D431;</mi></mrow><mo>&#x0005E;</mo></mover><mn>2</mn></msub><msup><mo stretchy="false">&#x00029;</mo><mrow><mo>&#x02299;</mo><mn>2</mn></mrow></msup><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.25</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math></div></section><section class="step"><h4>3. Sum within each sample to get squared vector norms</h4><p>The squared Euclidean norm is the sum of that sample vector’s squared coordinate errors.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>&#x02016;</mo><msub><mi>&#x1D431;</mi><mn>1</mn></msub><mo>&#x02212;</mo><msub><mover accent="true"><mrow><mi>&#x1D431;</mi></mrow><mo>&#x0005E;</mo></mover><mn>1</mn></msub><msubsup><mo>&#x02016;</mo><mn>2</mn><mn>2</mn></msubsup><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>0.25</mn><mo>&#x0002B;</mo><mn>4</mn><mo>&#x0003D;</mo><mn>5.25</mn><mo>&#x0002C;</mo><mspace width="2em" /><mo>&#x02016;</mo><msub><mi>&#x1D431;</mi><mn>2</mn></msub><mo>&#x02212;</mo><msub><mover accent="true"><mrow><mi>&#x1D431;</mi></mrow><mo>&#x0005E;</mo></mover><mn>2</mn></msub><msubsup><mo>&#x02016;</mo><mn>2</mn><mn>2</mn></msubsup><mo>&#x0003D;</mo><mn>0.25</mn><mo>&#x0002B;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>1.25</mn></mrow></math></div></section><section class="step"><h4>4. Average the two sample norms and check independently</h4><p>There are N=2 sample vectors, so divide the sum of their norms by 2. An independent check adds all six squared coordinate errors first, then divides by the number of samples. This is not the pixelwise mean, which would divide by six coordinates.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>L</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>5.25</mn><mo>&#x0002B;</mo><mn>1.25</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>3.25</mn></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtext>check:&#x000A0;</mtext><mfrac><mrow><mn>1</mn><mo>&#x0002B;</mo><mn>0.25</mn><mo>&#x0002B;</mo><mn>4</mn><mo>&#x0002B;</mo><mn>0.25</mn><mo>&#x0002B;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>6.5</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>3.25</mn><mo>&#x0002C;</mo><mspace width="2em" /><mtext>pixel&#x000A0;mean</mtext><mo>&#x0003D;</mo><mfrac><mrow><mn>6.5</mn></mrow><mrow><mn>2</mn><mo>&#x000B7;</mo><mn>3</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>13</mn></mrow><mrow><mn>12</mn></mrow></mfrac><mo>&#x02248;</mo><mn>1.0833</mn></mrow></math></div></section></section></details>
+<p>In the source’s basic example, the widths narrow from 784 input values through 100 hidden units to a 20-unit code, then expand symmetrically through 100 to 784 reconstructed values. Since 20 is below 784, this is an <strong>undercomplete bottleneck</strong>. It constrains how much information can pass through the code and encourages compression useful for the training objective. It does not guarantee universally informative features: what is retained depends on the data, model, and reconstruction objective.</p>
+<h2 id="section-2">Historical deep autoencoder training</h2>
+<p>The deeper example extends the encoder and decoder with more hidden layers. The source diagram uses a 30-unit code and mirrored widths. Its accompanying training description is a historical layerwise method: pretrain a stack of restricted Boltzmann machines (RBMs), passing the learned feature activations of one as the training data for the next. Then unfold the pretrained stack into an encoder and mirrored decoder and fine-tune the whole autoencoder by backpropagating reconstruction error.</p>
+<figure><div class="diagram-frame" style="--diagram-width:419.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Historical layerwise RBM pretraining and reconstruction fine-tuning described on the slide and associated with Hinton and Salakhutdinov (2006). It is one historical procedure, not a required modern workflow." width="419pt" height="451pt"
+ viewBox="0.00 0.00 419.00 451.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="autoencoders-figure-2-autoencoders-historical-deep-training-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 440.6)">
+<title>G</title>
+<!-- rbm1 -->
+<g id="autoencoders-figure-2-autoencoders-historical-deep-training-node1" class="node">
+<title>rbm1</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M329.85,-429.8C329.85,-429.8 48,-429.8 48,-429.8 42,-429.8 36,-423.8 36,-417.8 36,-417.8 36,-405.8 36,-405.8 36,-399.8 42,-393.8 48,-393.8 48,-393.8 329.85,-393.8 329.85,-393.8 335.85,-393.8 341.85,-399.8 341.85,-405.8 341.85,-405.8 341.85,-417.8 341.85,-417.8 341.85,-423.8 335.85,-429.8 329.85,-429.8"/>
+<text xml:space="preserve" text-anchor="middle" x="188.93" y="-406.55" font-family="Georgia" font-size="15.00">RBM 1: 2000 visible → 1000 feature units</text>
+</g>
+<!-- rbm2 -->
+<g id="autoencoders-figure-2-autoencoders-historical-deep-training-node2" class="node">
+<title>rbm2</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M326.1,-347.55C326.1,-347.55 51.75,-347.55 51.75,-347.55 45.75,-347.55 39.75,-341.55 39.75,-335.55 39.75,-335.55 39.75,-323.55 39.75,-323.55 39.75,-317.55 45.75,-311.55 51.75,-311.55 51.75,-311.55 326.1,-311.55 326.1,-311.55 332.1,-311.55 338.1,-317.55 338.1,-323.55 338.1,-323.55 338.1,-335.55 338.1,-335.55 338.1,-341.55 332.1,-347.55 326.1,-347.55"/>
+<text xml:space="preserve" text-anchor="middle" x="188.93" y="-324.3" font-family="Georgia" font-size="15.00">RBM 2: 1000 visible → 500 feature units</text>
+</g>
+<!-- rbm1&#45;&gt;rbm2 -->
+<g id="autoencoders-figure-2-autoencoders-historical-deep-training-edge1" class="edge">
+<title>rbm1&#45;&gt;rbm2</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M188.93,-392.99C188.93,-382.18 188.93,-368.21 188.93,-356.23"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="191.2,-356.32 188.93,-349.82 186.65,-356.32 191.2,-356.32"/>
+<text xml:space="preserve" text-anchor="middle" x="292.43" y="-366.4" font-family="Georgia" font-size="12.00">RBM 1 activations become RBM 2 data</text>
+</g>
+<!-- rbm3 -->
+<g id="autoencoders-figure-2-autoencoders-historical-deep-training-node3" class="node">
+<title>rbm3</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M317.85,-265.3C317.85,-265.3 60,-265.3 60,-265.3 54,-265.3 48,-259.3 48,-253.3 48,-253.3 48,-241.3 48,-241.3 48,-235.3 54,-229.3 60,-229.3 60,-229.3 317.85,-229.3 317.85,-229.3 323.85,-229.3 329.85,-235.3 329.85,-241.3 329.85,-241.3 329.85,-253.3 329.85,-253.3 329.85,-259.3 323.85,-265.3 317.85,-265.3"/>
+<text xml:space="preserve" text-anchor="middle" x="188.93" y="-242.05" font-family="Georgia" font-size="15.00">RBM 3: 500 visible → 30 feature units</text>
+</g>
+<!-- rbm2&#45;&gt;rbm3 -->
+<g id="autoencoders-figure-2-autoencoders-historical-deep-training-edge2" class="edge">
+<title>rbm2&#45;&gt;rbm3</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M188.93,-310.74C188.93,-299.93 188.93,-285.96 188.93,-273.98"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="191.2,-274.07 188.93,-267.57 186.65,-274.07 191.2,-274.07"/>
+<text xml:space="preserve" text-anchor="middle" x="293.18" y="-284.15" font-family="Georgia" font-size="12.00">RBM 2 activations become RBM 3 data</text>
+</g>
+<!-- unfold -->
+<g id="autoencoders-figure-2-autoencoders-historical-deep-training-node4" class="node">
+<title>unfold</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M365.85,-183.05C365.85,-183.05 12,-183.05 12,-183.05 6,-183.05 0,-177.05 0,-171.05 0,-171.05 0,-126.65 0,-126.65 0,-120.65 6,-114.65 12,-114.65 12,-114.65 365.85,-114.65 365.85,-114.65 371.85,-114.65 377.85,-120.65 377.85,-126.65 377.85,-126.65 377.85,-171.05 377.85,-171.05 377.85,-177.05 371.85,-183.05 365.85,-183.05"/>
+<text xml:space="preserve" text-anchor="middle" x="188.93" y="-161.6" font-family="Georgia" font-size="15.00">Unfold the pretrained encoder</text>
+<text xml:space="preserve" text-anchor="middle" x="188.93" y="-143.6" font-family="Georgia" font-size="15.00">and mirrored decoder</text>
+<text xml:space="preserve" text-anchor="middle" x="188.93" y="-125.6" font-family="Georgia" font-size="15.00">2000 → 1000 → 500 → 30 → 500 → 1000 → 2000</text>
+</g>
+<!-- rbm3&#45;&gt;unfold -->
+<g id="autoencoders-figure-2-autoencoders-historical-deep-training-edge3" class="edge">
+<title>rbm3&#45;&gt;unfold</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M188.93,-228.61C188.93,-218.25 188.93,-204.7 188.93,-191.77"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="191.2,-191.84 188.93,-185.34 186.65,-191.84 191.2,-191.84"/>
+<text xml:space="preserve" text-anchor="middle" x="262.8" y="-201.9" font-family="Georgia" font-size="12.00">mirror the pretrained stack</text>
+</g>
+<!-- tune -->
+<g id="autoencoders-figure-2-autoencoders-historical-deep-training-node5" class="node">
+<title>tune</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M290.48,-68.4C290.48,-68.4 87.38,-68.4 87.38,-68.4 81.38,-68.4 75.38,-62.4 75.38,-56.4 75.38,-56.4 75.38,-12 75.38,-12 75.38,-6 81.38,0 87.38,0 87.38,0 290.48,0 290.48,0 296.48,0 302.48,-6 302.48,-12 302.48,-12 302.48,-56.4 302.48,-56.4 302.48,-62.4 296.48,-68.4 290.48,-68.4"/>
+<text xml:space="preserve" text-anchor="middle" x="188.93" y="-46.95" font-family="Georgia" font-size="15.00">Fine&#45;tune the full autoencoder</text>
+<text xml:space="preserve" text-anchor="middle" x="188.93" y="-28.95" font-family="Georgia" font-size="15.00">using reconstruction error</text>
+<text xml:space="preserve" text-anchor="middle" x="188.93" y="-10.95" font-family="Georgia" font-size="15.00">and backpropagation</text>
+</g>
+<!-- unfold&#45;&gt;tune -->
+<g id="autoencoders-figure-2-autoencoders-historical-deep-training-edge4" class="edge">
+<title>unfold&#45;&gt;tune</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M188.93,-113.75C188.93,-102.17 188.93,-89.09 188.93,-76.98"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="191.2,-77.2 188.93,-70.7 186.65,-77.2 191.2,-77.2"/>
+<text xml:space="preserve" text-anchor="middle" x="226.8" y="-87.25" font-family="Georgia" font-size="12.00">then fine&#45;tune</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Historical layerwise RBM pretraining and reconstruction fine-tuning described on the slide and associated with Hinton and Salakhutdinov (2006). It is one historical procedure, not a required modern workflow.</figcaption></figure>
+<details class="worked"><summary>Step through the RBM activation handoff and unfolding</summary><section class="walk" tabindex="0" aria-label="Historical layerwise pretraining and unfolding"><h3>Historical layerwise pretraining and unfolding</h3><div class="example-input"><strong>Fixed architecture from the lecture</strong><span>Layer sizes are visible in every stage: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2000</mn><mo>&#x02192;</mo><mn>1000</mn><mo>&#x02192;</mo><mn>500</mn><mo>&#x02192;</mo><mn>30</mn><mo>&#x02192;</mo><mn>500</mn><mo>&#x02192;</mo><mn>1000</mn><mo>&#x02192;</mo><mn>2000</mn></mrow></math>.</span><span>Pretraining passes activations forward; unfolding mirrors the encoder widths on the decoder side.</span></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Pretrain the first RBM</h4><p>Train the first restricted Boltzmann machine with 2000 visible input dimensions and 1000 feature-detector units. Its learned feature activations form the data representation passed to the next layer.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mn>2000</mn><mi>&#x027F6;</mi><mn>1000</mn></mrow></math></div></section><section class="step"><h4>2. Use those activations to train the second RBM</h4><p>Use the first RBM’s activations as the next RBM’s training data. The second RBM maps 1000 input dimensions to 500 feature-detector units.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mn>1000</mn><mi>&#x027F6;</mi><mn>500</mn></mrow></math></div></section><section class="step"><h4>3. Pass activations to the third RBM</h4><p>Again pass the learned activations forward as data. The third RBM maps the 500-dimensional representation to the 30-unit central code.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mn>500</mn><mi>&#x027F6;</mi><mn>30</mn></mrow></math></div></section><section class="step"><h4>4. Unfold the mirror and fine-tune reconstruction</h4><p>Unroll the pretrained stack into an encoder followed by its mirrored decoder. Then fine-tune the complete autoencoder by backpropagating reconstruction error.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mn>2000</mn><mo>&#x02192;</mo><mn>1000</mn><mo>&#x02192;</mo><mn>500</mn><mo>&#x02192;</mo><mn>30</mn><mo>&#x02192;</mo><mn>500</mn><mo>&#x02192;</mo><mn>1000</mn><mo>&#x02192;</mo><mn>2000</mn></mrow></math></div>
+<p>This is the historical procedure attributed on the slide to Hinton and Salakhutdinov (2006), not a requirement for modern autoencoder training.</p></section></section></details>
+<p>The pictured method is attributed to Hinton and Salakhutdinov (2006), whose paper describes low-dimensional codes trained to reconstruct high-dimensional inputs and an initialization strategy for deep autoencoders (<a href="https://pubmed.ncbi.nlm.nih.gov/16873662/">paper record</a>). Treat this as historical context rather than a required modern workflow. For the general gradient method behind fine-tuning, see <a href="backpropagation.html">backpropagation</a>.</p>
+<h2 id="section-3">Denoising autoencoders</h2>
+<p>A denoising autoencoder first applies stochastic corruption to the input. The corrupted vector is what the encoder sees, while the decoder is trained to reconstruct the original clean vector. This target distinction is essential: comparing the prediction with the corrupted vector would teach the network to reproduce the noise rather than undo it.</p>
+<figure><div class="diagram-frame" style="--diagram-width:309.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Only the encoder input is corrupted. The loss compares the decoder prediction with the original clean x, not with the corrupted x-tilde." width="309pt" height="444pt"
+ viewBox="0.00 0.00 309.00 444.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="autoencoders-figure-3-autoencoders-denoising-target-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 433.4)">
+<title>G</title>
+<!-- clean -->
+<g id="autoencoders-figure-3-autoencoders-denoising-target-node1" class="node">
+<title>clean</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M227.48,-422.6C227.48,-422.6 69.38,-422.6 69.38,-422.6 63.38,-422.6 57.38,-416.6 57.38,-410.6 57.38,-410.6 57.38,-398.6 57.38,-398.6 57.38,-392.6 63.38,-386.6 69.38,-386.6 69.38,-386.6 227.48,-386.6 227.48,-386.6 233.48,-386.6 239.48,-392.6 239.48,-398.6 239.48,-398.6 239.48,-410.6 239.48,-410.6 239.48,-416.6 233.48,-422.6 227.48,-422.6"/>
+<text xml:space="preserve" text-anchor="middle" x="148.43" y="-399.35" font-family="Georgia" font-size="15.00">Clean input and target x</text>
+</g>
+<!-- corrupt -->
+<g id="autoencoders-figure-3-autoencoders-denoising-target-node2" class="node">
+<title>corrupt</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M152.85,-340.35C152.85,-340.35 12,-340.35 12,-340.35 6,-340.35 0,-334.35 0,-328.35 0,-328.35 0,-301.95 0,-301.95 0,-295.95 6,-289.95 12,-289.95 12,-289.95 152.85,-289.95 152.85,-289.95 158.85,-289.95 164.85,-295.95 164.85,-301.95 164.85,-301.95 164.85,-328.35 164.85,-328.35 164.85,-334.35 158.85,-340.35 152.85,-340.35"/>
+<text xml:space="preserve" text-anchor="middle" x="82.42" y="-318.9" font-family="Georgia" font-size="15.00">Stochastic corruption</text>
+<text xml:space="preserve" text-anchor="middle" x="82.42" y="-300.9" font-family="Georgia" font-size="15.00">x → x&#45;tilde</text>
+</g>
+<!-- clean&#45;&gt;corrupt -->
+<g id="autoencoders-figure-3-autoencoders-denoising-target-edge1" class="edge">
+<title>clean&#45;&gt;corrupt</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M100.08,-386.11C93.91,-381.94 88.38,-376.83 84.42,-370.6 80.44,-364.32 78.71,-356.77 78.23,-349.32"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="80.51,-349.32 78.17,-342.84 75.96,-349.37 80.51,-349.32"/>
+<text xml:space="preserve" text-anchor="middle" x="141.43" y="-359.2" font-family="Georgia" font-size="12.00">corrupt forward view</text>
+</g>
+<!-- loss -->
+<g id="autoencoders-figure-3-autoencoders-denoising-target-node5" class="node">
+<title>loss</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M256.35,-50.4C256.35,-50.4 64.5,-50.4 64.5,-50.4 58.5,-50.4 52.5,-44.4 52.5,-38.4 52.5,-38.4 52.5,-12 52.5,-12 52.5,-6 58.5,0 64.5,0 64.5,0 256.35,0 256.35,0 262.35,0 268.35,-6 268.35,-12 268.35,-12 268.35,-38.4 268.35,-38.4 268.35,-44.4 262.35,-50.4 256.35,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="160.43" y="-28.95" font-family="Georgia" font-size="15.00">Squared reconstruction error</text>
+<text xml:space="preserve" text-anchor="middle" x="160.43" y="-10.95" font-family="Georgia" font-size="15.00">compare x&#45;hat with clean x</text>
+</g>
+<!-- clean&#45;&gt;loss -->
+<g id="autoencoders-figure-3-autoencoders-denoising-target-edge5" class="edge">
+<title>clean&#45;&gt;loss</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M182.82,-386.21C189.03,-381.81 194.95,-376.6 199.43,-370.6 214.51,-350.39 215.43,-341.37 215.43,-316.15 215.43,-316.15 215.43,-316.15 215.43,-120.85 215.43,-95.22 209.45,-88.48 196.43,-66.4 194.56,-63.24 192.42,-60.1 190.14,-57.06"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="192.06,-55.82 186.23,-52.15 188.5,-58.65 192.06,-55.82"/>
+<text xml:space="preserve" text-anchor="middle" x="251.43" y="-214.22" font-family="Georgia" font-size="12.00">clean target x</text>
+</g>
+<!-- encoder -->
+<g id="autoencoders-figure-3-autoencoders-denoising-target-node3" class="node">
+<title>encoder</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M112.47,-243.7C112.47,-243.7 38.38,-243.7 38.38,-243.7 32.38,-243.7 26.38,-237.7 26.38,-231.7 26.38,-231.7 26.38,-205.3 26.38,-205.3 26.38,-199.3 32.38,-193.3 38.38,-193.3 38.38,-193.3 112.47,-193.3 112.47,-193.3 118.47,-193.3 124.47,-199.3 124.47,-205.3 124.47,-205.3 124.47,-231.7 124.47,-231.7 124.47,-237.7 118.47,-243.7 112.47,-243.7"/>
+<text xml:space="preserve" text-anchor="middle" x="75.42" y="-222.25" font-family="Georgia" font-size="15.00">Encoder</text>
+<text xml:space="preserve" text-anchor="middle" x="75.42" y="-204.25" font-family="Georgia" font-size="15.00">x&#45;tilde → h</text>
+</g>
+<!-- corrupt&#45;&gt;encoder -->
+<g id="autoencoders-figure-3-autoencoders-denoising-target-edge2" class="edge">
+<title>corrupt&#45;&gt;encoder</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M80.59,-289.28C79.75,-277.96 78.75,-264.4 77.85,-252.27"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="80.14,-252.35 77.39,-246.04 75.6,-252.69 80.14,-252.35"/>
+<text xml:space="preserve" text-anchor="middle" x="116.47" y="-262.55" font-family="Georgia" font-size="12.00">encoder input</text>
+</g>
+<!-- decoder -->
+<g id="autoencoders-figure-3-autoencoders-denoising-target-node4" class="node">
+<title>decoder</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M138.35,-147.05C138.35,-147.05 72.5,-147.05 72.5,-147.05 66.5,-147.05 60.5,-141.05 60.5,-135.05 60.5,-135.05 60.5,-108.65 60.5,-108.65 60.5,-102.65 66.5,-96.65 72.5,-96.65 72.5,-96.65 138.35,-96.65 138.35,-96.65 144.35,-96.65 150.35,-102.65 150.35,-108.65 150.35,-108.65 150.35,-135.05 150.35,-135.05 150.35,-141.05 144.35,-147.05 138.35,-147.05"/>
+<text xml:space="preserve" text-anchor="middle" x="105.42" y="-125.6" font-family="Georgia" font-size="15.00">Decoder</text>
+<text xml:space="preserve" text-anchor="middle" x="105.42" y="-107.6" font-family="Georgia" font-size="15.00">h → x&#45;hat</text>
+</g>
+<!-- encoder&#45;&gt;decoder -->
+<g id="autoencoders-figure-3-autoencoders-denoising-target-edge3" class="edge">
+<title>encoder&#45;&gt;decoder</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M71.61,-192.56C71.05,-183.1 71.52,-172.36 74.67,-163.05 75.69,-160.05 77.03,-157.11 78.58,-154.25"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="80.29,-155.81 81.74,-149.07 76.41,-153.44 80.29,-155.81"/>
+<text xml:space="preserve" text-anchor="middle" x="136.55" y="-165.9" font-family="Georgia" font-size="12.00">latent representation h</text>
+</g>
+<!-- decoder&#45;&gt;loss -->
+<g id="autoencoders-figure-3-autoencoders-denoising-target-edge4" class="edge">
+<title>decoder&#45;&gt;loss</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M119.88,-95.98C126.64,-84.34 134.78,-70.33 141.99,-57.93"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="143.82,-59.3 145.12,-52.54 139.89,-57.02 143.82,-59.3"/>
+<text xml:space="preserve" text-anchor="middle" x="163.97" y="-69.25" font-family="Georgia" font-size="12.00">prediction</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Only the encoder input is corrupted. The loss compares the decoder prediction with the original clean x, not with the corrupted x-tilde.</figcaption></figure>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi>&#x1D421;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><msub><mi>f</mi><mrow><mrow><mi mathvariant="normal">e</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">c</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><msup><mover><mrow><mi>&#x1D431;</mi></mrow><mo stretchy="false">&#x0007E;</mo></mover><mrow><mo stretchy="false">&#x00028;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><msup><mover accent="true"><mrow><mi>&#x1D431;</mi></mrow><mo>&#x0005E;</mo></mover><mrow><mo stretchy="false">&#x00028;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><msub><mi>f</mi><mrow><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><msup><mi>&#x1D421;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>L</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>N</mi></mrow></mfrac><munderover><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>N</mi></mrow></munderover><mo>&#x02016;</mo><msup><mi>&#x1D431;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x02212;</mo><msup><mover accent="true"><mrow><mi>&#x1D431;</mi></mrow><mo>&#x0005E;</mo></mover><mrow><mo stretchy="false">&#x00028;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><msubsup><mo>&#x02016;</mo><mn>2</mn><mn>2</mn></msubsup></mrow></math></div>
+<p>The lecture motivates corruption as a way to encourage representations that remain stable under input corruption and capture useful structure in the input distribution. It emphasizes that denoising is a training criterion for learning higher-level features, not the primary goal by itself.</p>
+<details class="worked"><summary>Trace one clearly labeled corruption and target pair</summary><p><strong>Supplemental teaching scenario; illustrative values, not learned output.</strong> Let a clean four-value input be <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D431;</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. One possible corruption masks the second and fourth coordinates, giving the encoder <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><mi>&#x1D431;</mi></mrow><mo stretchy="false">&#x0007E;</mo></mover><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. The target remains the original clean vector <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D431;</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. A model prediction would be compared with that clean target; no prediction or trained result is assumed here.</p></details>
+<h2 id="section-4">Supplemental relationship to PCA</h2>
+<p>This supplemental comparison concerns a restricted linear autoencoder. Under the assumptions of centered data, a linear encoder and decoder, an undercomplete code of dimension <em>k</em>, squared reconstruction loss, and optimization to a globally best reconstruction of rank at most <em>k</em>, a leading <em>k</em>-dimensional PCA subspace yields an optimal reconstruction. If the eigenvalues tie across the retention cutoff, several principal subspaces can be equally optimal; if the data rank is below <em>k</em>, unused directions are not determined by the data. This is a statement about the reconstruction subspace, not an assertion that every autoencoder is PCA.</p>
+<p>Even when the optimal subspace agrees, latent coordinates need not equal the principal-component coordinates. An invertible change of basis in the code can be offset by the decoder while leaving the reconstructed vector and its loss unchanged. The primary Bourlard–Kamp paper analyzes linear auto-association through low-rank approximation and singular value decomposition (<a href="https://pubmed.ncbi.nlm.nih.gov/3196773/">1988 paper record</a>). For PCA’s full centering, projection, and component calculations, continue to <a href="pca.html">PCA</a>; the broader representation-learning context is in <a href="deep-learning-foundations.html">deep-learning foundations</a>.</p>
+<h2 id="section-5">Common mistakes</h2>
+<ul>
+<li>Treating the target as another forward-pass input. The network predicts first; the clean target enters when computing loss.</li>
+<li>Confusing encoder and decoder. The encoder maps the input toward the code; the decoder maps the code back toward an input-sized reconstruction.</li>
+<li>Claiming the bottleneck guarantees that the most useful task features are retained. It constrains capacity for the reconstruction objective but does not define usefulness for every downstream task.</li>
+<li>Dividing the source loss by <em>N</em> times the number of pixels. The displayed objective averages sample-level squared vector norms over <em>N</em> samples only.</li>
+<li>Using the corrupted input as a denoising target. Feed the corrupted view to the encoder and compare the output with the original clean input.</li>
+<li>Treating the historical RBM pretraining procedure as mandatory for all current autoencoders.</li>
+<li>Saying every autoencoder is equivalent to PCA or that its latent coordinates must be PCA scores. The optional connection requires linearity, centered data, an undercomplete code, squared reconstruction loss, and a globally optimal rank-<em>k</em> reconstruction; it concerns the reconstruction subspace.</li>
+</ul>
+<h2 id="section-6">Exam focus</h2>
+<ul>
+<li>Autoencoder: a feedforward network trained to predict its input at the output.</li>
+<li>Encoder maps input to a latent code; decoder maps code to reconstruction.</li>
+<li>Basic widths: <strong>784 → 100 → 20 → 100 → 784</strong>. The 20-unit code is undercomplete relative to the 784-value input.</li>
+<li>Reconstruction objective: mean over <em>N</em> sample vectors of their squared Euclidean reconstruction norms.</li>
+<li>Historical deep widths: <strong>2000 → 1000 → 500 → 30 → 500 → 1000 → 2000</strong>. RBM feature activations become the next RBM’s data; unfold the mirrored layers and fine-tune by reconstruction backpropagation.</li>
+<li>Denoising: corrupt the encoder input, keep the clean input as the reconstruction target.</li>
+<li>PCA connection is supplemental and conditional; the optimal reconstruction subspace may match PCA while latent basis coordinates remain non-unique.</li>
+</ul>
+<h2 id="section-7">Practice questions</h2>
+<p class="question">1. What does the encoder produce, and what does the decoder produce?</p>
+<details class="worked"><summary>Check your answer</summary><p>The encoder maps the input to a latent code. The decoder maps that code to a reconstruction with the original input dimensions.</p></details>
+<p class="question">2. For a 784 → 100 → 20 → 100 → 784 network, why is the code undercomplete?</p>
+<details class="worked"><summary>Check your answer</summary><p>The 20-value code has fewer coordinates than the 784-value input. That limits representational capacity for reconstruction; it does not guarantee task-optimal features.</p></details>
+<p class="question">3. The batch has N=8 vectors, each with 784 coordinates. What divisor appears in the source reconstruction objective?</p>
+<details class="worked"><summary>Check your answer</summary><p>Divide the sum of the eight squared vector norms by N=8. The source objective does not additionally divide by 784.</p></details>
+<p class="question">4. In the historical deep procedure, what becomes the input data for the next RBM?</p>
+<details class="worked"><summary>Check your answer</summary><p>The learned feature activations of the preceding RBM. After layerwise pretraining, the mirrored stack is unfolded and the full autoencoder is fine-tuned with backpropagated reconstruction error.</p></details>
+<p class="question">5. In a denoising autoencoder, which vector is fed to the encoder and which is the target?</p>
+<details class="worked"><summary>Check your answer</summary><p>The corrupted input <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><mi>&#x1D431;</mi></mrow><mo stretchy="false">&#x0007E;</mo></mover></mrow></math> is fed to the encoder. The decoder output is compared with the original clean <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D431;</mi></mrow></math> target.</p></details>
+<p class="question">6. Under what conditions is the autoencoder–PCA relationship stated here?</p>
+<details class="worked"><summary>Check your answer</summary><p>Centered data, a linear encoder and decoder, an undercomplete dimension <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi></mrow></math>, squared reconstruction loss, and optimization to a globally best reconstruction of rank at most <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi></mrow></math>. A leading PCA subspace gives an optimal reconstruction, but a tie at the retained/discarded boundary can make that subspace non-unique; data rank below the code dimension also leaves unused directions undetermined. An arbitrary latent basis need not equal PCA coordinates.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="seq2seq-encoder-decoder.html"><small>Previous</small>Sequence-to-Sequence and Encoder–Decoder Models <span aria-hidden="true">↗</span></a><a href="gan-foundations-training.html"><small>Next</small>GANs: Objective, Training, and Failure Modes <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

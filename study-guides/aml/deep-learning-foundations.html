@@ -1,0 +1,925 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="How neural networks learn representations, form predictions, regularize with dropout, and choose architectures and training settings."><title>Deep Learning Foundations and Regularization · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html" aria-current="page">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Deep and generative models <span>/</span> Lecture 4</div><h1>Deep Learning Foundations and Regularization</h1><p class="lead">How neural networks learn representations, form predictions, regularize with dropout, and choose architectures and training settings.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Computer-vision tasks ask for different outputs</a><a href="#section-2">From raw input to learned representations</a><a href="#section-3">Layers, tensors, predictions, and the training loop</a><a href="#section-4">Nonlinear representation and the role of depth</a><a href="#section-5">Sigmoid and softmax outputs</a><a href="#section-6">Dropout regularization</a><a href="#section-7">Hyperparameter tuning</a><a href="#section-8">Common mistakes</a><a href="#section-9">Exam focus</a><a href="#section-10">Practice questions</a><a href="#section-11">Study route</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Conventional machine learning often asks a person to decide which measurements or patterns to extract before a classifier learns from them. Deep learning moves more of that representation work into a hierarchy of trainable layers. An end-to-end model maps input data to predictions, compares those predictions with targets through a task-appropriate loss, and uses an optimizer to update the layers’ learned weights. This gives the model a flexible way to learn useful patterns, while making data, architecture, regularization, and tuning important parts of the problem.</p>
+<h2 id="section-1">Computer-vision tasks ask for different outputs</h2>
+<p>The same image can support different prediction tasks. The lecture contrasts a single cat’s class label with locating that cat, then moves to scenes with several objects. Detection places a box around each object; instance segmentation identifies the pixels belonging to each separate object, so two cats can have different instance masks even though their class is the same.</p>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Predicted output</th>
+<th>Objects in the lecture illustration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Classification</td>
+<td>A class label, such as cat</td>
+<td>One object</td>
+</tr>
+<tr>
+<td>Classification plus localization</td>
+<td>A class label and its bounding box</td>
+<td>One object</td>
+</tr>
+<tr>
+<td>Object detection</td>
+<td>A class label and bounding box for each object</td>
+<td>Multiple objects, including cats, a dog, and a duck</td>
+</tr>
+<tr>
+<td>Instance segmentation</td>
+<td>A class label and a separate pixel mask for each instance</td>
+<td>Multiple objects, with their individual outlines</td>
+</tr>
+</tbody>
+</table>
+<p>These outputs require different targets and output structures; identifying an object’s class alone does not provide its location or its pixel mask.</p>
+<figure><div class="diagram-frame" style="--diagram-width:898.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Conceptual cat-classification pipelines: conventional ML begins with human-designed features, while deep learning learns several representation levels end to end." width="898pt" height="144pt"
+ viewBox="0.00 0.00 898.00 144.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="deep-learning-foundations-figure-1-deep-learning-foundations-feature-pipelines-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 133.2)">
+<title>G</title>
+<!-- image -->
+<g id="deep-learning-foundations-figure-1-deep-learning-foundations-feature-pipelines-node1" class="node">
+<title>image</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M76.35,-79.2C76.35,-79.2 12,-79.2 12,-79.2 6,-79.2 0,-73.2 0,-67.2 0,-67.2 0,-55.2 0,-55.2 0,-49.2 6,-43.2 12,-43.2 12,-43.2 76.35,-43.2 76.35,-43.2 82.35,-43.2 88.35,-49.2 88.35,-55.2 88.35,-55.2 88.35,-67.2 88.35,-67.2 88.35,-73.2 82.35,-79.2 76.35,-79.2"/>
+<text xml:space="preserve" text-anchor="middle" x="44.17" y="-55.95" font-family="Georgia" font-size="15.00">Cat image</text>
+</g>
+<!-- handcrafted -->
+<g id="deep-learning-foundations-figure-1-deep-learning-foundations-feature-pipelines-node2" class="node">
+<title>handcrafted</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M247.32,-122.4C247.32,-122.4 134.22,-122.4 134.22,-122.4 128.22,-122.4 122.22,-116.4 122.22,-110.4 122.22,-110.4 122.22,-84 122.22,-84 122.22,-78 128.22,-72 134.22,-72 134.22,-72 247.32,-72 247.32,-72 253.32,-72 259.32,-78 259.32,-84 259.32,-84 259.32,-110.4 259.32,-110.4 259.32,-116.4 253.32,-122.4 247.32,-122.4"/>
+<text xml:space="preserve" text-anchor="middle" x="190.77" y="-100.95" font-family="Georgia" font-size="15.00">Human&#45;designed</text>
+<text xml:space="preserve" text-anchor="middle" x="190.77" y="-82.95" font-family="Georgia" font-size="15.00">features</text>
+</g>
+<!-- image&#45;&gt;handcrafted -->
+<g id="deep-learning-foundations-figure-1-deep-learning-foundations-feature-pipelines-edge1" class="edge">
+<title>image&#45;&gt;handcrafted</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M88.56,-72C96.67,-74.02 105.35,-76.18 114.11,-78.36"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="113.48,-80.55 120.34,-79.91 114.58,-76.13 113.48,-80.55"/>
+</g>
+<!-- learned_low -->
+<g id="deep-learning-foundations-figure-1-deep-learning-foundations-feature-pipelines-node4" class="node">
+<title>learned_low</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M249.2,-50.4C249.2,-50.4 132.35,-50.4 132.35,-50.4 126.35,-50.4 120.35,-44.4 120.35,-38.4 120.35,-38.4 120.35,-12 120.35,-12 120.35,-6 126.35,0 132.35,0 132.35,0 249.2,0 249.2,0 255.2,0 261.2,-6 261.2,-12 261.2,-12 261.2,-38.4 261.2,-38.4 261.2,-44.4 255.2,-50.4 249.2,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="190.77" y="-28.95" font-family="Georgia" font-size="15.00">Learned low&#45;level</text>
+<text xml:space="preserve" text-anchor="middle" x="190.77" y="-10.95" font-family="Georgia" font-size="15.00">representation</text>
+</g>
+<!-- image&#45;&gt;learned_low -->
+<g id="deep-learning-foundations-figure-1-deep-learning-foundations-feature-pipelines-edge4" class="edge">
+<title>image&#45;&gt;learned_low</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M88.56,-50.4C96.01,-48.54 103.95,-46.57 111.99,-44.57"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="112.15,-46.87 117.91,-43.09 111.05,-42.45 112.15,-46.87"/>
+</g>
+<!-- traditional -->
+<g id="deep-learning-foundations-figure-1-deep-learning-foundations-feature-pipelines-node3" class="node">
+<title>traditional</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M393.55,-122.4C393.55,-122.4 335.95,-122.4 335.95,-122.4 329.95,-122.4 323.95,-116.4 323.95,-110.4 323.95,-110.4 323.95,-84 323.95,-84 323.95,-78 329.95,-72 335.95,-72 335.95,-72 393.55,-72 393.55,-72 399.55,-72 405.55,-78 405.55,-84 405.55,-84 405.55,-110.4 405.55,-110.4 405.55,-116.4 399.55,-122.4 393.55,-122.4"/>
+<text xml:space="preserve" text-anchor="middle" x="364.75" y="-100.95" font-family="Georgia" font-size="15.00">Learned</text>
+<text xml:space="preserve" text-anchor="middle" x="364.75" y="-82.95" font-family="Georgia" font-size="15.00">classifier</text>
+</g>
+<!-- handcrafted&#45;&gt;traditional -->
+<g id="deep-learning-foundations-figure-1-deep-learning-foundations-feature-pipelines-edge2" class="edge">
+<title>handcrafted&#45;&gt;traditional</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M259.74,-97.2C278.47,-97.2 298.39,-97.2 315.73,-97.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="315.49,-99.48 321.99,-97.2 315.49,-94.93 315.49,-99.48"/>
+</g>
+<!-- cat_a -->
+<g id="deep-learning-foundations-figure-1-deep-learning-foundations-feature-pipelines-node8" class="node">
+<title>cat_a</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M587.77,-115.2C587.77,-115.2 495.68,-115.2 495.68,-115.2 489.68,-115.2 483.68,-109.2 483.68,-103.2 483.68,-103.2 483.68,-91.2 483.68,-91.2 483.68,-85.2 489.68,-79.2 495.68,-79.2 495.68,-79.2 587.77,-79.2 587.77,-79.2 593.77,-79.2 599.77,-85.2 599.77,-91.2 599.77,-91.2 599.77,-103.2 599.77,-103.2 599.77,-109.2 593.77,-115.2 587.77,-115.2"/>
+<text xml:space="preserve" text-anchor="middle" x="541.73" y="-91.95" font-family="Georgia" font-size="15.00">Cat prediction</text>
+</g>
+<!-- traditional&#45;&gt;cat_a -->
+<g id="deep-learning-foundations-figure-1-deep-learning-foundations-feature-pipelines-edge3" class="edge">
+<title>traditional&#45;&gt;cat_a</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M405.89,-97.2C426.47,-97.2 452.05,-97.2 475.38,-97.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="475.18,-99.48 481.68,-97.2 475.18,-94.93 475.18,-99.48"/>
+</g>
+<!-- learned_mid -->
+<g id="deep-learning-foundations-figure-1-deep-learning-foundations-feature-pipelines-node5" class="node">
+<title>learned_mid</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M424.3,-50.4C424.3,-50.4 305.2,-50.4 305.2,-50.4 299.2,-50.4 293.2,-44.4 293.2,-38.4 293.2,-38.4 293.2,-12 293.2,-12 293.2,-6 299.2,0 305.2,0 305.2,0 424.3,0 424.3,0 430.3,0 436.3,-6 436.3,-12 436.3,-12 436.3,-38.4 436.3,-38.4 436.3,-44.4 430.3,-50.4 424.3,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="364.75" y="-28.95" font-family="Georgia" font-size="15.00">Learned mid&#45;level</text>
+<text xml:space="preserve" text-anchor="middle" x="364.75" y="-10.95" font-family="Georgia" font-size="15.00">representation</text>
+</g>
+<!-- learned_low&#45;&gt;learned_mid -->
+<g id="deep-learning-foundations-figure-1-deep-learning-foundations-feature-pipelines-edge5" class="edge">
+<title>learned_low&#45;&gt;learned_mid</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M261.72,-25.2C269.33,-25.2 277.1,-25.2 284.8,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="284.45,-27.48 290.95,-25.2 284.45,-22.93 284.45,-27.48"/>
+</g>
+<!-- learned_high -->
+<g id="deep-learning-foundations-figure-1-deep-learning-foundations-feature-pipelines-node6" class="node">
+<title>learned_high</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M603.15,-50.4C603.15,-50.4 480.3,-50.4 480.3,-50.4 474.3,-50.4 468.3,-44.4 468.3,-38.4 468.3,-38.4 468.3,-12 468.3,-12 468.3,-6 474.3,0 480.3,0 480.3,0 603.15,0 603.15,0 609.15,0 615.15,-6 615.15,-12 615.15,-12 615.15,-38.4 615.15,-38.4 615.15,-44.4 609.15,-50.4 603.15,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="541.73" y="-28.95" font-family="Georgia" font-size="15.00">Learned high&#45;level</text>
+<text xml:space="preserve" text-anchor="middle" x="541.73" y="-10.95" font-family="Georgia" font-size="15.00">representation</text>
+</g>
+<!-- learned_mid&#45;&gt;learned_high -->
+<g id="deep-learning-foundations-figure-1-deep-learning-foundations-feature-pipelines-edge6" class="edge">
+<title>learned_mid&#45;&gt;learned_high</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M437.17,-25.2C444.68,-25.2 452.36,-25.2 459.97,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="459.53,-27.48 466.03,-25.2 459.53,-22.93 459.53,-27.48"/>
+</g>
+<!-- classifier -->
+<g id="deep-learning-foundations-figure-1-deep-learning-foundations-feature-pipelines-node7" class="node">
+<title>classifier</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M716.75,-50.4C716.75,-50.4 659.15,-50.4 659.15,-50.4 653.15,-50.4 647.15,-44.4 647.15,-38.4 647.15,-38.4 647.15,-12 647.15,-12 647.15,-6 653.15,0 659.15,0 659.15,0 716.75,0 716.75,0 722.75,0 728.75,-6 728.75,-12 728.75,-12 728.75,-38.4 728.75,-38.4 728.75,-44.4 722.75,-50.4 716.75,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="687.95" y="-28.95" font-family="Georgia" font-size="15.00">Learned</text>
+<text xml:space="preserve" text-anchor="middle" x="687.95" y="-10.95" font-family="Georgia" font-size="15.00">classifier</text>
+</g>
+<!-- learned_high&#45;&gt;classifier -->
+<g id="deep-learning-foundations-figure-1-deep-learning-foundations-feature-pipelines-edge7" class="edge">
+<title>learned_high&#45;&gt;classifier</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M616.11,-25.2C623.87,-25.2 631.62,-25.2 638.99,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="638.8,-27.48 645.3,-25.2 638.8,-22.93 638.8,-27.48"/>
+</g>
+<!-- cat_b -->
+<g id="deep-learning-foundations-figure-1-deep-learning-foundations-feature-pipelines-node9" class="node">
+<title>cat_b</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M864.85,-43.2C864.85,-43.2 772.75,-43.2 772.75,-43.2 766.75,-43.2 760.75,-37.2 760.75,-31.2 760.75,-31.2 760.75,-19.2 760.75,-19.2 760.75,-13.2 766.75,-7.2 772.75,-7.2 772.75,-7.2 864.85,-7.2 864.85,-7.2 870.85,-7.2 876.85,-13.2 876.85,-19.2 876.85,-19.2 876.85,-31.2 876.85,-31.2 876.85,-37.2 870.85,-43.2 864.85,-43.2"/>
+<text xml:space="preserve" text-anchor="middle" x="818.8" y="-19.95" font-family="Georgia" font-size="15.00">Cat prediction</text>
+</g>
+<!-- classifier&#45;&gt;cat_b -->
+<g id="deep-learning-foundations-figure-1-deep-learning-foundations-feature-pipelines-edge8" class="edge">
+<title>classifier&#45;&gt;cat_b</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M729.01,-25.2C736.44,-25.2 744.37,-25.2 752.32,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="752.25,-27.48 758.75,-25.2 752.25,-22.93 752.25,-27.48"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Conceptual cat-classification pipelines: conventional ML begins with human-designed features, while deep learning learns several representation levels end to end.</figcaption></figure>
+<p>The cat example makes the division of labor visible. In a conventional pipeline, a person supplies handcrafted features and a learned classifier uses them. In a deep pipeline, the intermediate representations and classifier are learned together. Handcrafted features can be tedious, costly, and application-specific; learned features can adapt within the training task, but they still need suitable data and training.</p>
+<h2 id="section-2">From raw input to learned representations</h2>
+<p>Deep learning is also called representation learning. Each stage transforms one or more input tensors into one or more output tensors, with a trainable nonlinear transformation able to build on earlier representations. The lecture illustrates increasing abstraction with image and text hierarchies:</p>
+<figure><div class="diagram-frame" style="--diagram-width:703.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Conceptual examples of increasing abstraction from the lecture. A trained network does not necessarily form these exact named stages." width="703pt" height="116pt"
+ viewBox="0.00 0.00 703.00 116.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 104.8)">
+<title>G</title>
+<!-- pixel -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-node1" class="node">
+<title>pixel</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M58.72,-36C58.72,-36 28.12,-36 28.12,-36 22.12,-36 16.12,-30 16.12,-24 16.12,-24 16.12,-12 16.12,-12 16.12,-6 22.12,0 28.12,0 28.12,0 58.72,0 58.72,0 64.72,0 70.72,-6 70.72,-12 70.72,-12 70.72,-24 70.72,-24 70.72,-30 64.72,-36 58.72,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="43.42" y="-12.75" font-family="Georgia" font-size="15.00">Pixel</text>
+</g>
+<!-- edge_unit -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-node2" class="node">
+<title>edge_unit</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M163.7,-36C163.7,-36 133.1,-36 133.1,-36 127.1,-36 121.1,-30 121.1,-24 121.1,-24 121.1,-12 121.1,-12 121.1,-6 127.1,0 133.1,0 133.1,0 163.7,0 163.7,0 169.7,0 175.7,-6 175.7,-12 175.7,-12 175.7,-24 175.7,-24 175.7,-30 169.7,-36 163.7,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="148.4" y="-12.75" font-family="Georgia" font-size="15.00">Edge</text>
+</g>
+<!-- pixel&#45;&gt;edge_unit -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-edge1" class="edge">
+<title>pixel&#45;&gt;edge_unit</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M71.21,-18C83.86,-18 99.13,-18 112.66,-18"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="112.38,-20.28 118.88,-18 112.38,-15.73 112.38,-20.28"/>
+</g>
+<!-- texture -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-node3" class="node">
+<title>texture</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M285.55,-36C285.55,-36 236.2,-36 236.2,-36 230.2,-36 224.2,-30 224.2,-24 224.2,-24 224.2,-12 224.2,-12 224.2,-6 230.2,0 236.2,0 236.2,0 285.55,0 285.55,0 291.55,0 297.55,-6 297.55,-12 297.55,-12 297.55,-24 297.55,-24 297.55,-30 291.55,-36 285.55,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="260.88" y="-12.75" font-family="Georgia" font-size="15.00">Texture</text>
+</g>
+<!-- edge_unit&#45;&gt;texture -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-edge2" class="edge">
+<title>edge_unit&#45;&gt;texture</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M176.43,-18C188.39,-18 202.76,-18 216.18,-18"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="215.94,-20.28 222.44,-18 215.94,-15.73 215.94,-20.28"/>
+</g>
+<!-- motif -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-node4" class="node">
+<title>motif</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M424.28,-36C424.28,-36 389.18,-36 389.18,-36 383.18,-36 377.18,-30 377.18,-24 377.18,-24 377.18,-12 377.18,-12 377.18,-6 383.18,0 389.18,0 389.18,0 424.28,0 424.28,0 430.28,0 436.28,-6 436.28,-12 436.28,-12 436.28,-24 436.28,-24 436.28,-30 430.28,-36 424.28,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="406.73" y="-12.75" font-family="Georgia" font-size="15.00">Motif</text>
+</g>
+<!-- texture&#45;&gt;motif -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-edge3" class="edge">
+<title>texture&#45;&gt;motif</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M297.8,-18C319.59,-18 347.32,-18 369.22,-18"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="368.98,-20.28 375.48,-18 368.98,-15.73 368.98,-20.28"/>
+</g>
+<!-- part -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-node5" class="node">
+<title>part</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M557.83,-36C557.83,-36 527.83,-36 527.83,-36 521.83,-36 515.83,-30 515.83,-24 515.83,-24 515.83,-12 515.83,-12 515.83,-6 521.83,0 527.83,0 527.83,0 557.83,0 557.83,0 563.83,0 569.83,-6 569.83,-12 569.83,-12 569.83,-24 569.83,-24 569.83,-30 563.83,-36 557.83,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="542.83" y="-12.75" font-family="Georgia" font-size="15.00">Part</text>
+</g>
+<!-- motif&#45;&gt;part -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-edge4" class="edge">
+<title>motif&#45;&gt;part</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M436.49,-18C457.33,-18 485.58,-18 507.58,-18"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="507.37,-20.28 513.87,-18 507.37,-15.73 507.37,-20.28"/>
+</g>
+<!-- object -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-node6" class="node">
+<title>object</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M669.1,-36C669.1,-36 628,-36 628,-36 622,-36 616,-30 616,-24 616,-24 616,-12 616,-12 616,-6 622,0 628,0 628,0 669.1,0 669.1,0 675.1,0 681.1,-6 681.1,-12 681.1,-12 681.1,-24 681.1,-24 681.1,-30 675.1,-36 669.1,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="648.55" y="-12.75" font-family="Georgia" font-size="15.00">Object</text>
+</g>
+<!-- part&#45;&gt;object -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-edge5" class="edge">
+<title>part&#45;&gt;object</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M570.27,-18C581.7,-18 595.32,-18 607.92,-18"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="607.59,-20.28 614.09,-18 607.59,-15.73 607.59,-20.28"/>
+</g>
+<!-- character -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-node7" class="node">
+<title>character</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M74.85,-94C74.85,-94 12,-94 12,-94 6,-94 0,-88 0,-82 0,-82 0,-70 0,-70 0,-64 6,-58 12,-58 12,-58 74.85,-58 74.85,-58 80.85,-58 86.85,-64 86.85,-70 86.85,-70 86.85,-82 86.85,-82 86.85,-88 80.85,-94 74.85,-94"/>
+<text xml:space="preserve" text-anchor="middle" x="43.42" y="-70.75" font-family="Georgia" font-size="15.00">Character</text>
+</g>
+<!-- word -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-node8" class="node">
+<title>word</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M165.95,-94C165.95,-94 130.85,-94 130.85,-94 124.85,-94 118.85,-88 118.85,-82 118.85,-82 118.85,-70 118.85,-70 118.85,-64 124.85,-58 130.85,-58 130.85,-58 165.95,-58 165.95,-58 171.95,-58 177.95,-64 177.95,-70 177.95,-70 177.95,-82 177.95,-82 177.95,-88 171.95,-94 165.95,-94"/>
+<text xml:space="preserve" text-anchor="middle" x="148.4" y="-70.75" font-family="Georgia" font-size="15.00">Word</text>
+</g>
+<!-- character&#45;&gt;word -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-edge6" class="edge">
+<title>character&#45;&gt;word</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M87.2,-76C94.83,-76 102.72,-76 110.18,-76"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="110.06,-78.28 116.56,-76 110.06,-73.73 110.06,-78.28"/>
+</g>
+<!-- word_group -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-node9" class="node">
+<title>word_group</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M299.8,-94C299.8,-94 221.95,-94 221.95,-94 215.95,-94 209.95,-88 209.95,-82 209.95,-82 209.95,-70 209.95,-70 209.95,-64 215.95,-58 221.95,-58 221.95,-58 299.8,-58 299.8,-58 305.8,-58 311.8,-64 311.8,-70 311.8,-70 311.8,-82 311.8,-82 311.8,-88 305.8,-94 299.8,-94"/>
+<text xml:space="preserve" text-anchor="middle" x="260.88" y="-70.75" font-family="Georgia" font-size="15.00">Word group</text>
+</g>
+<!-- word&#45;&gt;word_group -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-edge7" class="edge">
+<title>word&#45;&gt;word_group</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M178.72,-76C185.81,-76 193.64,-76 201.56,-76"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="201.47,-78.28 207.97,-76 201.47,-73.73 201.47,-78.28"/>
+</g>
+<!-- phrase_clause -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-node10" class="node">
+<title>phrase_clause</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M457.65,-94C457.65,-94 355.8,-94 355.8,-94 349.8,-94 343.8,-88 343.8,-82 343.8,-82 343.8,-70 343.8,-70 343.8,-64 349.8,-58 355.8,-58 355.8,-58 457.65,-58 457.65,-58 463.65,-58 469.65,-64 469.65,-70 469.65,-70 469.65,-82 469.65,-82 469.65,-88 463.65,-94 457.65,-94"/>
+<text xml:space="preserve" text-anchor="middle" x="406.73" y="-70.75" font-family="Georgia" font-size="15.00">Clause / phrase</text>
+</g>
+<!-- word_group&#45;&gt;phrase_clause -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-edge8" class="edge">
+<title>word_group&#45;&gt;phrase_clause</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M312.19,-76C319.78,-76 327.73,-76 335.65,-76"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="335.54,-78.28 342.04,-76 335.54,-73.73 335.54,-78.28"/>
+</g>
+<!-- sentence -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-node11" class="node">
+<title>sentence</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M572,-94C572,-94 513.65,-94 513.65,-94 507.65,-94 501.65,-88 501.65,-82 501.65,-82 501.65,-70 501.65,-70 501.65,-64 507.65,-58 513.65,-58 513.65,-58 572,-58 572,-58 578,-58 584,-64 584,-70 584,-70 584,-82 584,-82 584,-88 578,-94 572,-94"/>
+<text xml:space="preserve" text-anchor="middle" x="542.83" y="-70.75" font-family="Georgia" font-size="15.00">Sentence</text>
+</g>
+<!-- phrase_clause&#45;&gt;sentence -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-edge9" class="edge">
+<title>phrase_clause&#45;&gt;sentence</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M470.06,-76C478.07,-76 486.16,-76 493.88,-76"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="493.45,-78.28 499.95,-76 493.45,-73.73 493.45,-78.28"/>
+</g>
+<!-- story -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-node12" class="node">
+<title>story</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M664.98,-94C664.98,-94 632.13,-94 632.13,-94 626.13,-94 620.13,-88 620.13,-82 620.13,-82 620.13,-70 620.13,-70 620.13,-64 626.13,-58 632.13,-58 632.13,-58 664.98,-58 664.98,-58 670.98,-58 676.98,-64 676.98,-70 676.98,-70 676.98,-82 676.98,-82 676.98,-88 670.98,-94 664.98,-94"/>
+<text xml:space="preserve" text-anchor="middle" x="648.55" y="-70.75" font-family="Georgia" font-size="15.00">Story</text>
+</g>
+<!-- sentence&#45;&gt;story -->
+<g id="deep-learning-foundations-figure-2-deep-learning-foundations-representation-hierarchies-edge10" class="edge">
+<title>sentence&#45;&gt;story</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M584.22,-76C593.37,-76 603.02,-76 611.95,-76"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="611.9,-78.28 618.4,-76 611.9,-73.73 611.9,-78.28"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Conceptual examples of increasing abstraction from the lecture. A trained network does not necessarily form these exact named stages.</figcaption></figure>
+<p>These are conceptual examples of abstraction, not a promise that every trained network will form separately identifiable “edge,” “motif,” “phrase,” or “story” stages. The central idea is that later representations can combine patterns from earlier ones. This end-to-end flexibility can support supervised or unsupervised learning; the lecture also emphasizes that deep learning typically requires large amounts of training data.</p>
+<h2 id="section-3">Layers, tensors, predictions, and the training loop</h2>
+<p>A layer is a data-processing module. Dense, convolutional, recurrent, pooling, flattening, merging, and normalization layers are different examples; each has its own input/output shape and transformation. A trainable layer’s weights and biases are its learned internal state. They begin from an initialization and are adjusted during training; parameter-free operations such as fixed pooling have no learned weights. When layers are connected, they form a network or model.</p>
+<figure><div class="diagram-frame" style="--diagram-width:871.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Training compares prediction Y′ with target Y at the loss. The optimizer uses loss gradients to update the weighted layers; the target has no direct path into the forward layers." width="871pt" height="209pt"
+ viewBox="0.00 0.00 871.00 209.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="deep-learning-foundations-figure-3-deep-learning-foundations-training-feedback-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 198)">
+<title>G</title>
+<!-- x -->
+<g id="deep-learning-foundations-figure-3-deep-learning-foundations-training-feedback-node1" class="node">
+<title>x</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M107.85,-43.2C107.85,-43.2 12,-43.2 12,-43.2 6,-43.2 0,-37.2 0,-31.2 0,-31.2 0,-19.2 0,-19.2 0,-13.2 6,-7.2 12,-7.2 12,-7.2 107.85,-7.2 107.85,-7.2 113.85,-7.2 119.85,-13.2 119.85,-19.2 119.85,-19.2 119.85,-31.2 119.85,-31.2 119.85,-37.2 113.85,-43.2 107.85,-43.2"/>
+<text xml:space="preserve" text-anchor="middle" x="59.92" y="-19.95" font-family="Georgia" font-size="15.00">Input tensor X</text>
+</g>
+<!-- l1 -->
+<g id="deep-learning-foundations-figure-3-deep-learning-foundations-training-feedback-node2" class="node">
+<title>l1</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M259.95,-50.4C259.95,-50.4 164.85,-50.4 164.85,-50.4 158.85,-50.4 152.85,-44.4 152.85,-38.4 152.85,-38.4 152.85,-12 152.85,-12 152.85,-6 158.85,0 164.85,0 164.85,0 259.95,0 259.95,0 265.95,0 271.95,-6 271.95,-12 271.95,-12 271.95,-38.4 271.95,-38.4 271.95,-44.4 265.95,-50.4 259.95,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="212.4" y="-28.95" font-family="Georgia" font-size="15.00">Layer 1</text>
+<text xml:space="preserve" text-anchor="middle" x="212.4" y="-10.95" font-family="Georgia" font-size="15.00">weights W₁,b₁</text>
+</g>
+<!-- x&#45;&gt;l1 -->
+<g id="deep-learning-foundations-figure-3-deep-learning-foundations-training-feedback-edge1" class="edge">
+<title>x&#45;&gt;l1</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M119.96,-25.2C127.87,-25.2 136.02,-25.2 144.06,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="144.02,-27.48 150.52,-25.2 144.02,-22.93 144.02,-27.48"/>
+</g>
+<!-- l2 -->
+<g id="deep-learning-foundations-figure-3-deep-learning-foundations-training-feedback-node3" class="node">
+<title>l2</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M412.05,-95.4C412.05,-95.4 316.95,-95.4 316.95,-95.4 310.95,-95.4 304.95,-89.4 304.95,-83.4 304.95,-83.4 304.95,-57 304.95,-57 304.95,-51 310.95,-45 316.95,-45 316.95,-45 412.05,-45 412.05,-45 418.05,-45 424.05,-51 424.05,-57 424.05,-57 424.05,-83.4 424.05,-83.4 424.05,-89.4 418.05,-95.4 412.05,-95.4"/>
+<text xml:space="preserve" text-anchor="middle" x="364.5" y="-73.95" font-family="Georgia" font-size="15.00">Layer 2</text>
+<text xml:space="preserve" text-anchor="middle" x="364.5" y="-55.95" font-family="Georgia" font-size="15.00">weights W₂,b₂</text>
+</g>
+<!-- l1&#45;&gt;l2 -->
+<g id="deep-learning-foundations-figure-3-deep-learning-foundations-training-feedback-edge2" class="edge">
+<title>l1&#45;&gt;l2</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M272.72,-42.99C280.63,-45.36 288.78,-47.8 296.8,-50.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="295.79,-52.27 302.67,-51.96 297.09,-47.92 295.79,-52.27"/>
+</g>
+<!-- yp -->
+<g id="deep-learning-foundations-figure-3-deep-learning-foundations-training-feedback-node4" class="node">
+<title>yp</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M552.9,-187.2C552.9,-187.2 469.05,-187.2 469.05,-187.2 463.05,-187.2 457.05,-181.2 457.05,-175.2 457.05,-175.2 457.05,-163.2 457.05,-163.2 457.05,-157.2 463.05,-151.2 469.05,-151.2 469.05,-151.2 552.9,-151.2 552.9,-151.2 558.9,-151.2 564.9,-157.2 564.9,-163.2 564.9,-163.2 564.9,-175.2 564.9,-175.2 564.9,-181.2 558.9,-187.2 552.9,-187.2"/>
+<text xml:space="preserve" text-anchor="middle" x="510.97" y="-163.95" font-family="Georgia" font-size="15.00">Prediction Y′</text>
+</g>
+<!-- l2&#45;&gt;yp -->
+<g id="deep-learning-foundations-figure-3-deep-learning-foundations-training-feedback-edge3" class="edge">
+<title>l2&#45;&gt;yp</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M397.25,-96.38C414.48,-110.09 436.42,-126.77 457.05,-140.2 460.51,-142.45 464.15,-144.69 467.85,-146.88"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="466.45,-148.7 473.21,-149.99 468.73,-144.76 466.45,-148.7"/>
+</g>
+<!-- loss -->
+<g id="deep-learning-foundations-figure-3-deep-learning-foundations-training-feedback-node6" class="node">
+<title>loss</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M715.4,-129.2C715.4,-129.2 685.4,-129.2 685.4,-129.2 679.4,-129.2 673.4,-123.2 673.4,-117.2 673.4,-117.2 673.4,-105.2 673.4,-105.2 673.4,-99.2 679.4,-93.2 685.4,-93.2 685.4,-93.2 715.4,-93.2 715.4,-93.2 721.4,-93.2 727.4,-99.2 727.4,-105.2 727.4,-105.2 727.4,-117.2 727.4,-117.2 727.4,-123.2 721.4,-129.2 715.4,-129.2"/>
+<text xml:space="preserve" text-anchor="middle" x="700.4" y="-105.95" font-family="Georgia" font-size="15.00">Loss</text>
+</g>
+<!-- yp&#45;&gt;loss -->
+<g id="deep-learning-foundations-figure-3-deep-learning-foundations-training-feedback-edge4" class="edge">
+<title>yp&#45;&gt;loss</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M565.25,-155.68C592.96,-148.28 627.25,-138.52 657.4,-128.2 660.01,-127.31 662.69,-126.34 665.38,-125.34"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="665.79,-127.61 671.04,-123.16 664.16,-123.37 665.79,-127.61"/>
+</g>
+<!-- y -->
+<g id="deep-learning-foundations-figure-3-deep-learning-foundations-training-feedback-node5" class="node">
+<title>y</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M537.52,-129.2C537.52,-129.2 484.42,-129.2 484.42,-129.2 478.42,-129.2 472.42,-123.2 472.42,-117.2 472.42,-117.2 472.42,-105.2 472.42,-105.2 472.42,-99.2 478.42,-93.2 484.42,-93.2 484.42,-93.2 537.52,-93.2 537.52,-93.2 543.52,-93.2 549.52,-99.2 549.52,-105.2 549.52,-105.2 549.52,-117.2 549.52,-117.2 549.52,-123.2 543.52,-129.2 537.52,-129.2"/>
+<text xml:space="preserve" text-anchor="middle" x="510.97" y="-105.95" font-family="Georgia" font-size="15.00">Target Y</text>
+</g>
+<!-- y&#45;&gt;loss -->
+<g id="deep-learning-foundations-figure-3-deep-learning-foundations-training-feedback-edge5" class="edge">
+<title>y&#45;&gt;loss</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M549.9,-111.2C583.43,-111.2 631.93,-111.2 664.51,-111.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="664.42,-113.48 670.92,-111.2 664.42,-108.93 664.42,-113.48"/>
+</g>
+<!-- optimizer -->
+<g id="deep-learning-foundations-figure-3-deep-learning-foundations-training-feedback-node7" class="node">
+<title>optimizer</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M837.5,-84.4C837.5,-84.4 772.4,-84.4 772.4,-84.4 766.4,-84.4 760.4,-78.4 760.4,-72.4 760.4,-72.4 760.4,-46 760.4,-46 760.4,-40 766.4,-34 772.4,-34 772.4,-34 837.5,-34 837.5,-34 843.5,-34 849.5,-40 849.5,-46 849.5,-46 849.5,-72.4 849.5,-72.4 849.5,-78.4 843.5,-84.4 837.5,-84.4"/>
+<text xml:space="preserve" text-anchor="middle" x="804.95" y="-62.95" font-family="Georgia" font-size="15.00">Optimizer</text>
+<text xml:space="preserve" text-anchor="middle" x="804.95" y="-44.95" font-family="Georgia" font-size="15.00">η + rule</text>
+</g>
+<!-- loss&#45;&gt;optimizer -->
+<g id="deep-learning-foundations-figure-3-deep-learning-foundations-training-feedback-edge6" class="edge">
+<title>loss&#45;&gt;optimizer</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M728.34,-97.54C735.85,-93.73 744.27,-89.46 752.69,-85.19"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="753.62,-87.27 758.39,-82.3 751.56,-83.21 753.62,-87.27"/>
+</g>
+<!-- optimizer&#45;&gt;l1 -->
+<g id="deep-learning-foundations-figure-3-deep-learning-foundations-training-feedback-edge7" class="edge">
+<title>optimizer&#45;&gt;l1</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M768.32,-33.23C749.4,-21.92 725.19,-11.2 701.4,-11.2 363.5,-11.2 363.5,-11.2 363.5,-11.2 336.34,-11.2 306.54,-13.5 280.7,-16.24"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="280.53,-13.97 274.32,-16.93 281.03,-18.49 280.53,-13.97"/>
+<text xml:space="preserve" text-anchor="middle" x="510.97" y="-14.05" font-family="Georgia" font-size="12.00">update layer 1</text>
+</g>
+<!-- optimizer&#45;&gt;l2 -->
+<g id="deep-learning-foundations-figure-3-deep-learning-foundations-training-feedback-edge8" class="edge">
+<title>optimizer&#45;&gt;l2</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M759.65,-60.31C682.5,-62.25 523.05,-66.25 432.38,-68.52"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="432.59,-66.24 426.14,-68.68 432.7,-70.79 432.59,-66.24"/>
+<text xml:space="preserve" text-anchor="middle" x="619.15" y="-67.65" font-family="Georgia" font-size="12.00">update layer 2</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Training compares prediction Y′ with target Y at the loss. The optimizer uses loss gradients to update the weighted layers; the target has no direct path into the forward layers.</figcaption></figure>
+<p>During a forward pass, the model maps input <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>X</mi></mrow></math> to prediction <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>Y</mi><mrow><mi>&#x02032;</mi></mrow></msup></mrow></math>. During training, the loss function compares <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>Y</mi><mrow><mi>&#x02032;</mi></mrow></msup></mrow></math> with the true target <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Y</mi></mrow></math>. The loss is the quantity selected for minimization; other metrics may still matter when judging a model. Backpropagation supplies gradients through the layers, and the optimizer applies updates to relevant weighted layers. See <a href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a> and <a href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a> for the detailed optimization and gradient derivations.</p>
+<div class="table-scroll"><table><thead><tr><th>Task</th><th>Common loss named in the lecture</th><th>What the output represents</th></tr></thead><tbody><tr><td>Regression</td><td>Mean squared error</td><td>A numeric prediction</td></tr><tr><td>Two-class classification</td><td>Binary cross-entropy</td><td>A binary decision or probability</td></tr><tr><td>Multi-class classification</td><td>Categorical cross-entropy</td><td>A choice among classes; softmax is a common output activation</td></tr></tbody></table></div>
+<p>The optimizer determines how weights are changed based on the loss gradients. The lecture names stochastic gradient descent (SGD), momentum, and variants such as RMSProp, and highlights the learning rate and its schedule. Its comment that RMSProp is “usually a good first choice” is lecture context, not a universal current recommendation. Optimizer behavior depends on the task, model, data, and tuning.</p>
+<h2 id="section-4">Nonlinear representation and the role of depth</h2>
+<p>Neural networks build nonlinear mappings from input to output. If every layer were only linear, composing layers would still produce one linear mapping; nonlinear activations are what let compositions form nonlinear decision boundaries and richer transformations. The lecture describes a one-hidden-layer universal approximation result and notes that depth can be useful even though shallow and deep networks share broad representational capacity under suitable conditions.</p>
+<p><strong>Supplemental theorem statement.</strong> One verified version says that finite single-hidden-layer networks with a continuous sigmoidal nonlinearity can uniformly approximate continuous functions on the unit hypercube, under the theorem’s stated conditions. This is an existence result about approximation capacity. It does not say that gradient-based training will find the approximating parameters, that the representation will generalize, or that the required shallow network will be efficient. It also does not establish that a fixed-width network can approximate every function. <a href="https://doi.org/10.1007/BF02551274">Cybenko’s original paper</a> states the compact-domain and activation assumptions.</p>
+<figure><div class="diagram-frame" style="--diagram-width:690.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Depth composes learned nonlinear transforms. The lecture reports an empirical advantage only up to a point, followed by a performance plateau; this is not a guarantee that adding layers helps every task." width="690pt" height="116pt"
+ viewBox="0.00 0.00 690.00 116.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="deep-learning-foundations-figure-4-deep-learning-foundations-shallow-vs-deep-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 104.8)">
+<title>G</title>
+<!-- input_s -->
+<g id="deep-learning-foundations-figure-4-deep-learning-foundations-shallow-vs-deep-node1" class="node">
+<title>input_s</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M47.1,-36C47.1,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 47.1,0 47.1,0 53.1,0 59.1,-6 59.1,-12 59.1,-12 59.1,-24 59.1,-24 59.1,-30 53.1,-36 47.1,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="29.55" y="-12.75" font-family="Georgia" font-size="15.00">Input</text>
+</g>
+<!-- wide -->
+<g id="deep-learning-foundations-figure-4-deep-learning-foundations-shallow-vs-deep-node2" class="node">
+<title>wide</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M250.7,-36C250.7,-36 103.1,-36 103.1,-36 97.1,-36 91.1,-30 91.1,-24 91.1,-24 91.1,-12 91.1,-12 91.1,-6 97.1,0 103.1,0 103.1,0 250.7,0 250.7,0 256.7,0 262.7,-6 262.7,-12 262.7,-12 262.7,-24 262.7,-24 262.7,-30 256.7,-36 250.7,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="176.9" y="-12.75" font-family="Georgia" font-size="15.00">One wide hidden layer</text>
+</g>
+<!-- input_s&#45;&gt;wide -->
+<g id="deep-learning-foundations-figure-4-deep-learning-foundations-shallow-vs-deep-edge1" class="edge">
+<title>input_s&#45;&gt;wide</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M59.27,-18C66.42,-18 74.49,-18 82.96,-18"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="82.82,-20.28 89.32,-18 82.82,-15.73 82.82,-20.28"/>
+</g>
+<!-- output_s -->
+<g id="deep-learning-foundations-figure-4-deep-learning-foundations-shallow-vs-deep-node3" class="node">
+<title>output_s</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M377.43,-36C377.43,-36 331.82,-36 331.82,-36 325.82,-36 319.82,-30 319.82,-24 319.82,-24 319.82,-12 319.82,-12 319.82,-6 325.82,0 331.82,0 331.82,0 377.43,0 377.43,0 383.43,0 389.43,-6 389.43,-12 389.43,-12 389.43,-24 389.43,-24 389.43,-30 383.43,-36 377.43,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="354.62" y="-12.75" font-family="Georgia" font-size="15.00">Output</text>
+</g>
+<!-- wide&#45;&gt;output_s -->
+<g id="deep-learning-foundations-figure-4-deep-learning-foundations-shallow-vs-deep-edge2" class="edge">
+<title>wide&#45;&gt;output_s</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M263.19,-18C280.01,-18 296.96,-18 311.56,-18"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="311.41,-20.28 317.91,-18 311.41,-15.73 311.41,-20.28"/>
+</g>
+<!-- input_d -->
+<g id="deep-learning-foundations-figure-4-deep-learning-foundations-shallow-vs-deep-node4" class="node">
+<title>input_d</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M47.1,-94C47.1,-94 12,-94 12,-94 6,-94 0,-88 0,-82 0,-82 0,-70 0,-70 0,-64 6,-58 12,-58 12,-58 47.1,-58 47.1,-58 53.1,-58 59.1,-64 59.1,-70 59.1,-70 59.1,-82 59.1,-82 59.1,-88 53.1,-94 47.1,-94"/>
+<text xml:space="preserve" text-anchor="middle" x="29.55" y="-70.75" font-family="Georgia" font-size="15.00">Input</text>
+</g>
+<!-- d1 -->
+<g id="deep-learning-foundations-figure-4-deep-learning-foundations-shallow-vs-deep-node5" class="node">
+<title>d1</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M224.07,-94C224.07,-94 129.72,-94 129.72,-94 123.72,-94 117.72,-88 117.72,-82 117.72,-82 117.72,-70 117.72,-70 117.72,-64 123.72,-58 129.72,-58 129.72,-58 224.07,-58 224.07,-58 230.07,-58 236.07,-64 236.07,-70 236.07,-70 236.07,-82 236.07,-82 236.07,-88 230.07,-94 224.07,-94"/>
+<text xml:space="preserve" text-anchor="middle" x="176.9" y="-70.75" font-family="Georgia" font-size="15.00">Hidden layer 1</text>
+</g>
+<!-- input_d&#45;&gt;d1 -->
+<g id="deep-learning-foundations-figure-4-deep-learning-foundations-shallow-vs-deep-edge3" class="edge">
+<title>input_d&#45;&gt;d1</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M59.27,-76C73.54,-76 91.45,-76 108.91,-76"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="108.87,-78.28 115.37,-76 108.87,-73.73 108.87,-78.28"/>
+</g>
+<!-- d2 -->
+<g id="deep-learning-foundations-figure-4-deep-learning-foundations-shallow-vs-deep-node6" class="node">
+<title>d2</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M402.55,-94C402.55,-94 306.7,-94 306.7,-94 300.7,-94 294.7,-88 294.7,-82 294.7,-82 294.7,-70 294.7,-70 294.7,-64 300.7,-58 306.7,-58 306.7,-58 402.55,-58 402.55,-58 408.55,-58 414.55,-64 414.55,-70 414.55,-70 414.55,-82 414.55,-82 414.55,-88 408.55,-94 402.55,-94"/>
+<text xml:space="preserve" text-anchor="middle" x="354.62" y="-70.75" font-family="Georgia" font-size="15.00">Hidden layer 2</text>
+</g>
+<!-- d1&#45;&gt;d2 -->
+<g id="deep-learning-foundations-figure-4-deep-learning-foundations-shallow-vs-deep-edge4" class="edge">
+<title>d1&#45;&gt;d2</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M236.9,-76C252.67,-76 269.83,-76 286.02,-76"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="285.87,-78.28 292.37,-76 285.87,-73.73 285.87,-78.28"/>
+</g>
+<!-- d3 -->
+<g id="deep-learning-foundations-figure-4-deep-learning-foundations-shallow-vs-deep-node7" class="node">
+<title>d3</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M554.4,-94C554.4,-94 458.55,-94 458.55,-94 452.55,-94 446.55,-88 446.55,-82 446.55,-82 446.55,-70 446.55,-70 446.55,-64 452.55,-58 458.55,-58 458.55,-58 554.4,-58 554.4,-58 560.4,-58 566.4,-64 566.4,-70 566.4,-70 566.4,-82 566.4,-82 566.4,-88 560.4,-94 554.4,-94"/>
+<text xml:space="preserve" text-anchor="middle" x="506.48" y="-70.75" font-family="Georgia" font-size="15.00">Hidden layer 3</text>
+</g>
+<!-- d2&#45;&gt;d3 -->
+<g id="deep-learning-foundations-figure-4-deep-learning-foundations-shallow-vs-deep-edge5" class="edge">
+<title>d2&#45;&gt;d3</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M415.28,-76C422.87,-76 430.68,-76 438.38,-76"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="438.01,-78.28 444.51,-76 438.01,-73.73 438.01,-78.28"/>
+</g>
+<!-- output_d -->
+<g id="deep-learning-foundations-figure-4-deep-learning-foundations-shallow-vs-deep-node8" class="node">
+<title>output_d</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M656,-94C656,-94 610.4,-94 610.4,-94 604.4,-94 598.4,-88 598.4,-82 598.4,-82 598.4,-70 598.4,-70 598.4,-64 604.4,-58 610.4,-58 610.4,-58 656,-58 656,-58 662,-58 668,-64 668,-70 668,-70 668,-82 668,-82 668,-88 662,-94 656,-94"/>
+<text xml:space="preserve" text-anchor="middle" x="633.2" y="-70.75" font-family="Georgia" font-size="15.00">Output</text>
+</g>
+<!-- d3&#45;&gt;output_d -->
+<g id="deep-learning-foundations-figure-4-deep-learning-foundations-shallow-vs-deep-edge6" class="edge">
+<title>d3&#45;&gt;output_d</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M567.28,-76C575.09,-76 582.94,-76 590.37,-76"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="590.21,-78.28 596.71,-76 590.21,-73.73 590.21,-78.28"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Depth composes learned nonlinear transforms. The lecture reports an empirical advantage only up to a point, followed by a performance plateau; this is not a guarantee that adding layers helps every task.</figcaption></figure>
+<p>The lecture presents deeper networks as empirically performing better than shallow networks up to a limit, after which performance plateaus. That is a task-dependent observation, not a rule that more depth always helps. Depth and width change the structure and possible efficiency of a model; capacity alone does not guarantee good generalization. The appropriate choice must be learned and assessed using training and validation data.</p>
+<h2 id="section-5">Sigmoid and softmax outputs</h2>
+<p>For a logit <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>z</mi><mi>i</mi></msub></mrow></math>, sigmoid applies <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi><mo stretchy="false">&#x00028;</mo><msub><mi>z</mi><mi>i</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><msup><mi>e</mi><mrow><mo>&#x02212;</mo><msub><mi>z</mi><mi>i</mi></msub></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow></math> independently. Each result lies between zero and one, but several sigmoid outputs need not add to one. They can suit binary classification, or separate non-exclusive yes/no labels. For an exclusive multi-class choice, softmax exponentiates the logits and normalizes them with one shared denominator so the outputs form a probability distribution.</p>
+<details class="worked"><summary>Worked example: compare sigmoid outputs with softmax for the lecture logits (3, 1, −3)</summary><section class="walk" tabindex="0" aria-label="From logits to normalized class probabilities"><h3>From logits to normalized class probabilities</h3><div class="example-input"><strong>Lecture givens</strong><span>Logits: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>1</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mo>&#x02212;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow></math></span><span>Softmax rule: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mfrac><mrow><msup><mi>e</mi><mrow><msub><mi>z</mi><mi>i</mi></msub></mrow></msup></mrow><mrow><msubsup><mo>&#x02211;</mo><mrow><mi>j</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mn>3</mn></mrow></msubsup><msup><mi>e</mi><mrow><msub><mi>z</mi><mi>j</mi></msub></mrow></msup></mrow></mfrac></mrow></math></span></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Start with the lecture logits</h4><p>The three classes have logits <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>z</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mn>3</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><msub><mi>z</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><msub><mi>z</mi><mn>3</mn></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>3</mn></mrow></math>. Independent sigmoid outputs use <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>1</mn><mo>&#x0002B;</mo><msup><mi>e</mi><mrow><mo>&#x02212;</mo><mi>z</mi></mrow></msup></mrow></mfrac></mrow></math>:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x003C3;</mi><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.952574127</mn><mo>&#x0002C;</mo><mspace width="2em" /><mi>&#x003C3;</mi><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.731058579</mn><mo>&#x0002C;</mo><mspace width="2em" /><mi>&#x003C3;</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.047425873</mn></mrow></math></div>
+<p>Their sum is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1.731058579</mn></mrow></math>, so independent sigmoids do not normalize an exclusive three-class choice.</p></section><section class="step"><h4>2. Exponentiate each logit</h4><p>Softmax exponentiates each logit while keeping its class identity:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi>e</mi><mrow><msub><mi>z</mi><mn>1</mn></msub></mrow></msup><mo>&#x0003D;</mo><msup><mi>e</mi><mn>3</mn></msup><mo>&#x0003D;</mo><mn>20.085536923188</mn><mo>&#x0002C;</mo><mspace width="2em" /><msup><mi>e</mi><mrow><msub><mi>z</mi><mn>2</mn></msub></mrow></msup><mo>&#x0003D;</mo><msup><mi>e</mi><mn>1</mn></msup><mo>&#x0003D;</mo><mn>2.718281828459</mn><mo>&#x0002C;</mo><mspace width="2em" /><msup><mi>e</mi><mrow><msub><mi>z</mi><mn>3</mn></msub></mrow></msup><mo>&#x0003D;</mo><msup><mi>e</mi><mrow><mo>&#x02212;</mo><mn>3</mn></mrow></msup><mo>&#x0003D;</mo><mn>0.049787068368</mn></mrow></math></div>
+<p>Each value is finite and strictly positive, including the value for the third class.</p></section><section class="step"><h4>3. Add the shared denominator and divide</h4><p>Sum the three exponentials, then divide each class value by that same sum:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>D</mi><mo>&#x0003D;</mo><mn>20.085536923188</mn><mo>&#x0002B;</mo><mn>2.718281828459</mn><mo>&#x0002B;</mo><mn>0.049787068368</mn><mo>&#x0003D;</mo><mn>22.853605820015</mn></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>y</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>20.085536923188</mn></mrow><mrow><mn>22.853605820015</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.878878242732</mn></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>y</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>2.718281828459</mn></mrow><mrow><mn>22.853605820015</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.118943235911</mn></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>y</mi><mn>3</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>0.049787068368</mn></mrow><mrow><mn>22.853605820015</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.002178521357</mn></mrow></math></div>
+<p><strong>Supplemental calculation.</strong> The slide rounds the exponentials to about <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>20</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>2.7</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>0.05</mn></mrow></math> and obtains <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.88</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>0.12</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mo>&#x02248;</mo><mn>0</mn></mrow></math>. The full calculation shows why the small third-class probability is positive rather than zero.</p></section><section class="step"><h4>4. Check the probability vector</h4><p>Each output is between zero and one, and the values sum to one:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mn>0.878878242732</mn><mo>&#x0002B;</mo><mn>0.118943235911</mn><mo>&#x0002B;</mo><mn>0.002178521357</mn><mo>&#x0003D;</mo><mn>1.000000000000</mn></mrow></math></div>
+<p>For an exclusive multiclass target, the normalized vector is directly comparable across classes. Sigmoid outputs remain useful for binary classification and for multiple labels that are not mutually exclusive, where each label is a separate yes/no decision.</p></section></section></details>
+<h2 id="section-6">Dropout regularization</h2>
+<p>Dropout randomly removes units during training, along with the connections incident to those units. Each sampled mask therefore trains a slightly different thinned network. The lecture motivates this as reducing overfitting and improving generalization, and uses ensemble learning as an intuition: mini-batches train the same shared model through different subnetworks. At inference, the full network is used rather than a training mask.</p>
+<figure><div class="diagram-frame" style="--diagram-width:720px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" width="720" height="250" role="img" aria-label="Before a sampled dropout mask: all displayed units and connections are present."><defs><marker id="deep-learning-foundations-figure-5-dropout-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowhead"/></marker></defs><style>svg{font-family:Georgia,serif}.connection{stroke:var(--diagram-edge,#547b86);stroke-width:1.5;fill:none}.arrowhead{fill:var(--diagram-edge,#547b86)}.unit circle,.unit rect{fill:var(--diagram-fill,#e8f1f3);stroke:var(--diagram-border,#7f9da5);stroke-width:1.5}.unit text{fill:var(--foreground,#26363a);font-size:13px;text-anchor:middle}.dropped circle{stroke-dasharray:5 3;stroke-width:2}</style><line class="connection" x1="98.9" y1="57.9" x2="338.1" y2="36.9" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="98.9" y1="62.1" x2="338.1" y2="83.1" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="98.2" y1="66.1" x2="338.7" y2="129.4" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="97.0" y1="69.6" x2="339.9" y2="176.2" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="97.8" y1="122.4" x2="339.1" y2="42.0" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="98.7" y1="126.3" x2="338.3" y2="88.4" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="99.0" y1="130.4" x2="338.0" y2="134.6" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="98.6" y1="134.5" x2="338.4" y2="180.8" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="95.8" y1="188.0" x2="341.0" y2="46.0" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="97.3" y1="191.0" x2="339.6" y2="93.2" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="98.4" y1="194.7" x2="338.6" y2="139.9" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="99.0" y1="198.7" x2="338.0" y2="186.2" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="381.7" y1="38.8" x2="620.4" y2="80.7" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="380.3" y1="43.5" x2="622.0" y2="145.3" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="382.0" y1="85.0" x2="620.0" y2="85.0" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="381.4" y1="90.2" x2="620.7" y2="149.0" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="381.7" y1="131.2" x2="620.4" y2="89.3" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="381.9" y1="136.5" x2="620.1" y2="153.2" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="380.8" y1="177.7" x2="621.4" y2="93.3" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><line class="connection" x1="381.9" y1="182.7" x2="620.1" y2="157.6" marker-end="url(#deep-learning-foundations-figure-5-dropout-arrow)" /><g class="unit" aria-label="X₁"><circle cx="75" cy="60" r="24"/><text x="75" y="65">X₁</text></g><g class="unit" aria-label="X₂"><circle cx="75" cy="130" r="24"/><text x="75" y="135">X₂</text></g><g class="unit" aria-label="X₃"><circle cx="75" cy="200" r="24"/><text x="75" y="205">X₃</text></g><g class="unit" aria-label="H₁"><circle cx="360" cy="35" r="24"/><text x="360" y="40">H₁</text></g><g class="unit" aria-label="H₂"><circle cx="360" cy="85" r="24"/><text x="360" y="90">H₂</text></g><g class="unit" aria-label="H₃"><circle cx="360" cy="135" r="24"/><text x="360" y="140">H₃</text></g><g class="unit" aria-label="H₄"><circle cx="360" cy="185" r="24"/><text x="360" y="190">H₄</text></g><g class="unit output" aria-label="Output 1"><rect x="590" y="63" width="110" height="44" rx="10"/><text x="645" y="90">Output 1</text></g><g class="unit output" aria-label="Output 2"><rect x="590" y="133" width="110" height="44" rx="10"/><text x="645" y="160">Output 2</text></g><text x="360" y="238" class="legend" style="fill:var(--muted,#617176);font:12px sans-serif;text-anchor:middle">All displayed units and connections are present.</text></svg></div><figcaption>Before a sampled dropout mask: all displayed units and connections are present.</figcaption></figure>
+<figure><div class="diagram-frame" style="--diagram-width:720px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" width="720" height="250" role="img" aria-label="One illustrative training mask: H₂ and H₄ are dropped, so every incident connection is absent. Crossed dashed circles identify the removed units."><defs><marker id="deep-learning-foundations-figure-6-dropout-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowhead"/></marker></defs><style>svg{font-family:Georgia,serif}.connection{stroke:var(--diagram-edge,#547b86);stroke-width:1.5;fill:none}.arrowhead{fill:var(--diagram-edge,#547b86)}.unit circle,.unit rect{fill:var(--diagram-fill,#e8f1f3);stroke:var(--diagram-border,#7f9da5);stroke-width:1.5}.unit text{fill:var(--foreground,#26363a);font-size:13px;text-anchor:middle}.dropped circle{stroke-dasharray:5 3;stroke-width:2}</style><line class="connection" x1="98.9" y1="57.9" x2="338.1" y2="36.9" marker-end="url(#deep-learning-foundations-figure-6-dropout-arrow)" /><line class="connection" x1="98.2" y1="66.1" x2="338.7" y2="129.4" marker-end="url(#deep-learning-foundations-figure-6-dropout-arrow)" /><line class="connection" x1="97.8" y1="122.4" x2="339.1" y2="42.0" marker-end="url(#deep-learning-foundations-figure-6-dropout-arrow)" /><line class="connection" x1="99.0" y1="130.4" x2="338.0" y2="134.6" marker-end="url(#deep-learning-foundations-figure-6-dropout-arrow)" /><line class="connection" x1="95.8" y1="188.0" x2="341.0" y2="46.0" marker-end="url(#deep-learning-foundations-figure-6-dropout-arrow)" /><line class="connection" x1="98.4" y1="194.7" x2="338.6" y2="139.9" marker-end="url(#deep-learning-foundations-figure-6-dropout-arrow)" /><line class="connection" x1="381.7" y1="38.8" x2="620.4" y2="80.7" marker-end="url(#deep-learning-foundations-figure-6-dropout-arrow)" /><line class="connection" x1="380.3" y1="43.5" x2="622.0" y2="145.3" marker-end="url(#deep-learning-foundations-figure-6-dropout-arrow)" /><line class="connection" x1="381.7" y1="131.2" x2="620.4" y2="89.3" marker-end="url(#deep-learning-foundations-figure-6-dropout-arrow)" /><line class="connection" x1="381.9" y1="136.5" x2="620.1" y2="153.2" marker-end="url(#deep-learning-foundations-figure-6-dropout-arrow)" /><g class="unit" aria-label="X₁"><circle cx="75" cy="60" r="24"/><text x="75" y="65">X₁</text></g><g class="unit" aria-label="X₂"><circle cx="75" cy="130" r="24"/><text x="75" y="135">X₂</text></g><g class="unit" aria-label="X₃"><circle cx="75" cy="200" r="24"/><text x="75" y="205">X₃</text></g><g class="unit" aria-label="H₁"><circle cx="360" cy="35" r="24"/><text x="360" y="40">H₁</text></g><g class="unit dropped" aria-label="H₂ dropped"><circle cx="360" cy="85" r="24"/><text x="360" y="90">H₂×</text></g><g class="unit" aria-label="H₃"><circle cx="360" cy="135" r="24"/><text x="360" y="140">H₃</text></g><g class="unit dropped" aria-label="H₄ dropped"><circle cx="360" cy="185" r="24"/><text x="360" y="190">H₄×</text></g><g class="unit output" aria-label="Output 1"><rect x="590" y="63" width="110" height="44" rx="10"/><text x="645" y="90">Output 1</text></g><g class="unit output" aria-label="Output 2"><rect x="590" y="133" width="110" height="44" rx="10"/><text x="645" y="160">Output 2</text></g><text x="360" y="238" class="legend" style="fill:var(--muted,#617176);font:12px sans-serif;text-anchor:middle">H₂× and H₄× mark dropped units; every incident connection is absent.</text></svg></div><figcaption>One illustrative training mask: H₂ and H₄ are dropped, so every incident connection is absent. Crossed dashed circles identify the removed units.</figcaption></figure>
+<figure><div class="diagram-frame" style="--diagram-width:720px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" width="720" height="250" role="img" aria-label="At inference, this inverted-dropout convention disables the random mask and uses the full network."><defs><marker id="deep-learning-foundations-figure-7-dropout-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowhead"/></marker></defs><style>svg{font-family:Georgia,serif}.connection{stroke:var(--diagram-edge,#547b86);stroke-width:1.5;fill:none}.arrowhead{fill:var(--diagram-edge,#547b86)}.unit circle,.unit rect{fill:var(--diagram-fill,#e8f1f3);stroke:var(--diagram-border,#7f9da5);stroke-width:1.5}.unit text{fill:var(--foreground,#26363a);font-size:13px;text-anchor:middle}.dropped circle{stroke-dasharray:5 3;stroke-width:2}</style><line class="connection" x1="98.9" y1="57.9" x2="338.1" y2="36.9" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="98.9" y1="62.1" x2="338.1" y2="83.1" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="98.2" y1="66.1" x2="338.7" y2="129.4" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="97.0" y1="69.6" x2="339.9" y2="176.2" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="97.8" y1="122.4" x2="339.1" y2="42.0" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="98.7" y1="126.3" x2="338.3" y2="88.4" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="99.0" y1="130.4" x2="338.0" y2="134.6" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="98.6" y1="134.5" x2="338.4" y2="180.8" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="95.8" y1="188.0" x2="341.0" y2="46.0" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="97.3" y1="191.0" x2="339.6" y2="93.2" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="98.4" y1="194.7" x2="338.6" y2="139.9" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="99.0" y1="198.7" x2="338.0" y2="186.2" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="381.7" y1="38.8" x2="620.4" y2="80.7" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="380.3" y1="43.5" x2="622.0" y2="145.3" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="382.0" y1="85.0" x2="620.0" y2="85.0" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="381.4" y1="90.2" x2="620.7" y2="149.0" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="381.7" y1="131.2" x2="620.4" y2="89.3" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="381.9" y1="136.5" x2="620.1" y2="153.2" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="380.8" y1="177.7" x2="621.4" y2="93.3" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><line class="connection" x1="381.9" y1="182.7" x2="620.1" y2="157.6" marker-end="url(#deep-learning-foundations-figure-7-dropout-arrow)" /><g class="unit" aria-label="X₁"><circle cx="75" cy="60" r="24"/><text x="75" y="65">X₁</text></g><g class="unit" aria-label="X₂"><circle cx="75" cy="130" r="24"/><text x="75" y="135">X₂</text></g><g class="unit" aria-label="X₃"><circle cx="75" cy="200" r="24"/><text x="75" y="205">X₃</text></g><g class="unit" aria-label="H₁"><circle cx="360" cy="35" r="24"/><text x="360" y="40">H₁</text></g><g class="unit" aria-label="H₂"><circle cx="360" cy="85" r="24"/><text x="360" y="90">H₂</text></g><g class="unit" aria-label="H₃"><circle cx="360" cy="135" r="24"/><text x="360" y="140">H₃</text></g><g class="unit" aria-label="H₄"><circle cx="360" cy="185" r="24"/><text x="360" y="190">H₄</text></g><g class="unit output" aria-label="Output 1"><rect x="590" y="63" width="110" height="44" rx="10"/><text x="645" y="90">Output 1</text></g><g class="unit output" aria-label="Output 2"><rect x="590" y="133" width="110" height="44" rx="10"/><text x="645" y="160">Output 2</text></g><text x="360" y="238" class="legend" style="fill:var(--muted,#617176);font:12px sans-serif;text-anchor:middle">All displayed units and connections are present.</text></svg></div><figcaption>At inference, this inverted-dropout convention disables the random mask and uses the full network.</figcaption></figure>
+<p>The phrase “retained with a fixed dropout rate” makes the lecture’s symbol <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi></mrow></math> ambiguous: it mixes keep and drop language, while later saying that often 20–50% of units are dropped. To keep the two quantities distinct, this guide writes <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>q</mi><mrow><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">p</mi></mrow></mrow></msub></mrow></math> for the fraction dropped and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>r</mi><mrow><mrow><mi mathvariant="normal">k</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">p</mi></mrow></mrow></msub><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><msub><mi>q</mi><mrow><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">p</mi></mrow></mrow></msub></mrow></math> for the fraction retained. Masks are sampled independently as described in the slide; exact mask granularity can depend on the layer and implementation.</p>
+<p>The following supplemental calculation applies one explicit software convention so the training-time scaling and inference steps can be followed.</p>
+<details class="worked"><summary>Supplemental calculation: one inverted-dropout mask</summary><section class="walk" tabindex="0" aria-label="One inverted-dropout mask, coordinate by coordinate"><h3>One inverted-dropout mask, coordinate by coordinate</h3><div class="example-input"><strong>Supplemental teaching example</strong><span>Activations: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><mn>2</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>4</mn><mo stretchy="false">]</mo></mrow></math></span><span>Drop fraction <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>q</mi><mrow><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">p</mi></mrow></mrow></msub><mo>&#x0003D;</mo><mn>0.25</mn></mrow></math>; keep fraction <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>r</mi><mrow><mrow><mi mathvariant="normal">k</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">p</mi></mrow></mrow></msub><mo>&#x0003D;</mo><mn>0.75</mn></mrow></math></span><span>One fixed mask: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><mn>1</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">]</mo></mrow></math></span><span>Convention: TensorFlow/Keras-style inverted dropout during training; no mask during inference. This calculation explicitly uses the inverted-dropout convention. See the <a href="https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dropout">TensorFlow/Keras Dropout documentation</a>.</span></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Separate drop and keep probabilities</h4><p><strong>Supplemental calculation.</strong> Let <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>q</mi><mrow><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">p</mi></mrow></mrow></msub><mo>&#x0003D;</mo><mn>0.25</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>r</mi><mrow><mrow><mi mathvariant="normal">k</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">p</mi></mrow></mrow></msub><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><msub><mi>q</mi><mrow><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">p</mi></mrow></mrow></msub><mo>&#x0003D;</mo><mn>0.75</mn></mrow></math>. For inverted scaling require <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x02264;</mo><msub><mi>q</mi><mrow><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">p</mi></mrow></mrow></msub><mo>&#x0003C;</mo><mn>1</mn></mrow></math>, so the keep fraction is positive. A Bernoulli mask independently keeps or drops each unit in this illustrative elementwise example. The fixed mask below is a teaching realization, not a newly sampled or trained network result.</p></section><section class="step"><h4>2. Apply the sampled mask</h4><p>Starting activations are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><mn>2</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>4</mn><mo stretchy="false">]</mo></mrow></math> and the sampled mask is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><mn>1</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">]</mo></mrow></math>. Multiply coordinate by coordinate:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="false">[</mo><mn>2</mn><mo>&#x000B7;</mo><mn>1</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mo>&#x02212;</mo><mn>1</mn><mo>&#x000B7;</mo><mn>0</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>0</mn><mo>&#x000B7;</mo><mn>1</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>4</mn><mo>&#x000B7;</mo><mn>1</mn><mo stretchy="false">]</mo><mo>&#x0003D;</mo><mo stretchy="false">[</mo><mn>2</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>4</mn><mo stretchy="false">]</mo></mrow></math></div>
+<p>The second unit is dropped, so its path is removed. The third unit’s original activation is zero; it was kept here, which is different from saying the zero value was dropped.</p></section><section class="step"><h4>3. Scale retained coordinates once during training</h4><p>In the explicitly chosen inverted-dropout convention, divide retained values by <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>r</mi><mrow><mrow><mi mathvariant="normal">k</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">p</mi></mrow></mrow></msub><mo>&#x0003D;</mo><mn>0.75</mn></mrow></math>:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="false">[</mo><mn>2</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>4</mn><mo stretchy="false">]</mo><mo>&#x000F7;</mo><mn>0.75</mn><mo>&#x0003D;</mo><mo stretchy="false">[</mo><mn>8</mn><mo>&#x0002F;</mo><mn>3</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>16</mn><mo>&#x0002F;</mo><mn>3</mn><mo stretchy="false">]</mo></mrow></math></div>
+<p>Coordinate check: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mo>&#x0002F;</mo><mn>0.75</mn><mo>&#x0003D;</mo><mn>8</mn><mo>&#x0002F;</mo><mn>3</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn></mrow></math> for the dropped coordinate, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002F;</mo><mn>0.75</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math> for the retained zero activation, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>4</mn><mo>&#x0002F;</mo><mn>0.75</mn><mo>&#x0003D;</mo><mn>16</mn><mo>&#x0002F;</mo><mn>3</mn></mrow></math>.</p></section><section class="step"><h4>4. Disable the mask at inference and check the expectation</h4><p>At inference, use the original activation vector <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><mn>2</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>4</mn><mo stretchy="false">]</mo></mrow></math> without another scale factor. For any coordinate <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi></mrow></math>, the training-time inverted value has expectation <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>r</mi><mrow><mrow><mi mathvariant="normal">k</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">p</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>a</mi><mo>&#x0002F;</mo><msub><mi>r</mi><mrow><mrow><mi mathvariant="normal">k</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">p</mi></mrow></mrow></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><msub><mi>r</mi><mrow><mrow><mi mathvariant="normal">k</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">p</mi></mrow></mrow></msub><mo stretchy="false">&#x00029;</mo><mn>0</mn><mo>&#x0003D;</mo><mi>a</mi></mrow></math>. This coordinate-wise expectation check does not imply that a nonlinear network’s expected output equals the output at the expected activations.</p>
+<p>A separate older convention leaves retained training activations unscaled and multiplies activations by <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>r</mi><mrow><mrow><mi mathvariant="normal">k</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">p</mi></mrow></mrow></msub></mrow></math> at inference. Do not combine that inference-time factor with the training-time scaling above.</p></section></section></details>
+<p>For inverted dropout, the training mask and scaling preserve each activation’s expectation coordinate by coordinate. This check applies to activations before later nonlinear transformations; it does not mean a nonlinear network’s expected output equals the output at its mean activation. A separate older convention leaves training values unscaled and applies a keep-probability factor at inference; keep the two conventions separate.</p>
+<h2 id="section-7">Hyperparameter tuning</h2>
+<p>Training a neural network involves choices beyond the weights learned by the optimizer. The lecture’s list includes model depth and layer width, initial learning rate and its decay schedule, optimizer type, regularization such as an L₂ penalty or dropout rate, batch size, activation functions, and loss function. These settings interact: for example, architecture controls the model’s transformations while the optimizer and learning-rate schedule control how its parameters move.</p>
+<p>Grid search checks combinations from specified ranges and steps. Random search samples candidate settings and is often preferred to a grid when only some dimensions strongly affect performance. Bayesian hyperparameter optimization uses prior trial results to choose later candidates; the lecture labels it an active research area. Each is a search strategy, and all can be costly when model training is expensive.</p>
+<p>Use training data to fit candidate models and validation data to compare hyperparameter choices. Keep a held-out test set for a final evaluation after choices are settled; repeatedly tuning against that test set leaks information into the selection process. This division helps measure generalization, but it does not guarantee it.</p>
+<h2 id="section-8">Common mistakes</h2>
+<ul>
+<li>Treating handcrafted feature extraction and the learned classifier as the same stage. In the conventional pipeline, people define the representation; in deep learning, layers learn intermediate representations as part of the model.</li>
+<li>Treating the image or text hierarchy as a guaranteed semantic explanation of every layer. The arrows are conceptual examples of increasing abstraction.</li>
+<li>Saying the optimizer compares predictions with targets. The loss function makes that comparison; the optimizer uses gradients to update weights.</li>
+<li>Feeding the target directly through the model’s forward path. The target is compared with the prediction at the loss.</li>
+<li>Assuming independent sigmoid outputs sum to one. Softmax provides normalization across mutually exclusive classes.</li>
+<li>Saying the third softmax probability is zero because the slide rounds it to approximately zero. The exact exponential is positive and the normalized result is about 0.002179.</li>
+<li>Confusing the dropout fraction with the retained fraction, or masking weights instead of units. Unit dropout removes each dropped unit and its incident connections.</li>
+<li>Applying inverted scaling during training and then scaling again at inference. The worked example uses no inference scaling.</li>
+<li>Treating a universal approximation theorem as a training or generalization guarantee, or assuming that depth always improves performance.</li>
+<li>Selecting hyperparameters on the held-out test set and then treating its score as an untouched final evaluation.</li>
+</ul>
+<h2 id="section-9">Exam focus</h2>
+<ul>
+<li><strong>Representation learning:</strong> deep networks learn successive trainable feature transformations; conventional ML often starts from handcrafted features.</li>
+<li><strong>Layer anatomy:</strong> a layer maps input tensor(s) to output tensor(s), and learned weights/biases are internal state.</li>
+<li><strong>Training loop:</strong> input maps to prediction; compare that prediction with the target at the loss, then use gradients and an optimizer to update weighted layers.</li>
+<li><strong>Task and loss:</strong> MSE for regression, binary cross-entropy for two-class classification, categorical cross-entropy for multi-class classification.</li>
+<li><strong>Activations:</strong> nonlinear activations enable nonlinear compositions; sigmoid outputs are independent, while softmax outputs normalize to one across classes.</li>
+<li><strong>Depth:</strong> universal approximation is conditional and concerns existence/representational capacity; empirical depth gains can plateau and do not guarantee generalization.</li>
+<li><strong>Dropout:</strong> randomly remove units and incident connections during training; track the drop fraction separately from the keep fraction; inference uses the full network under the inverted convention shown.</li>
+<li><strong>Tuning:</strong> know the listed hyperparameters and the distinction between grid, random, and Bayesian search; compare on validation data and reserve the test set.</li>
+</ul>
+<h2 id="section-10">Practice questions</h2>
+<p class="question">1. In the cat example, what is learned in the conventional pipeline and what is learned in the deep-learning pipeline?</p>
+<details class="worked"><summary>Check your answer</summary><p>The conventional pipeline uses human-designed features followed by a learned classifier. The deep-learning pipeline learns low-, mid-, and high-level representations together with the classifier.</p></details>
+<p class="question">2. Why do neural networks need nonlinear activations between linear layers to represent nonlinear decision boundaries?</p>
+<details class="worked"><summary>Check your answer</summary><p>A composition of linear maps is still linear. A nonlinear activation prevents that collapse and lets stacked layers form nonlinear mappings.</p></details>
+<p class="question">3. For logits (3, 1, −3), why is the third softmax probability positive even though the lecture writes approximately zero?</p>
+<details class="worked"><summary>Check your answer</summary><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>e</mi><mrow><mo>&#x02212;</mo><mn>3</mn></mrow></msup><mo>&#x0003D;</mo><mn>0.049787068368</mn></mrow></math> is positive. Dividing by the shared denominator <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>22.853605820015</mn></mrow></math> gives about <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.002178521357</mn></mrow></math>. It is small enough to round to approximately zero in the slide.</p></details>
+<p class="question">4. A dropout example uses a 0.25 drop fraction. What is the keep fraction, and which units remain under mask [1, 0, 1, 1]?</p>
+<details class="worked"><summary>Check your answer</summary><p>The keep fraction is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x02212;</mo><mn>0.25</mn><mo>&#x0003D;</mo><mn>0.75</mn></mrow></math>. Coordinates 1, 3, and 4 are kept; coordinate 2 is dropped along with its incident connections.</p></details>
+<p class="question">5. What does the universal approximation result establish, and what does it leave open?</p>
+<details class="worked"><summary>Check your answer</summary><p>Under its domain and activation conditions, it establishes that a suitable one-hidden-layer network exists that can approximate a target continuous function. It does not establish that training finds it, that it generalizes, or that it is computationally efficient.</p></details>
+<p class="question">6. Which data should guide hyperparameter selection, and which should be kept for final evaluation?</p>
+<details class="worked"><summary>Check your answer</summary><p>Use training data to fit candidates and validation data to compare settings. Keep a held-out test set for a final evaluation after choices are settled.</p></details>
+<h2 id="section-11">Study route</h2>
+<p>Review <a href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a> for optimizer updates and learning-rate schedules, then <a href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a> for the loss-gradient path. Continue to <a href="cnn-architectures.html">Convolutional Neural Networks</a>, <a href="sequence-models.html">RNNs, LSTMs, and GRUs</a>, and <a href="autoencoders.html">Autoencoders and Learned Representations</a> for their separate architectures and procedures.</p></article><nav class="pager" aria-label="Study sequence"><a href="domain-adaptation-pretraining.html"><small>Previous</small>Domain Adaptation, Shift, and Negative Transfer <span aria-hidden="true">↗</span></a><a href="cnn-architectures.html"><small>Next</small>Convolutional Neural Networks <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

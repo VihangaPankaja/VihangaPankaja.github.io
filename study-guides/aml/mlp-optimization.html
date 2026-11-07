@@ -1,0 +1,724 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="How multilayer networks combine affine layers and activations, and how gradients, objectives, and training schedules shape their learning."><title>Multilayer Networks, Gradient Descent, and Training Practice · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html" aria-current="page">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Neural networks and optimization <span>/</span> Lecture 2</div><h1>Multilayer Networks, Gradient Descent, and Training Practice</h1><p class="lead">How multilayer networks combine affine layers and activations, and how gradients, objectives, and training schedules shape their learning.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">How a multilayer network is composed</a><a href="#section-2">Gradient descent and learning-rate behavior</a><a href="#section-3">Match the output and loss to the task</a><a href="#section-4">Training fit and generalization</a><a href="#section-5">Data schedules: batch, stochastic, and mini-batch</a><a href="#section-6">Regularization and norms</a><a href="#section-7">Momentum and the slide’s sign discrepancy</a><a href="#section-8">Dropout as described in this lecture</a><a href="#section-9">Other deep-network training difficulties</a><a href="#section-10">Common mistakes</a><a href="#section-11">Exam focus</a><a href="#section-12">Practice questions</a><a href="#section-13">Study route</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>A multilayer perceptron (MLP) composes weighted affine transformations and activation functions. Training chooses parameters so predictions match a task-specific target while controlling how well the model behaves beyond its training examples. The main loop is: produce outputs, calculate a scalar loss, compute gradients, and let an optimizer update parameters. The network’s forward computations and backward error information serve different roles: <strong>backpropagation computes gradients; the optimizer applies the updates</strong>.</p>
+<h2 id="section-1">How a multilayer network is composed</h2>
+<p>Each layer takes the previous layer’s activations, forms a weighted sum, adds a bias, and applies an activation. The bias is an independent parameter that shifts the affine response; it is not another activation or an output correction.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi>&#x1D41A;</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><mi>&#x1D431;</mi><mo>&#x0002C;</mo><mspace width="2em" /><msup><mi>&#x1D42F;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>&#x02113;</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><msup><mi>W</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>&#x02113;</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><msup><mi>&#x1D41A;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>&#x02113;</mi><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0002B;</mo><msup><mi>&#x1D41B;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>&#x02113;</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0002C;</mo><mspace width="2em" /><msup><mi>&#x1D41A;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>&#x02113;</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><msup><mi>&#x003D5;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>&#x02113;</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo stretchy="false">&#x00028;</mo><msup><mi>&#x1D42F;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>&#x02113;</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>The output of one layer becomes the input to the next. Stacking affine maps without a nonlinear activation still gives one affine map; the activation is what lets the composition represent nonlinear relationships. An output layer’s activation must also fit the task.</p>
+<figure><div class="diagram-frame" style="--diagram-width:1106.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Forward function signals produce a prediction; loss gradients assign hidden-layer credit; the optimizer applies parameter changes. The detailed backpropagation derivation is on its own topic page." width="1106pt" height="206pt"
+ viewBox="0.00 0.00 1106.00 206.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 194.88)">
+<title>G</title>
+<!-- input -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-node1" class="node">
+<title>input</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M47.4,-40.08C47.4,-40.08 12,-40.08 12,-40.08 6,-40.08 0,-34.08 0,-28.08 0,-28.08 0,-12 0,-12 0,-6 6,0 12,0 12,0 47.4,0 47.4,0 53.4,0 59.4,-6 59.4,-12 59.4,-12 59.4,-28.08 59.4,-28.08 59.4,-34.08 53.4,-40.08 47.4,-40.08"/>
+<text xml:space="preserve" text-anchor="middle" x="29.7" y="-22.69" font-family="Georgia" font-size="13.00">Input</text>
+<text xml:space="preserve" text-anchor="middle" x="29.7" y="-7.69" font-family="Georgia" font-size="13.00">vector x</text>
+</g>
+<!-- affine1 -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-node2" class="node">
+<title>affine1</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M158.55,-40.08C158.55,-40.08 104.4,-40.08 104.4,-40.08 98.4,-40.08 92.4,-34.08 92.4,-28.08 92.4,-28.08 92.4,-12 92.4,-12 92.4,-6 98.4,0 104.4,0 104.4,0 158.55,0 158.55,0 164.55,0 170.55,-6 170.55,-12 170.55,-12 170.55,-28.08 170.55,-28.08 170.55,-34.08 164.55,-40.08 158.55,-40.08"/>
+<text xml:space="preserve" text-anchor="middle" x="131.48" y="-22.69" font-family="Georgia" font-size="13.00">Affine map</text>
+<text xml:space="preserve" text-anchor="middle" x="131.48" y="-7.69" font-family="Georgia" font-size="13.00">W₁x + b₁</text>
+</g>
+<!-- input&#45;&gt;affine1 -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-edge1" class="edge">
+<title>input&#45;&gt;affine1</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M59.83,-20.04C67.25,-20.04 75.41,-20.04 83.48,-20.04"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="83.46,-22.32 89.96,-20.04 83.46,-17.77 83.46,-22.32"/>
+</g>
+<!-- act1 -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-node3" class="node">
+<title>act1</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M265.2,-80.08C265.2,-80.08 215.55,-80.08 215.55,-80.08 209.55,-80.08 203.55,-74.08 203.55,-68.08 203.55,-68.08 203.55,-52 203.55,-52 203.55,-46 209.55,-40 215.55,-40 215.55,-40 265.2,-40 265.2,-40 271.2,-40 277.2,-46 277.2,-52 277.2,-52 277.2,-68.08 277.2,-68.08 277.2,-74.08 271.2,-80.08 265.2,-80.08"/>
+<text xml:space="preserve" text-anchor="middle" x="240.38" y="-62.69" font-family="Georgia" font-size="13.00">Activation</text>
+<text xml:space="preserve" text-anchor="middle" x="240.38" y="-47.69" font-family="Georgia" font-size="13.00">φ₁</text>
+</g>
+<!-- affine1&#45;&gt;act1 -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-edge2" class="edge">
+<title>affine1&#45;&gt;act1</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M171.37,-34.59C179.23,-37.54 187.55,-40.65 195.57,-43.65"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="194.52,-45.68 201.4,-45.83 196.11,-41.42 194.52,-45.68"/>
+</g>
+<!-- affine2 -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-node4" class="node">
+<title>affine2</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M376.35,-80.08C376.35,-80.08 322.2,-80.08 322.2,-80.08 316.2,-80.08 310.2,-74.08 310.2,-68.08 310.2,-68.08 310.2,-52 310.2,-52 310.2,-46 316.2,-40 322.2,-40 322.2,-40 376.35,-40 376.35,-40 382.35,-40 388.35,-46 388.35,-52 388.35,-52 388.35,-68.08 388.35,-68.08 388.35,-74.08 382.35,-80.08 376.35,-80.08"/>
+<text xml:space="preserve" text-anchor="middle" x="349.28" y="-62.69" font-family="Georgia" font-size="13.00">Affine map</text>
+<text xml:space="preserve" text-anchor="middle" x="349.28" y="-47.69" font-family="Georgia" font-size="13.00">W₂h₁ + b₂</text>
+</g>
+<!-- act1&#45;&gt;affine2 -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-edge3" class="edge">
+<title>act1&#45;&gt;affine2</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M278.16,-60.04C285.68,-60.04 293.69,-60.04 301.51,-60.04"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="301.22,-62.32 307.72,-60.04 301.22,-57.77 301.22,-62.32"/>
+</g>
+<!-- act2 -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-node5" class="node">
+<title>act2</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M483,-155.08C483,-155.08 433.35,-155.08 433.35,-155.08 427.35,-155.08 421.35,-149.08 421.35,-143.08 421.35,-143.08 421.35,-127 421.35,-127 421.35,-121 427.35,-115 433.35,-115 433.35,-115 483,-115 483,-115 489,-115 495,-121 495,-127 495,-127 495,-143.08 495,-143.08 495,-149.08 489,-155.08 483,-155.08"/>
+<text xml:space="preserve" text-anchor="middle" x="458.18" y="-137.69" font-family="Georgia" font-size="13.00">Activation</text>
+<text xml:space="preserve" text-anchor="middle" x="458.18" y="-122.69" font-family="Georgia" font-size="13.00">φ₂</text>
+</g>
+<!-- affine2&#45;&gt;act2 -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-edge4" class="edge">
+<title>affine2&#45;&gt;act2</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M380.05,-80.93C392.69,-89.8 407.54,-100.21 420.81,-109.53"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="419.32,-111.26 425.95,-113.13 421.93,-107.54 419.32,-111.26"/>
+</g>
+<!-- output -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-node6" class="node">
+<title>output</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M649.4,-184.08C649.4,-184.08 600.5,-184.08 600.5,-184.08 594.5,-184.08 588.5,-178.08 588.5,-172.08 588.5,-172.08 588.5,-156 588.5,-156 588.5,-150 594.5,-144 600.5,-144 600.5,-144 649.4,-144 649.4,-144 655.4,-144 661.4,-150 661.4,-156 661.4,-156 661.4,-172.08 661.4,-172.08 661.4,-178.08 655.4,-184.08 649.4,-184.08"/>
+<text xml:space="preserve" text-anchor="middle" x="624.95" y="-166.69" font-family="Georgia" font-size="13.00">Output /</text>
+<text xml:space="preserve" text-anchor="middle" x="624.95" y="-151.69" font-family="Georgia" font-size="13.00">prediction</text>
+</g>
+<!-- act2&#45;&gt;output -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-edge5" class="edge">
+<title>act2&#45;&gt;output</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M495.74,-141.48C520.77,-145.88 554.06,-151.74 580.45,-156.38"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="579.76,-158.57 586.56,-157.46 580.55,-154.09 579.76,-158.57"/>
+</g>
+<!-- loss -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-node8" class="node">
+<title>loss</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M817.3,-132.04C817.3,-132.04 766.9,-132.04 766.9,-132.04 760.9,-132.04 754.9,-126.04 754.9,-120.04 754.9,-120.04 754.9,-108.04 754.9,-108.04 754.9,-102.04 760.9,-96.04 766.9,-96.04 766.9,-96.04 817.3,-96.04 817.3,-96.04 823.3,-96.04 829.3,-102.04 829.3,-108.04 829.3,-108.04 829.3,-120.04 829.3,-120.04 829.3,-126.04 823.3,-132.04 817.3,-132.04"/>
+<text xml:space="preserve" text-anchor="middle" x="792.1" y="-109.19" font-family="Georgia" font-size="13.00">Scalar loss</text>
+</g>
+<!-- output&#45;&gt;loss -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-edge6" class="edge">
+<title>output&#45;&gt;loss</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M661.79,-153.19C686.57,-145.69 719.72,-135.65 746.25,-127.62"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="746.89,-129.8 752.46,-125.74 745.57,-125.45 746.89,-129.8"/>
+</g>
+<!-- target -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-node7" class="node">
+<title>target</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M639.95,-122.04C639.95,-122.04 609.95,-122.04 609.95,-122.04 603.95,-122.04 597.95,-116.04 597.95,-110.04 597.95,-110.04 597.95,-98.04 597.95,-98.04 597.95,-92.04 603.95,-86.04 609.95,-86.04 609.95,-86.04 639.95,-86.04 639.95,-86.04 645.95,-86.04 651.95,-92.04 651.95,-98.04 651.95,-98.04 651.95,-110.04 651.95,-110.04 651.95,-116.04 645.95,-122.04 639.95,-122.04"/>
+<text xml:space="preserve" text-anchor="middle" x="624.95" y="-99.19" font-family="Georgia" font-size="13.00">Target</text>
+</g>
+<!-- target&#45;&gt;loss -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-edge7" class="edge">
+<title>target&#45;&gt;loss</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M652.12,-105.62C677.33,-107.15 715.99,-109.49 746.14,-111.32"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="745.86,-113.58 752.49,-111.7 746.14,-109.04 745.86,-113.58"/>
+</g>
+<!-- grad -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-node9" class="node">
+<title>grad</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M967.45,-141.58C967.45,-141.58 874.3,-141.58 874.3,-141.58 868.3,-141.58 862.3,-135.58 862.3,-129.58 862.3,-129.58 862.3,-98.5 862.3,-98.5 862.3,-92.5 868.3,-86.5 874.3,-86.5 874.3,-86.5 967.45,-86.5 967.45,-86.5 973.45,-86.5 979.45,-92.5 979.45,-98.5 979.45,-98.5 979.45,-129.58 979.45,-129.58 979.45,-135.58 973.45,-141.58 967.45,-141.58"/>
+<text xml:space="preserve" text-anchor="middle" x="920.88" y="-124.19" font-family="Georgia" font-size="13.00">Gradient</text>
+<text xml:space="preserve" text-anchor="middle" x="920.88" y="-109.19" font-family="Georgia" font-size="13.00">information</text>
+<text xml:space="preserve" text-anchor="middle" x="920.88" y="-94.19" font-family="Georgia" font-size="13.00">(backward credit)</text>
+</g>
+<!-- loss&#45;&gt;grad -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-edge8" class="edge">
+<title>loss&#45;&gt;grad</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M830.11,-114.04C837.45,-114.04 845.37,-114.04 853.36,-114.04"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="853.34,-116.32 859.84,-114.04 853.34,-111.77 853.34,-116.32"/>
+</g>
+<!-- optimizer -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-node10" class="node">
+<title>optimizer</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M1072.6,-72.08C1072.6,-72.08 1024.45,-72.08 1024.45,-72.08 1018.45,-72.08 1012.45,-66.08 1012.45,-60.08 1012.45,-60.08 1012.45,-44 1012.45,-44 1012.45,-38 1018.45,-32 1024.45,-32 1024.45,-32 1072.6,-32 1072.6,-32 1078.6,-32 1084.6,-38 1084.6,-44 1084.6,-44 1084.6,-60.08 1084.6,-60.08 1084.6,-66.08 1078.6,-72.08 1072.6,-72.08"/>
+<text xml:space="preserve" text-anchor="middle" x="1048.53" y="-54.69" font-family="Georgia" font-size="13.00">Optimizer</text>
+<text xml:space="preserve" text-anchor="middle" x="1048.53" y="-39.69" font-family="Georgia" font-size="13.00">step</text>
+</g>
+<!-- grad&#45;&gt;optimizer -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-edge9" class="edge">
+<title>grad&#45;&gt;optimizer</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M979.55,-85.58C988.22,-81.3 997.02,-76.96 1005.29,-72.88"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="1005.91,-75.11 1010.73,-70.19 1003.9,-71.03 1005.91,-75.11"/>
+</g>
+<!-- optimizer&#45;&gt;affine1 -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-edge10" class="edge">
+<title>optimizer&#45;&gt;affine1</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M1012.21,-31.6C987.69,-19.31 953.82,-6.04 921.88,-6.04 239.38,-6.04 239.38,-6.04 239.38,-6.04 219.56,-6.04 197.85,-8.43 179.2,-11.24"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="178.97,-8.98 172.91,-12.23 179.68,-13.47 178.97,-8.98"/>
+<text xml:space="preserve" text-anchor="middle" x="541.75" y="-23.14" font-family="Georgia" font-size="12.00">new</text>
+<text xml:space="preserve" text-anchor="middle" x="541.75" y="-8.89" font-family="Georgia" font-size="12.00">parameters</text>
+</g>
+<!-- optimizer&#45;&gt;affine2 -->
+<g id="mlp-optimization-figure-1-mlp-optimization-network-flow-edge11" class="edge">
+<title>optimizer&#45;&gt;affine2</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M1012.05,-52.04C986.88,-52.04 952.31,-52.04 921.88,-52.04 457.18,-52.04 457.18,-52.04 457.18,-52.04 437.47,-52.04 415.78,-53.41 397.12,-55.01"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="397.1,-52.73 390.83,-55.58 397.5,-57.26 397.1,-52.73"/>
+<text xml:space="preserve" text-anchor="middle" x="708.15" y="-69.14" font-family="Georgia" font-size="12.00">new</text>
+<text xml:space="preserve" text-anchor="middle" x="708.15" y="-54.89" font-family="Georgia" font-size="12.00">parameters</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Forward function signals produce a prediction; loss gradients assign hidden-layer credit; the optimizer applies parameter changes. The detailed backpropagation derivation is on its own topic page.</figcaption></figure>
+<h3>Forward signals and hidden-layer credit</h3>
+<p>Function signals travel from input toward output. The output is compared with the training target to form a loss. Error information then moves back through the network so shared hidden units can receive credit or blame even though no desired response is supplied for each hidden neuron. The chain-rule calculation of those hidden gradients belongs to the <a href="backpropagation.html">backpropagation topic</a>; keep the distinction clear here: a gradient describes how the objective changes with a parameter, while an optimizer rule decides how to change that parameter.</p>
+<h2 id="section-2">Gradient descent and learning-rate behavior</h2>
+<p>Treat the objective as a scalar function of all parameters. Its gradient points toward locally faster increase, so gradient descent takes a step in the opposite direction:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mrow><mi mathvariant="bold-italic">&#x003B8;</mi></mrow><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo>&#x0003D;</mo><msub><mrow><mi mathvariant="bold-italic">&#x003B8;</mi></mrow><mrow><mi>t</mi></mrow></msub><mo>&#x02212;</mo><mi>&#x003B7;</mi><msub><mo>&#x02207;</mo><mrow><mrow><mi mathvariant="bold-italic">&#x003B8;</mi></mrow></mrow></msub><mi>J</mi><mo stretchy="false">&#x00028;</mo><msub><mrow><mi mathvariant="bold-italic">&#x003B8;</mi></mrow><mrow><mi>t</mi></mrow></msub><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>Here <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mi mathvariant="bold-italic">&#x003B8;</mi></mrow></mrow></math> collects weights and biases, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi><mo>&#x0003E;</mo><mn>0</mn></mrow></math> is the learning rate. The loss defines what “better” means; the gradient supplies local direction; the optimizer turns that direction into a parameter step. They are related but are not the same operation.</p>
+<section class="walk" tabindex="0" aria-label="Three scalar gradient-descent iterations"><h3>Three scalar gradient-descent iterations</h3><div class="example-input"><strong>Teaching example</strong><span>Objective: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>J</mi><mo stretchy="false">&#x00028;</mo><mi>w</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mi>w</mi><mo>&#x02212;</mo><mn>2</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></math>; derivative: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>J</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo stretchy="false">&#x00028;</mo><mi>w</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2</mn><mo stretchy="false">&#x00028;</mo><mi>w</mi><mo>&#x02212;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></math></span><span>Initial parameter: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>w</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><mn>0</mn></mrow></math>; learning rate: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math></span><span>Update from the derivative at the old value: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>w</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>k</mi><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><msup><mi>w</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>k</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x02212;</mo><mi>&#x003B7;</mi><msup><mi>J</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo stretchy="false">&#x00028;</mo><msup><mi>w</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>k</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow></math></span><span>Each step reports the objective after the update. The index k counts optimizer iterations, not dataset epochs.</span></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Iteration 1: move from w = 0</h4><p><strong>Teaching example.</strong> Minimize <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>J</mi><mo stretchy="false">&#x00028;</mo><mi>w</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mi>w</mi><mo>&#x02212;</mo><mn>2</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></math>. Its derivative is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>J</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo stretchy="false">&#x00028;</mo><mi>w</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2</mn><mo stretchy="false">&#x00028;</mo><mi>w</mi><mo>&#x02212;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. Start with <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>w</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><mn>0</mn></mrow></math> and use <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math>. Evaluate the derivative at the old parameter:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>J</mi><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>4</mn><mo>&#x0002C;</mo><mspace width="2em" /><msup><mi>J</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x02212;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>4</mn></mrow></math></div>
+<p>Gradient descent subtracts the gradient-scaled step:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi>w</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><mn>0</mn><mo>&#x02212;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.4</mn><mo>&#x0002C;</mo><mspace width="2em" /><mi>J</mi><mo stretchy="false">&#x00028;</mo><msup><mi>w</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.4</mn><mo>&#x02212;</mo><mn>2</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0003D;</mo><mn>2.56</mn></mrow></math></div>
+<p>The negative gradient points toward larger <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi></mrow></math> here, toward the minimizer at 2. This is one optimizer iteration, not an epoch.</p></section><section class="step"><h4>Iteration 2: use the updated parameter</h4><p>The current parameter is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>w</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><mn>0.4</mn></mrow></math>. Recompute both objective and derivative at this old state:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>J</mi><mo stretchy="false">&#x00028;</mo><mn>0.4</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.4</mn><mo>&#x02212;</mo><mn>2</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0003D;</mo><mn>2.56</mn><mo>&#x0002C;</mo><mspace width="2em" /><msup><mi>J</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo stretchy="false">&#x00028;</mo><mn>0.4</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>0.4</mn><mo>&#x02212;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>3.2</mn></mrow></math></div>
+<p>Apply the same rule, then evaluate the objective at the new value:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi>w</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><mn>0.4</mn><mo>&#x02212;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>3.2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.72</mn><mo>&#x0002C;</mo><mspace width="2em" /><mi>J</mi><mo stretchy="false">&#x00028;</mo><msup><mi>w</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.72</mn><mo>&#x02212;</mo><mn>2</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0003D;</mo><mn>1.6384</mn></mrow></math></div>
+<p>Use the newly updated parameter for the next iteration.</p></section><section class="step"><h4>Iteration 3: check the third update</h4><p>At <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>w</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><mn>0.72</mn></mrow></math>, the old-state objective and derivative are:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>J</mi><mo stretchy="false">&#x00028;</mo><mn>0.72</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.72</mn><mo>&#x02212;</mo><mn>2</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0003D;</mo><mn>1.6384</mn><mo>&#x0002C;</mo><mspace width="2em" /><msup><mi>J</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo stretchy="false">&#x00028;</mo><mn>0.72</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>0.72</mn><mo>&#x02212;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>2.56</mn></mrow></math></div>
+<p>Substitute into the update and calculate the post-step objective:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi>w</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><mn>0.72</mn><mo>&#x02212;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>2.56</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.976</mn><mo>&#x0002C;</mo><mspace width="2em" /><mi>J</mi><mo stretchy="false">&#x00028;</mo><msup><mi>w</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.976</mn><mo>&#x02212;</mo><mn>2</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0003D;</mo><mn>1.048576</mn></mrow></math></div>
+<p><strong>Independent check.</strong> Since <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>J</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo stretchy="false">&#x00028;</mo><mi>w</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2</mn><mo stretchy="false">&#x00028;</mo><mi>w</mi><mo>&#x02212;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, the exact minimizer is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi><mo>&#x0003D;</mo><mn>2</mn></mrow></math>. The three states move <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0003C;</mo><mn>0.4</mn><mo>&#x0003C;</mo><mn>0.72</mn><mo>&#x0003C;</mo><mn>0.976</mn><mo>&#x0003C;</mo><mn>2</mn></mrow></math>, and the directly evaluated objectives decrease <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>4</mn><mo>&#x0003E;</mo><mn>2.56</mn><mo>&#x0003E;</mo><mn>1.6384</mn><mo>&#x0003E;</mo><mn>1.048576</mn></mrow></math>. This verifies these steps only; it is not a convergence proof for a neural-network objective.</p></section></section>
+<p>The lecture’s contour sketches show why the step size matters. A small <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi></mrow></math> gives smooth but slow progress; a larger value can zigzag across a narrow valley; above a problem-dependent range, steps can become unstable and diverge. The example rates <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.1</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>0.01</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>0.001</mn></mrow></math> are illustrative starting scales, not universally safe choices. Initialization also matters: an unfavorable starting point or scale can make progress difficult.</p>
+<h2 id="section-3">Match the output and loss to the task</h2>
+<p>The output representation and objective should reflect what the task asks the model to predict. For categorical classification, softmax converts class scores (logits) into a normalized distribution. For a real-valued prediction, a linear output with squared loss is a common pairing. The lecture also pairs linear regression with least squares and SVMs with hinge loss.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>p</mi><mi>c</mi></msub><mo>&#x0003D;</mo><mfrac><mrow><msup><mi>e</mi><mrow><msub><mi>z</mi><mi>c</mi></msub></mrow></msup></mrow><mrow><msubsup><mo>&#x02211;</mo><mrow><mi>j</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>K</mi></mrow></msubsup><msup><mi>e</mi><mrow><msub><mi>z</mi><mi>j</mi></msub></mrow></msup></mrow></mfrac><mo>&#x0002C;</mo><mspace width="2em" /><munderover><mo>&#x02211;</mo><mrow><mi>c</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>K</mi></mrow></munderover><msub><mi>p</mi><mi>c</mi></msub><mo>&#x0003D;</mo><mn>1</mn></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>L</mi><mrow><mrow><mi mathvariant="normal">c</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">s</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>&#x1D42D;</mi><mo>&#x0002C;</mo><mi>&#x1D429;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><munderover><mo>&#x02211;</mo><mrow><mi>c</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>K</mi></mrow></munderover><msub><mi>t</mi><mi>c</mi></msub><mi>log</mi><msub><mi>p</mi><mi>c</mi></msub><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>L</mi><mrow><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">q</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">d</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo>&#x0002C;</mo><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo>&#x02212;</mo><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></math></div>
+<p>For a one-hot categorical target, cross-entropy focuses on the probability assigned to the true class. The slide’s quick reminder also includes the following loss forms, written for its signed-label notation where applicable:</p>
+<div class="table-scroll"><table><thead><tr><th>Loss name</th><th>Slide expression</th><th>Context</th></tr></thead><tbody><tr><td>Zero-one</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mn mathvariant="double-struck">1</mn></mrow><mo stretchy="false">[</mo><mi>y</mi><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mo>&#x02264;</mo><mn>0</mn><mo stretchy="false">]</mo></mrow></math></td><td>Counts a classification mistake under signed-label notation.</td></tr><tr><td>Hinge</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>max</mo><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo>&#x02212;</mo><mi>y</mi><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mo stretchy="false">&#x00029;</mo></mrow></math></td><td>Used with the SVM pairing named in the lecture.</td></tr><tr><td>Logistic</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>log</mi><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mi>y</mi><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo></mrow><mrow><mi>log</mi><mn>2</mn></mrow></mfrac></mrow></math></td><td>Margin form as displayed, normalized by <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>log</mi><mn>2</mn></mrow></math>.</td></tr><tr><td>Exponential</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mi>y</mi><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mo stretchy="false">&#x00029;</mo></mrow></math></td><td>Decreases as signed margin grows.</td></tr><tr><td>Squared</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo>&#x02212;</mo><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></math></td><td>Common pairing for real-valued output.</td></tr><tr><td>Cross-entropy</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><msubsup><mo>&#x02211;</mo><mrow><mi>c</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>M</mi></mrow></msubsup><msub><mi>y</mi><mi>c</mi></msub><mi>log</mi><msub><mi>p</mi><mrow><msub><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mi>c</mi></msub></mrow></msub></mrow></math></td><td>For categorical probabilities and target components.</td></tr></tbody></table></div>
+<p>These are objective choices, not activation functions. For a one-hot categorical target, the multi-class cross-entropy expression above sums across class components.</p>
+<details class="worked"><summary>Convert three class scores into probabilities</summary><p>The lecture illustrates a four-class output (pedestrian, car, motorcycle, truck) after three hidden layers. In this separate <strong>Teaching example</strong>, use three unnamed classes with invented logits <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D433;</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, softmax exponentiates each score and divides by the common sum:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mi>&#x1D433;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><msup><mi>e</mi><mn>2</mn></msup><mo>&#x0002C;</mo><msup><mi>e</mi><mn>1</mn></msup><mo>&#x0002C;</mo><msup><mi>e</mi><mn>0</mn></msup><mo stretchy="false">&#x00029;</mo><mo>&#x02248;</mo><mo stretchy="false">&#x00028;</mo><mn>7.389056</mn><mo>&#x0002C;</mo><mn>2.718282</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>S</mi><mo>&#x02248;</mo><mn>11.107338</mn></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x1D429;</mi><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mfrac><mrow><mn>7.389056</mn></mrow><mrow><mi>S</mi></mrow></mfrac><mo>&#x0002C;</mo><mfrac><mrow><mn>2.718282</mn></mrow><mrow><mi>S</mi></mrow></mfrac><mo>&#x0002C;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>S</mi></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x02248;</mo><mo stretchy="false">&#x00028;</mo><mn>0.665241</mn><mo>&#x0002C;</mo><mn>0.244728</mn><mo>&#x0002C;</mo><mn>0.090031</mn><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>The rounded probabilities sum to <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.665241</mn><mo>&#x0002B;</mo><mn>0.244728</mn><mo>&#x0002B;</mo><mn>0.090031</mn><mo>&#x0003D;</mo><mn>1</mn></mrow></math>. With one-hot target <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D42D;</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, only the first class contributes to cross-entropy:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>L</mi><mrow><mi>C</mi><mi>E</mi></mrow></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><munderover><mo>&#x02211;</mo><mrow><mi>c</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mn>3</mn></mrow></munderover><msub><mi>t</mi><mi>c</mi></msub><mi>ln</mi><msub><mi>p</mi><mi>c</mi></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mi>ln</mi><mo stretchy="false">&#x00028;</mo><mn>0.665241</mn><mo stretchy="false">&#x00029;</mo><mo>&#x02248;</mo><mn>0.407606</mn></mrow></math></div>
+<p>Check: all class probabilities are nonnegative and normalize to one; the loss is larger if the true-class probability is smaller.</p></details>
+<h2 id="section-4">Training fit and generalization</h2>
+<p>Overfitting occurs when fitting the observed training set does not translate into good prediction on unseen examples. The lecture emphasizes the gap between training and test performance, especially when a model is complex relative to a small dataset. Its four-row illustration makes the limitation tangible:</p>
+<details class="worked"><summary>The two weight vectors both fit all four displayed training rows</summary><p><strong>Worked example.</strong> The lecture gives these feature vectors and targets:</p>
+<div class="table-scroll"><table><thead><tr><th>Features (x₁,…,x₅)</th><th>Target</th><th>W̄₁ = [2,0,0,0,0]</th><th>W̄₂ = [0,2,4,6,8]</th></tr></thead><tbody><tr><td>(1,1,0,0,0)</td><td>2</td><td>2</td><td>2</td></tr><tr><td>(2,0,1,0,0)</td><td>4</td><td>4</td><td>4</td></tr><tr><td>(3,0,0,1,0)</td><td>6</td><td>6</td><td>6</td></tr><tr><td>(4,0,0,0,1)</td><td>8</td><td>8</td><td>8</td></tr></tbody></table></div>
+<p>For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mover><mrow><mi>W</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mn>1</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">[</mo><mn>2</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">]</mo></mrow></math>, each prediction is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><msub><mi>x</mi><mn>1</mn></msub></mrow></math>: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>4</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>6</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>8</mn></mrow></math>. For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mover><mrow><mi>W</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mn>2</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">[</mo><mn>0</mn><mo>&#x0002C;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>4</mn><mo>&#x0002C;</mo><mn>6</mn><mo>&#x0002C;</mo><mn>8</mn><mo stretchy="false">]</mo></mrow></math>, each row activates one of its last four coordinates, giving <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mo>&#x0002C;</mo><mn>4</mn><mo>&#x0002C;</mo><mn>6</mn><mo>&#x0002C;</mo><mn>8</mn></mrow></math> again. Thus both weight vectors have zero error on the four shown rows.</p>
+<p>On an unlisted input <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, the predictions differ: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mover><mrow><mi>W</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mn>1</mn></msub><mo>&#x000B7;</mo><mi>x</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math> while <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mover><mrow><mi>W</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mn>2</mn></msub><mo>&#x000B7;</mo><mi>x</mi><mo>&#x0003D;</mo><mn>2</mn></mrow></math>. The source supplies no target for this input, so the training rows do not tell us which prediction is correct. This is the concrete point: training fit alone does not settle behavior away from the observed examples.</p></details>
+<h3>Remedies change different parts of training</h3>
+<p>Regularization changes the objective by penalizing parameter values. Domain-informed architecture and parameter sharing change what the network can represent—for example, by reusing structure across words in a sentence or pixels in an image. Early stopping changes how long optimization continues: hold out part of the training data and stop when its error begins to rise. Trading breadth for depth changes the model’s shape; the lecture notes that compositions in deeper networks can need fewer units per layer. Ensemble methods combine models; the lecture lists dropout in this context. These are distinct choices, not interchangeable guarantees.</p>
+<h2 id="section-5">Data schedules: batch, stochastic, and mini-batch</h2>
+<p>An update uses a gradient calculated from some portion of the training data. Full-batch gradient descent uses all examples before one update. Stochastic gradient descent (SGD) uses one example per update. Mini-batch learning uses a subset to approximate the full-data gradient; it is more memory-efficient than loading the whole set and has lower gradient variance than one-example SGD, though it need not point in the steepest full-data direction. The noise in mini-batch updates may sometimes help move out of shallow minima; it does not guarantee escape or a better final solution.</p>
+<p>An <strong>iteration</strong> is one update on one chosen batch. An <strong>epoch</strong> is one complete forward/backward pass over the training examples. The slide’s example has 10,000 examples split into 10 minibatches, so each batch contains 1,000 examples and one epoch has 10 update iterations—not a batch size of 10.</p>
+<div class="table-scroll"><table><thead><tr><th>Schedule</th><th>Examples used for one update</th><th>Updates in one pass (if each example is used once)</th></tr></thead><tbody><tr><td>Full batch</td><td>All 10,000</td><td>1</td></tr><tr><td>One-example SGD</td><td>1</td><td>10,000</td></tr><tr><td>10 mini-batches</td><td>1,000 per batch</td><td>10</td></tr></tbody></table></div>
+<figure><div class="diagram-frame" style="--diagram-width:952.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="One update consumes the selected batch. An epoch counts a complete pass through the dataset, so the number of updates per epoch depends on the batch size." width="952pt" height="175pt"
+ viewBox="0.00 0.00 952.00 175.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="mlp-optimization-figure-2-mlp-optimization-training-schedule-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 164.02)">
+<title>G</title>
+<!-- data -->
+<g id="mlp-optimization-figure-2-mlp-optimization-training-schedule-node1" class="node">
+<title>data</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M70.65,-59.04C70.65,-59.04 12,-59.04 12,-59.04 6,-59.04 0,-53.04 0,-47.04 0,-47.04 0,-30.96 0,-30.96 0,-24.96 6,-18.96 12,-18.96 12,-18.96 70.65,-18.96 70.65,-18.96 76.65,-18.96 82.65,-24.96 82.65,-30.96 82.65,-30.96 82.65,-47.04 82.65,-47.04 82.65,-53.04 76.65,-59.04 70.65,-59.04"/>
+<text xml:space="preserve" text-anchor="middle" x="41.33" y="-41.65" font-family="Georgia" font-size="13.00">Training set</text>
+<text xml:space="preserve" text-anchor="middle" x="41.33" y="-26.65" font-family="Georgia" font-size="13.00">N examples</text>
+</g>
+<!-- schedule -->
+<g id="mlp-optimization-figure-2-mlp-optimization-training-schedule-node2" class="node">
+<title>schedule</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M236.55,-66.54C236.55,-66.54 127.65,-66.54 127.65,-66.54 121.65,-66.54 115.65,-60.54 115.65,-54.54 115.65,-54.54 115.65,-23.46 115.65,-23.46 115.65,-17.46 121.65,-11.46 127.65,-11.46 127.65,-11.46 236.55,-11.46 236.55,-11.46 242.55,-11.46 248.55,-17.46 248.55,-23.46 248.55,-23.46 248.55,-54.54 248.55,-54.54 248.55,-60.54 242.55,-66.54 236.55,-66.54"/>
+<text xml:space="preserve" text-anchor="middle" x="182.1" y="-49.15" font-family="Georgia" font-size="13.00">Choose update batch</text>
+<text xml:space="preserve" text-anchor="middle" x="182.1" y="-34.15" font-family="Georgia" font-size="13.00">full set / one /</text>
+<text xml:space="preserve" text-anchor="middle" x="182.1" y="-19.15" font-family="Georgia" font-size="13.00">mini&#45;batch</text>
+</g>
+<!-- data&#45;&gt;schedule -->
+<g id="mlp-optimization-figure-2-mlp-optimization-training-schedule-edge1" class="edge">
+<title>data&#45;&gt;schedule</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M82.84,-39C90.42,-39 98.55,-39 106.78,-39"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="106.68,-41.28 113.18,-39 106.68,-36.73 106.68,-41.28"/>
+</g>
+<!-- forward -->
+<g id="mlp-optimization-figure-2-mlp-optimization-training-schedule-node3" class="node">
+<title>forward</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M332.7,-99.04C332.7,-99.04 293.55,-99.04 293.55,-99.04 287.55,-99.04 281.55,-93.04 281.55,-87.04 281.55,-87.04 281.55,-70.96 281.55,-70.96 281.55,-64.96 287.55,-58.96 293.55,-58.96 293.55,-58.96 332.7,-58.96 332.7,-58.96 338.7,-58.96 344.7,-64.96 344.7,-70.96 344.7,-70.96 344.7,-87.04 344.7,-87.04 344.7,-93.04 338.7,-99.04 332.7,-99.04"/>
+<text xml:space="preserve" text-anchor="middle" x="313.13" y="-81.65" font-family="Georgia" font-size="13.00">Forward</text>
+<text xml:space="preserve" text-anchor="middle" x="313.13" y="-66.65" font-family="Georgia" font-size="13.00">pass</text>
+</g>
+<!-- schedule&#45;&gt;forward -->
+<g id="mlp-optimization-figure-2-mlp-optimization-training-schedule-edge2" class="edge">
+<title>schedule&#45;&gt;forward</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M249.5,-59.59C257.65,-62.11 265.76,-64.63 273.31,-66.97"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="272.33,-69.04 279.21,-68.8 273.67,-64.7 272.33,-69.04"/>
+</g>
+<!-- loss -->
+<g id="mlp-optimization-figure-2-mlp-optimization-training-schedule-node4" class="node">
+<title>loss</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M484.35,-100.04C484.35,-100.04 389.7,-100.04 389.7,-100.04 383.7,-100.04 377.7,-94.04 377.7,-88.04 377.7,-88.04 377.7,-71.96 377.7,-71.96 377.7,-65.96 383.7,-59.96 389.7,-59.96 389.7,-59.96 484.35,-59.96 484.35,-59.96 490.35,-59.96 496.35,-65.96 496.35,-71.96 496.35,-71.96 496.35,-88.04 496.35,-88.04 496.35,-94.04 490.35,-100.04 484.35,-100.04"/>
+<text xml:space="preserve" text-anchor="middle" x="437.03" y="-82.65" font-family="Georgia" font-size="13.00">Data loss</text>
+<text xml:space="preserve" text-anchor="middle" x="437.03" y="-67.65" font-family="Georgia" font-size="13.00">+ optional penalty</text>
+</g>
+<!-- forward&#45;&gt;loss -->
+<g id="mlp-optimization-figure-2-mlp-optimization-training-schedule-edge3" class="edge">
+<title>forward&#45;&gt;loss</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M345.52,-79.26C352.79,-79.32 360.8,-79.38 368.96,-79.45"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="368.77,-81.72 375.29,-79.5 368.81,-77.17 368.77,-81.72"/>
+</g>
+<!-- gradient -->
+<g id="mlp-optimization-figure-2-mlp-optimization-training-schedule-node5" class="node">
+<title>gradient</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M583.5,-101.04C583.5,-101.04 541.35,-101.04 541.35,-101.04 535.35,-101.04 529.35,-95.04 529.35,-89.04 529.35,-89.04 529.35,-72.96 529.35,-72.96 529.35,-66.96 535.35,-60.96 541.35,-60.96 541.35,-60.96 583.5,-60.96 583.5,-60.96 589.5,-60.96 595.5,-66.96 595.5,-72.96 595.5,-72.96 595.5,-89.04 595.5,-89.04 595.5,-95.04 589.5,-101.04 583.5,-101.04"/>
+<text xml:space="preserve" text-anchor="middle" x="562.43" y="-83.65" font-family="Georgia" font-size="13.00">Compute</text>
+<text xml:space="preserve" text-anchor="middle" x="562.43" y="-68.65" font-family="Georgia" font-size="13.00">gradient</text>
+</g>
+<!-- loss&#45;&gt;gradient -->
+<g id="mlp-optimization-figure-2-mlp-optimization-training-schedule-edge4" class="edge">
+<title>loss&#45;&gt;gradient</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M497.19,-80.48C505.1,-80.54 513.06,-80.61 520.55,-80.67"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="520.45,-82.94 526.97,-80.72 520.48,-78.39 520.45,-82.94"/>
+</g>
+<!-- step -->
+<g id="mlp-optimization-figure-2-mlp-optimization-training-schedule-node6" class="node">
+<title>step</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M714.9,-105.04C714.9,-105.04 640.5,-105.04 640.5,-105.04 634.5,-105.04 628.5,-99.04 628.5,-93.04 628.5,-93.04 628.5,-76.96 628.5,-76.96 628.5,-70.96 634.5,-64.96 640.5,-64.96 640.5,-64.96 714.9,-64.96 714.9,-64.96 720.9,-64.96 726.9,-70.96 726.9,-76.96 726.9,-76.96 726.9,-93.04 726.9,-93.04 726.9,-99.04 720.9,-105.04 714.9,-105.04"/>
+<text xml:space="preserve" text-anchor="middle" x="677.7" y="-87.65" font-family="Georgia" font-size="13.00">Optimizer step</text>
+<text xml:space="preserve" text-anchor="middle" x="677.7" y="-72.65" font-family="Georgia" font-size="13.00">learning rate η</text>
+</g>
+<!-- gradient&#45;&gt;step -->
+<g id="mlp-optimization-figure-2-mlp-optimization-training-schedule-edge5" class="edge">
+<title>gradient&#45;&gt;step</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M596.49,-82.17C603.84,-82.43 611.83,-82.71 619.83,-82.99"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="619.71,-85.26 626.29,-83.22 619.87,-80.72 619.71,-85.26"/>
+</g>
+<!-- next -->
+<g id="mlp-optimization-figure-2-mlp-optimization-training-schedule-node7" class="node">
+<title>next</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M897.8,-36C897.8,-36 845.15,-36 845.15,-36 839.15,-36 833.15,-30 833.15,-24 833.15,-24 833.15,-12 833.15,-12 833.15,-6 839.15,0 845.15,0 845.15,0 897.8,0 897.8,0 903.8,0 909.8,-6 909.8,-12 909.8,-12 909.8,-24 909.8,-24 909.8,-30 903.8,-36 897.8,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="871.48" y="-13.15" font-family="Georgia" font-size="13.00">Next batch</text>
+</g>
+<!-- step&#45;&gt;next -->
+<g id="mlp-optimization-figure-2-mlp-optimization-training-schedule-edge6" class="edge">
+<title>step&#45;&gt;next</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M709.19,-105.96C734.85,-120.75 771.24,-134.73 796.15,-115 820.49,-95.72 792.86,-71.33 812.15,-47 815.95,-42.2 820.76,-38.14 825.97,-34.71"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="827,-36.74 831.44,-31.47 824.68,-32.82 827,-36.74"/>
+<text xml:space="preserve" text-anchor="middle" x="769.53" y="-141.82" font-family="Georgia" font-size="12.00">examples</text>
+<text xml:space="preserve" text-anchor="middle" x="769.53" y="-127.57" font-family="Georgia" font-size="12.00">remain</text>
+</g>
+<!-- epoch -->
+<g id="mlp-optimization-figure-2-mlp-optimization-training-schedule-node8" class="node">
+<title>epoch</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M918.8,-113.54C918.8,-113.54 824.15,-113.54 824.15,-113.54 818.15,-113.54 812.15,-107.54 812.15,-101.54 812.15,-101.54 812.15,-70.46 812.15,-70.46 812.15,-64.46 818.15,-58.46 824.15,-58.46 824.15,-58.46 918.8,-58.46 918.8,-58.46 924.8,-58.46 930.8,-64.46 930.8,-70.46 930.8,-70.46 930.8,-101.54 930.8,-101.54 930.8,-107.54 924.8,-113.54 918.8,-113.54"/>
+<text xml:space="preserve" text-anchor="middle" x="871.48" y="-96.15" font-family="Georgia" font-size="13.00">Epoch complete</text>
+<text xml:space="preserve" text-anchor="middle" x="871.48" y="-81.15" font-family="Georgia" font-size="13.00">when all examples</text>
+<text xml:space="preserve" text-anchor="middle" x="871.48" y="-66.15" font-family="Georgia" font-size="13.00">covered</text>
+</g>
+<!-- step&#45;&gt;epoch -->
+<g id="mlp-optimization-figure-2-mlp-optimization-training-schedule-edge8" class="edge">
+<title>step&#45;&gt;epoch</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M727.84,-85.18C748.88,-85.27 773.72,-85.38 796.15,-85.5 798.89,-85.52 801.69,-85.53 804.52,-85.55"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="804.02,-87.82 810.54,-85.58 804.05,-83.27 804.02,-87.82"/>
+<text xml:space="preserve" text-anchor="middle" x="769.53" y="-102.6" font-family="Georgia" font-size="12.00">last batch</text>
+<text xml:space="preserve" text-anchor="middle" x="769.53" y="-88.35" font-family="Georgia" font-size="12.00">processed</text>
+</g>
+<!-- next&#45;&gt;schedule -->
+<g id="mlp-optimization-figure-2-mlp-optimization-training-schedule-edge7" class="edge">
+<title>next&#45;&gt;schedule</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M833.01,-20.18C794.36,-22.23 732.34,-25 678.7,-25 312.13,-25 312.13,-25 312.13,-25 294.18,-25 274.92,-26.35 256.9,-28.22"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="256.97,-25.92 250.76,-28.89 257.46,-30.45 256.97,-25.92"/>
+</g>
+</g>
+</svg>
+</div><figcaption>One update consumes the selected batch. An epoch counts a complete pass through the dataset, so the number of updates per epoch depends on the batch size.</figcaption></figure>
+<p>With <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>N</mi></mrow></math> examples and batch size <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>B</mi></mrow></math>, the usual number of updates per epoch is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x02308;</mi><mi>N</mi><mo>&#x0002F;</mo><mi>B</mi><mi>&#x02309;</mi></mrow></math> when a final partial batch is kept. If <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>B</mi><mo>&#x0003D;</mo><mi>N</mi></mrow></math>, one update covers an epoch; if <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>B</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math>, one epoch has one update per example. Shuffling batch order is common supplemental practice, but it does not change these definitions.</p>
+<h2 id="section-6">Regularization and norms</h2>
+<p>Underfitting means the model fails to capture useful structure even in its training data; overfitting means its training fit does not carry over to new cases. The lecture contrasts a simple model with high bias against a complex model with high variance. This is a useful explanation of the extremes, not a universal rule that complexity alone determines either quantity.</p>
+<p>Why discourage large weights? In a linear response, a small change to an input is multiplied by its coefficient, so a large coefficient can amplify a small input change into a large output change. The lecture connects that sensitivity to variance and overfitting risk. Penalizing large weights can restrain this sensitivity, while too strong a penalty can make the model underfit; its effect depends on feature scaling, model structure and the task.</p>
+<p>The lecture’s general objective is written as a sum of data losses plus a weighted regularizer. Keep that displayed sum distinct from the later illustrative penalties, which each show a separate division by the batch/sample count <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi></mrow></math>.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mo>min</mo><mrow><mi>&#x1D430;</mi><mo>&#x0002C;</mo><mi>b</mi></mrow></msub><mspace width="0.278em" /><munder><mo>&#x02211;</mo><mrow><mi>n</mi></mrow></munder><mi>l</mi><mspace width="negativethinmathspace" /><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><msub><mi>y</mi><mi>n</mi></msub><mo>&#x0002C;</mo><mi>&#x1D430;</mi><mo>&#x000B7;</mo><msub><mi>&#x1D431;</mi><mi>n</mi></msub><mo>&#x0002B;</mo><mi>b</mi><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x0002B;</mo><mi>&#x003BB;</mi><mi>R</mi><mo stretchy="false">&#x00028;</mo><mi>&#x1D430;</mi><mo>&#x0002C;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><mo>&#x02265;</mo><mn>1</mn></mrow></math>, the following expression defines a norm. For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0003C;</mo><mi>p</mi><mo>&#x0003C;</mo><mn>1</mn></mrow></math>, it is a quasi-norm instead:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>&#x02016;</mo><mi>&#x1D430;</mi><msub><mo>&#x02016;</mo><mi>p</mi></msub><mo>&#x0003D;</mo><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><msub><mo>&#x02211;</mo><mi>d</mi></msub><mo stretchy="false">&#x0007C;</mo><msub><mi>w</mi><mi>d</mi></msub><msup><mo stretchy="false">&#x0007C;</mo><mi>p</mi></msup><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mrow><mn>1</mn><mo>&#x0002F;</mo><mi>p</mi></mrow></msup><mo>&#x0002C;</mo><mspace width="2em" /><mi>p</mi><mo>&#x0003E;</mo><mn>0</mn></mrow></math></div>
+<p>For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, direct substitution is not valid: the exponent <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002F;</mo><mi>p</mi></mrow></math> is undefined at zero, and zero-to-zero terms need a separate convention. The zero case requires a separately defined quantity rather than direct substitution.</p>
+<div class="table-scroll"><table><thead><tr><th>Penalty</th><th>Expression on the slides</th><th>Effect described in the lecture</th></tr></thead><tbody><tr><td>L₂</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>&#x003BB;</mi></mrow><mrow><mi>n</mi></mrow></mfrac><msub><mo>&#x02211;</mo><mrow><msub><mi>w</mi><mi>i</mi></msub><mo>&#x02208;</mo><msub><mi>w</mi><mi>o</mi></msub></mrow></msub><msubsup><mi>w</mi><mi>i</mi><mn>2</mn></msubsup></mrow></math></td><td>Penalizes large coefficients smoothly; the lecture describes it as useful for most classification and prediction tasks.</td></tr><tr><td>L₁</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>&#x003BB;</mi></mrow><mrow><mi>n</mi></mrow></mfrac><msub><mo>&#x02211;</mo><mrow><msub><mi>w</mi><mi>i</mi></msub><mo>&#x02208;</mo><msub><mi>w</mi><mi>o</mi></msub></mrow></msub><mo stretchy="false">&#x0007C;</mo><msub><mi>w</mi><mi>i</mi></msub><mo stretchy="false">&#x0007C;</mo></mrow></math></td><td>The lecture highlights many irrelevant or noisy features. Treat this as a heuristic, not a universal ranking.</td></tr></tbody></table></div>
+<p>The L₂ slide uses the <strong>squared</strong> Euclidean norm, not the unsquared norm. Its L₁ and L₂ illustrations sum weights in the displayed set <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D430;</mi><mi>o</mi></msub></mrow></math> and scale those penalties by <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BB;</mi><mo>&#x0002F;</mo><mi>n</mi></mrow></math>, while the general data-loss expression above is a sum with no displayed averaging factor. State any averaging convention explicitly rather than silently moving factors between terms.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msubsup><mi>E</mi><mrow><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">g</mi></mrow></mrow><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>L</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x0003D;</mo><msub><mi>E</mi><mrow><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi></mrow></mrow></msub><mo>&#x0002B;</mo><mfrac><mrow><mi>&#x003BB;</mi></mrow><mrow><mi>n</mi></mrow></mfrac><munder><mo>&#x02211;</mo><mrow><msub><mi>w</mi><mi>i</mi></msub><mo>&#x02208;</mo><msub><mi>&#x1D430;</mi><mi>o</mi></msub></mrow></munder><msubsup><mi>w</mi><mi>i</mi><mn>2</mn></msubsup><mo>&#x0003D;</mo><msub><mi>E</mi><mrow><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi></mrow></mrow></msub><mo>&#x0002B;</mo><mfrac><mrow><mi>&#x003BB;</mi></mrow><mrow><mi>n</mi></mrow></mfrac><mo>&#x02016;</mo><msub><mi>&#x1D430;</mi><mi>o</mi></msub><msubsup><mo>&#x02016;</mo><mn>2</mn><mn>2</mn></msubsup></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msubsup><mi>E</mi><mrow><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">g</mi></mrow></mrow><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>L</mi><mn>1</mn></msub><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x0003D;</mo><msub><mi>E</mi><mrow><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi></mrow></mrow></msub><mo>&#x0002B;</mo><mfrac><mrow><mi>&#x003BB;</mi></mrow><mrow><mi>n</mi></mrow></mfrac><munder><mo>&#x02211;</mo><mrow><msub><mi>w</mi><mi>i</mi></msub><mo>&#x02208;</mo><msub><mi>&#x1D430;</mi><mi>o</mi></msub></mrow></munder><mo stretchy="false">&#x0007C;</mo><msub><mi>w</mi><mi>i</mi></msub><mo stretchy="false">&#x0007C;</mo><mo>&#x0003D;</mo><msub><mi>E</mi><mrow><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi></mrow></mrow></msub><mo>&#x0002B;</mo><mfrac><mrow><mi>&#x003BB;</mi></mrow><mrow><mi>n</mi></mrow></mfrac><mo>&#x02016;</mo><msub><mi>&#x1D430;</mi><mi>o</mi></msub><msub><mo>&#x02016;</mo><mn>1</mn></msub></mrow></math></div>
+<p>The source says L₂ quickly penalizes large weights and is often preferable for classification/prediction, while L₁ can help when many features are irrelevant or noisy. Those are source heuristics, not universal guarantees. A regularizer is a penalty added to the data objective; it is not the task’s prediction loss.</p>
+<h2 id="section-7">Momentum and the slide’s sign discrepancy</h2>
+<p>Momentum carries direction from a previous step into a new step to smooth zigzags. A signed increment recurrence that preserves this direction is:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x1D42F;</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo>&#x0003D;</mo><mi>&#x003BC;</mi><msub><mi>&#x1D42F;</mi><mrow><mi>t</mi></mrow></msub><mo>&#x02212;</mo><mi>&#x003B7;</mi><mo>&#x02207;</mo><mi>J</mi><mo stretchy="false">&#x00028;</mo><msub><mrow><mi mathvariant="bold-italic">&#x003B8;</mi></mrow><mrow><mi>t</mi></mrow></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><msub><mrow><mi mathvariant="bold-italic">&#x003B8;</mi></mrow><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo>&#x0003D;</mo><msub><mrow><mi mathvariant="bold-italic">&#x003B8;</mi></mrow><mrow><mi>t</mi></mrow></msub><mo>&#x0002B;</mo><msub><mi>&#x1D42F;</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub></mrow></math></div>
+<p>The lecture prints this weight-level expression:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msubsup><mi>w</mi><mi>i</mi><mrow><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msubsup><mo>&#x0003D;</mo><msubsup><mi>w</mi><mi>i</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi></mrow></msubsup><mo>&#x02212;</mo><mi>&#x003B7;</mi><mfrac><mrow><mo>&#x02202;</mo><mi>E</mi></mrow><mrow><mo>&#x02202;</mo><msubsup><mi>w</mi><mi>i</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi></mrow></msubsup></mrow></mfrac><mo>&#x0002B;</mo><mi>&#x003BC;</mi><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msubsup><mi>w</mi><mi>i</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi></mrow></msubsup><mo>&#x02212;</mo><msubsup><mi>w</mi><mi>i</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi><mi>e</mi><mi>r</mi></mrow></msubsup><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math></div>
+<p>This is one standard convention; the equivalent gradient-buffer form stores the gradient-like quantity and subtracts it from the parameters. The printed lecture expression instead adds <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BC;</mi><mo stretchy="false">&#x0007C;</mo><msubsup><mi>w</mi><mi>i</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi></mrow></msubsup><mo>&#x02212;</mo><msubsup><mi>w</mi><mi>i</mi><mrow><mi>o</mi><mi>l</mi><mi>d</mi><mi>e</mi><mi>r</mi></mrow></msubsup><mo stretchy="false">&#x0007C;</mo></mrow></math> to the gradient step. Absolute value removes the sign of the previous increment, so it cannot in general retain whether that move was positive or negative. That conflicts with the accompanying prose and zigzag-smoothing illustration. The signed recurrence above is the mathematically direction-preserving correction, consistent with the standard signed momentum update documented by <a href="https://docs.pytorch.org/docs/stable/generated/torch.optim.SGD.html">PyTorch’s SGD reference</a>; it is not the printed absolute-value formula. Momentum may smooth updates and sometimes help across shallow regions, but it does not guarantee escape from every local minimum. The slides give <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BC;</mi><mo>&#x02208;</mo><mo stretchy="false">[</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">]</mo></mrow></math> and a typical value near <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.9</mn></mrow></math>.</p>
+<h2 id="section-8">Dropout as described in this lecture</h2>
+<p>In this dropout description, each <strong>weight</strong> is set to zero with probability <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C0;</mi></mrow></math> during each epoch, where <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C0;</mi><mo>&#x02208;</mo><mo stretchy="false">[</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">]</mo></mrow></math>. This masks individual connections. The later deep-learning treatment masks <strong>units</strong>, removing their incident connections together. These are different sampling granularities. See the <a href="deep-learning-foundations.html">deep-learning foundations topic</a> for unit dropout.</p>
+<h2 id="section-9">Other deep-network training difficulties</h2>
+<p>Backpropagating through many layers multiplies local derivatives. Early-layer updates can become negligibly small (vanishing gradients) or excessively large (exploding gradients), and very deep networks may converge slowly. The slide points to sigmoid saturation as one source of vanishing gradients and mentions ReLU, adaptive learning rates, and batch normalization as responses. For the unit-slope logistic sigmoid, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>&#x003C3;</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo stretchy="false">&#x00028;</mo><mi>v</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>&#x003C3;</mi><mo stretchy="false">&#x00028;</mo><mi>v</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mi>&#x003C3;</mi><mo stretchy="false">&#x00028;</mo><mi>v</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo></mrow></math> is at most <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002F;</mo><mn>4</mn></mrow></math>; equality occurs at <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>v</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, so the correct bound is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02264;</mo><mn>0.25</mn></mrow></math>. For a positive slope <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi></mrow></math>, the maximum is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0002F;</mo><mn>4</mn></mrow></math>.</p>
+<p>Training also faces high learning rates, poor initialization, local optima in a nonlinear objective, and substantial computation time. The lecture notes that large text and image networks may require weeks. It also points to non-sequential layouts, changes to the loss, and variational autoencoders as alternative designs; it gives no additional measured training results.</p>
+<h2 id="section-10">Common mistakes</h2>
+<ul>
+<li>Treating backpropagation and the optimizer as synonyms. Backpropagation computes gradients; an optimizer applies a selected update rule.</li>
+<li>Calling every update an epoch. An epoch covers the whole dataset; one mini-batch update is one iteration.</li>
+<li>Reading the 10,000-example example as batch size 10. Ten batches means 1,000 examples per batch and ten updates per epoch.</li>
+<li>Assuming two different parameter vectors that fit the shown rows must agree on unseen inputs—or claiming one is right without a target.</li>
+<li>Replacing a sum with a mean, or changing only the regularization term’s normalization without saying so.</li>
+<li>Calling <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02016;</mo><mi>&#x1D430;</mi><msubsup><mo>&#x02016;</mo><mn>2</mn><mn>2</mn></msubsup></mrow></math> the L₂ norm; it is the squared L₂ norm.</li>
+<li>Substituting <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math> directly into the displayed formula despite its undefined reciprocal exponent.</li>
+<li>Copying the absolute-value momentum term as though it retained direction, or claiming momentum always escapes local minima.</li>
+<li>Treating the lecture’s weight-level dropout as identical to later unit-level dropout.</li>
+</ul>
+<h2 id="section-11">Exam focus</h2>
+<ul>
+<li>Layer composition: affine weighted sum plus bias, followed by activation; nonlinear activations let stacked layers represent nonlinear functions.</li>
+<li>Gradient descent: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mrow><mi mathvariant="bold-italic">&#x003B8;</mi></mrow><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo>&#x0003D;</mo><msub><mrow><mi mathvariant="bold-italic">&#x003B8;</mi></mrow><mi>t</mi></msub><mo>&#x02212;</mo><mi>&#x003B7;</mi><mo>&#x02207;</mo><mi>J</mi></mrow></math>; a gradient is not itself an update rule.</li>
+<li>Pair categorical outputs with softmax/cross-entropy; pair real-valued outputs with linear/squared loss when appropriate.</li>
+<li>Overfitting means training fit does not ensure unseen-data performance. Distinguish objective penalties, architecture/parameter sharing, validation-based early stopping, and ensembles.</li>
+<li>Full batch uses all examples/update; SGD uses one; mini-batch uses a subset. One iteration is one batch update; one epoch covers all examples.</li>
+<li>Keep the general summed data objective separate from the displayed <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BB;</mi><mo>&#x0002F;</mo><mi>n</mi></mrow></math> L₁/L₂ penalties. L₂ uses squared norm; the <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math> case cannot be obtained by direct substitution.</li>
+<li>Know the signed momentum recurrence and explain the printed absolute-value conflict. Momentum has no universal local-minimum guarantee.</li>
+<li>State dropout’s granularity: this lecture says weights; the later deep-learning material says units.</li>
+</ul>
+<h2 id="section-12">Practice questions</h2>
+<p class="question">1. What happens to a layer’s output when its affine map is followed by a nonlinear activation?</p>
+<details class="worked"><summary>Check your answer</summary><p>The affine map forms weighted sums and adds biases; the activation transforms those values. Because the activation is nonlinear, stacking layers can represent nonlinear compositions rather than collapsing into one affine map.</p></details>
+<p class="question">2. Does backpropagation itself choose the learning rate and apply a parameter update?</p>
+<details class="worked"><summary>Check your answer</summary><p>No. Backpropagation computes loss gradients with the chain rule. The optimizer uses those gradients with its learning rate and any state such as momentum to update parameters.</p></details>
+<p class="question">3. For 10,000 examples split into 10 equal mini-batches, what are the batch size and updates per epoch?</p>
+<details class="worked"><summary>Check your answer</summary><p>Each batch has <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>10000</mn><mo>&#x0002F;</mo><mn>10</mn><mo>&#x0003D;</mo><mn>1000</mn></mrow></math> examples. One update uses one batch, so all 10 batches require 10 updates for one epoch.</p></details>
+<p class="question">4. Why do the two displayed weight vectors not identify a unique prediction for every possible input?</p>
+<details class="worked"><summary>Check your answer</summary><p>Both match all four shown training rows, but on the unlisted input <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></math> they predict 0 and 2. No true target is supplied for that input, so the slide cannot establish which prediction is correct.</p></details>
+<p class="question">5. What is the difference between the slide’s general regularized objective and its L₁/L₂ examples?</p>
+<details class="worked"><summary>Check your answer</summary><p>The general expression adds <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BB;</mi><mi>R</mi><mo stretchy="false">&#x00028;</mo><mi>&#x1D430;</mi><mo>&#x0002C;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo></mrow></math> to a sum of data losses and displays no averaging factor. The later L₁/L₂ illustrations scale their shown weight penalties by <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BB;</mi><mo>&#x0002F;</mo><mi>n</mi></mrow></math>; L₂ uses the squared norm. Do not transfer one normalization silently.</p></details>
+<p class="question">6. Why is the printed absolute-value momentum increment inconsistent with retaining direction?</p>
+<details class="worked"><summary>Check your answer</summary><p>Absolute value erases whether the previous increment was positive or negative. A signed velocity retains that direction: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D42F;</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo>&#x0003D;</mo><mi>&#x003BC;</mi><msub><mi>&#x1D42F;</mi><mi>t</mi></msub><mo>&#x02212;</mo><mi>&#x003B7;</mi><mo>&#x02207;</mo><mi>J</mi></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mrow><mi mathvariant="bold-italic">&#x003B8;</mi></mrow><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo>&#x0003D;</mo><msub><mrow><mi mathvariant="bold-italic">&#x003B8;</mi></mrow><mi>t</mi></msub><mo>&#x0002B;</mo><msub><mi>&#x1D42F;</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub></mrow></math>. The correction matches the accompanying direction-retaining prose, while the printed absolute-value expression loses that direction.</p></details>
+<p class="question">7. When does the unit-slope sigmoid derivative reach its maximum, and what is the maximum?</p>
+<details class="worked"><summary>Check your answer</summary><p>It is at most <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002F;</mo><mn>4</mn></mrow></math>, with equality when the pre-activation is zero. A strict “less than” statement misses the equality case.</p></details>
+<h2 id="section-13">Study route</h2>
+<p>Review <a href="neural-computation-perceptron.html">neural computation and perceptron learning</a> first. Continue to <a href="least-mean-squares.html">least mean squares</a> for the linear delta-rule derivation and <a href="backpropagation.html">backpropagation</a> for the detailed multilayer chain rule. The later <a href="deep-learning-foundations.html">deep-learning foundations topic</a> treats unit dropout and related architectures.</p></article><nav class="pager" aria-label="Study sequence"><a href="neural-computation-perceptron.html"><small>Previous</small>Neural Computation and Perceptron Learning <span aria-hidden="true">↗</span></a><a href="least-mean-squares.html"><small>Next</small>Least Mean Squares and the Delta Rule <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

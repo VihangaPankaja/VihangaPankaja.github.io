@@ -1,0 +1,747 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Classical machine translation must preserve a message while changing its word order and form. This page follows the shift from hand-written linguistic rules to phrase-based statistical translation."><title>Machine Translation: Rule-Based and Statistical Methods · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html" aria-current="page">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Language and self-supervision <span>/</span> Lecture 9</div><h1>Machine Translation: Rule-Based and Statistical Methods</h1><p class="lead">Classical machine translation must preserve a message while changing its word order and form. This page follows the shift from hand-written linguistic rules to phrase-based statistical translation.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Why translation is more than word substitution</a><a href="#section-2">Rule-based translation: analyze, transfer, generate</a><a href="#section-3">Parallel data and the statistical objective</a><a href="#section-4">Phrase translation: relative frequency and reordering</a><a href="#section-5">The target n-gram language model</a><a href="#section-6">Phrase decoding: cover source spans and prune search</a><a href="#section-7">Limitations and the neural handoff</a><a href="#section-8">Common mistakes</a><a href="#section-9">Exam focus</a><a href="#section-10">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Machine translation (MT) automatically converts text from a <strong>source language</strong> into a <strong>target language</strong> while preserving meaning. That goal is harder than replacing each word with a dictionary entry: languages order ideas differently, mark grammatical information differently, and leave different information unstated. A useful system must preserve the message and produce a target sentence that reads naturally.</p>
+<p>Rule-based MT (RBMT) encodes linguistic analysis and transfer rules by hand. Statistical MT (SMT) instead learns translation choices from parallel sentences, then ranks possible target sentences using both translation evidence and target-language fluency. The classical phrase-based decoder searches among phrase translations, but limited reordering and sparse phrase estimates constrain it. The following neural and decoding topics continue from this point; their detailed architectures, beam-search variants, and BLEU evaluation are covered separately.</p>
+
+<h2 id="section-1">Why translation is more than word substitution</h2>
+<p>Word order carries grammatical roles. English commonly uses subject–verb–object (SVO), while Sinhala, Tamil, and Japanese commonly use subject–object–verb (SOV). A translation may need to move a verb across a phrase, not just select equivalent vocabulary. Morphology adds another challenge: a single English word may correspond to a target form carrying case, number, tense, or honorific information.</p>
+<p>Words can also be ambiguous or have no one-word equivalent. “Bank” can refer to a river edge or a financial institution; context selects the intended sense. A pro-drop language may omit a subject that English expects. The Sinhala sentence “ලියුම ලිව්වා” (liyuma liwwā, “wrote the letter”) does not identify whether the subject is I, he, she, or they. The discourse may supply that information; translating without it should not invent a subject. These differences explain why a translation system needs structure, context, and evidence about how languages correspond.</p>
+
+<figure><div class="diagram-frame" style="--diagram-width:1046.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="RBMT passes an analyzed source representation through bilingual and structural transfer rules, then realizes target syntax and inflection." width="1046pt" height="72pt"
+ viewBox="0.00 0.00 1046.00 72.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="machine-translation-classical-figure-1-machine-translation-classical-rbmt-pipeline-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 61.2)">
+<title>G</title>
+<!-- source -->
+<g id="machine-translation-classical-figure-1-machine-translation-classical-rbmt-pipeline-node1" class="node">
+<title>source</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M118.35,-43.2C118.35,-43.2 12,-43.2 12,-43.2 6,-43.2 0,-37.2 0,-31.2 0,-31.2 0,-19.2 0,-19.2 0,-13.2 6,-7.2 12,-7.2 12,-7.2 118.35,-7.2 118.35,-7.2 124.35,-7.2 130.35,-13.2 130.35,-19.2 130.35,-19.2 130.35,-31.2 130.35,-31.2 130.35,-37.2 124.35,-43.2 118.35,-43.2"/>
+<text xml:space="preserve" text-anchor="middle" x="65.18" y="-19.95" font-family="Georgia" font-size="15.00">Source sentence</text>
+</g>
+<!-- analysis -->
+<g id="machine-translation-classical-figure-1-machine-translation-classical-rbmt-pipeline-node2" class="node">
+<title>analysis</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M341.45,-50.4C341.45,-50.4 174.35,-50.4 174.35,-50.4 168.35,-50.4 162.35,-44.4 162.35,-38.4 162.35,-38.4 162.35,-12 162.35,-12 162.35,-6 168.35,0 174.35,0 174.35,0 341.45,0 341.45,0 347.45,0 353.45,-6 353.45,-12 353.45,-12 353.45,-38.4 353.45,-38.4 353.45,-44.4 347.45,-50.4 341.45,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="257.9" y="-28.95" font-family="Georgia" font-size="15.00">Analysis</text>
+<text xml:space="preserve" text-anchor="middle" x="257.9" y="-10.95" font-family="Georgia" font-size="15.00">morphology · POS · parse</text>
+</g>
+<!-- source&#45;&gt;analysis -->
+<g id="machine-translation-classical-figure-1-machine-translation-classical-rbmt-pipeline-edge1" class="edge">
+<title>source&#45;&gt;analysis</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M130.75,-25.2C138.2,-25.2 145.94,-25.2 153.75,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="153.56,-27.48 160.06,-25.2 153.56,-22.93 153.56,-27.48"/>
+</g>
+<!-- transfer -->
+<g id="machine-translation-classical-figure-1-machine-translation-classical-rbmt-pipeline-node3" class="node">
+<title>transfer</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M636.55,-50.4C636.55,-50.4 397.45,-50.4 397.45,-50.4 391.45,-50.4 385.45,-44.4 385.45,-38.4 385.45,-38.4 385.45,-12 385.45,-12 385.45,-6 391.45,0 397.45,0 397.45,0 636.55,0 636.55,0 642.55,0 648.55,-6 648.55,-12 648.55,-12 648.55,-38.4 648.55,-38.4 648.55,-44.4 642.55,-50.4 636.55,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="517" y="-28.95" font-family="Georgia" font-size="15.00">Transfer</text>
+<text xml:space="preserve" text-anchor="middle" x="517" y="-10.95" font-family="Georgia" font-size="15.00">bilingual dictionary · structure rules</text>
+</g>
+<!-- analysis&#45;&gt;transfer -->
+<g id="machine-translation-classical-figure-1-machine-translation-classical-rbmt-pipeline-edge2" class="edge">
+<title>analysis&#45;&gt;transfer</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M354.27,-25.2C361.77,-25.2 369.44,-25.2 377.15,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="376.86,-27.48 383.36,-25.2 376.86,-22.93 376.86,-27.48"/>
+</g>
+<!-- generation -->
+<g id="machine-translation-classical-figure-1-machine-translation-classical-rbmt-pipeline-node4" class="node">
+<title>generation</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M852.9,-50.4C852.9,-50.4 692.55,-50.4 692.55,-50.4 686.55,-50.4 680.55,-44.4 680.55,-38.4 680.55,-38.4 680.55,-12 680.55,-12 680.55,-6 686.55,0 692.55,0 692.55,0 852.9,0 852.9,0 858.9,0 864.9,-6 864.9,-12 864.9,-12 864.9,-38.4 864.9,-38.4 864.9,-44.4 858.9,-50.4 852.9,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="772.73" y="-28.95" font-family="Georgia" font-size="15.00">Generation</text>
+<text xml:space="preserve" text-anchor="middle" x="772.73" y="-10.95" font-family="Georgia" font-size="15.00">target syntax · inflection</text>
+</g>
+<!-- transfer&#45;&gt;generation -->
+<g id="machine-translation-classical-figure-1-machine-translation-classical-rbmt-pipeline-edge3" class="edge">
+<title>transfer&#45;&gt;generation</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M649.32,-25.2C656.87,-25.2 664.4,-25.2 671.8,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="671.76,-27.48 678.25,-25.2 671.75,-22.93 671.76,-27.48"/>
+</g>
+<!-- target -->
+<g id="machine-translation-classical-figure-1-machine-translation-classical-rbmt-pipeline-node5" class="node">
+<title>target</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M1012.25,-43.2C1012.25,-43.2 908.9,-43.2 908.9,-43.2 902.9,-43.2 896.9,-37.2 896.9,-31.2 896.9,-31.2 896.9,-19.2 896.9,-19.2 896.9,-13.2 902.9,-7.2 908.9,-7.2 908.9,-7.2 1012.25,-7.2 1012.25,-7.2 1018.25,-7.2 1024.25,-13.2 1024.25,-19.2 1024.25,-19.2 1024.25,-31.2 1024.25,-31.2 1024.25,-37.2 1018.25,-43.2 1012.25,-43.2"/>
+<text xml:space="preserve" text-anchor="middle" x="960.58" y="-19.95" font-family="Georgia" font-size="15.00">Target sentence</text>
+</g>
+<!-- generation&#45;&gt;target -->
+<g id="machine-translation-classical-figure-1-machine-translation-classical-rbmt-pipeline-edge4" class="edge">
+<title>generation&#45;&gt;target</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M865.83,-25.2C873.47,-25.2 881.12,-25.2 888.57,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="888.56,-27.48 895.06,-25.2 888.56,-22.93 888.56,-27.48"/>
+</g>
+</g>
+</svg>
+</div><figcaption>RBMT passes an analyzed source representation through bilingual and structural transfer rules, then realizes target syntax and inflection.</figcaption></figure>
+
+<h2 id="section-2">Rule-based translation: analyze, transfer, generate</h2>
+<p>An RBMT system is a pipeline of hand-written resources. It first analyzes the source, then maps the analysis into the target language, then generates a target form. Each stage has a distinct job: analysis identifies what the source says, transfer chooses target equivalents and structure, and generation expresses that structure in grammatical target forms.</p>
+
+<details class="worked"><summary>Teaching example: preserve roles while changing order</summary><p>This is a <strong>Teaching example</strong>, not a lexical translation table. Suppose analysis of a source sentence identifies the roles subject = “I”, verb = “read”, and object = “the book”.</p>
+<ol>
+<li><strong>Analysis:</strong> record the subject, action, and object rather than treating the words as an unordered list.</li>
+<li><strong>Transfer:</strong> for an SOV target structure, arrange the roles as subject → object → verb.</li>
+<li><strong>Generation:</strong> choose target words and the inflected verb form required by the target grammar. No particular target-language words are assumed here.</li>
+<li><strong>Check:</strong> the same person must still perform the same action on the same object. The changed order expresses the same role relations.</li>
+</ol>
+<p>The hard part is coverage: hand-writing rules for language structure and exceptions is tedious, and an uncovered construction can fail even if the pipeline stages are conceptually sound.</p></details>
+
+<h2 id="section-3">Parallel data and the statistical objective</h2>
+<p>Data-driven translation learns from <strong>parallel data</strong>: source sentences paired with their translations. Such pairs provide evidence about how meanings and forms correspond across languages. The lecture motivates statistical MT with large-scale parallel data, but parallel data is not equally abundant for every language pair; the approach depends on what suitable data exists.</p>
+<p>Let <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>e</mi></mrow></math> denote one fixed source sentence and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>f</mi></mrow></math> a candidate target sentence. The SMT objective is to select the target with the greatest conditional probability given that source. The lecture briefly reverses these variable names on one page; here <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>e</mi></mrow></math> is source and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>f</mi></mrow></math> is target throughout. With that convention, Bayes’ theorem gives the noisy-channel decomposition below.</p>
+
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi>f</mi><mrow><mo>&#x0002A;</mo></mrow></msup><mo>&#x0003D;</mo><msub><mo>argmax</mo><mrow><mi>f</mi></mrow></msub><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo>&#x02223;</mo><mi>e</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo>&#x02223;</mo><mi>e</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo>&#x02223;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo stretchy="false">&#x00029;</mo></mrow></mfrac></mrow></math></div>
+
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi>f</mi><mrow><mo>&#x0002A;</mo></mrow></msup><mo>&#x0003D;</mo><msub><mo>argmax</mo><mrow><mi>f</mi></mrow></msub><mfrac><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo>&#x02223;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo stretchy="false">&#x00029;</mo></mrow></mfrac><mo>&#x0003D;</mo><msub><mo>argmax</mo><mrow><mi>f</mi></mrow></msub><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo>&#x02223;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+
+<p>For a fixed source <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>e</mi></mrow></math>, the denominator <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo stretchy="false">&#x00029;</mo></mrow></math> is the same for every candidate <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>f</mi></mrow></math>; removing that positive constant cannot change which candidate maximizes the score. The term <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo>&#x02223;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math> is the <strong>translation channel</strong>: how well a proposed target could account for the source. The term <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math> is a <strong>target-language model</strong>: how probable or fluent the target sentence is in its own language. Both are needed: a fluent candidate may still express the wrong message, while a faithful candidate may be awkwardly formed.</p>
+
+<figure><div class="diagram-frame" style="--diagram-width:552.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="The candidate target is assessed both for explaining the fixed source and for fluency in the target language. The product ranks candidates; fluency alone is not a translation objective." width="552pt" height="144pt"
+ viewBox="0.00 0.00 552.00 144.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="machine-translation-classical-figure-2-machine-translation-classical-noisy-channel-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 133.2)">
+<title>G</title>
+<!-- source -->
+<g id="machine-translation-classical-figure-2-machine-translation-classical-noisy-channel-node1" class="node">
+<title>source</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M117.22,-115.2C117.22,-115.2 23.62,-115.2 23.62,-115.2 17.62,-115.2 11.62,-109.2 11.62,-103.2 11.62,-103.2 11.62,-91.2 11.62,-91.2 11.62,-85.2 17.62,-79.2 23.62,-79.2 23.62,-79.2 117.22,-79.2 117.22,-79.2 123.22,-79.2 129.22,-85.2 129.22,-91.2 129.22,-91.2 129.22,-103.2 129.22,-103.2 129.22,-109.2 123.22,-115.2 117.22,-115.2"/>
+<text xml:space="preserve" text-anchor="middle" x="70.42" y="-91.95" font-family="Georgia" font-size="15.00">Fixed source e</text>
+</g>
+<!-- channel -->
+<g id="machine-translation-classical-figure-2-machine-translation-classical-noisy-channel-node3" class="node">
+<title>channel</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M325.7,-122.4C325.7,-122.4 193.85,-122.4 193.85,-122.4 187.85,-122.4 181.85,-116.4 181.85,-110.4 181.85,-110.4 181.85,-84 181.85,-84 181.85,-78 187.85,-72 193.85,-72 193.85,-72 325.7,-72 325.7,-72 331.7,-72 337.7,-78 337.7,-84 337.7,-84 337.7,-110.4 337.7,-110.4 337.7,-116.4 331.7,-122.4 325.7,-122.4"/>
+<text xml:space="preserve" text-anchor="middle" x="259.77" y="-100.95" font-family="Georgia" font-size="15.00">Translation channel</text>
+<text xml:space="preserve" text-anchor="middle" x="259.77" y="-82.95" font-family="Georgia" font-size="15.00">P(e | f)</text>
+</g>
+<!-- source&#45;&gt;channel -->
+<g id="machine-translation-classical-figure-2-machine-translation-classical-noisy-channel-edge2" class="edge">
+<title>source&#45;&gt;channel</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M129.68,-97.2C143.49,-97.2 158.51,-97.2 173.25,-97.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="172.92,-99.48 179.42,-97.2 172.92,-94.93 172.92,-99.48"/>
+</g>
+<!-- candidate -->
+<g id="machine-translation-classical-figure-2-machine-translation-classical-noisy-channel-node2" class="node">
+<title>candidate</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M128.85,-50.2C128.85,-50.2 12,-50.2 12,-50.2 6,-50.2 0,-44.2 0,-38.2 0,-38.2 0,-26.2 0,-26.2 0,-20.2 6,-14.2 12,-14.2 12,-14.2 128.85,-14.2 128.85,-14.2 134.85,-14.2 140.85,-20.2 140.85,-26.2 140.85,-26.2 140.85,-38.2 140.85,-38.2 140.85,-44.2 134.85,-50.2 128.85,-50.2"/>
+<text xml:space="preserve" text-anchor="middle" x="70.42" y="-26.95" font-family="Georgia" font-size="15.00">Candidate target f</text>
+</g>
+<!-- candidate&#45;&gt;channel -->
+<g id="machine-translation-classical-figure-2-machine-translation-classical-noisy-channel-edge1" class="edge">
+<title>candidate&#45;&gt;channel</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M124.61,-50.65C140.61,-56.2 158.56,-62.43 175.99,-68.48"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="175.11,-70.58 182,-70.56 176.6,-66.28 175.11,-70.58"/>
+</g>
+<!-- lm -->
+<g id="machine-translation-classical-figure-2-machine-translation-classical-noisy-channel-node4" class="node">
+<title>lm</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M334.7,-50.4C334.7,-50.4 184.85,-50.4 184.85,-50.4 178.85,-50.4 172.85,-44.4 172.85,-38.4 172.85,-38.4 172.85,-12 172.85,-12 172.85,-6 178.85,0 184.85,0 184.85,0 334.7,0 334.7,0 340.7,0 346.7,-6 346.7,-12 346.7,-12 346.7,-38.4 346.7,-38.4 346.7,-44.4 340.7,-50.4 334.7,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="259.77" y="-28.95" font-family="Georgia" font-size="15.00">Target language model</text>
+<text xml:space="preserve" text-anchor="middle" x="259.77" y="-10.95" font-family="Georgia" font-size="15.00">P(f)</text>
+</g>
+<!-- candidate&#45;&gt;lm -->
+<g id="machine-translation-classical-figure-2-machine-translation-classical-noisy-channel-edge3" class="edge">
+<title>candidate&#45;&gt;lm</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M141.19,-29.59C148.76,-29.31 156.55,-29.02 164.35,-28.73"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="164.22,-31.01 170.63,-28.49 164.05,-26.46 164.22,-31.01"/>
+</g>
+<!-- rank -->
+<g id="machine-translation-classical-figure-2-machine-translation-classical-noisy-channel-node5" class="node">
+<title>rank</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M518.05,-86.4C518.05,-86.4 390.7,-86.4 390.7,-86.4 384.7,-86.4 378.7,-80.4 378.7,-74.4 378.7,-74.4 378.7,-48 378.7,-48 378.7,-42 384.7,-36 390.7,-36 390.7,-36 518.05,-36 518.05,-36 524.05,-36 530.05,-42 530.05,-48 530.05,-48 530.05,-74.4 530.05,-74.4 530.05,-80.4 524.05,-86.4 518.05,-86.4"/>
+<text xml:space="preserve" text-anchor="middle" x="454.37" y="-64.95" font-family="Georgia" font-size="15.00">Rank candidates by</text>
+<text xml:space="preserve" text-anchor="middle" x="454.37" y="-46.95" font-family="Georgia" font-size="15.00">P(e | f) P(f)</text>
+</g>
+<!-- channel&#45;&gt;rank -->
+<g id="machine-translation-classical-figure-2-machine-translation-classical-noisy-channel-edge4" class="edge">
+<title>channel&#45;&gt;rank</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M338.56,-82.66C348.97,-80.71 359.69,-78.71 370.2,-76.75"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="370.34,-79.03 376.32,-75.6 369.51,-74.56 370.34,-79.03"/>
+</g>
+<!-- lm&#45;&gt;rank -->
+<g id="machine-translation-classical-figure-2-machine-translation-classical-noisy-channel-edge5" class="edge">
+<title>lm&#45;&gt;rank</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M347.5,-41.41C355.06,-42.82 362.7,-44.25 370.24,-45.66"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="369.43,-47.82 376.24,-46.78 370.27,-43.35 369.43,-47.82"/>
+</g>
+</g>
+</svg>
+</div><figcaption>The candidate target is assessed both for explaining the fixed source and for fluency in the target language. The product ranks candidates; fluency alone is not a translation objective.</figcaption></figure>
+
+<details class="worked"><summary>Worked derivation: why the source denominator disappears</summary><ol>
+<li>Start with the desired conditional probability: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo>&#x02223;</mo><mi>e</mi><mo stretchy="false">&#x00029;</mo></mrow></math>.</li>
+<li>Apply Bayes’ rule: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo>&#x02223;</mo><mi>e</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo>&#x02223;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo stretchy="false">&#x00029;</mo></mrow></mfrac></mrow></math>.</li>
+<li>Keep the source <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>e</mi></mrow></math> fixed and compare two candidate targets, <code>f₁</code> and <code>f₂</code>. Both scores divide by the same <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo stretchy="false">&#x00029;</mo></mrow></math>.</li>
+<li>Therefore <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><msub><mi>f</mi><mn>1</mn></msub><mo>&#x02223;</mo><mi>e</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003E;</mo><mi>P</mi><mo stretchy="false">&#x00028;</mo><msub><mi>f</mi><mn>2</mn></msub><mo>&#x02223;</mo><mi>e</mi><mo stretchy="false">&#x00029;</mo></mrow></math> exactly when <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo>&#x02223;</mo><msub><mi>f</mi><mn>1</mn></msub><mo stretchy="false">&#x00029;</mo><mi>P</mi><mo stretchy="false">&#x00028;</mo><msub><mi>f</mi><mn>1</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003E;</mo><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo>&#x02223;</mo><msub><mi>f</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo><mi>P</mi><mo stretchy="false">&#x00028;</mo><msub><mi>f</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo></mrow></math> (for <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003E;</mo><mn>0</mn></mrow></math>).</li>
+<li>So maximize the product <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo>&#x02223;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math>. The channel rewards source compatibility; the target LM rewards target-language plausibility.</li>
+</ol>
+<p>This is the classical noisy-channel objective described here, not a modern neural MT training loss.</p></details>
+
+<h2 id="section-4">Phrase translation: relative frequency and reordering</h2>
+<p>Phrase-based SMT groups consecutive words into spans and translates each source phrase into a target phrase. A phrase can contain multiple words; it need not be a grammatical phrase in the linguistic sense. Parallel sentence alignments supply extracted phrase pairs. For a source phrase <code>ē</code>, the target-given-source phrase probability is estimated by relative frequency over the extracted pairs:</p>
+
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x003D5;</mi><mo stretchy="false">&#x00028;</mo><mover><mrow><mi>f</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mo>&#x02223;</mo><mover><mrow><mi>e</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mo>count</mo><mo stretchy="false">&#x00028;</mo><mover><mrow><mi>e</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mo>&#x0002C;</mo><mover><mrow><mi>f</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mo stretchy="false">&#x00029;</mo></mrow><mrow><msub><mo>&#x02211;</mo><mrow><msup><mover><mrow><mi>f</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mi>&#x02032;</mi></msup></mrow></msub><mo>count</mo><mo stretchy="false">&#x00028;</mo><mover><mrow><mi>e</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mo>&#x0002C;</mo><msup><mover><mrow><mi>f</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mi>&#x02032;</mi></msup><mo stretchy="false">&#x00029;</mo></mrow></mfrac></mrow></math></div>
+
+<p>The denominator sums counts for that same source phrase over candidate target phrases <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mover><mrow><mi>f</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mrow><mi>&#x02032;</mi></mrow></msup></mrow></math>; this direction is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003D5;</mi><mo stretchy="false">&#x00028;</mo><mover><mrow><mi>f</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mo>&#x02223;</mo><mover><mrow><mi>e</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mo stretchy="false">&#x00029;</mo></mrow></math>, target phrase given source phrase. If the source phrase has no extracted pair, the denominator has no observed count and the relative-frequency estimate cannot provide a usable translation for it. The lecture gives no phrase counts, so there is no numeric phrase-table probability to calculate here.</p>
+<p>A candidate sentence can be segmented into <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>K</mi></mrow></math> phrase pairs. Its phrase translation score multiplies their conditional phrase probabilities and a distortion term for each jump between consecutive source spans:</p>
+
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><msubsup><mover><mrow><mi>f</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mrow><mn>1</mn></mrow><mrow><mi>K</mi></mrow></msubsup><mo>&#x02223;</mo><msubsup><mover><mrow><mi>e</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mrow><mn>1</mn></mrow><mrow><mi>K</mi></mrow></msubsup><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><munderover><mo>&#x0220F;</mo><mrow><mi>k</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>K</mi></mrow></munderover><mi>&#x003D5;</mi><mo stretchy="false">&#x00028;</mo><msub><mover><mrow><mi>f</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mrow><mi>k</mi></mrow></msub><mo>&#x02223;</mo><msub><mover><mrow><mi>e</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mrow><mi>k</mi></mrow></msub><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mi>d</mi><mo stretchy="false">&#x00028;</mo><msub><mo>start</mo><mrow><mi>k</mi></mrow></msub><mo>&#x02212;</mo><msub><mo>end</mo><mrow><mi>k</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+
+<p>The distortion function <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo stretchy="false">&#x00028;</mo><mo>&#x000B7;</mo><mo stretchy="false">&#x00029;</mo></mrow></math> penalizes the jump from the previously translated source span to the next one; its role is to discourage large reorderings. In practice, the phrase system also keeps the reverse conditional phrase probability <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003D5;</mi><mo stretchy="false">&#x00028;</mo><mover><mrow><mi>e</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mo>&#x02223;</mo><mover><mrow><mi>f</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mo stretchy="false">&#x00029;</mo></mrow></math> and lexical weights that smooth estimates for rare phrase pairs. These components contribute evidence and robustness; the source supplies no extracted counts, distortion values, or learned feature weights, so they remain symbolic.</p>
+
+<details class="worked"><summary>Worked interpretation: what each phrase score term contributes</summary><p>For a segmented candidate with phrase pairs indexed <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002C;</mo><mi>&#x02026;</mi><mo>&#x0002C;</mo><mi>K</mi></mrow></math>, read the expression from left to right:</p>
+<ol>
+<li>For each pair <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mover><mrow><mi>e</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mi>k</mi></msub><mo>&#x0002C;</mo><msub><mover><mrow><mi>f</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mi>k</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math>, use <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003D5;</mi><mo stretchy="false">&#x00028;</mo><msub><mover><mrow><mi>f</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mi>k</mi></msub><mo>&#x02223;</mo><msub><mover><mrow><mi>e</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mi>k</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math>: how frequently this target phrase was observed with this source phrase relative to other target phrases for the same source phrase.</li>
+<li>Multiply the phrase probabilities across the chosen segmentation. A rare or unseen pair can make this evidence weak or unavailable.</li>
+<li>For each next source span, evaluate <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo stretchy="false">&#x00028;</mo><msub><mo>start</mo><mi>k</mi></msub><mo>&#x02212;</mo><msub><mo>end</mo><mrow><mi>k</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. It penalizes the displacement between source spans; a long jump receives a penalty according to the learned/modelled distortion function.</li>
+<li>Combine with the reverse phrase direction, lexical weights, and target LM as the system’s scoring features. Their weights and exact numeric values are learned or estimated by the system; they are not provided in the lecture.</li>
+</ol>
+<p>This is a symbolic reading of the source model. It does not invent phrase counts or a numeric candidate ranking.</p></details>
+
+<h2 id="section-5">The target n-gram language model</h2>
+<p>The language model estimates the target sentence’s fluency from <strong>monolingual text in the target language</strong>. It factors a sentence into next-word predictions conditioned on preceding words. In an n-gram model, the context is limited to the preceding <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi><mo>&#x02212;</mo><mn>1</mn></mrow></math> words; for example, a trigram predicts a word from the previous two. This target-side score supports natural local word sequences, while the translation channel supplies source-conditioned evidence.</p>
+
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><munderover><mo>&#x0220F;</mo><mrow><mi>j</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>m</mi></mrow></munderover><mi>P</mi><mo stretchy="false">&#x00028;</mo><msub><mi>f</mi><mrow><mi>j</mi></mrow></msub><mo>&#x02223;</mo><msubsup><mi>f</mi><mrow><mn>1</mn></mrow><mrow><mi>j</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msubsup><mo stretchy="false">&#x00029;</mo><mo>&#x02248;</mo><munderover><mo>&#x0220F;</mo><mrow><mi>j</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>m</mi></mrow></munderover><mi>P</mi><mo stretchy="false">&#x00028;</mo><msub><mi>f</mi><mrow><mi>j</mi></mrow></msub><mo>&#x02223;</mo><msubsup><mi>f</mi><mrow><mi>j</mi><mo>&#x02212;</mo><mi>n</mi><mo>&#x0002B;</mo><mn>1</mn></mrow><mrow><mi>j</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msubsup><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+
+<p>For a trigram, the maximum-likelihood estimate uses observed counts in the target-language text:</p>
+
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>P</mi><mrow><mrow><mi mathvariant="normal">M</mi><mi mathvariant="normal">L</mi><mi mathvariant="normal">E</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mi>f</mi><mi>j</mi></msub><mo>&#x02223;</mo><msub><mi>f</mi><mrow><mi>j</mi><mo>&#x02212;</mo><mn>2</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>f</mi><mrow><mi>j</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mi>c</mi><mo stretchy="false">&#x00028;</mo><msub><mi>f</mi><mrow><mi>j</mi><mo>&#x02212;</mo><mn>2</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>f</mi><mrow><mi>j</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>f</mi><mi>j</mi></msub><mo stretchy="false">&#x00029;</mo></mrow><mrow><mi>c</mi><mo stretchy="false">&#x00028;</mo><msub><mi>f</mi><mrow><mi>j</mi><mo>&#x02212;</mo><mn>2</mn></mrow></msub><mo>&#x0002C;</mo><msub><mi>f</mi><mrow><mi>j</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub><mo stretchy="false">&#x00029;</mo></mrow></mfrac></mrow></math></div>
+
+<p>The numerator counts occurrences of the preceding two words followed by the proposed next word. The denominator counts that two-word history. With a positive history count, an unseen continuation has numerator zero and therefore estimated probability zero. If the history itself has no occurrences, this raw ratio is undefined; a model needs a strategy such as backing off to a shorter context. These are count dependencies, not assumed numerical counts.</p>
+
+<p>An unsmoothed n-gram model may assign probability zero to an unseen n-gram. Since the sentence probability is a product, one zero term makes the whole product zero and can veto an otherwise good translation. Smoothing avoids treating every unseen sequence as impossible. The lecture names Kneser–Ney, backoff, and interpolation: these methods redistribute or combine probability evidence so a model can score events beyond the exact observed counts. No counts or smoothing values are given, so none are fabricated here.</p>
+<p>The slide’s example shows the <strong>target German</strong> candidates for the English source “the house is small.” Its displayed values are illustrative <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>log</mi><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math> scores under a trigram LM:</p>
+
+<table>
+<thead>
+<tr>
+<th>Source sentence</th>
+<th>Candidate target <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>f</mi></mrow></math></th>
+<th style="text-align: right;">Illustrative <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>log</mi><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>the house is small</td>
+<td>das Haus ist klein</td>
+<td style="text-align: right;">-7.4</td>
+</tr>
+<tr>
+<td>the house is small</td>
+<td>das Haus ist gering</td>
+<td style="text-align: right;">-10.2</td>
+</tr>
+<tr>
+<td>the house is small</td>
+<td>klein das Haus ist</td>
+<td style="text-align: right;">-16.1</td>
+</tr>
+</tbody>
+</table>
+
+<details class="worked"><summary>Worked ranking: compare the illustrative target-LM scores</summary><ol>
+<li>Compare the three log scores: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>7.4</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>10.2</mn></mrow></math>, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>16.1</mn></mrow></math>.</li>
+<li>Since <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>7.4</mn><mo>&#x0003E;</mo><mo>&#x02212;</mo><mn>10.2</mn><mo>&#x0003E;</mo><mo>&#x02212;</mo><mn>16.1</mn></mrow></math>, the first candidate has the greatest log probability (it is least negative).</li>
+<li>Thus this <strong>target German trigram LM term</strong> ranks <code>das Haus ist klein</code> highest among these three candidates.</li>
+<li>Check the direction: larger log probability is better; all three values are negative, so the one closest to zero wins this LM-only comparison.</li>
+</ol>
+<p>The values are illustrative and cannot be regenerated from the supplied material because trigram counts and smoothing details are absent. This ranking says nothing by itself about source faithfulness: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math> assesses target fluency, while translation compatibility comes from <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo>&#x02223;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math>.</p></details>
+
+<h2 id="section-6">Phrase decoding: cover source spans and prune search</h2>
+<p>Phrase decoding searches through target hypotheses by extending them with phrase pairs that cover source spans. The lecture describes building translations left to right. Hypotheses are grouped into <strong>stacks</strong> according to how many source words they have covered, so candidates at comparable coverage compete. Because the search space grows exponentially, <strong>histogram pruning</strong> retains only a fixed number of high-scoring hypotheses per stack, while <strong>threshold pruning</strong> discards hypotheses too far below the best score in that stack. The lecture does not specify a beam width, a tie rule, or a complete set of phrase options.</p>
+
+<figure><div class="diagram-frame" style="--diagram-width:838.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Coverage stacks organize partial hypotheses by source words covered. Phrase-pair extensions move hypotheses toward complete coverage; pruning controls the search within stacks." width="838pt" height="216pt"
+ viewBox="0.00 0.00 838.00 216.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="machine-translation-classical-figure-3-machine-translation-classical-decoder-coverage-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 205.2)">
+<title>G</title>
+<!-- start -->
+<g id="machine-translation-classical-figure-3-machine-translation-classical-decoder-coverage-node1" class="node">
+<title>start</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M166.35,-122.4C166.35,-122.4 12,-122.4 12,-122.4 6,-122.4 0,-116.4 0,-110.4 0,-110.4 0,-84 0,-84 0,-78 6,-72 12,-72 12,-72 166.35,-72 166.35,-72 172.35,-72 178.35,-78 178.35,-84 178.35,-84 178.35,-110.4 178.35,-110.4 178.35,-116.4 172.35,-122.4 166.35,-122.4"/>
+<text xml:space="preserve" text-anchor="middle" x="89.17" y="-100.95" font-family="Georgia" font-size="15.00">Partial hypothesis</text>
+<text xml:space="preserve" text-anchor="middle" x="89.17" y="-82.95" font-family="Georgia" font-size="15.00">0 source words covered</text>
+</g>
+<!-- expand -->
+<g id="machine-translation-classical-figure-3-machine-translation-classical-decoder-coverage-node5" class="node">
+<title>expand</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M384.95,-122.4C384.95,-122.4 222.35,-122.4 222.35,-122.4 216.35,-122.4 210.35,-116.4 210.35,-110.4 210.35,-110.4 210.35,-84 210.35,-84 210.35,-78 216.35,-72 222.35,-72 222.35,-72 384.95,-72 384.95,-72 390.95,-72 396.95,-78 396.95,-84 396.95,-84 396.95,-110.4 396.95,-110.4 396.95,-116.4 390.95,-122.4 384.95,-122.4"/>
+<text xml:space="preserve" text-anchor="middle" x="303.65" y="-100.95" font-family="Georgia" font-size="15.00">Extend with phrase pair</text>
+<text xml:space="preserve" text-anchor="middle" x="303.65" y="-82.95" font-family="Georgia" font-size="15.00">cover an uncovered span</text>
+</g>
+<!-- start&#45;&gt;expand -->
+<g id="machine-translation-classical-figure-3-machine-translation-classical-decoder-coverage-edge1" class="edge">
+<title>start&#45;&gt;expand</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M178.74,-97.2C186.35,-97.2 194.07,-97.2 201.76,-97.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="201.41,-99.48 207.91,-97.2 201.41,-94.93 201.41,-99.48"/>
+</g>
+<!-- s1 -->
+<g id="machine-translation-classical-figure-3-machine-translation-classical-decoder-coverage-node2" class="node">
+<title>s1</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M580.67,-194.4C580.67,-194.4 451.82,-194.4 451.82,-194.4 445.82,-194.4 439.82,-188.4 439.82,-182.4 439.82,-182.4 439.82,-156 439.82,-156 439.82,-150 445.82,-144 451.82,-144 451.82,-144 580.67,-144 580.67,-144 586.67,-144 592.67,-150 592.67,-156 592.67,-156 592.67,-182.4 592.67,-182.4 592.67,-188.4 586.67,-194.4 580.67,-194.4"/>
+<text xml:space="preserve" text-anchor="middle" x="516.25" y="-172.95" font-family="Georgia" font-size="15.00">Stack: 1 word</text>
+<text xml:space="preserve" text-anchor="middle" x="516.25" y="-154.95" font-family="Georgia" font-size="15.00">covered hypotheses</text>
+</g>
+<!-- prune -->
+<g id="machine-translation-classical-figure-3-machine-translation-classical-decoder-coverage-node6" class="node">
+<title>prune</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M804.9,-122.4C804.9,-122.4 647.55,-122.4 647.55,-122.4 641.55,-122.4 635.55,-116.4 635.55,-110.4 635.55,-110.4 635.55,-84 635.55,-84 635.55,-78 641.55,-72 647.55,-72 647.55,-72 804.9,-72 804.9,-72 810.9,-72 816.9,-78 816.9,-84 816.9,-84 816.9,-110.4 816.9,-110.4 816.9,-116.4 810.9,-122.4 804.9,-122.4"/>
+<text xml:space="preserve" text-anchor="middle" x="726.23" y="-100.95" font-family="Georgia" font-size="15.00">Histogram + threshold</text>
+<text xml:space="preserve" text-anchor="middle" x="726.23" y="-82.95" font-family="Georgia" font-size="15.00">prune within each stack</text>
+</g>
+<!-- s1&#45;&gt;prune -->
+<g id="machine-translation-classical-figure-3-machine-translation-classical-decoder-coverage-edge5" class="edge">
+<title>s1&#45;&gt;prune</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M591.45,-143.51C607.99,-137.79 625.62,-131.68 642.48,-125.85"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="642.82,-128.14 648.22,-123.86 641.33,-123.84 642.82,-128.14"/>
+</g>
+<!-- s2 -->
+<g id="machine-translation-classical-figure-3-machine-translation-classical-decoder-coverage-node3" class="node">
+<title>s2</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M580.67,-122.4C580.67,-122.4 451.82,-122.4 451.82,-122.4 445.82,-122.4 439.82,-116.4 439.82,-110.4 439.82,-110.4 439.82,-84 439.82,-84 439.82,-78 445.82,-72 451.82,-72 451.82,-72 580.67,-72 580.67,-72 586.67,-72 592.67,-78 592.67,-84 592.67,-84 592.67,-110.4 592.67,-110.4 592.67,-116.4 586.67,-122.4 580.67,-122.4"/>
+<text xml:space="preserve" text-anchor="middle" x="516.25" y="-100.95" font-family="Georgia" font-size="15.00">Stack: 2 words</text>
+<text xml:space="preserve" text-anchor="middle" x="516.25" y="-82.95" font-family="Georgia" font-size="15.00">covered hypotheses</text>
+</g>
+<!-- s2&#45;&gt;prune -->
+<g id="machine-translation-classical-figure-3-machine-translation-classical-decoder-coverage-edge6" class="edge">
+<title>s2&#45;&gt;prune</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M592.92,-97.2C603.96,-97.2 615.46,-97.2 626.88,-97.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="626.74,-99.48 633.24,-97.2 626.74,-94.93 626.74,-99.48"/>
+</g>
+<!-- sall -->
+<g id="machine-translation-classical-figure-3-machine-translation-classical-decoder-coverage-node4" class="node">
+<title>sall</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M591.55,-50.4C591.55,-50.4 440.95,-50.4 440.95,-50.4 434.95,-50.4 428.95,-44.4 428.95,-38.4 428.95,-38.4 428.95,-12 428.95,-12 428.95,-6 434.95,0 440.95,0 440.95,0 591.55,0 591.55,0 597.55,0 603.55,-6 603.55,-12 603.55,-12 603.55,-38.4 603.55,-38.4 603.55,-44.4 597.55,-50.4 591.55,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="516.25" y="-28.95" font-family="Georgia" font-size="15.00">Stack: all source words</text>
+<text xml:space="preserve" text-anchor="middle" x="516.25" y="-10.95" font-family="Georgia" font-size="15.00">complete hypotheses</text>
+</g>
+<!-- sall&#45;&gt;prune -->
+<g id="machine-translation-classical-figure-3-machine-translation-classical-decoder-coverage-edge7" class="edge">
+<title>sall&#45;&gt;prune</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M591.45,-50.89C607.99,-56.61 625.62,-62.72 642.48,-68.55"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="641.33,-70.56 648.22,-70.54 642.82,-66.26 641.33,-70.56"/>
+</g>
+<!-- expand&#45;&gt;s1 -->
+<g id="machine-translation-classical-figure-3-machine-translation-classical-decoder-coverage-edge2" class="edge">
+<title>expand&#45;&gt;s1</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M381.28,-123.4C398.05,-129.13 415.88,-135.23 432.86,-141.03"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="431.77,-143.06 438.66,-143.01 433.24,-138.76 431.77,-143.06"/>
+</g>
+<!-- expand&#45;&gt;s2 -->
+<g id="machine-translation-classical-figure-3-machine-translation-classical-decoder-coverage-edge3" class="edge">
+<title>expand&#45;&gt;s2</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M397.94,-97.2C409.1,-97.2 420.43,-97.2 431.44,-97.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="431.38,-99.48 437.88,-97.2 431.38,-94.93 431.38,-99.48"/>
+</g>
+<!-- expand&#45;&gt;sall -->
+<g id="machine-translation-classical-figure-3-machine-translation-classical-decoder-coverage-edge4" class="edge">
+<title>expand&#45;&gt;sall</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M381.28,-71C398.05,-65.27 415.88,-59.17 432.86,-53.37"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="433.24,-55.64 438.66,-51.39 431.77,-51.34 433.24,-55.64"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Coverage stacks organize partial hypotheses by source words covered. Phrase-pair extensions move hypotheses toward complete coverage; pruning controls the search within stacks.</figcaption></figure>
+
+<section class="walk" tabindex="0" aria-label="Supplemental teaching example: symbolic phrase coverage and pruning"><h3>Supplemental teaching example: symbolic phrase coverage and pruning</h3><div class="example-input"><p><strong>Given:</strong> source positions {1, 2, 3}; a schematic phrase span covering {2, 3}; then a schematic span covering {1}. Phrase text, scores, beam width, and tie-breaking are intentionally unspecified.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Start with uncovered source words</h4><p><strong>Teaching example.</strong> Represent a three-word source abstractly as positions 1, 2, 3. The initial hypothesis has coverage set ∅, so it belongs to the 0-covered stack. No phrase translations are assumed.</p></section><section class="step"><h4>2. Extend with one phrase span</h4><p>Suppose a phrase pair covers source positions 2–3. The new coverage set is {2, 3}, containing two source words, so place this hypothesis in the 2-covered stack. Its uncovered position is 1. This illustrates that phrase extension can cover a span; it does not assert the source’s next selected phrase.</p></section><section class="step"><h4>3. Extend to complete coverage</h4><p>Extend that partial hypothesis with a phrase pair covering position 1. Coverage becomes {1, 2, 3}, so the hypothesis reaches a complete-coverage stack. The target pieces are appended in decoder order; no target phrase text or source order is invented.</p></section><section class="step"><h4>4. Prune comparable hypotheses and check</h4><p>Within each coverage stack, histogram pruning keeps the best fixed number and threshold pruning removes candidates too far below that stack’s best score. The lecture provides neither width nor scores, so the result is a completed coverage path, not a numeric winner. Check: every source position 1, 2, and 3 is covered exactly once in this schematic path.</p></section></section>
+
+<h2 id="section-7">Limitations and the neural handoff</h2>
+<p>The phrase-based system’s reordering is local: its distance penalty systematically discourages long jumps, even when an SOV–SVO language pair needs them. It does not generalize across surface forms; forms such as “walk,” “walks,” and “walked” can be unrelated phrase-table entries, and morphological richness fragments the evidence further. Sparse estimates make unseen phrases brittle, while the table itself grows as phrase pairs accumulate.</p>
+<p>Finally, alignment, phrase extraction, scoring, and tuning are separately trained or optimized components. Each can pursue a different objective, so errors can accumulate across the pipeline instead of one end-to-end objective coordinating them. Continue with <a href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a>, then <a href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a> for the architectures and detailed search/evaluation procedures.</p>
+
+<h2 id="section-8">Common mistakes</h2>
+<ul>
+<li><strong>Treating translation as dictionary substitution.</strong> Check structure, morphology, ambiguity, lexical gaps, and information supplied only by discourse.</li>
+<li><strong>Reversing source and target variables.</strong> This page fixes <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>e</mi></mrow></math> as source and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>f</mi></mrow></math> as target: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo>&#x02223;</mo><mi>e</mi><mo stretchy="false">&#x00029;</mo></mrow></math> is the translation objective.</li>
+<li><strong>Calling <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math> a source-language model.</strong> It scores the target sentence; the example’s target language is German.</li>
+<li><strong>Maximizing fluency alone.</strong> A fluent sentence may not explain the source; combine <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math> with translation-channel evidence <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo>&#x02223;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math>.</li>
+<li><strong>Reversing the phrase conditional.</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003D5;</mi><mo stretchy="false">&#x00028;</mo><mover><mrow><mi>f</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mo>&#x02223;</mo><mover><mrow><mi>e</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mo stretchy="false">&#x00029;</mo></mrow></math> conditions on a source phrase and scores a candidate target phrase; its denominator sums over target phrase alternatives for that same source phrase.</li>
+<li><strong>Assuming phrase counts or decoder settings that are not supplied.</strong> Keep phrase scores symbolic and do not invent count tables, weights, beam widths, or tie rules.</li>
+<li><strong>Assuming an unseen n-gram is harmless.</strong> In an unsmoothed product, one zero factor makes the whole sentence probability zero.</li>
+<li><strong>Calling stacks a target-length grouping.</strong> In this phrase decoder they are grouped by the number of source words covered.</li>
+<li><strong>Expecting the phrase model to handle any reordering or morphology.</strong> Its local distortion, fragmented surface forms, and sparse estimates limit those cases.</li>
+</ul>
+
+<h2 id="section-9">Exam focus</h2>
+<ul>
+<li>State the RBMT order: <strong>analysis → transfer → generation</strong>, and name each stage’s role.</li>
+<li>Explain why source and target languages differ in order, morphology, lexical choice, and omitted information.</li>
+<li>Derive the noisy-channel score with <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>e</mi><mo>&#x0003D;</mo><mtext>source</mtext></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>f</mi><mo>&#x0003D;</mo><mtext>target</mtext></mrow></math>; explain why the fixed-source denominator can be dropped.</li>
+<li>Distinguish translation channel <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo>&#x02223;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math> from target fluency model <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math>.</li>
+<li>Read the direction and denominator of <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003D5;</mi><mo stretchy="false">&#x00028;</mo><mover><mrow><mi>f</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mo>&#x02223;</mo><mover><mrow><mi>e</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mo stretchy="false">&#x00029;</mo></mrow></math>, and identify the roles of phrase segmentation, distortion, reverse probability, and lexical weights.</li>
+<li>Rank log probabilities correctly: a greater, less-negative score is preferred by that LM term.</li>
+<li>Describe coverage stacks, phrase-pair extension, and histogram/threshold pruning without claiming exact settings.</li>
+<li>Connect local reordering, surface-form fragmentation, sparsity, and independent components to phrase-SMT limitations.</li>
+</ul>
+
+<h2 id="section-10">Practice questions</h2>
+
+<p class="question">1. What information does the Sinhala sentence “ලියුම ලිව්වා” leave to discourse?</p>
+<details class="worked"><summary>Check your answer</summary><p>It says “wrote the letter” but omits the subject. Context must determine whether the writer is I, he, she, they, or another understood subject; do not invent one without evidence.</p></details>
+
+<p class="question">2. In RBMT, what does each of analysis, transfer, and generation contribute?</p>
+<details class="worked"><summary>Check your answer</summary><p>Analysis identifies source morphology, parts of speech, and structure. Transfer uses bilingual vocabulary and structural rules to map that representation. Generation realizes target syntax and inflection.</p></details>
+
+<p class="question">3. With <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>e</mi></mrow></math> fixed as the source and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>f</mi></mrow></math> as the target, which factor can be removed from Bayes’ argmax and why?</p>
+<details class="worked"><summary>Check your answer</summary><p>The denominator <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo stretchy="false">&#x00029;</mo></mrow></math> is constant across candidate targets for the fixed source, so dividing every candidate score by it cannot change their ordering. The ranking can use <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo>&#x02223;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math>.</p></details>
+
+<p class="question">4. For the German candidates, which target n-gram LM score ranks highest: -7.4, -10.2, or -16.1? What does that result not establish?</p>
+<details class="worked"><summary>Check your answer</summary><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>7.4</mn></mrow></math> is greatest and least negative, so <code>das Haus ist klein</code> ranks highest under the illustrative target LM term. This does not establish that it is the most faithful translation; source compatibility must also be assessed.</p></details>
+
+<p class="question">5. A phrase table has no extracted pair for a source phrase. What can you conclude from the relative-frequency formula?</p>
+<details class="worked"><summary>Check your answer</summary><p>No observed phrase-pair count is available to estimate its target-given-source relative frequency. The lecture’s phrase table is sparse for this case; no numeric probability can be recovered from absent counts.</p></details>
+
+<p class="question">6. How do coverage stacks and the two pruning methods control phrase-decoder search?</p>
+<details class="worked"><summary>Check your answer</summary><p>Stacks group partial hypotheses by how many source words are covered, so comparable coverage states compete. Histogram pruning keeps a fixed count per stack; threshold pruning removes candidates too far below that stack’s best score. Both reduce an exponential search without making it an exact exhaustive search.</p></details>
+
+<p class="question">7. Name two phrase-based SMT limitations and explain their effect.</p>
+<details class="worked"><summary>Check your answer</summary><p>Distance-penalized local reordering discourages the long jumps some SOV–SVO pairs require. Surface-form fragmentation and sparse phrase counts leave related forms or unseen phrases without robust shared evidence. Independent alignment, extraction, scoring, and tuning can also accumulate errors.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="data-augmentation.html"><small>Previous</small>Data Augmentation for Images and Text <span aria-hidden="true">↗</span></a><a href="machine-translation-neural.html"><small>Next</small>Neural Machine Translation, Attention, and Transformers <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

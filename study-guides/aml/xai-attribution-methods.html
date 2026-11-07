@@ -1,0 +1,559 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Choose the scalar output and reference first; then read input, hidden-unit, coalition, or spatial attributions with their assumptions and limits."><title>Integrated Gradients, SHAP, and Grad-CAM · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html" aria-current="page">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Explainability and data quality <span>/</span> Lecture 7</div><h1>Integrated Gradients, SHAP, and Grad-CAM</h1><p class="lead">Choose the scalar output and reference first; then read input, hidden-unit, coalition, or spatial attributions with their assumptions and limits.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">1. Choose the scalar output and reference</a><a href="#section-2">2. Integrated Gradients follows a straight path</a><a href="#section-3">3. Follow attribution through hidden units</a><a href="#section-4">4. SHAP averages marginal contributions over coalitions</a><a href="#section-5">5. Grad-CAM localizes a selected class in a spatial feature map</a><a href="#section-6">Common mistakes</a><a href="#section-7">Exam focus</a><a href="#section-8">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>An attribution method asks how parts of an input or model representation relate to a chosen output. Before reading a number or heatmap, identify <strong>which scalar output</strong> is being explained and, for a path-based method, <strong>which baseline</strong> is the reference. Those choices define what the result means. Integrated Gradients follows a straight path from baseline to input and accumulates gradients; SHAP averages feature contributions across coalitions; Grad-CAM combines class-score gradients with convolutional feature maps to localize class-specific regions.</p>
+<p>These methods answer different questions. Input attributions refer to input features. Layer Conductance refers to units in a selected hidden layer. Neuron Conductance then breaks one selected unit's conductance down by input feature. SHAP gives coalition-based contributions under a chosen value function. Grad-CAM produces a coarse spatial map for an image or spectrogram. None of these values is, by itself, a causal effect.</p>
+
+<h2 id="section-1">1. Choose the scalar output and reference</h2>
+<p>For a model with several outputs, an explanation is conditional on the output selected for differentiation. A classifier might return class scores or probabilities; a method needs one scalar target, such as the probability assigned to a named class. Do not assume the predicted class is the target unless it was selected.</p>
+<p>A baseline is the reference input used to ask what changes between the reference and the actual input. A zero baseline is a convenient numeric reference, but it is meaningful only if zero represents a sensible comparison for the feature encoding. For one-hot columns and count features, a zero reference may mean “absent”; for another encoding or model, another reference may be more appropriate. Changing the baseline changes the question and can change the attributions.</p>
+
+<table aria-label="Attribution method inputs and outputs"><thead><tr><th>Method</th><th>Question</th><th>Target/reference needed</th><th>What is attributed?</th></tr></thead><tbody><tr><th>Integrated Gradients</th><td>How does this input differ from a reference for this output?</td><td>Scalar output and baseline</td><td>Input features</td></tr><tr><th>Layer Conductance</th><td>How does attribution flow through this layer?</td><td>Scalar output, baseline, selected layer</td><td>Outputs of the selected layer</td></tr><tr><th>Neuron Conductance</th><td>Which input features contribute to this selected unit's conductance?</td><td>Scalar output, baseline, layer, selected neuron</td><td>Input features, decomposing one unit's conductance</td></tr><tr><th>SHAP</th><td>What are the features' marginal contributions over coalitions?</td><td>Scalar output and coalition value function</td><td>Features under the chosen missing-feature convention</td></tr><tr><th>Grad-CAM</th><td>Where is evidence for this selected class represented spatially?</td><td>Selected class score and convolutional layer</td><td>Coarse feature-map locations</td></tr></tbody></table>
+
+<h2 id="section-2">2. Integrated Gradients follows a straight path</h2>
+<p>Let <code>F</code> be the chosen scalar output, <code>x′</code> the baseline, and <code>x</code> the input. Integrated Gradients (IG) evaluates the gradient along the straight line from <code>x′</code> to <code>x</code>. Each feature's accumulated gradient is multiplied by how far that feature moved away from its baseline. The formal equation below is the standard presentation of IG in <a href="https://proceedings.mlr.press/v70/sundararajan17a.html">Sundararajan, Taly, and Yan (2017)</a>.</p>
+
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>x</mi><mo stretchy="false">&#x00028;</mo><mi>&#x003B1;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msup><mi>x</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo>&#x0002B;</mo><mi>&#x003B1;</mi><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo>&#x02212;</mo><msup><mi>x</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mn>0</mn><mo>&#x02264;</mo><mi>&#x003B1;</mi><mo>&#x02264;</mo><mn>1</mn></mrow></math></div>
+
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mo>IG</mo><mi>i</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mi>;</mi><msup><mi>x</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><msub><mi>x</mi><mi>i</mi></msub><mo>&#x02212;</mo><msubsup><mi>x</mi><mi>i</mi><mrow><mi>&#x02032;</mi></mrow></msubsup><mo stretchy="false">&#x00029;</mo><msubsup><mo>&#x0222B;</mo><mn>0</mn><mn>1</mn></msubsup><mfrac><mrow><mo>&#x02202;</mo><mi>F</mi><mo stretchy="false">&#x00028;</mo><msup><mi>x</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo>&#x0002B;</mo><mi>&#x003B1;</mi><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo>&#x02212;</mo><msup><mi>x</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo></mrow><mrow><mo>&#x02202;</mo><msub><mi>x</mi><mi>i</mi></msub></mrow></mfrac><mspace width="0.167em" /><mi>d</mi><mi>&#x003B1;</mi></mrow></math></div>
+
+<figure><div class="diagram-frame" style="--diagram-width:1109.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Supplemental polynomial example: gradients are accumulated along the baseline-to-input path, then scaled by each feature displacement." width="1109pt" height="144pt"
+ viewBox="0.00 0.00 1109.00 144.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="xai-attribution-methods-figure-1-xai-attribution-methods-ig-path-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 133.2)">
+<title>G</title>
+<!-- base -->
+<g id="xai-attribution-methods-figure-1-xai-attribution-methods-ig-path-node1" class="node">
+<title>base</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M131.1,-86.4C131.1,-86.4 12,-86.4 12,-86.4 6,-86.4 0,-80.4 0,-74.4 0,-74.4 0,-48 0,-48 0,-42 6,-36 12,-36 12,-36 131.1,-36 131.1,-36 137.1,-36 143.1,-42 143.1,-48 143.1,-48 143.1,-74.4 143.1,-74.4 143.1,-80.4 137.1,-86.4 131.1,-86.4"/>
+<text xml:space="preserve" text-anchor="middle" x="71.55" y="-64.95" font-family="Georgia" font-size="15.00">Baseline b = (1, 0)</text>
+<text xml:space="preserve" text-anchor="middle" x="71.55" y="-46.95" font-family="Georgia" font-size="15.00">F(b) = 1</text>
+</g>
+<!-- mid -->
+<g id="xai-attribution-methods-figure-1-xai-attribution-methods-ig-path-node2" class="node">
+<title>mid</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M466.7,-86.4C466.7,-86.4 284.6,-86.4 284.6,-86.4 278.6,-86.4 272.6,-80.4 272.6,-74.4 272.6,-74.4 272.6,-48 272.6,-48 272.6,-42 278.6,-36 284.6,-36 284.6,-36 466.7,-36 466.7,-36 472.7,-36 478.7,-42 478.7,-48 478.7,-48 478.7,-74.4 478.7,-74.4 478.7,-80.4 472.7,-86.4 466.7,-86.4"/>
+<text xml:space="preserve" text-anchor="middle" x="375.65" y="-64.95" font-family="Georgia" font-size="15.00">Target F = x1² + 3x2</text>
+<text xml:space="preserve" text-anchor="middle" x="375.65" y="-46.95" font-family="Georgia" font-size="15.00">Path x(α), ∇F = (2 + 4α, 3)</text>
+</g>
+<!-- base&#45;&gt;mid -->
+<g id="xai-attribution-methods-figure-1-xai-attribution-methods-ig-path-edge1" class="edge">
+<title>base&#45;&gt;mid</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M143.38,-61.2C179.35,-61.2 223.87,-61.2 264.21,-61.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="264.21,-63.48 270.71,-61.2 264.21,-58.93 264.21,-63.48"/>
+<text xml:space="preserve" text-anchor="middle" x="207.85" y="-64.05" font-family="Georgia" font-size="12.00">α increases 0 → 1</text>
+</g>
+<!-- input -->
+<g id="xai-attribution-methods-figure-1-xai-attribution-methods-ig-path-node3" class="node">
+<title>input</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M676.3,-122.4C676.3,-122.4 576.7,-122.4 576.7,-122.4 570.7,-122.4 564.7,-116.4 564.7,-110.4 564.7,-110.4 564.7,-84 564.7,-84 564.7,-78 570.7,-72 576.7,-72 576.7,-72 676.3,-72 676.3,-72 682.3,-72 688.3,-78 688.3,-84 688.3,-84 688.3,-110.4 688.3,-110.4 688.3,-116.4 682.3,-122.4 676.3,-122.4"/>
+<text xml:space="preserve" text-anchor="middle" x="626.5" y="-100.95" font-family="Georgia" font-size="15.00">Input x = (3, 2)</text>
+<text xml:space="preserve" text-anchor="middle" x="626.5" y="-82.95" font-family="Georgia" font-size="15.00">F(x) = 15</text>
+</g>
+<!-- mid&#45;&gt;input -->
+<g id="xai-attribution-methods-figure-1-xai-attribution-methods-ig-path-edge2" class="edge">
+<title>mid&#45;&gt;input</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M478.94,-76C505.07,-79.78 532.55,-83.75 556.55,-87.23"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="555.96,-89.44 562.72,-88.12 556.62,-84.94 555.96,-89.44"/>
+<text xml:space="preserve" text-anchor="middle" x="518.7" y="-87.38" font-family="Georgia" font-size="12.00">endpoint</text>
+</g>
+<!-- integral -->
+<g id="xai-attribution-methods-figure-1-xai-attribution-methods-ig-path-node4" class="node">
+<title>integral</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M682.3,-50.4C682.3,-50.4 570.7,-50.4 570.7,-50.4 564.7,-50.4 558.7,-44.4 558.7,-38.4 558.7,-38.4 558.7,-12 558.7,-12 558.7,-6 564.7,0 570.7,0 570.7,0 682.3,0 682.3,0 688.3,0 694.3,-6 694.3,-12 694.3,-12 694.3,-38.4 694.3,-38.4 694.3,-44.4 688.3,-50.4 682.3,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="626.5" y="-28.95" font-family="Georgia" font-size="15.00">Accumulate each</text>
+<text xml:space="preserve" text-anchor="middle" x="626.5" y="-10.95" font-family="Georgia" font-size="15.00">feature gradient</text>
+</g>
+<!-- mid&#45;&gt;integral -->
+<g id="xai-attribution-methods-figure-1-xai-attribution-methods-ig-path-edge3" class="edge">
+<title>mid&#45;&gt;integral</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M478.94,-46.4C502.93,-42.93 528.04,-39.3 550.57,-36.04"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="550.82,-38.3 556.93,-35.12 550.17,-33.8 550.82,-38.3"/>
+</g>
+<!-- scale -->
+<g id="xai-attribution-methods-figure-1-xai-attribution-methods-ig-path-node5" class="node">
+<title>scale</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M865.9,-50.4C865.9,-50.4 739.3,-50.4 739.3,-50.4 733.3,-50.4 727.3,-44.4 727.3,-38.4 727.3,-38.4 727.3,-12 727.3,-12 727.3,-6 733.3,0 739.3,0 739.3,0 865.9,0 865.9,0 871.9,0 877.9,-6 877.9,-12 877.9,-12 877.9,-38.4 877.9,-38.4 877.9,-44.4 871.9,-50.4 865.9,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="802.6" y="-28.95" font-family="Georgia" font-size="15.00">Multiply by input</text>
+<text xml:space="preserve" text-anchor="middle" x="802.6" y="-10.95" font-family="Georgia" font-size="15.00">displacement (2, 2)</text>
+</g>
+<!-- integral&#45;&gt;scale -->
+<g id="xai-attribution-methods-figure-1-xai-attribution-methods-ig-path-edge4" class="edge">
+<title>integral&#45;&gt;scale</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M694.31,-25.2C702.38,-25.2 710.69,-25.2 718.95,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="718.83,-27.48 725.33,-25.2 718.83,-22.93 718.83,-27.48"/>
+</g>
+<!-- result -->
+<g id="xai-attribution-methods-figure-1-xai-attribution-methods-ig-path-node6" class="node">
+<title>result</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M1075.75,-50.4C1075.75,-50.4 922.9,-50.4 922.9,-50.4 916.9,-50.4 910.9,-44.4 910.9,-38.4 910.9,-38.4 910.9,-12 910.9,-12 910.9,-6 916.9,0 922.9,0 922.9,0 1075.75,0 1075.75,0 1081.75,0 1087.75,-6 1087.75,-12 1087.75,-12 1087.75,-38.4 1087.75,-38.4 1087.75,-44.4 1081.75,-50.4 1075.75,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="999.32" y="-28.95" font-family="Georgia" font-size="15.00">IG = (8, 6)</text>
+<text xml:space="preserve" text-anchor="middle" x="999.32" y="-10.95" font-family="Georgia" font-size="15.00">Sum = 14 = F(x) − F(b)</text>
+</g>
+<!-- scale&#45;&gt;result -->
+<g id="xai-attribution-methods-figure-1-xai-attribution-methods-ig-path-edge5" class="edge">
+<title>scale&#45;&gt;result</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M878.33,-25.2C886.29,-25.2 894.47,-25.2 902.64,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="902.44,-27.48 908.94,-25.2 902.44,-22.93 902.44,-27.48"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Supplemental polynomial example: gradients are accumulated along the baseline-to-input path, then scaled by each feature displacement.</figcaption></figure>
+
+<section class="walk" tabindex="0" aria-label="Supplemental worked example: exact two-feature IG"><h3>Supplemental worked example: exact two-feature IG</h3><div class="example-input"><p><strong>Givens:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>F</mi><mo stretchy="false">&#x00028;</mo><msub><mi>x</mi><mn>1</mn></msub><mo>&#x0002C;</mo><msub><mi>x</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup><mo>&#x0002B;</mo><mn>3</mn><msub><mi>x</mi><mn>2</mn></msub></mrow></math>; baseline <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; input <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x0002C;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; path <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo stretchy="false">&#x00028;</mo><mi>&#x003B1;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>b</mi><mo>&#x0002B;</mo><mi>&#x003B1;</mi><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo>&#x02212;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo></mrow></math>.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>State the target and endpoints</h4><p>Supplemental calculation. Let <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>F</mi><mo stretchy="false">&#x00028;</mo><msub><mi>x</mi><mn>1</mn></msub><mo>&#x0002C;</mo><msub><mi>x</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup><mo>&#x0002B;</mo><mn>3</mn><msub><mi>x</mi><mn>2</mn></msub></mrow></math>. Use baseline <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></math> and input <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x0002C;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. The target is this scalar function. The input displacement is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x02212;</mo><mi>b</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></math>.</p>
+<p>The exact polynomial integral makes each attribution step visible.</p></section><section class="step"><h4>Interpolate and differentiate</h4><p>The straight path is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo stretchy="false">&#x00028;</mo><mi>&#x003B1;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>b</mi><mo>&#x0002B;</mo><mi>&#x003B1;</mi><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo>&#x02212;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>2</mn><mi>&#x003B1;</mi><mo>&#x0002C;</mo><mn>2</mn><mi>&#x003B1;</mi><mo stretchy="false">&#x00029;</mo></mrow></math>. Substitute it into the gradient: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02207;</mo><mi>F</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><msub><mi>x</mi><mn>1</mn></msub><mo>&#x0002C;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, so along the path <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02207;</mo><mi>F</mi><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00028;</mo><mi>&#x003B1;</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002B;</mo><mn>4</mn><mi>&#x003B1;</mi><mo>&#x0002C;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. The first gradient changes with <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi></mrow></math>; the second remains 3.</p></section><section class="step"><h4>Integrate each feature gradient</h4><p>Feature 1: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mo>&#x0222B;</mo><mn>0</mn><mn>1</mn></msubsup><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002B;</mo><mn>4</mn><mi>&#x003B1;</mi><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mi>d</mi><mi>&#x003B1;</mi><mo>&#x0003D;</mo><mo stretchy="false">[</mo><mn>2</mn><mi>&#x003B1;</mi><mo>&#x0002B;</mo><mn>2</mn><msup><mi>&#x003B1;</mi><mn>2</mn></msup><msubsup><mo stretchy="false">]</mo><mn>0</mn><mn>1</mn></msubsup><mo>&#x0003D;</mo><mn>4</mn></mrow></math>. Feature 2: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mo>&#x0222B;</mo><mn>0</mn><mn>1</mn></msubsup><mn>3</mn><mspace width="0.167em" /><mi>d</mi><mi>&#x003B1;</mi><mo>&#x0003D;</mo><mn>3</mn></mrow></math>.</p>
+<p>These are the path-averaged gradient contributions before accounting for how far each feature moved.</p></section><section class="step"><h4>Scale by input displacement</h4><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mo>IG</mo><mn>1</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x000B7;</mo><mn>4</mn><mo>&#x0003D;</mo><mn>8</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mo>IG</mo><mn>2</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x02212;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x000B7;</mo><mn>3</mn><mo>&#x0003D;</mo><mn>6</mn></mrow></math>. Thus <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>IG</mo><mo stretchy="false">&#x00028;</mo><mi>x</mi><mi>;</mi><mi>b</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>8</mn><mo>&#x0002C;</mo><mn>6</mn><mo stretchy="false">&#x00029;</mo></mrow></math> and the attribution sum is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>8</mn><mo>&#x0002B;</mo><mn>6</mn><mo>&#x0003D;</mo><mn>14</mn></mrow></math>.</p></section><section class="step"><h4>Check completeness</h4><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>F</mi><mo stretchy="false">&#x00028;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msup><mn>1</mn><mn>2</mn></msup><mo>&#x0002B;</mo><mn>3</mn><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>F</mi><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msup><mn>3</mn><mn>2</mn></msup><mo>&#x0002B;</mo><mn>3</mn><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>15</mn></mrow></math>, so the output difference is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>F</mi><mo>&#x0003D;</mo><mn>15</mn><mo>&#x02212;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>14</mn></mrow></math>. With the named residual convention <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>R</mi><mo>&#x0003D;</mo><msub><mo>&#x02211;</mo><mi>i</mi></msub><msub><mo>IG</mo><mi>i</mi></msub><mo>&#x02212;</mo><mi>&#x00394;</mi><mi>F</mi></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>R</mi><mo>&#x0003D;</mo><mn>14</mn><mo>&#x02212;</mo><mn>14</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math>. The sum matches the output change.</p>
+<p>Completeness applies to the exact path integral under its differentiability conditions. A numerical implementation approximates the integral, so its reported convergence delta can be nonzero.</p></section></section>
+
+<h3>Worked model context: Titanic classification</h3>
+<p>The classifier receives 12 inputs in this order: <code>age</code>, <code>sibsp</code>, <code>parch</code>, <code>fare</code>, <code>female</code>, <code>male</code>, <code>embark_C</code>, <code>embark_Q</code>, <code>embark_S</code>, <code>class_1</code>, <code>class_2</code>, <code>class_3</code>. Missing <code>age</code> and <code>fare</code> are mean-imputed; sex, embarkation, and passenger class are represented by dummy columns, with no shown feature standardization. The network is 12→12 sigmoid→8 sigmoid→2 softmax, returning probabilities for not survived and survived. In the recorded example, <code>target=1</code> selects the survival probability and the zero vector is the default IG baseline when no explicit baseline is passed.</p>
+<p>The recorded example reports train accuracy 0.8493449781659389 and test accuracy 0.816793893129771. These are historical saved values, not fresh measurements. They describe classification accuracy; the attributions below answer a different question about the selected output.</p>
+
+<table aria-label="Recorded signed mean Integrated Gradients by feature"><thead><tr><th>Input feature</th><th>Recorded signed mean</th><th>Input feature</th><th>Recorded signed mean</th></tr></thead><tbody><tr><td><code>age</code></td><td>−0.454</td><td><code>sibsp</code></td><td>−0.119</td></tr><tr><td><code>parch</code></td><td>−0.056</td><td><code>fare</code></td><td>+0.175</td></tr><tr><td><code>female</code></td><td>+0.154</td><td><code>male</code></td><td>−0.359</td></tr><tr><td><code>embark_C</code></td><td>+0.086</td><td><code>embark_Q</code></td><td>−0.001</td></tr><tr><td><code>embark_S</code></td><td>−0.082</td><td><code>class_1</code></td><td>+0.062</td></tr><tr><td><code>class_2</code></td><td>+0.021</td><td><code>class_3</code></td><td>−0.159</td></tr></tbody></table>
+
+<p>These are rounded arithmetic means of <strong>signed</strong> attributions over the saved test examples for the selected survival probability relative to the zero baseline. A negative value means a negative average contribution to that selected output under this reference and model; it is not a correlation coefficient or the causal effect of changing a feature. The sum of the displayed rounded means is −0.732. A sum of rounded mean attributions alone is not enough to check batch completeness: it must be compared with the matching mean output difference.</p>
+
+<h3>Why a mean is not the whole distribution</h3>
+<p>The <code>sibsp</code> histogram has a large mass at zero and a sparse tail of negative attributions extending to about −2.8. With a zero baseline, an input feature that is itself zero has zero input displacement and therefore zero IG for that feature. A small signed mean can therefore coexist with a few substantially negative cases. Positive and negative case values can also cancel when averaged.</p>
+<p>The six-bin summary plots each bin's mean attribution against its mean feature value, with marker size representing the number of examples. Its visible pattern is more negative attribution at larger <code>sibsp</code> values, with fewer examples there. Read this as a distributional contrast, not as an exact lookup table or a causal relationship.</p>
+
+<table aria-label="How attribution summaries answer different questions"><thead><tr><th>Summary</th><th>What it keeps</th><th>What it can hide</th></tr></thead><tbody><tr><th>Signed arithmetic mean</th><td>Average direction and magnitude in the target output units</td><td>Opposing case-level signs can cancel</td></tr><tr><th>Mean absolute attribution</th><td>Average magnitude, regardless of sign</td><td>Whether a feature raises or lowers the selected output</td></tr><tr><th>Per-instance distribution</th><td>Spread, skew, zero mass, and tails</td><td>It may be harder to summarize in one ranking</td></tr></tbody></table>
+
+<p>A ranking based on average absolute values is not the same statistic as a signed mean. Use signed means to discuss average direction, absolute means to discuss average magnitude, and instance distributions to see heterogeneity. State which statistic a figure uses.</p>
+
+<h2 id="section-3">3. Follow attribution through hidden units</h2>
+<p>Input IG attributes a selected output directly to input features. <strong>Layer Conductance</strong> instead reports attribution flow to the outputs of a selected hidden layer; it extends path-based attribution to hidden neurons (<a href="https://arxiv.org/abs/1805.12233">Dhamdhere, Sundararajan, and Yan, 2018</a>). Here it examines all 12 outputs of the first sigmoid layer, using the same zero baseline and selected survival probability. It is a layer-level view of that output.</p>
+<p>The saved mean conductances, in neuron index order, are below. The mean for neuron 10 is the largest negative displayed mean. The saved histograms show why averages need a distribution check: neurons 7 and 9 have most values close to zero but their shapes differ; neuron 7 also has positive mass and another bump, while neuron 9 has a negative tail. Neurons 0 and 10 have broad negative distributions; neuron 10 includes a sparse positive extreme. A neuron index is not a semantic name, and these signed conductances do not prove what the unit “learned” or that its activation has the same sign.</p>
+
+<table aria-label="Recorded mean Layer Conductance for first hidden layer neurons"><thead><tr><th>Neuron index</th><th>Mean conductance</th><th>Neuron index</th><th>Mean conductance</th></tr></thead><tbody><tr><td>0</td><td>−0.123</td><td>1</td><td>−0.040</td></tr><tr><td>2</td><td>+0.030</td><td>3</td><td>+0.012</td></tr><tr><td>4</td><td>−0.022</td><td>5</td><td>−0.137</td></tr><tr><td>6</td><td>+0.009</td><td>7</td><td>+0.001</td></tr><tr><td>8</td><td>−0.136</td><td>9</td><td>−0.000</td></tr><tr><td>10</td><td>−0.306</td><td>11</td><td>+0.016</td></tr></tbody></table>
+
+<p><strong>Neuron Conductance</strong> answers a narrower question: for one selected layer neuron, how is that neuron's conductance decomposed across input features? Here the selected neuron is 0 or 10 in the first sigmoid layer, and the target remains the survival probability. The resulting 12-feature vector is a decomposition of that selected neuron's conductance. It is not another direct IG vector for the model output.</p>
+
+<table aria-label="Recorded mean Neuron Conductance feature decomposition for neurons 0 and 10"><thead><tr><th>Input feature</th><th>Neuron 0</th><th>Neuron 10</th></tr></thead><tbody><tr><td><code>age</code></td><td>−0.128</td><td>−0.012</td></tr><tr><td><code>sibsp</code></td><td>−0.004</td><td>+0.003</td></tr><tr><td><code>parch</code></td><td>+0.003</td><td>+0.000</td></tr><tr><td><code>fare</code></td><td>+0.003</td><td>−0.015</td></tr><tr><td><code>female</code></td><td>+0.000</td><td>+0.055</td></tr><tr><td><code>male</code></td><td>+0.001</td><td>−0.210</td></tr><tr><td><code>embark_C</code></td><td>+0.006</td><td>+0.016</td></tr><tr><td><code>embark_Q</code></td><td>−0.000</td><td>−0.006</td></tr><tr><td><code>embark_S</code></td><td>−0.004</td><td>−0.052</td></tr><tr><td><code>class_1</code></td><td>+0.002</td><td>+0.022</td></tr><tr><td><code>class_2</code></td><td>+0.007</td><td>+0.009</td></tr><tr><td><code>class_3</code></td><td>−0.019</td><td>−0.116</td></tr></tbody></table>
+
+<p>In these saved means, age is the largest-magnitude input allocation for neuron 0; for neuron 10, the largest displayed allocations are male, class 3, and female. That describes this recorded decomposition, not a causal role or a stable semantic meaning for either hidden unit.</p>
+
+<h2 id="section-4">4. SHAP averages marginal contributions over coalitions</h2>
+<p>SHAP treats features as players in a cooperative game. For each feature, its Shapley value averages the change in a chosen coalition value when that feature joins, across possible feature orders, following the additive feature attribution framing of <a href="https://proceedings.neurips.cc/paper/2017/hash/8a20a8621978632d76c43dfd28b67767-Abstract.html">Lundberg and Lee (2017)</a>. In a prediction explanation, the coalition value function determines how the model output is evaluated when some features are absent. That missing-feature convention (often involving background data), the expected-value reference, and the scalar target must be stated before interpreting numerical contributions.</p>
+<p>SHAP can explain how features contribute to a specific prediction; a visual explanation can rank pixel regions for an image classification. This coalition idea differs from IG's gradient accumulation along a continuous input path. The methods can both produce per-feature contributions, but the reference and attribution calculation are different.</p>
+
+<section class="walk" tabindex="0" aria-label="Supplemental worked example: two-feature SHAP"><h3>Supplemental worked example: two-feature SHAP</h3><div class="example-input"><p style="flex-basis:100%"><strong>Givens:</strong> synthetic coalition values for features A and B; equal weight on both feature orders.</p><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02205;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x0007B;</mo><mi>A</mi><mo stretchy="false">&#x0007D;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2</mn></mrow></math></p><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x0007B;</mo><mi>B</mi><mo stretchy="false">&#x0007D;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x0007B;</mo><mi>A</mi><mo>&#x0002C;</mo><mi>B</mi><mo stretchy="false">&#x0007D;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>5</mn></mrow></math></p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Declare the toy coalition values</h4><p>Supplemental synthetic example, not a Titanic result. Let the scalar game values be <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02205;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x0007B;</mo><mi>A</mi><mo stretchy="false">&#x0007D;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x0007B;</mo><mi>B</mi><mo stretchy="false">&#x0007D;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn></mrow></math>, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x0007B;</mo><mi>A</mi><mo>&#x0002C;</mo><mi>B</mi><mo stretchy="false">&#x0007D;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>5</mn></mrow></math>. For two features there are two orders in which each feature can join.</p></section><section class="step"><h4>Average feature A marginal contribution</h4><p>If A joins first, its change is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x0007B;</mo><mi>A</mi><mo stretchy="false">&#x0007D;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02205;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2</mn><mo>&#x02212;</mo><mn>0</mn><mo>&#x0003D;</mo><mn>2</mn></mrow></math>. If A joins second, its change is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x0007B;</mo><mi>A</mi><mo>&#x0002C;</mo><mi>B</mi><mo stretchy="false">&#x0007D;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x0007B;</mo><mi>B</mi><mo stretchy="false">&#x0007D;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>5</mn><mo>&#x02212;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>4</mn></mrow></math>. Average them: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003D5;</mi><mi>A</mi></msub><mo>&#x0003D;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002B;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>3</mn></mrow></math>.</p></section><section class="step"><h4>Average feature B marginal contribution</h4><p>If B joins first, its change is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x0007B;</mo><mi>B</mi><mo stretchy="false">&#x0007D;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02205;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><mn>0</mn><mo>&#x0003D;</mo><mn>1</mn></mrow></math>. If B joins second, its change is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x0007B;</mo><mi>A</mi><mo>&#x0002C;</mo><mi>B</mi><mo stretchy="false">&#x0007D;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x0007B;</mo><mi>A</mi><mo stretchy="false">&#x0007D;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>5</mn><mo>&#x02212;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>3</mn></mrow></math>. Average them: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003D5;</mi><mi>B</mi></msub><mo>&#x0003D;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2</mn></mrow></math>.</p></section><section class="step"><h4>Check the additive total and state the assumption</h4><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003D5;</mi><mi>A</mi></msub><mo>&#x0002B;</mo><msub><mi>&#x003D5;</mi><mi>B</mi></msub><mo>&#x0003D;</mo><mn>3</mn><mo>&#x0002B;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>5</mn><mo>&#x0003D;</mo><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x0007B;</mo><mi>A</mi><mo>&#x0002C;</mo><mi>B</mi><mo stretchy="false">&#x0007D;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02205;</mo><mo stretchy="false">&#x00029;</mo></mrow></math>. The contributions add to the full-coalition value relative to the empty coalition.</p>
+<p>This arithmetic depends on the supplied coalition values. A real explanation needs an explicit rule for what the model receives when a feature is missing and which output is decomposed; these toy values are not model measurements.</p></section></section>
+
+<h2 id="section-5">5. Grad-CAM localizes a selected class in a spatial feature map</h2>
+<p>Grad-CAM is for CNN-based image or spectrogram tasks. It sends gradients from a selected class score back to a convolutional feature layer. For each channel, it averages the class-score gradients over spatial positions to get a channel weight; it combines that weight with the channel's feature map and applies ReLU to retain positive evidence for the chosen class. This formal calculation follows <a href="https://openaccess.thecvf.com/content_ICCV_2017/html/Selvaraju_Grad-CAM_Visual_Explanations_ICCV_2017_paper.html">Selvaraju et al. (2017)</a>. The result is a class-specific, usually coarse spatial localization map, not an exact pixel attribution.</p>
+<p>Applications include highlighting frequency bands in a speech spectrogram for emotion recognition or image regions for a “cat” prediction. The target class matters: another class can produce another map. The map can show where the model's convolutional representation provides positive evidence for that target, but it does not prove those regions caused the real-world outcome or that the explanation is complete.</p>
+
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msubsup><mi>&#x003B1;</mi><mi>k</mi><mi>c</mi></msubsup><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>Z</mi></mrow></mfrac><munder><mo>&#x02211;</mo><mi>i</mi></munder><munder><mo>&#x02211;</mo><mi>j</mi></munder><mfrac><mrow><mo>&#x02202;</mo><msup><mi>S</mi><mi>c</mi></msup></mrow><mrow><mo>&#x02202;</mo><msubsup><mi>A</mi><mrow><mi>i</mi><mi>j</mi></mrow><mi>k</mi></msubsup></mrow></mfrac><mo>&#x0002C;</mo><mspace width="2em" /><msubsup><mi>L</mi><mrow><mrow><mi mathvariant="normal">G</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">d</mi><mtext>-</mtext><mi mathvariant="normal">C</mi><mi mathvariant="normal">A</mi><mi mathvariant="normal">M</mi></mrow></mrow><mi>c</mi></msubsup><mo>&#x0003D;</mo><mo>ReLU</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><msub><mo>&#x02211;</mo><mi>k</mi></msub><msubsup><mi>&#x003B1;</mi><mi>k</mi><mi>c</mi></msubsup><msup><mi>A</mi><mi>k</mi></msup><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow></mrow></math></div>
+
+<section class="walk" tabindex="0" aria-label="Supplemental worked example: class-specific Grad-CAM map"><h3>Supplemental worked example: class-specific Grad-CAM map</h3><div class="example-input"><p><strong>Givens:</strong> selected scalar target <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>S</mi><mi>c</mi></msup></mrow></math>; feature maps <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>A</mi><mn>1</mn></msup><mo>&#x0003D;</mo><mo>&#x0005B;</mo><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable><mo>&#x0005D;</mo></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>A</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mo>&#x0005B;</mo><mtable><mtr><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>2</mn></mtd><mtd><mn>0</mn></mtd></mtr></mtable><mo>&#x0005D;</mo></mrow></math>; class gradients <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>G</mi><mn>1</mn></msup><mo>&#x0003D;</mo><mo>&#x0005B;</mo><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable><mo>&#x0005D;</mo></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>G</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mo>&#x0005B;</mo><mtable><mtr><mtd><mn>0</mn></mtd><mtd><mn>2</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>2</mn></mtd></mtr></mtable><mo>&#x0005D;</mo></mrow></math>.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>State the selected class and feature maps</h4><p>Supplemental toy calculation, not measured model data. Let the selected scalar class score be <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>S</mi><mi>c</mi></msup></mrow></math>. Use two 2×2 feature maps <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>A</mi><mn>1</mn></msup><mo>&#x0003D;</mo><mo>&#x0005B;</mo><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable><mo>&#x0005D;</mo></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>A</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mo>&#x0005B;</mo><mtable><mtr><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>2</mn></mtd><mtd><mn>0</mn></mtd></mtr></mtable><mo>&#x0005D;</mo></mrow></math>. The target is fixed as class <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi></mrow></math> for every gradient below.</p></section><section class="step"><h4>Average each channel gradient over space</h4><p>For channel 1, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>G</mi><mn>1</mn></msup><mo>&#x0003D;</mo><mfrac><mrow><mo>&#x02202;</mo><msup><mi>S</mi><mi>c</mi></msup></mrow><mrow><mo>&#x02202;</mo><msup><mi>A</mi><mn>1</mn></msup></mrow></mfrac><mo>&#x0003D;</mo><mo>&#x0005B;</mo><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable><mo>&#x0005D;</mo></mrow></math>, so the four-cell mean is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>&#x003B1;</mi><mn>1</mn><mi>c</mi></msubsup><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>4</mn><mo>&#x0003D;</mo><mn>1</mn></mrow></math>. For channel 2, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>G</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mfrac><mrow><mo>&#x02202;</mo><msup><mi>S</mi><mi>c</mi></msup></mrow><mrow><mo>&#x02202;</mo><msup><mi>A</mi><mn>2</mn></msup></mrow></mfrac><mo>&#x0003D;</mo><mo>&#x0005B;</mo><mtable><mtr><mtd><mn>0</mn></mtd><mtd><mn>2</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>2</mn></mtd></mtr></mtable><mo>&#x0005D;</mo></mrow></math>, so <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>&#x003B1;</mi><mn>2</mn><mi>c</mi></msubsup><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>2</mn><mo>&#x0002B;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>4</mn><mo>&#x0003D;</mo><mn>1</mn></mrow></math>.</p>
+<p>Each channel weight uses all four spatial gradient cells for the selected class.</p></section><section class="step"><h4>Combine channel contributions cell by cell</h4><p>At row 1, column 1: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><msubsup><mi>A</mi><mrow><mn>11</mn></mrow><mn>1</mn></msubsup><mo>&#x0002B;</mo><mn>1</mn><msubsup><mi>A</mi><mrow><mn>11</mn></mrow><mn>2</mn></msubsup><mo>&#x0003D;</mo><mn>1</mn><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn></mrow></math>. At row 1, column 2: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn></mrow></math>. At row 2, column 1: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2</mn></mrow></math>. At row 2, column 2: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn></mrow></math>.</p>
+<p>The pre-ReLU map is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x0005B;</mo><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>2</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable><mo>&#x0005D;</mo></mrow></math>. Each map cell uses that position from both weighted feature maps.</p></section><section class="step"><h4>Apply ReLU and check</h4><p>All entries are nonnegative, so applying ReLU leaves the toy map <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x0005B;</mo><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>1</mn></mtd></mtr><mtr><mtd><mn>2</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable><mo>&#x0005D;</mo></mrow></math> unchanged. No normalization is applied. The cells are feature-map locations in this toy example, not pixel coordinates; changing the selected class changes the gradient weights and may change the map.</p></section></section>
+
+<h2 id="section-6">Common mistakes</h2>
+<ul>
+<li><strong>Leaving the target implicit:</strong> an attribution is conditional on a selected scalar output. Name the class and score being explained.</li>
+<li><strong>Treating a baseline as neutral by default:</strong> a zero vector encodes a particular reference. Check whether it makes sense for the model's inputs.</li>
+<li><strong>Mixing up signed and absolute summaries:</strong> a signed mean can cancel; mean absolute attribution removes direction. Always name the statistic.</li>
+<li><strong>Reading a mean as every case:</strong> distributions can contain a large zero mass and a sparse tail, as in the saved <code>sibsp</code> plot.</li>
+<li><strong>Calling attribution correlation or causation:</strong> the values describe a method's decomposition of a model output relative to its reference, not a measured association statistic or intervention effect.</li>
+<li><strong>Confusing layer and neuron conductance:</strong> Layer Conductance assigns output attribution to layer units; Neuron Conductance decomposes one selected unit's conductance over input features.</li>
+<li><strong>Assigning semantic meaning to neuron indices:</strong> a large or small mean at an index does not name what the unit represents.</li>
+<li><strong>Treating SHAP values as assumption-free:</strong> coalition values depend on the output and how absent features are represented.</li>
+<li><strong>Reading Grad-CAM as exact pixels or attention:</strong> it is a class-specific coarse map from CNN feature maps and gradients; it is neither a pixel-level decomposition nor proof of causation.</li>
+<li><strong>Claiming completeness from rounded batch means:</strong> check matching per-example attributions and output differences; rounded means alone may not support that check.</li>
+</ul>
+
+<h2 id="section-7">Exam focus</h2>
+<ul>
+<li>Start an explanation with the selected scalar output. For IG and conductance, also state the baseline and selected layer/neuron where applicable.</li>
+<li>IG = input displacement × path-integrated feature gradient; its completeness target is the output difference from baseline.</li>
+<li>A baseline is part of the question. In the recorded Titanic example, the default zero baseline is used; <code>target=1</code> selects the survival probability from the softmax output.</li>
+<li>Signed means and mean absolute values answer different questions. Inspect case distributions when values are heterogeneous or sparse.</li>
+<li>Layer Conductance attributes to selected hidden-layer outputs; Neuron Conductance breaks one selected neuron's conductance down by input feature.</li>
+<li>SHAP averages marginal feature contributions over coalitions under an explicit value function/missing-feature convention.</li>
+<li>Grad-CAM averages selected-class gradients per convolutional channel, weights feature maps, sums them, and applies ReLU to form a coarse spatial map.</li>
+<li>Attribution is model-relative evidence for a selected output, not a causal effect.</li>
+</ul>
+
+<h2 id="section-8">Practice questions</h2>
+<ol>
+<li>What two choices must be named before interpreting an Integrated Gradients result?</li>
+</ol>
+
+<p class="question">1. What two choices must be named before interpreting an Integrated Gradients result?</p>
+<details class="worked"><summary>Check your answer</summary><p>Name the scalar output being explained and the baseline. They determine the target and comparison represented by the attribution.</p></details>
+
+<ol>
+<li>In the supplemental IG example, what is the input displacement and what does multiplying by it accomplish?</li>
+</ol>
+
+<p class="question">2. In the supplemental IG example, what is the input displacement and what does multiplying by it accomplish?</p>
+<details class="worked"><summary>Check your answer</summary><p>The displacement is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x0002C;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. Each feature's path-integrated gradient is multiplied by that feature's own displacement to form its attribution.</p></details>
+
+<ol>
+<li>Why can the saved mean signed attribution for a feature understate case-level behavior?</li>
+</ol>
+
+<p class="question">3. Why can the saved mean signed attribution for a feature understate case-level behavior?</p>
+<details class="worked"><summary>Check your answer</summary><p>Positive and negative case contributions can cancel, and a large mass near zero can dominate a few strong tail values. Inspect the instance distribution as well as the signed mean.</p></details>
+
+<ol>
+<li>How does Neuron Conductance differ from Layer Conductance?</li>
+</ol>
+
+<p class="question">4. How does Neuron Conductance differ from Layer Conductance?</p>
+<details class="worked"><summary>Check your answer</summary><p>Layer Conductance attributes the selected output to outputs of a whole chosen layer. Neuron Conductance selects one unit in that layer and decomposes that unit's conductance across input features.</p></details>
+
+<ol>
+<li>In the two-feature SHAP example, what is the marginal contribution of feature A when it joins second?</li>
+</ol>
+
+<p class="question">5. In the two-feature SHAP example, what is the marginal contribution of feature A when it joins second?</p>
+<details class="worked"><summary>Check your answer</summary><p>It joins coalition {B}, so the change is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x0007B;</mo><mi>A</mi><mo>&#x0002C;</mo><mi>B</mi><mo stretchy="false">&#x0007D;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mi>v</mi><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x0007B;</mo><mi>B</mi><mo stretchy="false">&#x0007D;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>5</mn><mo>&#x02212;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>4</mn></mrow></math>. SHAP averages that with A's contribution when it joins first, which is 2.</p></details>
+
+<ol>
+<li>Why is a Grad-CAM heatmap class-specific and spatially coarse?</li>
+</ol>
+
+<p class="question">6. Why is a Grad-CAM heatmap class-specific and spatially coarse?</p>
+<details class="worked"><summary>Check your answer</summary><p>The channel weights use gradients of the selected class score, so another class can change the map. The map combines convolutional feature-map locations, which are lower-resolution spatial representations rather than exact input pixels.</p></details>
+
+<p>Apply SHAP and Grad-CAM in a model-interpretation exercise, then continue with a machine-learning explainability course, hands-on notebooks, exercises, and quizzes. The session concludes with Q&amp;A and a thank-you.</p></article><nav class="pager" aria-label="Study sequence"><a href="xai-explainability.html"><small>Previous</small>Explainable AI: Questions, Methods, and Presentation <span aria-hidden="true">↗</span></a><a href="class-imbalance.html"><small>Next</small>Imbalanced Data: Metrics and Resampling <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

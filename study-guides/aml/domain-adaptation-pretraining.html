@@ -1,0 +1,906 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Compare what transfers across domains, what labels remain available, and when transferred knowledge can hurt."><title>Domain Adaptation, Shift, and Negative Transfer · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html" aria-current="page">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Representations and transfer <span>/</span> Lecture 3</div><h1>Domain Adaptation, Shift, and Negative Transfer</h1><p class="lead">Compare what transfers across domains, what labels remain available, and when transferred knowledge can hurt.</p><nav class="on-page" aria-label="On this page"></nav><article><p>Transfer is useful when one collection of data does not fully match the task we care about. The lecture groups several approaches under transfer learning, while warning that the names and boundaries vary across sources. The most reliable way to compare them is to ask what stays the same, what changes, and which labels are actually available.</p>
+
+<h2 id="big-picture">Big picture</h2>
+<p><strong>Domain adaptation</strong> keeps the task but changes the domain: labeled source examples teach the task, and unlabeled target examples help shape a representation that works across both domains. <strong>Zero-shot learning</strong> addresses a different gap: the target class may have no labeled training examples, but it has a semantic description such as attributes or a word vector. Covariate shift describes a particular distribution change. Self-taught and unsupervised transfer use unlabeled auxiliary data in different ways. Negative transfer is the failure case in which transfer makes target performance worse.</p>
+<p>This page continues the earlier <a href="transfer-learning.html">transfer-learning foundations</a>, which cover task/domain terminology and other transfer approaches.</p>
+<figure><div class="diagram-frame" style="--diagram-width:768.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Forward data flow: both domains share features; only labeled source examples supply task labels, while domain-origin IDs are known for both." width="768pt" height="180pt"
+ viewBox="0.00 0.00 768.00 180.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="domain-adaptation-pretraining-figure-1-domain-adaptation-pretraining-dann-flow-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 169.2)">
+<title>G</title>
+<!-- source -->
+<g id="domain-adaptation-pretraining-figure-1-domain-adaptation-pretraining-dann-flow-node1" class="node">
+<title>source</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M131.85,-158.4C131.85,-158.4 16.5,-158.4 16.5,-158.4 10.5,-158.4 4.5,-152.4 4.5,-146.4 4.5,-146.4 4.5,-102 4.5,-102 4.5,-96 10.5,-90 16.5,-90 16.5,-90 131.85,-90 131.85,-90 137.85,-90 143.85,-96 143.85,-102 143.85,-102 143.85,-146.4 143.85,-146.4 143.85,-152.4 137.85,-158.4 131.85,-158.4"/>
+<text xml:space="preserve" text-anchor="middle" x="74.18" y="-136.95" font-family="Georgia" font-size="15.00">Source minibatch</text>
+<text xml:space="preserve" text-anchor="middle" x="74.18" y="-118.95" font-family="Georgia" font-size="15.00">(x_s, y_s)</text>
+<text xml:space="preserve" text-anchor="middle" x="74.18" y="-100.95" font-family="Georgia" font-size="15.00">label available</text>
+</g>
+<!-- features -->
+<g id="domain-adaptation-pretraining-figure-1-domain-adaptation-pretraining-dann-flow-node3" class="node">
+<title>features</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M351.95,-104.4C351.95,-104.4 192.35,-104.4 192.35,-104.4 186.35,-104.4 180.35,-98.4 180.35,-92.4 180.35,-92.4 180.35,-66 180.35,-66 180.35,-60 186.35,-54 192.35,-54 192.35,-54 351.95,-54 351.95,-54 357.95,-54 363.95,-60 363.95,-66 363.95,-66 363.95,-92.4 363.95,-92.4 363.95,-98.4 357.95,-104.4 351.95,-104.4"/>
+<text xml:space="preserve" text-anchor="middle" x="272.15" y="-82.95" font-family="Georgia" font-size="15.00">Shared feature extractor</text>
+<text xml:space="preserve" text-anchor="middle" x="272.15" y="-64.95" font-family="Georgia" font-size="15.00">θ_f</text>
+</g>
+<!-- source&#45;&gt;features -->
+<g id="domain-adaptation-pretraining-figure-1-domain-adaptation-pretraining-dann-flow-edge1" class="edge">
+<title>source&#45;&gt;features</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M144.27,-108.33C153.31,-106.26 162.72,-104.1 172.13,-101.94"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="172.38,-104.21 178.21,-100.54 171.36,-99.78 172.38,-104.21"/>
+</g>
+<!-- target -->
+<g id="domain-adaptation-pretraining-figure-1-domain-adaptation-pretraining-dann-flow-node2" class="node">
+<title>target</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M136.35,-68.4C136.35,-68.4 12,-68.4 12,-68.4 6,-68.4 0,-62.4 0,-56.4 0,-56.4 0,-12 0,-12 0,-6 6,0 12,0 12,0 136.35,0 136.35,0 142.35,0 148.35,-6 148.35,-12 148.35,-12 148.35,-56.4 148.35,-56.4 148.35,-62.4 142.35,-68.4 136.35,-68.4"/>
+<text xml:space="preserve" text-anchor="middle" x="74.18" y="-46.95" font-family="Georgia" font-size="15.00">Target minibatch</text>
+<text xml:space="preserve" text-anchor="middle" x="74.18" y="-28.95" font-family="Georgia" font-size="15.00">x_t</text>
+<text xml:space="preserve" text-anchor="middle" x="74.18" y="-10.95" font-family="Georgia" font-size="15.00">task label withheld</text>
+</g>
+<!-- target&#45;&gt;features -->
+<g id="domain-adaptation-pretraining-figure-1-domain-adaptation-pretraining-dann-flow-edge2" class="edge">
+<title>target&#45;&gt;features</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M148.71,-51.08C156.28,-52.82 164.07,-54.61 171.86,-56.4"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="171.33,-58.61 178.18,-57.85 172.35,-54.18 171.33,-58.61"/>
+</g>
+<!-- task -->
+<g id="domain-adaptation-pretraining-figure-1-domain-adaptation-pretraining-dann-flow-node4" class="node">
+<title>task</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M554.05,-140.4C554.05,-140.4 422.95,-140.4 422.95,-140.4 416.95,-140.4 410.95,-134.4 410.95,-128.4 410.95,-128.4 410.95,-102 410.95,-102 410.95,-96 416.95,-90 422.95,-90 422.95,-90 554.05,-90 554.05,-90 560.05,-90 566.05,-96 566.05,-102 566.05,-102 566.05,-128.4 566.05,-128.4 566.05,-134.4 560.05,-140.4 554.05,-140.4"/>
+<text xml:space="preserve" text-anchor="middle" x="488.5" y="-118.95" font-family="Georgia" font-size="15.00">Task&#45;label predictor</text>
+<text xml:space="preserve" text-anchor="middle" x="488.5" y="-100.95" font-family="Georgia" font-size="15.00">θ_y</text>
+</g>
+<!-- features&#45;&gt;task -->
+<g id="domain-adaptation-pretraining-figure-1-domain-adaptation-pretraining-dann-flow-edge3" class="edge">
+<title>features&#45;&gt;task</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M364.68,-94.57C377.4,-96.71 390.42,-98.9 403,-101.01"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="402.5,-103.23 409.28,-102.06 403.25,-98.74 402.5,-103.23"/>
+</g>
+<!-- domain -->
+<g id="domain-adaptation-pretraining-figure-1-domain-adaptation-pretraining-dann-flow-node5" class="node">
+<title>domain</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M569.05,-68.4C569.05,-68.4 407.95,-68.4 407.95,-68.4 401.95,-68.4 395.95,-62.4 395.95,-56.4 395.95,-56.4 395.95,-30 395.95,-30 395.95,-24 401.95,-18 407.95,-18 407.95,-18 569.05,-18 569.05,-18 575.05,-18 581.05,-24 581.05,-30 581.05,-30 581.05,-56.4 581.05,-56.4 581.05,-62.4 575.05,-68.4 569.05,-68.4"/>
+<text xml:space="preserve" text-anchor="middle" x="488.5" y="-46.95" font-family="Georgia" font-size="15.00">Domain&#45;origin predictor</text>
+<text xml:space="preserve" text-anchor="middle" x="488.5" y="-28.95" font-family="Georgia" font-size="15.00">θ_d</text>
+</g>
+<!-- features&#45;&gt;domain -->
+<g id="domain-adaptation-pretraining-figure-1-domain-adaptation-pretraining-dann-flow-edge5" class="edge">
+<title>features&#45;&gt;domain</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M364.68,-63.83C372.36,-62.54 380.15,-61.23 387.88,-59.93"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="388.07,-62.21 394.11,-58.89 387.32,-57.72 388.07,-62.21"/>
+</g>
+<!-- taskloss -->
+<g id="domain-adaptation-pretraining-figure-1-domain-adaptation-pretraining-dann-flow-node6" class="node">
+<title>taskloss</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M732.15,-140.4C732.15,-140.4 627.3,-140.4 627.3,-140.4 621.3,-140.4 615.3,-134.4 615.3,-128.4 615.3,-128.4 615.3,-102 615.3,-102 615.3,-96 621.3,-90 627.3,-90 627.3,-90 732.15,-90 732.15,-90 738.15,-90 744.15,-96 744.15,-102 744.15,-102 744.15,-128.4 744.15,-128.4 744.15,-134.4 738.15,-140.4 732.15,-140.4"/>
+<text xml:space="preserve" text-anchor="middle" x="679.73" y="-118.95" font-family="Georgia" font-size="15.00">Source task loss</text>
+<text xml:space="preserve" text-anchor="middle" x="679.73" y="-100.95" font-family="Georgia" font-size="15.00">L_y</text>
+</g>
+<!-- task&#45;&gt;taskloss -->
+<g id="domain-adaptation-pretraining-figure-1-domain-adaptation-pretraining-dann-flow-edge4" class="edge">
+<title>task&#45;&gt;taskloss</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M566.47,-115.2C579.89,-115.2 593.81,-115.2 607.09,-115.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="606.81,-117.48 613.31,-115.2 606.81,-112.93 606.81,-117.48"/>
+</g>
+<!-- domainloss -->
+<g id="domain-adaptation-pretraining-figure-1-domain-adaptation-pretraining-dann-flow-node7" class="node">
+<title>domainloss</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M734.4,-68.4C734.4,-68.4 625.05,-68.4 625.05,-68.4 619.05,-68.4 613.05,-62.4 613.05,-56.4 613.05,-56.4 613.05,-30 613.05,-30 613.05,-24 619.05,-18 625.05,-18 625.05,-18 734.4,-18 734.4,-18 740.4,-18 746.4,-24 746.4,-30 746.4,-30 746.4,-56.4 746.4,-56.4 746.4,-62.4 740.4,-68.4 734.4,-68.4"/>
+<text xml:space="preserve" text-anchor="middle" x="679.73" y="-46.95" font-family="Georgia" font-size="15.00">Source + target</text>
+<text xml:space="preserve" text-anchor="middle" x="679.73" y="-28.95" font-family="Georgia" font-size="15.00">domain loss L_d</text>
+</g>
+<!-- domain&#45;&gt;domainloss -->
+<g id="domain-adaptation-pretraining-figure-1-domain-adaptation-pretraining-dann-flow-edge6" class="edge">
+<title>domain&#45;&gt;domainloss</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M581.34,-43.2C589.25,-43.2 597.19,-43.2 604.93,-43.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="604.58,-45.48 611.08,-43.2 604.58,-40.93 604.58,-45.48"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Forward data flow: both domains share features; only labeled source examples supply task labels, while domain-origin IDs are known for both.</figcaption></figure>
+<h2 id="domain-adaptation">Domain adaptation: same task, different domain</h2>
+<p>In the lecture's domain-adaptation setup, the source and target share the task but differ in domain. The source data has examples and task labels, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>x</mi><mi>s</mi></msub><mo>&#x0002C;</mo><msub><mi>y</mi><mi>s</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math>. The target collection supplies inputs <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mi>t</mi></msub></mrow></math> without task labels during adaptation. The domain-origin label is a separate piece of information: each source example is known to be from the source domain and each target example from the target domain. It is not a task label.</p>
+<p>The slide examples make the distinction concrete: labeled MNIST digits can be the source for unlabeled MNIST-M images; synthetic digits can be paired with SVHN; SVHN can be paired with MNIST; and synthetic signs can be paired with GTSRB. In each pair, the visual input distribution changes while the intended classification task remains the same.</p>
+
+<details class="worked"><summary>Worked setup: what labels enter a domain-adaptation minibatch?</summary><p>Suppose a source minibatch contains images and digit labels, while a target minibatch contains images only.</p>
+<table>
+<thead>
+<tr>
+<th>Example</th>
+<th>Task label available to adaptation?</th>
+<th>Domain-origin ID available?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Source image <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mi>s</mi></msub></mrow></math></td>
+<td>Yes: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mi>s</mi></msub></mrow></math></td>
+<td>Yes: source</td>
+</tr>
+<tr>
+<td>Target image <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mi>t</mi></msub></mrow></math></td>
+<td>No</td>
+<td>Yes: target</td>
+</tr>
+</tbody>
+</table>
+<p>The label predictor learns the task from source pairs <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>x</mi><mi>s</mi></msub><mo>&#x0002C;</mo><msub><mi>y</mi><mi>s</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math>. The domain predictor uses the source/target origin IDs for both batches. Feeding a target task label into this training step would change the stated unsupervised-target setup.</p></details>
+
+<h3>Domain-adversarial training (DANN)</h3>
+<p>The feature extractor maps both domains into a shared representation. A task-label head should predict source labels well. A second head tries to identify whether a feature came from the source or target. If the domain head can easily tell them apart, the representation still carries domain clues. The feature extractor is therefore trained to support the task while making domain origin harder to identify. This resembles an adversarial objective, but its purpose is a transferable representation rather than generated samples.</p>
+<figure><div class="diagram-frame" style="--diagram-width:441.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Gradient ownership: only the domain-loss signal entering θ_f is reversed and scaled; the domain head still learns to classify domain origin." width="441pt" height="206pt"
+ viewBox="0.00 0.00 441.00 206.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="domain-adaptation-pretraining-figure-2-domain-adaptation-pretraining-dann-updates-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 195.13)">
+<title>G</title>
+<!-- ly -->
+<g id="domain-adaptation-pretraining-figure-2-domain-adaptation-pretraining-dann-updates-node1" class="node">
+<title>ly</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M112.73,-172C112.73,-172 23.62,-172 23.62,-172 17.62,-172 11.63,-166 11.63,-160 11.63,-160 11.63,-148 11.63,-148 11.63,-142 17.63,-136 23.63,-136 23.63,-136 112.73,-136 112.73,-136 118.73,-136 124.73,-142 124.73,-148 124.73,-148 124.73,-160 124.73,-160 124.73,-166 118.73,-172 112.73,-172"/>
+<text xml:space="preserve" text-anchor="middle" x="68.18" y="-148.75" font-family="Georgia" font-size="15.00">Task loss L_y</text>
+</g>
+<!-- fy -->
+<g id="domain-adaptation-pretraining-figure-2-domain-adaptation-pretraining-dann-updates-node3" class="node">
+<title>fy</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M407.45,-94C407.45,-94 267.35,-94 267.35,-94 261.35,-94 255.35,-88 255.35,-82 255.35,-82 255.35,-70 255.35,-70 255.35,-64 261.35,-58 267.35,-58 267.35,-58 407.45,-58 407.45,-58 413.45,-58 419.45,-64 419.45,-70 419.45,-70 419.45,-82 419.45,-82 419.45,-88 413.45,-94 407.45,-94"/>
+<text xml:space="preserve" text-anchor="middle" x="337.4" y="-70.75" font-family="Georgia" font-size="15.00">Feature extractor θ_f</text>
+</g>
+<!-- ly&#45;&gt;fy -->
+<g id="domain-adaptation-pretraining-figure-2-domain-adaptation-pretraining-dann-updates-edge1" class="edge">
+<title>ly&#45;&gt;fy</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M125.22,-167.31C161.11,-172.48 206.89,-172.46 239.35,-149 256.22,-136.81 240.6,-119.68 255.35,-105 257.43,-102.93 259.67,-101 262.04,-99.22"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="263.19,-101.18 267.29,-95.65 260.64,-97.41 263.19,-101.18"/>
+<text xml:space="preserve" text-anchor="middle" x="195.85" y="-172.93" font-family="Georgia" font-size="12.00">minimize L_y</text>
+</g>
+<!-- yy -->
+<g id="domain-adaptation-pretraining-figure-2-domain-adaptation-pretraining-dann-updates-node4" class="node">
+<title>yy</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M384.58,-152C384.58,-152 290.23,-152 290.23,-152 284.23,-152 278.23,-146 278.23,-140 278.23,-140 278.23,-128 278.23,-128 278.23,-122 284.23,-116 290.23,-116 290.23,-116 384.58,-116 384.58,-116 390.58,-116 396.58,-122 396.58,-128 396.58,-128 396.58,-140 396.58,-140 396.58,-146 390.58,-152 384.58,-152"/>
+<text xml:space="preserve" text-anchor="middle" x="337.4" y="-128.75" font-family="Georgia" font-size="15.00">Task head θ_y</text>
+</g>
+<!-- ly&#45;&gt;yy -->
+<g id="domain-adaptation-pretraining-figure-2-domain-adaptation-pretraining-dann-updates-edge2" class="edge">
+<title>ly&#45;&gt;yy</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M125.22,-138.43C134.22,-136.49 143.5,-134.81 152.35,-133.75 191.14,-129.1 234.85,-128.94 269.94,-130.06"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="269.66,-132.32 276.24,-130.28 269.82,-127.78 269.66,-132.32"/>
+<text xml:space="preserve" text-anchor="middle" x="195.85" y="-136.6" font-family="Georgia" font-size="12.00">minimize L_y</text>
+</g>
+<!-- ld -->
+<g id="domain-adaptation-pretraining-figure-2-domain-adaptation-pretraining-dann-updates-node2" class="node">
+<title>ld</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M124.35,-57C124.35,-57 12,-57 12,-57 6,-57 0,-51 0,-45 0,-45 0,-33 0,-33 0,-27 6,-21 12,-21 12,-21 124.35,-21 124.35,-21 130.35,-21 136.35,-27 136.35,-33 136.35,-33 136.35,-45 136.35,-45 136.35,-51 130.35,-57 124.35,-57"/>
+<text xml:space="preserve" text-anchor="middle" x="68.18" y="-33.75" font-family="Georgia" font-size="15.00">Domain loss L_d</text>
+</g>
+<!-- ld&#45;&gt;fy -->
+<g id="domain-adaptation-pretraining-figure-2-domain-adaptation-pretraining-dann-updates-edge3" class="edge">
+<title>ld&#45;&gt;fy</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" stroke-width="2" stroke-dasharray="5,2" d="M136.61,-48.34C169.54,-52.9 209.64,-58.45 245.25,-63.38"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" stroke-width="2" points="244.93,-65.63 251.68,-64.27 245.56,-61.12 244.93,-65.63"/>
+<text xml:space="preserve" text-anchor="middle" x="195.85" y="-64.75" font-family="Georgia" font-size="12.00">−λ through GRL</text>
+</g>
+<!-- dd -->
+<g id="domain-adaptation-pretraining-figure-2-domain-adaptation-pretraining-dann-updates-node5" class="node">
+<title>dd</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M396.2,-36C396.2,-36 278.6,-36 278.6,-36 272.6,-36 266.6,-30 266.6,-24 266.6,-24 266.6,-12 266.6,-12 266.6,-6 272.6,0 278.6,0 278.6,0 396.2,0 396.2,0 402.2,0 408.2,-6 408.2,-12 408.2,-12 408.2,-24 408.2,-24 408.2,-30 402.2,-36 396.2,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="337.4" y="-12.75" font-family="Georgia" font-size="15.00">Domain head θ_d</text>
+</g>
+<!-- ld&#45;&gt;dd -->
+<g id="domain-adaptation-pretraining-figure-2-domain-adaptation-pretraining-dann-updates-edge4" class="edge">
+<title>ld&#45;&gt;dd</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M136.74,-28.48C142.02,-27.83 147.27,-27.24 152.35,-26.75 187.13,-23.37 225.74,-21.28 258.58,-20"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="258.44,-22.28 264.85,-19.76 258.27,-17.73 258.44,-22.28"/>
+<text xml:space="preserve" text-anchor="middle" x="195.85" y="-29.6" font-family="Georgia" font-size="12.00">minimize L_d</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Gradient ownership: only the domain-loss signal entering θ_f is reversed and scaled; the domain head still learns to classify domain origin.</figcaption></figure>
+<p>The gradient reversal layer is the identity during the forward pass: it passes features through unchanged. During backpropagation, it multiplies the domain-loss gradient entering the feature extractor by the negative scaling factor. The task head minimizes task loss, and the domain head minimizes domain loss. The following objective is a supplemental formalization of these goals.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mo>min</mo><mrow><msub><mi>&#x003B8;</mi><mi>f</mi></msub><mo>&#x0002C;</mo><msub><mi>&#x003B8;</mi><mi>y</mi></msub></mrow></msub><msub><mo>max</mo><mrow><msub><mi>&#x003B8;</mi><mi>d</mi></msub></mrow></msub><mspace width="0.278em" /><msub><mi>L</mi><mi>y</mi></msub><mo stretchy="false">&#x00028;</mo><msub><mi>&#x003B8;</mi><mi>f</mi></msub><mo>&#x0002C;</mo><msub><mi>&#x003B8;</mi><mi>y</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mi>&#x003BB;</mi><msub><mi>L</mi><mi>d</mi></msub><mo stretchy="false">&#x00028;</mo><msub><mi>&#x003B8;</mi><mi>f</mi></msub><mo>&#x0002C;</mo><msub><mi>&#x003B8;</mi><mi>d</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>With this objective, the feature extractor descends the task gradient and ascends the domain loss, giving a gradient proportional to <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mo>&#x02207;</mo><mrow><msub><mi>&#x003B8;</mi><mi>f</mi></msub></mrow></msub><msub><mi>L</mi><mi>y</mi></msub><mo>&#x02212;</mo><mi>&#x003BB;</mi><msub><mo>&#x02207;</mo><mrow><msub><mi>&#x003B8;</mi><mi>f</mi></msub></mrow></msub><msub><mi>L</mi><mi>d</mi></msub></mrow></math>. The task head descends <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>L</mi><mi>y</mi></msub></mrow></math>. The domain head descends <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>L</mi><mi>d</mi></msub></mrow></math>; equivalently, its descent step absorbs the objective's <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BB;</mi></mrow></math> scaling into its step size. The lecture does not specify a numeric <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BB;</mi></mrow></math>, optimizer, learning rate, batch size, or schedule.</p>
+<section class="walk" tabindex="0" aria-label="DANN: forward pass, three parameter updates, and target check"><h3>DANN: forward pass, three parameter updates, and target check</h3><div class="example-input"><p><strong>Visible givens:</strong> source minibatch <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>x</mi><mi>s</mi></msub><mo>&#x0002C;</mo><msub><mi>y</mi><mi>s</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math>; target minibatch <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mi>t</mi></msub></mrow></math>; symbolic initial parameters <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>&#x003B8;</mi><mi>f</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x0002C;</mo><msubsup><mi>&#x003B8;</mi><mi>y</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x0002C;</mo><msubsup><mi>&#x003B8;</mi><mi>d</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></msubsup></mrow></math>; teaching values <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mn>0.5</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math>, and illustrative gradients shown in the relevant update steps. Target task labels are withheld. All gradients use this same pre-update snapshot; the three parameter updates are applied together.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Start from parameters and minibatches</h4><p>Keep symbolic initial parameters <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>&#x003B8;</mi><mi>f</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></msubsup></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>&#x003B8;</mi><mi>y</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></msubsup></mrow></math>, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>&#x003B8;</mi><mi>d</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></msubsup></mrow></math>. The course slide does not give trained parameter values. For this <strong>supplemental sign calculation only</strong>, set <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mn>0.5</mn></mrow></math> and learning rate <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B7;</mi><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math>. The source minibatch has <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>x</mi><mi>s</mi></msub><mo>&#x0002C;</mo><msub><mi>y</mi><mi>s</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math>; the target minibatch has <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mi>t</mi></msub></mrow></math> but no task label. Both carry a domain-origin ID.</p></section><section class="step"><h4>2. Compute losses and gradients from one snapshot</h4><p>Pass both inputs through the shared extractor and compute <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>L</mi><mi>y</mi></msub></mrow></math> using only source task labels. Compute <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>L</mi><mi>d</mi></msub></mrow></math> using source/target origin IDs. The GRL passes features unchanged in this forward pass. No target task label enters either loss.</p>
+<p>Compute all gradients using the same old parameter snapshot <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>&#x003B8;</mi><mi>f</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x0002C;</mo><msubsup><mi>&#x003B8;</mi><mi>y</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x0002C;</mo><msubsup><mi>&#x003B8;</mi><mi>d</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></msubsup></mrow></math>. The next three states explain which parameter group receives each update; apply those updates together after computing the gradients. Do not recompute a later gradient using an already updated feature extractor.</p></section><section class="step"><h4>3. Update the feature extractor</h4><p>Assume a tiny illustrative minibatch yields <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mo>&#x02207;</mo><mrow><msub><mi>&#x003B8;</mi><mi>f</mi></msub></mrow></msub><msub><mi>L</mi><mi>y</mi></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mo>&#x02207;</mo><mrow><msub><mi>&#x003B8;</mi><mi>f</mi></msub></mrow></msub><msub><mi>L</mi><mi>d</mi></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. These are invented teaching gradients, not source measurements. The reversed, scaled feature gradient is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mn>0.5</mn><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1.5</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. Thus <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>&#x003B8;</mi><mi>f</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x0003D;</mo><msubsup><mi>&#x003B8;</mi><mi>f</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x02212;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>1.5</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msubsup><mi>&#x003B8;</mi><mi>f</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.15</mn><mo>&#x0002C;</mo><mn>0.30</mn><mo stretchy="false">&#x00029;</mo></mrow></math>.</p></section><section class="step"><h4>4. Update the task head</h4><p>For the same illustrative example, let <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mo>&#x02207;</mo><mrow><msub><mi>&#x003B8;</mi><mi>y</mi></msub></mrow></msub><msub><mi>L</mi><mi>y</mi></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.6</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>0.2</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. The task head descends its task loss: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>&#x003B8;</mi><mi>y</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x0003D;</mo><msubsup><mi>&#x003B8;</mi><mi>y</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x02212;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>0.6</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>0.2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msubsup><mi>&#x003B8;</mi><mi>y</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.06</mn><mo>&#x0002C;</mo><mn>0.02</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. Only source task labels contributed to this gradient.</p></section><section class="step"><h4>5. Update the domain head</h4><p>Let <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mo>&#x02207;</mo><mrow><msub><mi>&#x003B8;</mi><mi>d</mi></msub></mrow></msub><msub><mi>L</mi><mi>d</mi></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.4</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>0.8</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. To match the displayed saddle objective, use the domain-head step scaled by <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BB;</mi></mrow></math> (or equivalently absorb that scale into its learning rate): <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>&#x003B8;</mi><mi>d</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x0003D;</mo><msubsup><mi>&#x003B8;</mi><mi>d</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x02212;</mo><mn>0.1</mn><mo stretchy="false">&#x00028;</mo><mn>0.5</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.4</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>0.8</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msubsup><mi>&#x003B8;</mi><mi>d</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.02</mn><mo>&#x0002C;</mo><mn>0.04</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. The domain head still moves downhill on <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>L</mi><mi>d</mi></msub></mrow></math>; it is not reversed.</p></section><section class="step"><h4>6. Infer and check separately</h4><p>At inference, map a target input through the feature extractor and task head to get a task prediction. There is no target label in this inference step, so it cannot produce target task accuracy by itself. Check source task performance and whether the domain head struggles separately. Chance-level domain prediction is only a conceptual reference for balanced domains; it is not proof that adaptation succeeded. Evaluate target task performance only with a separately labeled target evaluation set, if one exists.</p></section></section>
+<h3>Reported comparisons in the lecture</h3>
+<p>The source table reports results for four source-to-target pairs. Preserve the method label <code>SA</code> as printed; the table does not expand it. Its parenthetical percentages appear to describe how much of the source-only-to-train-on-target gap is closed. That interpretation is an inference from the displayed rows, not a definition printed beside the table.</p>
+<div class="table-scroll" role="region" aria-label="Reported domain-adaptation scores" tabindex="0"><table>
+<thead><tr><th>Source → target</th><th>Source only</th><th>SA</th><th>Proposed approach</th><th>Train on target</th></tr></thead>
+<tbody>
+<tr><th>MNIST → MNIST-M</th><td>.5749</td><td>.6078 (7.9%)</td><td>.8149 (57.9%)</td><td>.9891</td></tr>
+<tr><th>Syn Numbers → SVHN</th><td>.8665</td><td>.8672 (1.3%)</td><td>.9048 (66.1%)</td><td>.9244</td></tr>
+<tr><th>SVHN → MNIST</th><td>.5919</td><td>.6157 (5.9%)</td><td>.7107 (29.3%)</td><td>.9951</td></tr>
+<tr><th>Syn Signs → GTSRB</th><td>.7400</td><td>.7635 (9.1%)</td><td>.8866 (56.7%)</td><td>.9987</td></tr>
+</tbody></table></div>
+<p><strong>Recomputed gap-closed interpretation.</strong> For each row, subtract source-only from the method score, then divide by the full gap (train-on-target minus source-only). The source's percentages are retained above exactly. Using only the displayed decimals gives the following staged calculations:</p>
+<ul>
+<li>MNIST → MNIST-M: SA <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>.6078</mi><mo>&#x02212;</mo><mi>.5749</mi></mrow><mrow><mi>.9891</mi><mo>&#x02212;</mo><mi>.5749</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mi>.0329</mi></mrow><mrow><mi>.4142</mi></mrow></mfrac><mo>&#x02248;</mo><mn>7.9</mn><mi>&#x00025;</mi></mrow></math>; proposed <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>.8149</mi><mo>&#x02212;</mo><mi>.5749</mi></mrow><mrow><mi>.4142</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mi>.2400</mi></mrow><mrow><mi>.4142</mi></mrow></mfrac><mo>&#x02248;</mo><mn>57.9</mn><mi>&#x00025;</mi></mrow></math>.</li>
+<li>Syn Numbers → SVHN: SA <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>.0007</mi></mrow><mrow><mi>.0579</mi></mrow></mfrac><mo>&#x02248;</mo><mn>1.2</mn><mi>&#x00025;</mi></mrow></math> (the slide prints 1.3%); proposed <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>.0383</mi></mrow><mrow><mi>.0579</mi></mrow></mfrac><mo>&#x02248;</mo><mn>66.1</mn><mi>&#x00025;</mi></mrow></math>.</li>
+<li>SVHN → MNIST: SA <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>.0238</mi></mrow><mrow><mi>.4032</mi></mrow></mfrac><mo>&#x02248;</mo><mn>5.9</mn><mi>&#x00025;</mi></mrow></math>; proposed <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>.1188</mi></mrow><mrow><mi>.4032</mi></mrow></mfrac><mo>&#x02248;</mo><mn>29.5</mn><mi>&#x00025;</mi></mrow></math> (the slide prints 29.3%).</li>
+<li>Syn Signs → GTSRB: SA <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>.0235</mi></mrow><mrow><mi>.2587</mi></mrow></mfrac><mo>&#x02248;</mo><mn>9.1</mn><mi>&#x00025;</mi></mrow></math>; proposed <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>.1466</mi></mrow><mrow><mi>.2587</mi></mrow></mfrac><mo>&#x02248;</mo><mn>56.7</mn><mi>&#x00025;</mi></mrow></math>.</li>
+</ul>
+<p>The two mismatches are preserved rather than explained away: displayed precision alone does not reproduce 1.3% or 29.3%, and the slide does not establish why. These percentages are fractions of the baseline gap, not raw relative increases. For MNIST → MNIST-M, the displayed score difference is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>.0329</mi></mrow></math>; if these scores are proportions, that is 3.29 percentage points. The raw relative increase uses the source-only score as denominator, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>.0329</mi></mrow><mrow><mi>.5749</mi></mrow></mfrac><mo>&#x02248;</mo><mn>5.7</mn><mi>&#x00025;</mi></mrow></math>, while the inferred gap-closed share uses the full source-to-target gap, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>.0329</mi></mrow><mrow><mi>.4142</mi></mrow></mfrac><mo>&#x02248;</mo><mn>7.9</mn><mi>&#x00025;</mi></mrow></math>. The table's score metric is not named in its body, and these are reported comparisons—not results measured in this guide.</p>
+
+<h2 id="zero-shot">Zero-shot learning: descriptions for unseen classes</h2>
+<p>Some tasks cannot include every possible class in labeled training data. The lecture uses speech recognition, where every possible word cannot be present, and then shows image classes. Zero-shot learning can still consider a class when labeled examples of that class were absent from training, provided a semantic description is available at prediction time. A class description is not a labeled target training image.</p>
+<h3>Attribute vectors and a nearest-description decision</h3>
+<p>The lecture represents classes by attributes in the order <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mtext>furry</mtext><mo>&#x0002C;</mo><mtext>4&#x000A0;legs</mtext><mo>&#x0002C;</mo><mtext>tail</mtext><mo stretchy="false">&#x00029;</mo></mrow></math>. A network predicts attributes from the input image, then the result is compared with the class database. The source asks for the most similar attribute vector. The following Hamming-distance calculation makes that decision explicit as a supplemental calculation.</p>
+<div class="table-scroll" role="region" aria-label="Zero-shot attribute comparison" tabindex="0"><table>
+<thead><tr><th>Class</th><th>furry</th><th>4 legs</th><th>tail</th><th>Query (0,0,1): differing bits</th><th>Hamming distance</th></tr></thead>
+<tbody><tr><th>Dog</th><td>1</td><td>1</td><td>1</td><td>2</td><td>2</td></tr>
+<tr><th>Fish</th><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+<tr><th>Chimp</th><td>1</td><td>0</td><td>0</td><td>2</td><td>2</td></tr></tbody></table></div>
+<section class="walk" tabindex="0" aria-label="Compare the predicted attributes with each class"><h3>Compare the predicted attributes with each class</h3><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Record the input and attribute order</h4><p>Input prediction: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. Positions mean furry, four legs, and tail, in that order.</p></section><section class="step"><h4>2. Compare Dog: (1, 1, 1)</h4><p>Bitwise differences: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x02260;</mo><mn>1</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x02260;</mo><mn>1</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0003D;</mo><mn>1</mn></mrow></math>. Distance: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>0</mn><mo>&#x0003D;</mo><mn>2</mn></mrow></math>.</p></section><section class="step"><h4>3. Compare Fish: (0, 0, 1)</h4><p>All three bits match: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>0</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math>.</p></section><section class="step"><h4>4. Compare Chimp: (1, 0, 0)</h4><p>First and third bits differ; the middle bit matches: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002B;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>2</mn></mrow></math>.</p></section><section class="step"><h4>5. Select and check</h4><p>The unique minimum is Fish with distance 0. Dog and Chimp tie at distance 2. The lecture says “most similar”; Hamming distance is the clearly labeled calculation used here to complete that comparison. If two class descriptions tie for the minimum, this rule cannot choose uniquely. Attributes must distinguish the candidate classes.</p></section></section>
+<h3>Shared embeddings and a margin</h3>
+<p>Instead of hand-designed attribute tables, the lecture maps an input and a class description into a shared embedding space: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>f</mi><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math> for the input and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>g</mi><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo stretchy="false">&#x00029;</mo></mrow></math> for the class. The paired image/class should be compatible, while a mismatched class should score lower. If the attribute database is unavailable, the slides suggest word-vector descriptions such as <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>V</mi><mo stretchy="false">&#x00028;</mo><mtext>chimp</mtext><mo stretchy="false">&#x00029;</mo></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>V</mi><mo stretchy="false">&#x00028;</mo><mtext>dog</mtext><mo stretchy="false">&#x00029;</mo></mrow></math>, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>V</mi><mo stretchy="false">&#x00028;</mo><mtext>alpaca</mtext><mo stretchy="false">&#x00029;</mo></mrow></math>.</p>
+<figure><div class="diagram-frame" style="--diagram-width:587.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Zero-shot prediction compares an image representation with semantic descriptions for candidate classes, including classes without labeled training images." width="587pt" height="130pt"
+ viewBox="0.00 0.00 587.00 130.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="domain-adaptation-pretraining-figure-3-domain-adaptation-pretraining-zero-shot-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 119)">
+<title>G</title>
+<!-- image -->
+<g id="domain-adaptation-pretraining-figure-3-domain-adaptation-pretraining-zero-shot-node1" class="node">
+<title>image</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M131.85,-108.2C131.85,-108.2 41.25,-108.2 41.25,-108.2 35.25,-108.2 29.25,-102.2 29.25,-96.2 29.25,-96.2 29.25,-84.2 29.25,-84.2 29.25,-78.2 35.25,-72.2 41.25,-72.2 41.25,-72.2 131.85,-72.2 131.85,-72.2 137.85,-72.2 143.85,-78.2 143.85,-84.2 143.85,-84.2 143.85,-96.2 143.85,-96.2 143.85,-102.2 137.85,-108.2 131.85,-108.2"/>
+<text xml:space="preserve" text-anchor="middle" x="86.55" y="-84.95" font-family="Georgia" font-size="15.00">Input image x</text>
+</g>
+<!-- imgembed -->
+<g id="domain-adaptation-pretraining-figure-3-domain-adaptation-pretraining-zero-shot-node2" class="node">
+<title>imgembed</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M318.2,-106.2C318.2,-106.2 217.1,-106.2 217.1,-106.2 211.1,-106.2 205.1,-100.2 205.1,-94.2 205.1,-94.2 205.1,-82.2 205.1,-82.2 205.1,-76.2 211.1,-70.2 217.1,-70.2 217.1,-70.2 318.2,-70.2 318.2,-70.2 324.2,-70.2 330.2,-76.2 330.2,-82.2 330.2,-82.2 330.2,-94.2 330.2,-94.2 330.2,-100.2 324.2,-106.2 318.2,-106.2"/>
+<text xml:space="preserve" text-anchor="middle" x="267.65" y="-82.95" font-family="Georgia" font-size="15.00">Image map f(x)</text>
+</g>
+<!-- image&#45;&gt;imgembed -->
+<g id="domain-adaptation-pretraining-figure-3-domain-adaptation-pretraining-zero-shot-edge1" class="edge">
+<title>image&#45;&gt;imgembed</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M144.22,-89.57C160.93,-89.38 179.41,-89.17 196.84,-88.98"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="196.78,-91.26 203.25,-88.91 196.72,-86.71 196.78,-91.26"/>
+</g>
+<!-- compare -->
+<g id="domain-adaptation-pretraining-figure-3-domain-adaptation-pretraining-zero-shot-node5" class="node">
+<title>compare</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M553.3,-82.4C553.3,-82.4 374.2,-82.4 374.2,-82.4 368.2,-82.4 362.2,-76.4 362.2,-70.4 362.2,-70.4 362.2,-44 362.2,-44 362.2,-38 368.2,-32 374.2,-32 374.2,-32 553.3,-32 553.3,-32 559.3,-32 565.3,-38 565.3,-44 565.3,-44 565.3,-70.4 565.3,-70.4 565.3,-76.4 559.3,-82.4 553.3,-82.4"/>
+<text xml:space="preserve" text-anchor="middle" x="463.75" y="-60.95" font-family="Georgia" font-size="15.00">Compare compatibility</text>
+<text xml:space="preserve" text-anchor="middle" x="463.75" y="-42.95" font-family="Georgia" font-size="15.00">choose best described class</text>
+</g>
+<!-- imgembed&#45;&gt;compare -->
+<g id="domain-adaptation-pretraining-figure-3-domain-adaptation-pretraining-zero-shot-edge2" class="edge">
+<title>imgembed&#45;&gt;compare</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M330.6,-78.31C338,-77.12 345.72,-75.89 353.55,-74.64"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="353.85,-76.9 359.91,-73.62 353.14,-72.4 353.85,-76.9"/>
+</g>
+<!-- class -->
+<g id="domain-adaptation-pretraining-figure-3-domain-adaptation-pretraining-zero-shot-node3" class="node">
+<title>class</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M161.1,-50.4C161.1,-50.4 12,-50.4 12,-50.4 6,-50.4 0,-44.4 0,-38.4 0,-38.4 0,-12 0,-12 0,-6 6,0 12,0 12,0 161.1,0 161.1,0 167.1,0 173.1,-6 173.1,-12 173.1,-12 173.1,-38.4 173.1,-38.4 173.1,-44.4 167.1,-50.4 161.1,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="86.55" y="-28.95" font-family="Georgia" font-size="15.00">Candidate class y</text>
+<text xml:space="preserve" text-anchor="middle" x="86.55" y="-10.95" font-family="Georgia" font-size="15.00">attribute / word vector</text>
+</g>
+<!-- classembed -->
+<g id="domain-adaptation-pretraining-figure-3-domain-adaptation-pretraining-zero-shot-node4" class="node">
+<title>classembed</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M315.95,-46.2C315.95,-46.2 219.35,-46.2 219.35,-46.2 213.35,-46.2 207.35,-40.2 207.35,-34.2 207.35,-34.2 207.35,-22.2 207.35,-22.2 207.35,-16.2 213.35,-10.2 219.35,-10.2 219.35,-10.2 315.95,-10.2 315.95,-10.2 321.95,-10.2 327.95,-16.2 327.95,-22.2 327.95,-22.2 327.95,-34.2 327.95,-34.2 327.95,-40.2 321.95,-46.2 315.95,-46.2"/>
+<text xml:space="preserve" text-anchor="middle" x="267.65" y="-22.95" font-family="Georgia" font-size="15.00">Class map g(y)</text>
+</g>
+<!-- class&#45;&gt;classembed -->
+<g id="domain-adaptation-pretraining-figure-3-domain-adaptation-pretraining-zero-shot-edge3" class="edge">
+<title>class&#45;&gt;classembed</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M173.43,-26.64C182,-26.78 190.62,-26.93 198.96,-27.07"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="198.82,-29.34 205.36,-27.17 198.9,-24.79 198.82,-29.34"/>
+</g>
+<!-- classembed&#45;&gt;compare -->
+<g id="domain-adaptation-pretraining-figure-3-domain-adaptation-pretraining-zero-shot-edge4" class="edge">
+<title>classembed&#45;&gt;compare</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M328.21,-37.1C336.39,-38.32 345,-39.61 353.74,-40.91"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="353.19,-43.13 359.95,-41.84 353.86,-38.63 353.19,-43.13"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Zero-shot prediction compares an image representation with semantic descriptions for candidate classes, including classes without labeled training images.</figcaption></figure>
+<p>Simply making every positive pair close can collapse all representations to the same point. The lecture's margin-ranking objective uses a positive pair <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msup><mi>x</mi><mi>n</mi></msup><mo>&#x0002C;</mo><msup><mi>y</mi><mi>n</mi></msup><mo stretchy="false">&#x00029;</mo></mrow></math> and the hardest wrong class description among candidates <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>m</mi><mo>&#x02260;</mo><mi>n</mi></mrow></math>. Here <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi></mrow></math> identifies the paired example/class, while <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>m</mi></mrow></math> ranges over wrong candidate classes; a different sample index with the same class label is not automatically a negative class.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><munder><mo>&#x02211;</mo><mi>n</mi></munder><mo>max</mo><mspace width="negativethinmathspace" /><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mi>k</mi><mo>&#x02212;</mo><mi>f</mi><mo stretchy="false">&#x00028;</mo><msup><mi>x</mi><mi>n</mi></msup><mo stretchy="false">&#x00029;</mo><mo>&#x000B7;</mo><mi>g</mi><mo stretchy="false">&#x00028;</mo><msup><mi>y</mi><mi>n</mi></msup><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><msub><mo>max</mo><mrow><mi>m</mi><mo>&#x02260;</mo><mi>n</mi></mrow></msub><mi>f</mi><mo stretchy="false">&#x00028;</mo><msup><mi>x</mi><mi>n</mi></msup><mo stretchy="false">&#x00029;</mo><mo>&#x000B7;</mo><mi>g</mi><mo stretchy="false">&#x00028;</mo><msup><mi>y</mi><mi>m</mi></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow></mrow></math></div>
+<p>The hinge becomes zero when the positive compatibility exceeds the hardest wrong-class compatibility by at least the margin. Rearranging the source equation gives:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>f</mi><mo stretchy="false">&#x00028;</mo><msup><mi>x</mi><mi>n</mi></msup><mo stretchy="false">&#x00029;</mo><mo>&#x000B7;</mo><mi>g</mi><mo stretchy="false">&#x00028;</mo><msup><mi>y</mi><mi>n</mi></msup><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><msub><mo>max</mo><mrow><mi>m</mi><mo>&#x02260;</mo><mi>n</mi></mrow></msub><mi>f</mi><mo stretchy="false">&#x00028;</mo><msup><mi>x</mi><mi>n</mi></msup><mo stretchy="false">&#x00029;</mo><mo>&#x000B7;</mo><mi>g</mi><mo stretchy="false">&#x00028;</mo><msup><mi>y</mi><mi>m</mi></msup><mo stretchy="false">&#x00029;</mo><mo>&#x02265;</mo><mi>k</mi></mrow></math></div>
+
+<details class="worked"><summary>Worked algebra: when is the hinge loss zero?</summary><p>For one paired example, call the positive score <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>s</mi><mo>&#x0002B;</mo></msub><mo>&#x0003D;</mo><mi>f</mi><mo stretchy="false">&#x00028;</mo><msup><mi>x</mi><mi>n</mi></msup><mo stretchy="false">&#x00029;</mo><mo>&#x000B7;</mo><mi>g</mi><mo stretchy="false">&#x00028;</mo><msup><mi>y</mi><mi>n</mi></msup><mo stretchy="false">&#x00029;</mo></mrow></math> and the hardest wrong-class score <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>s</mi><mo>&#x02212;</mo></msub><mo>&#x0003D;</mo><msub><mo>max</mo><mrow><mi>m</mi><mo>&#x02260;</mo><mi>n</mi></mrow></msub><mi>f</mi><mo stretchy="false">&#x00028;</mo><msup><mi>x</mi><mi>n</mi></msup><mo stretchy="false">&#x00029;</mo><mo>&#x000B7;</mo><mi>g</mi><mo stretchy="false">&#x00028;</mo><msup><mi>y</mi><mi>m</mi></msup><mo stretchy="false">&#x00029;</mo></mrow></math>. The hinge is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>max</mo><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mi>k</mi><mo>&#x02212;</mo><msub><mi>s</mi><mo>&#x0002B;</mo></msub><mo>&#x0002B;</mo><msub><mi>s</mi><mo>&#x02212;</mo></msub><mo stretchy="false">&#x00029;</mo></mrow></math>.</p>
+<p>For zero loss, its inside must be nonpositive:</p>
+<ol>
+<li><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi><mo>&#x02212;</mo><msub><mi>s</mi><mo>&#x0002B;</mo></msub><mo>&#x0002B;</mo><msub><mi>s</mi><mo>&#x02212;</mo></msub><mo>&#x02264;</mo><mn>0</mn></mrow></math></li>
+<li>Move the positive score to the other side: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>s</mi><mo>&#x0002B;</mo></msub><mo>&#x02212;</mo><msub><mi>s</mi><mo>&#x02212;</mo></msub><mo>&#x02265;</mo><mi>k</mi></mrow></math>.</li>
+</ol>
+<p>Thus the positive score needs a margin of at least <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi></mrow></math> over the hardest wrong class. This derives the condition; it does not assume any embedding coordinates or training outcome.</p></details>
+
+<h3>Other lecture examples</h3>
+<p>The lecture gives a semantic-composition example for “liger”: form <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.5</mn><mi>V</mi><mo stretchy="false">&#x00028;</mo><mtext>tiger</mtext><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mn>0.5</mn><mi>V</mi><mo stretchy="false">&#x00028;</mo><mtext>lion</mtext><mo stretchy="false">&#x00029;</mo></mrow></math>, then find the closest word vector. Its point is that a semantic vector can describe a class whose labeled examples were not in training. Another slide lists qualitative top-label outputs from ConvNet, DeViSE, and ConSE(10), including Steller sea lion among candidates for a sea-lion image and domestic llama among candidates for a llama image. These are examples, not a benchmark table.</p>
+<p>Google's multilingual neural machine translation system is another zero-shot use case in the lecture: train a shared multilingual system and consider translation for a language pair without presenting a measured benchmark here. The lecture's example is about semantic transfer across languages, not a new performance claim.</p>
+
+<h2 id="covariate-shift">Covariate shift: the input mix changes</h2>
+<p>Covariate shift is the lecture's case where source and target have the same input space <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>X</mi></mrow></math>, output space <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Y</mi></mrow></math>, and conditional label rule, but different input marginals. In plain language, the kinds of inputs become more or less common while the assumed mapping from an input to its label remains stable.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>P</mi><mi>S</mi></msub><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo>&#x02223;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mi>P</mi><mi>T</mi></msub><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo>&#x02223;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>P</mi><mi>S</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x02260;</mo><msub><mi>P</mi><mi>T</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>The formal equality is about <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo>&#x02223;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math>, not the marginal <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo stretchy="false">&#x00029;</mo></mrow></math>. If the mix of inputs changes, the overall frequency of output labels can change too. Do not infer that the label marginal must remain fixed.</p>
+<p>The source examples are a lighting change in image categorization, missing age or ethnic groups in facial-recognition training data, and speech recorded from different accents or dialects. These fit the covariate-shift description only while the conditional task rule is treated as stable. The lecture does not provide an importance-weighting procedure or data for a numeric correction.</p>
+
+<h2 id="self-taught">Self-taught learning: learn from unlabeled auxiliary data</h2>
+<p>Self-taught learning first uses an unsupervised approach to extract a better representation from auxiliary source data. That representation is then extracted for target data, where labeled examples support the target task. The source does not specify one representation-learning algorithm or whether its parameters are frozen or fine-tuned.</p>
+<figure><div class="diagram-frame" style="--diagram-width:704.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Self-taught learning uses unlabeled auxiliary data to learn a representation, then uses target labels for the target task." width="704pt" height="144pt"
+ viewBox="0.00 0.00 704.00 144.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="domain-adaptation-pretraining-figure-4-domain-adaptation-pretraining-self-taught-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 133.2)">
+<title>G</title>
+<!-- aux -->
+<g id="domain-adaptation-pretraining-figure-4-domain-adaptation-pretraining-self-taught-node1" class="node">
+<title>aux</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M140.1,-122.4C140.1,-122.4 12,-122.4 12,-122.4 6,-122.4 0,-116.4 0,-110.4 0,-110.4 0,-84 0,-84 0,-78 6,-72 12,-72 12,-72 140.1,-72 140.1,-72 146.1,-72 152.1,-78 152.1,-84 152.1,-84 152.1,-110.4 152.1,-110.4 152.1,-116.4 146.1,-122.4 140.1,-122.4"/>
+<text xml:space="preserve" text-anchor="middle" x="76.05" y="-100.95" font-family="Georgia" font-size="15.00">Unlabeled auxiliary</text>
+<text xml:space="preserve" text-anchor="middle" x="76.05" y="-82.95" font-family="Georgia" font-size="15.00">source examples</text>
+</g>
+<!-- learn -->
+<g id="domain-adaptation-pretraining-figure-4-domain-adaptation-pretraining-self-taught-node2" class="node">
+<title>learn</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M351.2,-122.4C351.2,-122.4 196.1,-122.4 196.1,-122.4 190.1,-122.4 184.1,-116.4 184.1,-110.4 184.1,-110.4 184.1,-84 184.1,-84 184.1,-78 190.1,-72 196.1,-72 196.1,-72 351.2,-72 351.2,-72 357.2,-72 363.2,-78 363.2,-84 363.2,-84 363.2,-110.4 363.2,-110.4 363.2,-116.4 357.2,-122.4 351.2,-122.4"/>
+<text xml:space="preserve" text-anchor="middle" x="273.65" y="-100.95" font-family="Georgia" font-size="15.00">Unsupervised</text>
+<text xml:space="preserve" text-anchor="middle" x="273.65" y="-82.95" font-family="Georgia" font-size="15.00">representation learning</text>
+</g>
+<!-- aux&#45;&gt;learn -->
+<g id="domain-adaptation-pretraining-figure-4-domain-adaptation-pretraining-self-taught-edge1" class="edge">
+<title>aux&#45;&gt;learn</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M152.39,-97.2C159.98,-97.2 167.76,-97.2 175.53,-97.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="175.28,-99.48 181.78,-97.2 175.28,-94.93 175.28,-99.48"/>
+</g>
+<!-- repr -->
+<g id="domain-adaptation-pretraining-figure-4-domain-adaptation-pretraining-self-taught-node4" class="node">
+<title>repr</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M503.8,-86.4C503.8,-86.4 407.2,-86.4 407.2,-86.4 401.2,-86.4 395.2,-80.4 395.2,-74.4 395.2,-74.4 395.2,-48 395.2,-48 395.2,-42 401.2,-36 407.2,-36 407.2,-36 503.8,-36 503.8,-36 509.8,-36 515.8,-42 515.8,-48 515.8,-48 515.8,-74.4 515.8,-74.4 515.8,-80.4 509.8,-86.4 503.8,-86.4"/>
+<text xml:space="preserve" text-anchor="middle" x="455.5" y="-64.95" font-family="Georgia" font-size="15.00">Extract / reuse</text>
+<text xml:space="preserve" text-anchor="middle" x="455.5" y="-46.95" font-family="Georgia" font-size="15.00">representation</text>
+</g>
+<!-- learn&#45;&gt;repr -->
+<g id="domain-adaptation-pretraining-figure-4-domain-adaptation-pretraining-self-taught-edge2" class="edge">
+<title>learn&#45;&gt;repr</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M364.05,-79.31C371.85,-77.74 379.66,-76.18 387.24,-74.66"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="387.32,-76.97 393.24,-73.46 386.42,-72.51 387.32,-76.97"/>
+</g>
+<!-- target -->
+<g id="domain-adaptation-pretraining-figure-4-domain-adaptation-pretraining-self-taught-node3" class="node">
+<title>target</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M327.2,-50.4C327.2,-50.4 220.1,-50.4 220.1,-50.4 214.1,-50.4 208.1,-44.4 208.1,-38.4 208.1,-38.4 208.1,-12 208.1,-12 208.1,-6 214.1,0 220.1,0 220.1,0 327.2,0 327.2,0 333.2,0 339.2,-6 339.2,-12 339.2,-12 339.2,-38.4 339.2,-38.4 339.2,-44.4 333.2,-50.4 327.2,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="273.65" y="-28.95" font-family="Georgia" font-size="15.00">Target examples</text>
+<text xml:space="preserve" text-anchor="middle" x="273.65" y="-10.95" font-family="Georgia" font-size="15.00">with task labels</text>
+</g>
+<!-- target&#45;&gt;repr -->
+<g id="domain-adaptation-pretraining-figure-4-domain-adaptation-pretraining-self-taught-edge3" class="edge">
+<title>target&#45;&gt;repr</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M339.58,-38.2C355.06,-41.29 371.61,-44.61 387.19,-47.73"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="386.45,-49.9 393.27,-48.94 387.34,-45.44 386.45,-49.9"/>
+</g>
+<!-- task -->
+<g id="domain-adaptation-pretraining-figure-4-domain-adaptation-pretraining-self-taught-node5" class="node">
+<title>task</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M670.65,-86.4C670.65,-86.4 559.8,-86.4 559.8,-86.4 553.8,-86.4 547.8,-80.4 547.8,-74.4 547.8,-74.4 547.8,-48 547.8,-48 547.8,-42 553.8,-36 559.8,-36 559.8,-36 670.65,-36 670.65,-36 676.65,-36 682.65,-42 682.65,-48 682.65,-48 682.65,-74.4 682.65,-74.4 682.65,-80.4 676.65,-86.4 670.65,-86.4"/>
+<text xml:space="preserve" text-anchor="middle" x="615.23" y="-64.95" font-family="Georgia" font-size="15.00">Learn target task</text>
+<text xml:space="preserve" text-anchor="middle" x="615.23" y="-46.95" font-family="Georgia" font-size="15.00">and evaluate</text>
+</g>
+<!-- repr&#45;&gt;task -->
+<g id="domain-adaptation-pretraining-figure-4-domain-adaptation-pretraining-self-taught-edge4" class="edge">
+<title>repr&#45;&gt;task</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M516.13,-61.2C523.78,-61.2 531.7,-61.2 539.55,-61.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="539.37,-63.48 545.87,-61.2 539.37,-58.93 539.37,-63.48"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Self-taught learning uses unlabeled auxiliary data to learn a representation, then uses target labels for the target task.</figcaption></figure>
+<p>The lecture's examples show that auxiliary and labeled target collections can differ in domain or task. The counts, class counts, and raw feature descriptions below retain the source values.</p>
+<div class="table-scroll" role="region" aria-label="Self-taught learning lecture examples" tabindex="0"><table>
+<thead><tr><th>Target domain/task</th><th>Unlabeled auxiliary data</th><th>Labeled data</th><th>Classes</th><th>Raw features</th></tr></thead><tbody>
+<tr><th>Image classification</th><td>10 images of outdoor scenes</td><td>Caltech101 image classification dataset</td><td>101</td><td>Intensities in 14×14 pixel patch</td></tr>
+<tr><th>Handwritten character recognition</th><td>Handwritten digits “0”–“9”</td><td>Handwritten English characters “a”–“z”</td><td>26</td><td>Intensities in 28×28 pixel character/digit image</td></tr>
+<tr><th>Font character recognition</th><td>Handwritten English characters “a”–“z”</td><td>Font characters “a”/“A”–“z”/“Z”</td><td>26</td><td>Intensities in 28×28 pixel character image</td></tr>
+<tr><th>Song genre classification</th><td>Song snippets from 10 genres</td><td>Song snippets from 7 different genres</td><td>7</td><td>Log-frequency spectrogram over 50 ms time windows</td></tr>
+<tr><th>Webpage classification</th><td>100,000 news articles (Reuters newswire)</td><td>Categorized webpages (from DMOZ hierarchy)</td><td>2</td><td>Bag of words with 500 word vocabulary</td></tr>
+<tr><th>UseNet article classification</th><td>100,000 news articles (Reuters newswire)</td><td>Categorized UseNet posts (from “SRAA” dataset)</td><td>2</td><td>Bag of words with 377 word vocabulary</td></tr>
+</tbody></table></div>
+<p>Use the table as examples of the source's data pairings, not as a universal definition of the tasks. The representation learning step is unsupervised; target labels are used for the target classification step.</p>
+
+<h2 id="unsupervised-transfer">Unsupervised transfer: cluster target data with auxiliary help</h2>
+<p>In the lecture's terminology, unsupervised transfer aims to cluster a small unlabeled target collection with help from a much larger unlabeled auxiliary collection. Their topic distributions may differ. They are clustered simultaneously so that the auxiliary data's representation can influence target examples through shared features. The lecture explicitly warns that the term is used differently across literature, so keep these defining data conditions attached to the name.</p>
+<p>The source illustrates common features across diamonds, platinum, rings, and titanium. It also reports entropy for eight dataset descriptions and several methods. The values below are transcribed exactly from the slide; “separate” and “combined” are retained as column labels. The source calls the measure entropy but provides no separate legend establishing a preferred direction, so the table does not rank methods as better or worse.</p>
+<div class="table-scroll" role="region" aria-label="CLUTO entropy values reported in the lecture" tabindex="0"><table><caption>Entropy by dataset — CLUTO</caption><thead><tr><th>Dataset</th><th>Separate</th><th>Combined</th></tr></thead><tbody>
+<tr><th>eyeglass vs sheet-music</th><td>0.527</td><td>0.966</td></tr><tr><th>airplane vs ostrich</th><td>0.352</td><td>0.696</td></tr><tr><th>fern vs starfish</th><td>0.865</td><td>0.988</td></tr><tr><th>guitar vs laptop</th><td>0.923</td><td>0.965</td></tr><tr><th>hibiscus vs ketch</th><td>0.371</td><td>0.446</td></tr><tr><th>cake vs harp</th><td>0.882</td><td>0.879</td></tr><tr><th>car-side, tire, frog</th><td>1.337</td><td>1.385</td></tr><tr><th>cd, comet, vcr, diamond-ring, skyscraper</th><td>1.663</td><td>1.827</td></tr><tr><th>AVERAGE (slide)</th><td>0.865</td><td>1.019</td></tr>
+</tbody></table></div>
+<div class="table-scroll" role="region" aria-label="Feature Clustering entropy values reported in the lecture" tabindex="0"><table><caption>Entropy by dataset — Feature Clustering</caption><thead><tr><th>Dataset</th><th>Separate</th><th>Combined</th></tr></thead><tbody>
+<tr><th>eyeglass vs sheet-music</th><td>0.669</td><td>0.669</td></tr><tr><th>airplane vs ostrich</th><td>0.512</td><td>0.479</td></tr><tr><th>fern vs starfish</th><td>0.588</td><td>0.953</td></tr><tr><th>guitar vs laptop</th><td>0.999</td><td>0.970</td></tr><tr><th>hibiscus vs ketch</th><td>0.659</td><td>0.649</td></tr><tr><th>cake vs harp</th><td>0.998</td><td>0.911</td></tr><tr><th>car-side, tire, frog</th><td>1.362</td><td>1.413</td></tr><tr><th>cd, comet, vcr, diamond-ring, skyscraper</th><td>1.755</td><td>1.751</td></tr><tr><th>AVERAGE (slide)</th><td>0.943</td><td>0.974</td></tr>
+</tbody></table></div>
+<div class="table-scroll" role="region" aria-label="Co-clustering entropy values reported in the lecture" tabindex="0"><table><caption>Entropy by dataset — Co-clustering</caption><thead><tr><th>Dataset</th><th>Separate</th><th>Combined</th></tr></thead><tbody>
+<tr><th>eyeglass vs sheet-music</th><td>0.630</td><td>0.986</td></tr><tr><th>airplane vs ostrich</th><td>0.426</td><td>0.753</td></tr><tr><th>fern vs starfish</th><td>0.741</td><td>0.968</td></tr><tr><th>guitar vs laptop</th><td>0.925</td><td>1.000</td></tr><tr><th>hibiscus vs ketch</th><td>0.399</td><td>0.793</td></tr><tr><th>cake vs harp</th><td>0.860</td><td>0.996</td></tr><tr><th>car-side, tire, frog</th><td>1.316</td><td>1.275</td></tr><tr><th>cd, comet, vcr, diamond-ring, skyscraper</th><td>1.715</td><td>1.772</td></tr><tr><th>AVERAGE (slide)</th><td>0.877</td><td>1.068</td></tr>
+</tbody></table></div>
+<div class="table-scroll" role="region" aria-label="STC entropy values reported in the lecture" tabindex="0"><table><caption>Entropy by dataset — STC</caption><thead><tr><th>Dataset</th><th>Entropy</th></tr></thead><tbody>
+<tr><th>eyeglass vs sheet-music</th><td>0.187</td></tr><tr><th>airplane vs ostrich</th><td>0.252</td></tr><tr><th>fern vs starfish</th><td>0.575</td></tr><tr><th>guitar vs laptop</th><td>0.569</td></tr><tr><th>hibiscus vs ketch</th><td>0.252</td></tr><tr><th>cake vs harp</th><td>0.772</td></tr><tr><th>car-side, tire, frog</th><td>1.000</td></tr><tr><th>cd, comet, vcr, diamond-ring, skyscraper</th><td>1.274</td></tr><tr><th>AVERAGE (slide)</th><td>0.610</td></tr>
+</tbody></table></div>
+<p><strong>Independent average check.</strong> Recompute each mean over the eight displayed data rows, then round to three decimals as the slide does. For example, CLUTO separate is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>0.527</mn><mo>&#x0002B;</mo><mn>0.352</mn><mo>&#x0002B;</mo><mn>0.865</mn><mo>&#x0002B;</mo><mn>0.923</mn><mo>&#x0002B;</mo><mn>0.371</mn><mo>&#x0002B;</mo><mn>0.882</mn><mo>&#x0002B;</mo><mn>1.337</mn><mo>&#x0002B;</mo><mn>1.663</mn></mrow><mrow><mn>8</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>6.920</mn></mrow><mrow><mn>8</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.865</mn></mrow></math>. In the same left-to-right column order as the source, recomputed means are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.865</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>1.019</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>0.943</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>0.974</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>0.877</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>1.068</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>0.610</mn></mrow></math>; they match all seven printed averages after rounding.</p>
+
+<h2 id="negative-transfer">Negative transfer and ways to limit it</h2>
+<p>Negative transfer occurs when a transfer method decreases target-task performance. The reference point is learning the target task without transfer. The lecture describes three strategies: reject harmful source-task knowledge; choose a source task that is at least a reasonable match; or model task relationships explicitly so the transfer method can use similarity information.</p>
+<p>These are risk-reduction strategies, not guarantees. A practical check is to compare transfer and a target-only baseline using the same held-out target evaluation protocol. If labeled target evaluation data are unavailable, this comparison cannot honestly report target-task accuracy.</p>
+<figure><div class="diagram-frame" style="--diagram-width:965.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="A practical comparison derived from the lecture definition: judge transfer against a target-only baseline under the same evaluation protocol." width="965pt" height="137pt"
+ viewBox="0.00 0.00 965.00 137.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="domain-adaptation-pretraining-figure-5-domain-adaptation-pretraining-negative-transfer-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 126.2)">
+<title>G</title>
+<!-- base -->
+<g id="domain-adaptation-pretraining-figure-5-domain-adaptation-pretraining-negative-transfer-node1" class="node">
+<title>base</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M281.07,-115.4C281.07,-115.4 206.22,-115.4 206.22,-115.4 200.22,-115.4 194.22,-109.4 194.22,-103.4 194.22,-103.4 194.22,-77 194.22,-77 194.22,-71 200.22,-65 206.22,-65 206.22,-65 281.07,-65 281.07,-65 287.07,-65 293.07,-71 293.07,-77 293.07,-77 293.07,-103.4 293.07,-103.4 293.07,-109.4 287.07,-115.4 281.07,-115.4"/>
+<text xml:space="preserve" text-anchor="middle" x="243.65" y="-93.95" font-family="Georgia" font-size="15.00">Target&#45;only</text>
+<text xml:space="preserve" text-anchor="middle" x="243.65" y="-75.95" font-family="Georgia" font-size="15.00">baseline</text>
+</g>
+<!-- compare -->
+<g id="domain-adaptation-pretraining-figure-5-domain-adaptation-pretraining-negative-transfer-node4" class="node">
+<title>compare</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M509.05,-82.4C509.05,-82.4 352.45,-82.4 352.45,-82.4 346.45,-82.4 340.45,-76.4 340.45,-70.4 340.45,-70.4 340.45,-44 340.45,-44 340.45,-38 346.45,-32 352.45,-32 352.45,-32 509.05,-32 509.05,-32 515.05,-32 521.05,-38 521.05,-44 521.05,-44 521.05,-70.4 521.05,-70.4 521.05,-76.4 515.05,-82.4 509.05,-82.4"/>
+<text xml:space="preserve" text-anchor="middle" x="430.75" y="-60.95" font-family="Georgia" font-size="15.00">Compare on the same</text>
+<text xml:space="preserve" text-anchor="middle" x="430.75" y="-42.95" font-family="Georgia" font-size="15.00">held&#45;out target protocol</text>
+</g>
+<!-- base&#45;&gt;compare -->
+<g id="domain-adaptation-pretraining-figure-5-domain-adaptation-pretraining-negative-transfer-edge1" class="edge">
+<title>base&#45;&gt;compare</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M293.28,-81.53C305.48,-79.35 319.01,-76.94 332.67,-74.51"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="332.77,-76.8 338.77,-73.42 331.97,-72.32 332.77,-76.8"/>
+</g>
+<!-- source -->
+<g id="domain-adaptation-pretraining-figure-5-domain-adaptation-pretraining-negative-transfer-node2" class="node">
+<title>source</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M134.85,-50.4C134.85,-50.4 12,-50.4 12,-50.4 6,-50.4 0,-44.4 0,-38.4 0,-38.4 0,-12 0,-12 0,-6 6,0 12,0 12,0 134.85,0 134.85,0 140.85,0 146.85,-6 146.85,-12 146.85,-12 146.85,-38.4 146.85,-38.4 146.85,-44.4 140.85,-50.4 134.85,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="73.42" y="-28.95" font-family="Georgia" font-size="15.00">Choose a plausible</text>
+<text xml:space="preserve" text-anchor="middle" x="73.42" y="-10.95" font-family="Georgia" font-size="15.00">source task</text>
+</g>
+<!-- adapt -->
+<g id="domain-adaptation-pretraining-figure-5-domain-adaptation-pretraining-negative-transfer-node3" class="node">
+<title>adapt</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M296.45,-43.2C296.45,-43.2 190.85,-43.2 190.85,-43.2 184.85,-43.2 178.85,-37.2 178.85,-31.2 178.85,-31.2 178.85,-19.2 178.85,-19.2 178.85,-13.2 184.85,-7.2 190.85,-7.2 190.85,-7.2 296.45,-7.2 296.45,-7.2 302.45,-7.2 308.45,-13.2 308.45,-19.2 308.45,-19.2 308.45,-31.2 308.45,-31.2 308.45,-37.2 302.45,-43.2 296.45,-43.2"/>
+<text xml:space="preserve" text-anchor="middle" x="243.65" y="-19.95" font-family="Georgia" font-size="15.00">Transfer / adapt</text>
+</g>
+<!-- source&#45;&gt;adapt -->
+<g id="domain-adaptation-pretraining-figure-5-domain-adaptation-pretraining-negative-transfer-edge2" class="edge">
+<title>source&#45;&gt;adapt</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M147.23,-25.2C155.02,-25.2 162.95,-25.2 170.73,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="170.44,-27.48 176.94,-25.2 170.44,-22.93 170.44,-27.48"/>
+</g>
+<!-- adapt&#45;&gt;compare -->
+<g id="domain-adaptation-pretraining-figure-5-domain-adaptation-pretraining-negative-transfer-edge3" class="edge">
+<title>adapt&#45;&gt;compare</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M308.87,-36.3C316.62,-37.64 324.67,-39.03 332.77,-40.43"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="331.92,-42.6 338.71,-41.46 332.7,-38.11 331.92,-42.6"/>
+</g>
+<!-- decision -->
+<g id="domain-adaptation-pretraining-figure-5-domain-adaptation-pretraining-negative-transfer-node5" class="node">
+<title>decision</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M701.4,-82.4C701.4,-82.4 565.05,-82.4 565.05,-82.4 559.05,-82.4 553.05,-76.4 553.05,-70.4 553.05,-70.4 553.05,-44 553.05,-44 553.05,-38 559.05,-32 565.05,-32 565.05,-32 701.4,-32 701.4,-32 707.4,-32 713.4,-38 713.4,-44 713.4,-44 713.4,-70.4 713.4,-70.4 713.4,-76.4 707.4,-82.4 701.4,-82.4"/>
+<text xml:space="preserve" text-anchor="middle" x="633.22" y="-60.95" font-family="Georgia" font-size="15.00">Lower performance?</text>
+<text xml:space="preserve" text-anchor="middle" x="633.22" y="-42.95" font-family="Georgia" font-size="15.00">Negative transfer</text>
+</g>
+<!-- compare&#45;&gt;decision -->
+<g id="domain-adaptation-pretraining-figure-5-domain-adaptation-pretraining-negative-transfer-edge4" class="edge">
+<title>compare&#45;&gt;decision</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M521.43,-57.2C529.1,-57.2 536.84,-57.2 544.49,-57.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="544.08,-59.48 550.58,-57.2 544.08,-54.93 544.08,-59.48"/>
+</g>
+<!-- respond -->
+<g id="domain-adaptation-pretraining-figure-5-domain-adaptation-pretraining-negative-transfer-node6" class="node">
+<title>respond</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M931.25,-82.4C931.25,-82.4 757.4,-82.4 757.4,-82.4 751.4,-82.4 745.4,-76.4 745.4,-70.4 745.4,-70.4 745.4,-44 745.4,-44 745.4,-38 751.4,-32 757.4,-32 757.4,-32 931.25,-32 931.25,-32 937.25,-32 943.25,-38 943.25,-44 943.25,-44 943.25,-70.4 943.25,-70.4 943.25,-76.4 937.25,-82.4 931.25,-82.4"/>
+<text xml:space="preserve" text-anchor="middle" x="844.33" y="-60.95" font-family="Georgia" font-size="15.00">Reject harmful knowledge</text>
+<text xml:space="preserve" text-anchor="middle" x="844.33" y="-42.95" font-family="Georgia" font-size="15.00">or improve source match</text>
+</g>
+<!-- decision&#45;&gt;respond -->
+<g id="domain-adaptation-pretraining-figure-5-domain-adaptation-pretraining-negative-transfer-edge5" class="edge">
+<title>decision&#45;&gt;respond</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M714.17,-57.2C721.78,-57.2 729.57,-57.2 737.38,-57.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="737.17,-59.48 743.67,-57.2 737.17,-54.93 737.17,-59.48"/>
+</g>
+</g>
+</svg>
+</div><figcaption>A practical comparison derived from the lecture definition: judge transfer against a target-only baseline under the same evaluation protocol.</figcaption></figure>
+
+<h2 id="pretraining">Pretraining examples in vision and language</h2>
+<h3>Computer vision</h3>
+<p>The lecture presents ImageNet-pretrained models as an influential and standard practice in computer vision at the time of the slides. Its feature montage moves from edge and texture patterns toward parts and object-level features across layers. Treat this as the lecture's explanation of why learned visual representations can transfer; it is not a current survey or a universal performance claim.</p>
+<h3>Natural language processing: static word embeddings</h3>
+<p>The lecture describes pretrained static word embeddings as an important component in deep-learning systems. It also lists limitations of this shallow approach: it is efficient but less expressive; a word's representation is not context-sensitive; senses are not distinguished; only the embedding/first layer is pretrained; and the rest of the model must be trained from scratch. These are properties of the static embedding approach discussed in the slides.</p>
+
+<h2 id="common-mistakes">Common mistakes</h2>
+<ul>
+<li><strong>Mixing up labels:</strong> source task labels, target task labels, and source/target domain IDs have different roles. Unlabeled target data still have a known domain origin.</li>
+<li><strong>Reversing every DANN gradient:</strong> reverse only the domain-loss signal entering the feature extractor. The domain head minimizes its own domain loss.</li>
+<li><strong>Calling domain confusion proof of task success:</strong> domain confusion and task performance are separate checks. Target task evaluation needs separately labeled target examples.</li>
+<li><strong>Confusing zero-shot with missing class descriptions:</strong> labeled target-class training images can be absent while semantic class descriptors are still available.</li>
+<li><strong>Assuming every attribute set identifies a class uniquely:</strong> repeated descriptors or equal nearest distances create ambiguity.</li>
+<li><strong>Confusing the marginal label frequency with the conditional task rule:</strong> covariate shift preserves <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo>&#x02223;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math>; it does not require <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo stretchy="false">&#x00029;</mo></mrow></math> to stay fixed.</li>
+<li><strong>Assuming transfer always helps:</strong> negative transfer is defined by worse target performance than the no-transfer baseline.</li>
+<li><strong>Reading entropy as an accuracy score:</strong> the lecture labels its table entropy and does not add a legend specifying the preferred direction.</li>
+</ul>
+
+<h2 id="revision">Revision checklist</h2>
+<ul>
+<li>Domain adaptation: same task, different domain; source task labels available, target task labels withheld during adaptation.</li>
+<li>DANN: source task loss trains task prediction; source/target origin loss trains the domain head; only its feature-extractor gradient is reversed.</li>
+<li>Zero-shot: unseen labeled training classes can be considered through available semantic descriptions.</li>
+<li>Covariate shift: same <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>X</mi></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Y</mi></mrow></math>, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo>&#x02223;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math>; changed <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math>.</li>
+<li>Self-taught: learn a representation from unlabeled auxiliary data, then use labeled target data for the task.</li>
+<li>Unsupervised transfer as defined here: jointly cluster small unlabeled target data with larger unlabeled auxiliary data using shared features.</li>
+<li>Negative transfer: transfer reduces target performance relative to a target-only baseline.</li>
+<li>Pretraining examples: ImageNet features in CV and static word embeddings in NLP, with the limitations stated in the lecture.</li>
+</ul>
+
+<h2 id="practice">Practice questions</h2>
+<p class="question">1. A labeled source set and unlabeled target set share a digit task but differ in image appearance. Which labels can the DANN task head use during adaptation?</p>
+<details class="worked"><summary>Check your answer</summary><p>Only the source task labels. Both source and target examples can carry domain-origin IDs, because their origin is known. Target task labels remain unavailable in the stated adaptation training setup.</p></details>
+<p class="question">2. Which DANN parameter group receives the reversed domain gradient, and what is the sign in its feature update?</p>
+<details class="worked"><summary>Check your answer</summary><p>The feature extractor <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B8;</mi><mi>f</mi></msub></mrow></math> receives the reversed signal. For the objective <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>L</mi><mi>y</mi></msub><mo>&#x02212;</mo><mi>&#x003BB;</mi><msub><mi>L</mi><mi>d</mi></msub></mrow></math>, its descent direction is based on <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mo>&#x02207;</mo><mrow><msub><mi>&#x003B8;</mi><mi>f</mi></msub></mrow></msub><msub><mi>L</mi><mi>y</mi></msub><mo>&#x02212;</mo><mi>&#x003BB;</mi><msub><mo>&#x02207;</mo><mrow><msub><mi>&#x003B8;</mi><mi>f</mi></msub></mrow></msub><msub><mi>L</mi><mi>d</mi></msub></mrow></math>. The domain head still minimizes <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>L</mi><mi>d</mi></msub></mrow></math>.</p></details>
+<p class="question">3. For the source attribute table, what are the Hamming distances from query <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math> to Dog <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, Fish <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, and Chimp <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></math>?</p>
+<details class="worked"><summary>Check your answer</summary><p>Dog: two differing bits, distance 2. Fish: zero differing bits, distance 0. Chimp: first and third bits differ, distance 2. Fish is the unique nearest class under this supplemental Hamming calculation.</p></details>
+<p class="question">4. What does zero loss require in the lecture’s margin-ranking objective?</p>
+<details class="worked"><summary>Check your answer</summary><p>The positive image/class compatibility must exceed the hardest wrong-class compatibility by at least the margin: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>f</mi><mo stretchy="false">&#x00028;</mo><msup><mi>x</mi><mi>n</mi></msup><mo stretchy="false">&#x00029;</mo><mo>&#x000B7;</mo><mi>g</mi><mo stretchy="false">&#x00028;</mo><msup><mi>y</mi><mi>n</mi></msup><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><msub><mo>max</mo><mrow><mi>m</mi><mo>&#x02260;</mo><mi>n</mi></mrow></msub><mi>f</mi><mo stretchy="false">&#x00028;</mo><msup><mi>x</mi><mi>n</mi></msup><mo stretchy="false">&#x00029;</mo><mo>&#x000B7;</mo><mi>g</mi><mo stretchy="false">&#x00028;</mo><msup><mi>y</mi><mi>m</mi></msup><mo stretchy="false">&#x00029;</mo><mo>&#x02265;</mo><mi>k</mi></mrow></math>.</p></details>
+<p class="question">5. Under covariate shift, can the marginal output-label distribution change?</p>
+<details class="worked"><summary>Check your answer</summary><p>Yes. The stable condition is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>P</mi><mi>S</mi></msub><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo>&#x02223;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mi>P</mi><mi>T</mi></msub><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo>&#x02223;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math>, while the input marginal changes. A changed mix of inputs can also change the overall marginal <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo stretchy="false">&#x00029;</mo></mrow></math>.</p></details>
+<p class="question">6. In the source’s self-taught examples, is the auxiliary source data labeled for the representation-learning step?</p>
+<details class="worked"><summary>Check your answer</summary><p>No. The representation is learned from unlabeled auxiliary source data; labeled target examples support the target task afterward.</p></details>
+<p class="question">7. How does the lecture define negative transfer?</p>
+<details class="worked"><summary>Check your answer</summary><p>A transfer method has negative transfer when it decreases target-task performance relative to learning the target task without transfer.</p></details>
+<p class="question">8. Give one static word-embedding limitation from the lecture.</p>
+<details class="worked"><summary>Check your answer</summary><p>The representation is not context-sensitive: the same word vector does not change with sentence context. The lecture also says it does not distinguish senses and that only the embedding/first layer is pretrained.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="transfer-learning.html"><small>Previous</small>Transfer Learning, Multitask Learning, and Fine-Tuning <span aria-hidden="true">↗</span></a><a href="deep-learning-foundations.html"><small>Next</small>Deep Learning Foundations and Regularization <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

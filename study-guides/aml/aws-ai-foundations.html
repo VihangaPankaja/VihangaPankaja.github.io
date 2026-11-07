@@ -1,0 +1,802 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="An optional companion survey of AI, machine learning, generative AI, and foundation models. It connects the data and workflow choices behind predictions to the tasks and limits of generated output."><title>AWS Companion: AI and Generative AI Foundations · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html" aria-current="page">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">AWS companion <span>/</span> AWS companion</div><h1>AWS Companion: AI and Generative AI Foundations</h1><p class="lead">An optional companion survey of AI, machine learning, generative AI, and foundation models. It connects the data and workflow choices behind predictions to the tasks and limits of generated output.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">AI, machine learning, and deep learning</a><a href="#section-2">From data to prediction</a><a href="#section-3">Data, labels, and learning approaches</a><a href="#section-4">Foundation models and generative AI</a><a href="#section-5">Model families: a brief architecture survey</a><a href="#section-6">Choosing a suitable generative task</a><a href="#section-7">Course-era AWS service map</a><a href="#section-8">Common mistakes</a><a href="#section-9">Concept review</a><a href="#section-10">Practice questions</a><a href="#section-11">Related optional companions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Artificial intelligence (AI) is a broad field for making machines perform tasks associated with human intelligence. Machine learning (ML) is one family of approaches within that field: instead of writing every decision as a rule, a learner uses data to build a model that can make predictions on new inputs. Deep learning uses layered neural networks for complex patterns. Generative AI uses learned patterns to produce new content in response to a request or context.</p>
+<p>These labels are useful ways to organize the introductory course material, not a complete taxonomy with rigid borders. A reliable way to reason about any system is to ask what task it performs, what data and learning approach support it, what happens when it receives new input, and how its outputs will be evaluated. This AWS material is optional companion reading and is separate from the assumed CS4681 exam route.</p>
+<h2 id="section-1">AI, machine learning, and deep learning</h2>
+<p>AI includes strategies and techniques for tasks that typically require human intelligence. The course uses computer vision and smart devices as examples; these can incorporate ML. ML learns patterns from existing data by training a mathematical model. Deep learning is ML based on neural networks with an input layer, one or more hidden layers, and an output layer. More complex networks can represent more complex relationships, and the course associates deep learning with large, varied datasets and tasks involving unstructured data.</p>
+<p>The course introduces generative AI through a deep-learning and foundation-model lineage. Treat that as a teaching map rather than an exhaustive classification: fields and model families can overlap, and a model's capabilities depend on its training and design. A foundation model (FM) is broadly pretrained and can be adapted to respond to a range of requests, but no single FM should be assumed to perform every modality or task well.</p>
+<p>AI can help analyze complex collections of sounds, images, and environmental information, and the course gives wildlife protection, food insecurity, and disaster recovery as areas where organizations apply it. It also highlights risks: biased or erroneous design can lead to unfair or inaccurate decisions, while limited transparency can make accountability harder. Its written examples include reported racial bias in some health-care treatment recommendations and lawyers submitting fabricated citations from AI tools. These are reminders to scrutinize outputs and systems; they are not evidence that all AI has the same outcomes.</p>
+<p>The course groups responsible AI practice into three areas: <strong>accurate, fair, safe, and secure</strong>; <strong>explainable and transparent</strong>; and <strong>governed and controlled</strong>. These connect protecting people and data with making system behavior inspectable and maintaining ways to steer it throughout its lifecycle. They are goals supported by practices and checks, not guarantees conferred by an AI label. The <a href="aws-responsible-security.html">responsible-AI and governance companion</a> develops these concerns in detail.</p>
+<figure><div class="diagram-frame" style="--diagram-width:265.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="A simplified introductory relationship map from the course. The labels describe common framing and do not claim a complete, mutually exclusive taxonomy or universal model capabilities." width="265pt" height="510pt"
+ viewBox="0.00 0.00 265.00 510.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="aws-ai-foundations-figure-1-aws-ai-foundations-model-map-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 499.45)">
+<title>G</title>
+<!-- ai -->
+<g id="aws-ai-foundations-figure-1-aws-ai-foundations-model-map-node1" class="node">
+<title>ai</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M130.72,-488.65C130.72,-488.65 74.62,-488.65 74.62,-488.65 68.62,-488.65 62.62,-482.65 62.62,-476.65 62.62,-476.65 62.62,-457.75 62.62,-457.75 62.62,-451.75 68.62,-445.75 74.62,-445.75 74.62,-445.75 130.72,-445.75 130.72,-445.75 136.72,-445.75 142.72,-451.75 142.72,-457.75 142.72,-457.75 142.72,-476.65 142.72,-476.65 142.72,-482.65 136.72,-488.65 130.72,-488.65"/>
+<text xml:space="preserve" text-anchor="middle" x="102.67" y="-470.05" font-family="Georgia" font-size="12.00">AI</text>
+<text xml:space="preserve" text-anchor="middle" x="102.67" y="-455.8" font-family="Georgia" font-size="12.00">broad field</text>
+</g>
+<!-- ml -->
+<g id="aws-ai-foundations-figure-1-aws-ai-foundations-model-map-node2" class="node">
+<title>ml</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M167.1,-399.5C167.1,-399.5 38.25,-399.5 38.25,-399.5 32.25,-399.5 26.25,-393.5 26.25,-387.5 26.25,-387.5 26.25,-368.6 26.25,-368.6 26.25,-362.6 32.25,-356.6 38.25,-356.6 38.25,-356.6 167.1,-356.6 167.1,-356.6 173.1,-356.6 179.1,-362.6 179.1,-368.6 179.1,-368.6 179.1,-387.5 179.1,-387.5 179.1,-393.5 173.1,-399.5 167.1,-399.5"/>
+<text xml:space="preserve" text-anchor="middle" x="102.67" y="-380.9" font-family="Georgia" font-size="12.00">Machine learning</text>
+<text xml:space="preserve" text-anchor="middle" x="102.67" y="-366.65" font-family="Georgia" font-size="12.00">learn patterns from data</text>
+</g>
+<!-- ai&#45;&gt;ml -->
+<g id="aws-ai-foundations-figure-1-aws-ai-foundations-model-map-edge1" class="edge">
+<title>ai&#45;&gt;ml</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M102.67,-445.55C102.67,-431.75 102.67,-413.68 102.67,-399.86"/>
+<text xml:space="preserve" text-anchor="middle" x="160.05" y="-418.35" font-family="Georgia" font-size="12.00">common relationship</text>
+</g>
+<!-- dl -->
+<g id="aws-ai-foundations-figure-1-aws-ai-foundations-model-map-node3" class="node">
+<title>dl</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M166.72,-310.35C166.72,-310.35 38.62,-310.35 38.62,-310.35 32.62,-310.35 26.62,-304.35 26.62,-298.35 26.62,-298.35 26.62,-279.45 26.62,-279.45 26.62,-273.45 32.62,-267.45 38.62,-267.45 38.62,-267.45 166.72,-267.45 166.72,-267.45 172.72,-267.45 178.72,-273.45 178.72,-279.45 178.72,-279.45 178.72,-298.35 178.72,-298.35 178.72,-304.35 172.72,-310.35 166.72,-310.35"/>
+<text xml:space="preserve" text-anchor="middle" x="102.67" y="-291.75" font-family="Georgia" font-size="12.00">Deep learning</text>
+<text xml:space="preserve" text-anchor="middle" x="102.67" y="-277.5" font-family="Georgia" font-size="12.00">layered neural networks</text>
+</g>
+<!-- ml&#45;&gt;dl -->
+<g id="aws-ai-foundations-figure-1-aws-ai-foundations-model-map-edge2" class="edge">
+<title>ml&#45;&gt;dl</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M102.67,-356.4C102.67,-342.6 102.67,-324.53 102.67,-310.71"/>
+<text xml:space="preserve" text-anchor="middle" x="158.93" y="-329.2" font-family="Georgia" font-size="12.00">subset in course map</text>
+</g>
+<!-- gen -->
+<g id="aws-ai-foundations-figure-1-aws-ai-foundations-model-map-node4" class="node">
+<title>gen</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M170.47,-221.2C170.47,-221.2 34.88,-221.2 34.88,-221.2 28.88,-221.2 22.88,-215.2 22.88,-209.2 22.88,-209.2 22.88,-190.3 22.88,-190.3 22.88,-184.3 28.88,-178.3 34.88,-178.3 34.88,-178.3 170.47,-178.3 170.47,-178.3 176.47,-178.3 182.47,-184.3 182.47,-190.3 182.47,-190.3 182.47,-209.2 182.47,-209.2 182.47,-215.2 176.47,-221.2 170.47,-221.2"/>
+<text xml:space="preserve" text-anchor="middle" x="102.67" y="-202.6" font-family="Georgia" font-size="12.00">Generative AI</text>
+<text xml:space="preserve" text-anchor="middle" x="102.67" y="-188.35" font-family="Georgia" font-size="12.00">creates requested content</text>
+</g>
+<!-- dl&#45;&gt;gen -->
+<g id="aws-ai-foundations-figure-1-aws-ai-foundations-model-map-edge3" class="edge">
+<title>dl&#45;&gt;gen</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M102.67,-267.25C102.67,-253.45 102.67,-235.38 102.67,-221.56"/>
+<text xml:space="preserve" text-anchor="middle" x="142.8" y="-240.05" font-family="Georgia" font-size="12.00">course framing</text>
+</g>
+<!-- fm -->
+<g id="aws-ai-foundations-figure-1-aws-ai-foundations-model-map-node5" class="node">
+<title>fm</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M173.1,-132.05C173.1,-132.05 32.25,-132.05 32.25,-132.05 26.25,-132.05 20.25,-126.05 20.25,-120.05 20.25,-120.05 20.25,-101.15 20.25,-101.15 20.25,-95.15 26.25,-89.15 32.25,-89.15 32.25,-89.15 173.1,-89.15 173.1,-89.15 179.1,-89.15 185.1,-95.15 185.1,-101.15 185.1,-101.15 185.1,-120.05 185.1,-120.05 185.1,-126.05 179.1,-132.05 173.1,-132.05"/>
+<text xml:space="preserve" text-anchor="middle" x="102.67" y="-113.45" font-family="Georgia" font-size="12.00">Foundation models</text>
+<text xml:space="preserve" text-anchor="middle" x="102.67" y="-99.2" font-family="Georgia" font-size="12.00">broadly pretrained models</text>
+</g>
+<!-- gen&#45;&gt;fm -->
+<g id="aws-ai-foundations-figure-1-aws-ai-foundations-model-map-edge4" class="edge">
+<title>gen&#45;&gt;fm</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M102.67,-178.1C102.67,-164.3 102.67,-146.23 102.67,-132.41"/>
+<text xml:space="preserve" text-anchor="middle" x="159.3" y="-150.9" font-family="Georgia" font-size="12.00">course example basis</text>
+</g>
+<!-- tasks -->
+<g id="aws-ai-foundations-figure-1-aws-ai-foundations-model-map-node6" class="node">
+<title>tasks</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M193.35,-42.9C193.35,-42.9 12,-42.9 12,-42.9 6,-42.9 0,-36.9 0,-30.9 0,-30.9 0,-12 0,-12 0,-6 6,0 12,0 12,0 193.35,0 193.35,0 199.35,0 205.35,-6 205.35,-12 205.35,-12 205.35,-30.9 205.35,-30.9 205.35,-36.9 199.35,-42.9 193.35,-42.9"/>
+<text xml:space="preserve" text-anchor="middle" x="102.67" y="-24.3" font-family="Georgia" font-size="12.00">Tasks and modalities</text>
+<text xml:space="preserve" text-anchor="middle" x="102.67" y="-10.05" font-family="Georgia" font-size="12.00">text · image · audio · other outputs</text>
+</g>
+<!-- fm&#45;&gt;tasks -->
+<g id="aws-ai-foundations-figure-1-aws-ai-foundations-model-map-edge5" class="edge">
+<title>fm&#45;&gt;tasks</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M102.67,-88.95C102.67,-75.15 102.67,-57.08 102.67,-43.26"/>
+<text xml:space="preserve" text-anchor="middle" x="172.8" y="-61.75" font-family="Georgia" font-size="12.00">capabilities vary by model</text>
+</g>
+</g>
+</svg>
+</div><figcaption>A simplified introductory relationship map from the course. The labels describe common framing and do not claim a complete, mutually exclusive taxonomy or universal model capabilities.</figcaption></figure>
+<h2 id="section-2">From data to prediction</h2>
+<p>An ML model is the result of a learning process: an algorithm is applied to training data so the model can recognize patterns and make predictions. A team selects data and a suitable approach, trains the model, evaluates performance, and may tune it, collect more data, and repeat training and testing. The quality of the data, techniques, and model affects output quality.</p>
+<p><strong>Inference</strong> is different: it is the output produced when a trained model applies what it learned to new input data. For example, a payment system may send an incoming card transaction to a fraud model; its prediction then informs the next processing step. Training uses examples to shape the model. Inference uses a trained model to produce a prediction for a new case.</p>
+<p>Evaluation does not stop at launch. In production, teams monitor and evaluate prediction quality because the environment can change. New fraud patterns, for example, may no longer resemble the historical training data. Monitoring can reveal when the model or data needs investigation and may motivate additional data collection, tuning, or retraining.</p>
+<figure><div class="diagram-frame" style="--diagram-width:375.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Training data changes a model during training; a separate new input is used for inference. Evaluation and production monitoring assess outputs and can inform a later learning cycle." width="375pt" height="464pt"
+ viewBox="0.00 0.00 375.00 464.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="aws-ai-foundations-figure-2-aws-ai-foundations-learning-workflow-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 452.8)">
+<title>G</title>
+<!-- data -->
+<g id="aws-ai-foundations-figure-2-aws-ai-foundations-learning-workflow-node1" class="node">
+<title>data</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M276.85,-442C276.85,-442 156.25,-442 156.25,-442 150.25,-442 144.25,-436 144.25,-430 144.25,-430 144.25,-411.1 144.25,-411.1 144.25,-405.1 150.25,-399.1 156.25,-399.1 156.25,-399.1 276.85,-399.1 276.85,-399.1 282.85,-399.1 288.85,-405.1 288.85,-411.1 288.85,-411.1 288.85,-430 288.85,-430 288.85,-436 282.85,-442 276.85,-442"/>
+<text xml:space="preserve" text-anchor="middle" x="216.55" y="-423.4" font-family="Georgia" font-size="12.00">Training data</text>
+<text xml:space="preserve" text-anchor="middle" x="216.55" y="-409.15" font-family="Georgia" font-size="12.00">examples used to learn</text>
+</g>
+<!-- fit -->
+<g id="aws-ai-foundations-figure-2-aws-ai-foundations-learning-workflow-node2" class="node">
+<title>fit</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M268.23,-366.1C268.23,-366.1 164.88,-366.1 164.88,-366.1 158.88,-366.1 152.88,-360.1 152.88,-354.1 152.88,-354.1 152.88,-335.2 152.88,-335.2 152.88,-329.2 158.88,-323.2 164.88,-323.2 164.88,-323.2 268.23,-323.2 268.23,-323.2 274.23,-323.2 280.23,-329.2 280.23,-335.2 280.23,-335.2 280.23,-354.1 280.23,-354.1 280.23,-360.1 274.23,-366.1 268.23,-366.1"/>
+<text xml:space="preserve" text-anchor="middle" x="216.55" y="-347.5" font-family="Georgia" font-size="12.00">Training and tuning</text>
+<text xml:space="preserve" text-anchor="middle" x="216.55" y="-333.25" font-family="Georgia" font-size="12.00">fit or adjust model</text>
+</g>
+<!-- data&#45;&gt;fit -->
+<g id="aws-ai-foundations-figure-2-aws-ai-foundations-learning-workflow-edge1" class="edge">
+<title>data&#45;&gt;fit</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M216.55,-398.96C216.55,-391.47 216.55,-382.85 216.55,-374.75"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="218.83,-374.91 216.55,-368.41 214.28,-374.91 218.83,-374.91"/>
+</g>
+<!-- model -->
+<g id="aws-ai-foundations-figure-2-aws-ai-foundations-learning-workflow-node3" class="node">
+<title>model</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M137.72,-276.95C137.72,-276.95 61.38,-276.95 61.38,-276.95 55.38,-276.95 49.37,-270.95 49.37,-264.95 49.37,-264.95 49.37,-252.95 49.37,-252.95 49.37,-246.95 55.37,-240.95 61.37,-240.95 61.37,-240.95 137.72,-240.95 137.72,-240.95 143.72,-240.95 149.72,-246.95 149.72,-252.95 149.72,-252.95 149.72,-264.95 149.72,-264.95 149.72,-270.95 143.72,-276.95 137.72,-276.95"/>
+<text xml:space="preserve" text-anchor="middle" x="99.55" y="-254.67" font-family="Georgia" font-size="12.00">Trained model</text>
+</g>
+<!-- fit&#45;&gt;model -->
+<g id="aws-ai-foundations-figure-2-aws-ai-foundations-learning-workflow-edge2" class="edge">
+<title>fit&#45;&gt;model</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M195.05,-322.45C184.76,-312.86 171.99,-301.74 159.55,-292.95 153.77,-288.87 147.44,-284.91 141.13,-281.22"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="142.39,-279.33 135.62,-278.09 140.15,-283.28 142.39,-279.33"/>
+</g>
+<!-- prediction -->
+<g id="aws-ai-foundations-figure-2-aws-ai-foundations-learning-workflow-node5" class="node">
+<title>prediction</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M142.97,-207.95C142.97,-207.95 56.12,-207.95 56.12,-207.95 50.12,-207.95 44.12,-201.95 44.12,-195.95 44.12,-195.95 44.12,-177.05 44.12,-177.05 44.12,-171.05 50.12,-165.05 56.12,-165.05 56.12,-165.05 142.97,-165.05 142.97,-165.05 148.97,-165.05 154.97,-171.05 154.97,-177.05 154.97,-177.05 154.97,-195.95 154.97,-195.95 154.97,-201.95 148.97,-207.95 142.97,-207.95"/>
+<text xml:space="preserve" text-anchor="middle" x="99.55" y="-189.35" font-family="Georgia" font-size="12.00">Prediction</text>
+<text xml:space="preserve" text-anchor="middle" x="99.55" y="-175.1" font-family="Georgia" font-size="12.00">for this new case</text>
+</g>
+<!-- model&#45;&gt;prediction -->
+<g id="aws-ai-foundations-figure-2-aws-ai-foundations-learning-workflow-edge4" class="edge">
+<title>model&#45;&gt;prediction</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M99.55,-240.54C99.55,-233.2 99.55,-224.47 99.55,-216.23"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="101.83,-216.23 99.55,-209.73 97.28,-216.23 101.83,-216.23"/>
+</g>
+<!-- new -->
+<g id="aws-ai-foundations-figure-2-aws-ai-foundations-learning-workflow-node4" class="node">
+<title>new</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M119.1,-366.1C119.1,-366.1 12,-366.1 12,-366.1 6,-366.1 0,-360.1 0,-354.1 0,-354.1 0,-335.2 0,-335.2 0,-329.2 6,-323.2 12,-323.2 12,-323.2 119.1,-323.2 119.1,-323.2 125.1,-323.2 131.1,-329.2 131.1,-335.2 131.1,-335.2 131.1,-354.1 131.1,-354.1 131.1,-360.1 125.1,-366.1 119.1,-366.1"/>
+<text xml:space="preserve" text-anchor="middle" x="65.55" y="-347.5" font-family="Georgia" font-size="12.00">New inference input</text>
+<text xml:space="preserve" text-anchor="middle" x="65.55" y="-333.25" font-family="Georgia" font-size="12.00">separate transaction</text>
+</g>
+<!-- new&#45;&gt;model -->
+<g id="aws-ai-foundations-figure-2-aws-ai-foundations-learning-workflow-edge3" class="edge">
+<title>new&#45;&gt;model</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M68.73,-322.89C70.61,-313.49 73.44,-302.41 77.55,-292.95 78.85,-289.97 80.42,-286.96 82.11,-284.04"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="83.92,-285.44 85.42,-278.72 80.06,-283.04 83.92,-285.44"/>
+<text xml:space="preserve" text-anchor="middle" x="118.05" y="-295.8" font-family="Georgia" font-size="12.00">inference input</text>
+</g>
+<!-- eval -->
+<g id="aws-ai-foundations-figure-2-aws-ai-foundations-learning-workflow-node6" class="node">
+<title>eval</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M170.35,-118.8C170.35,-118.8 28.75,-118.8 28.75,-118.8 22.75,-118.8 16.75,-112.8 16.75,-106.8 16.75,-106.8 16.75,-87.9 16.75,-87.9 16.75,-81.9 22.75,-75.9 28.75,-75.9 28.75,-75.9 170.35,-75.9 170.35,-75.9 176.35,-75.9 182.35,-81.9 182.35,-87.9 182.35,-87.9 182.35,-106.8 182.35,-106.8 182.35,-112.8 176.35,-118.8 170.35,-118.8"/>
+<text xml:space="preserve" text-anchor="middle" x="99.55" y="-100.2" font-family="Georgia" font-size="12.00">Evaluation and monitoring</text>
+<text xml:space="preserve" text-anchor="middle" x="99.55" y="-85.95" font-family="Georgia" font-size="12.00">check quality over time</text>
+</g>
+<!-- prediction&#45;&gt;eval -->
+<g id="aws-ai-foundations-figure-2-aws-ai-foundations-learning-workflow-edge5" class="edge">
+<title>prediction&#45;&gt;eval</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M99.55,-164.85C99.55,-153.7 99.55,-139.75 99.55,-127.51"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="101.83,-127.78 99.55,-121.28 97.28,-127.78 101.83,-127.78"/>
+<text xml:space="preserve" text-anchor="middle" x="122.05" y="-137.65" font-family="Georgia" font-size="12.00">evaluate</text>
+</g>
+<!-- next -->
+<g id="aws-ai-foundations-figure-2-aws-ai-foundations-learning-workflow-node7" class="node">
+<title>next</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M224.23,-42.9C224.23,-42.9 90.88,-42.9 90.88,-42.9 84.88,-42.9 78.88,-36.9 78.88,-30.9 78.88,-30.9 78.88,-12 78.88,-12 78.88,-6 84.88,0 90.88,0 90.88,0 224.23,0 224.23,0 230.23,0 236.23,-6 236.23,-12 236.23,-12 236.23,-30.9 236.23,-30.9 236.23,-36.9 230.23,-42.9 224.23,-42.9"/>
+<text xml:space="preserve" text-anchor="middle" x="157.55" y="-24.3" font-family="Georgia" font-size="12.00">Possible response</text>
+<text xml:space="preserve" text-anchor="middle" x="157.55" y="-10.05" font-family="Georgia" font-size="12.00">review data, tune, retrain</text>
+</g>
+<!-- eval&#45;&gt;next -->
+<g id="aws-ai-foundations-figure-2-aws-ai-foundations-learning-workflow-edge6" class="edge">
+<title>eval&#45;&gt;next</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M116.33,-74.98C122.56,-67.03 129.73,-57.9 136.31,-49.51"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="138.05,-50.98 140.28,-44.46 134.47,-48.17 138.05,-50.98"/>
+</g>
+<!-- next&#45;&gt;fit -->
+<g id="aws-ai-foundations-figure-2-aws-ai-foundations-learning-workflow-edge7" class="edge">
+<title>next&#45;&gt;fit</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" stroke-dasharray="5,2" d="M186.7,-43.33C201.57,-56.57 216.55,-75.17 216.55,-96.35 216.55,-259.95 216.55,-259.95 216.55,-259.95 216.55,-278.02 216.55,-298.28 216.55,-314.34"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="214.28,-314.31 216.55,-320.81 218.83,-314.31 214.28,-314.31"/>
+<text xml:space="preserve" text-anchor="middle" x="284.8" y="-182.22" font-family="Georgia" font-size="12.00">may inform later training</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Training data changes a model during training; a separate new input is used for inference. Evaluation and production monitoring assess outputs and can inform a later learning cycle.</figcaption></figure>
+<h3>Worked example: a new card transaction</h3>
+<p>The course's fraud example helps locate each phase without implying that a prediction is a verified fact.</p>
+
+<details class="worked"><summary>Trace the training, inference, and monitoring roles</summary><ol>
+<li><strong>Training:</strong> historical transactions form the training examples. If fraud labels are available, they identify the target the model learns to predict.</li>
+<li><strong>Model:</strong> training produces a model that recognizes patterns associated with the examples and learning method.</li>
+<li><strong>Inference:</strong> a newly arriving transaction is passed as new input. The model returns a prediction for that transaction; this is an inference.</li>
+<li><strong>Use and check:</strong> an application may use the prediction to select a next step. Evaluation checks whether predictions are useful, and production monitoring looks for quality changes.</li>
+<li><strong>Respond to change:</strong> if fraud tactics change, later evaluation may motivate reviewing the data, tuning, or retraining. Monitoring is evidence to investigate, not an automatic guarantee that the model remains reliable.</li>
+</ol></details>
+
+<h2 id="section-3">Data, labels, and learning approaches</h2>
+<p>Data must fit the task. Before choosing a model, consider whether there is enough relevant, high-quality, representative, and current data; what preparation it needs; whether it contains personally identifiable information; how it will be protected across development and deployment; and how duplicates or inconsistencies will be handled. The required accuracy, transparency, and response speed matter too, along with the team's skills, resources, and the cost relative to the problem's impact.</p>
+<p>The course groups data by its organization. The useful distinction is the schema and structure available for the task, not only the file extension: the same kind of file can be organized differently.</p>
+<div class="table-scroll" aria-label="Data organization and examples"><table class="named-table" aria-label="Data organization and examples">
+<caption>Data categories used in the course, interpreted through their organization</caption>
+<thead><tr><th scope="col">Category</th><th scope="col">How it is organized</th><th scope="col">Course examples</th></tr></thead>
+<tbody>
+<tr><th scope="row">Structured</th><td>Rows and columns with a defined schema; easier to query consistently, usually less flexible.</td><td>Relational database tables, spreadsheets.</td></tr>
+<tr><th scope="row">Semistructured</th><td>Tags, attributes, or other markers organize some elements without imposing one rigid table schema.</td><td>Email fields, JSON, XML; the course also lists CSV.</td></tr>
+<tr><th scope="row">Unstructured</th><td>No shared predefined schema for all content; flexible, but often needs more preparation to analyze.</td><td>Documents, audio, images, movies, and clickstream data.</td></tr>
+</tbody></table></div>
+
+<p>Labels specify a target in training data. Dog and cat image labels tell a learner which category each image belongs to; a historical transaction table can label each transaction as fraud or not fraud. Labels can be added by subject-matter experts or supported by ML. With unlabelled data, an approach must find patterns without a supplied target; this can take more data or more complex methods.</p>
+<h3>Learning paradigms answer different questions</h3>
+<p>The paradigms describe how learning receives information or feedback. They can be combined in a project, or different approaches can be used in different phases; they are not mutually exclusive project labels.</p>
+<div class="table-scroll" aria-label="Machine learning paradigms and examples"><table class="named-table" aria-label="Comparison of machine learning paradigms">
+<caption>Learning paradigms, feedback, and course examples</caption>
+<thead><tr><th scope="col">Approach</th><th scope="col">Learning signal</th><th scope="col">Typical task in the course</th><th scope="col">Example</th></tr></thead>
+<tbody>
+<tr><th scope="row">Supervised</th><td>Labeled examples with a target.</td><td>Classification or regression.</td><td>Predict whether a patient has a disease from diagnostic results.</td></tr>
+<tr><th scope="row">Unsupervised</th><td>Unlabelled examples; discover structure or unusual cases.</td><td>Clustering or anomaly detection.</td><td>Analyze spending patterns to identify possible fraud.</td></tr>
+<tr><th scope="row">Reinforcement</th><td>Rewards or penalties from interaction with an environment.</td><td>Learn actions through interaction.</td><td>Teach a robot to navigate a room; robotics and inventory control are also listed.</td></tr>
+</tbody></table></div>
+<h3>Choosing analytics, ML, or generative AI</h3>
+<p>Start with the task, not with a technology label. Traditional programming or statistical analytics can be a good fit when business rules are explicit, variables are limited, and an answer can be produced quickly enough. ML is worth considering when patterns are difficult to specify and sufficient relevant training data, required performance, skills, resources, and cost-benefit conditions are present. A generative approach may suit content synthesis or creation, but its flexible output brings additional quality and review demands.</p>
+
+<details class="worked"><summary>Retail: monthly inventory versus personalized recommendations</summary><p>A retailer can use historical sales and straightforward statistical forecasting to set monthly inventory levels when real-time forecasts are not required. This is a case where conventional analytics may fit.</p>
+<p>For customer grouping and recommendations, the same retailer may combine purchase history, browsing behavior, demographics, and social interactions, then use ML to identify buying-pattern groups and suggest items in real time. That is an illustrative fit, not a universal rule: data sufficiency and quality, privacy, performance needs, cost, and the actual business impact still need review.</p></details>
+
+<details class="worked"><summary>Fraud: labeled prediction versus pattern discovery</summary><p>A supervised fraud model can learn from historical transactions labeled fraud/not fraud and predict a label for a new transaction. If the task instead is to find unusual spending patterns without a supplied fraud label, an unsupervised method may help surface anomalies for investigation. These approaches answer different questions; an anomaly is not automatically confirmed fraud.</p></details>
+
+<h2 id="section-4">Foundation models and generative AI</h2>
+<p>The course describes generative AI as using large deep-learning models called foundation models, trained on extensive data, to produce new content in response to requests. A <strong>prompt</strong> is the natural-language instruction or question supplied to request a task. At inference, the prompt is part of the new input. The generated result is a prediction shaped by learned patterns and context—not a known fact simply because it sounds fluent.</p>
+<p>The course's modality examples include a text comparison of dogs and cats; an image request for a black puppy with large ears and a white kitten playing with a ball; a joyful puppy bark; and a prediction of the 3D structure of the canine olfactory receptor protein OR5B17. These are examples of different task and output types. FM categories are not exhaustive, and models are generally designed or trained for particular output categories. Some accept multiple input types, but do not assume that every FM generates every modality.</p>
+<h3>Six language-model tasks</h3>
+<p>Large language models (LLMs) are FMs trained extensively on text and specialized in natural-language processing. The course illustrates six text tasks:</p>
+<div class="table-scroll" aria-label="Six large language model tasks and examples"><table class="named-table" aria-label="Six large language model tasks and examples">
+<caption>LLM task examples in the course</caption>
+<thead><tr><th scope="col">Task</th><th scope="col">What is requested</th><th scope="col">Course-style example</th></tr></thead>
+<tbody>
+<tr><th scope="row">Text generation</th><td>Compose new text.</td><td>Write an introduction for a pet-adoption website.</td></tr>
+<tr><th scope="row">Question answering</th><td>Answer a specific question.</td><td>Ask for popular kinds of pets.</td></tr>
+<tr><th scope="row">Summarization</th><td>Condense existing content.</td><td>Summarize differences between dogs and cats in an article.</td></tr>
+<tr><th scope="row">Text extraction</th><td>Find requested details in unstructured text and return them in a concise format.</td><td>Extract pet names, breeds, and described characteristics from customer messages.</td></tr>
+<tr><th scope="row">Conversation</th><td>Continue a back-and-forth while using the conversation thread as context.</td><td>Ask about dog breeds, then follow up about their sizes.</td></tr>
+<tr><th scope="row">Code generation</th><td>Write or audit development code.</td><td>Request a Python function that posts adoption data from a MySQL database to a website.</td></tr>
+</tbody></table></div>
+<h3>Tokens and embeddings</h3>
+<p>An LLM first divides text into <strong>tokens</strong>: units that may be whole words, subwords, or individual characters depending on the tokenizer. <strong>Embedding</strong> maps a token to a numerical vector representation. The course's two-dimensional sketch is a schematic illustration that similar terms can have nearby vector representations (for example, “cat” closer to “kitten” than to “puppy”). Real embedding vectors have hundreds or thousands of dimensions. The sketch gives no numerical coordinates, so none should be inferred from its plotted positions.</p>
+<p>Tokenization creates the model's input units; embedding represents those units numerically. These steps are distinct from training the model's learned parameters. In the course's high-level account, vectors are inputs to neural-network processing, while training on data teaches patterns and relationships that support tasks such as language understanding, generation, and translation.</p>
+<figure><div class="diagram-frame" style="--diagram-width:831.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="At inference, text is split into tokens and represented as vectors for model processing, which uses learned model parameters. The earlier learning-workflow diagram shows training data and the process that learns those parameters separately." width="831pt" height="188pt"
+ viewBox="0.00 0.00 831.00 188.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="aws-ai-foundations-figure-3-aws-ai-foundations-token-pipeline-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 177.2)">
+<title>G</title>
+<!-- text -->
+<g id="aws-ai-foundations-figure-3-aws-ai-foundations-token-pipeline-node1" class="node">
+<title>text</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M120.6,-79.4C120.6,-79.4 12,-79.4 12,-79.4 6,-79.4 0,-73.4 0,-67.4 0,-67.4 0,-41 0,-41 0,-35 6,-29 12,-29 12,-29 120.6,-29 120.6,-29 126.6,-29 132.6,-35 132.6,-41 132.6,-41 132.6,-67.4 132.6,-67.4 132.6,-73.4 126.6,-79.4 120.6,-79.4"/>
+<text xml:space="preserve" text-anchor="middle" x="66.3" y="-57.95" font-family="Georgia" font-size="15.00">Prompt text</text>
+<text xml:space="preserve" text-anchor="middle" x="66.3" y="-39.95" font-family="Georgia" font-size="15.00">context included</text>
+</g>
+<!-- tokens -->
+<g id="aws-ai-foundations-figure-3-aws-ai-foundations-token-pipeline-node2" class="node">
+<title>tokens</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M381.2,-79.4C381.2,-79.4 176.6,-79.4 176.6,-79.4 170.6,-79.4 164.6,-73.4 164.6,-67.4 164.6,-67.4 164.6,-41 164.6,-41 164.6,-35 170.6,-29 176.6,-29 176.6,-29 381.2,-29 381.2,-29 387.2,-29 393.2,-35 393.2,-41 393.2,-41 393.2,-67.4 393.2,-67.4 393.2,-73.4 387.2,-79.4 381.2,-79.4"/>
+<text xml:space="preserve" text-anchor="middle" x="278.9" y="-57.95" font-family="Georgia" font-size="15.00">Tokenization</text>
+<text xml:space="preserve" text-anchor="middle" x="278.9" y="-39.95" font-family="Georgia" font-size="15.00">words, subwords, or characters</text>
+</g>
+<!-- text&#45;&gt;tokens -->
+<g id="aws-ai-foundations-figure-3-aws-ai-foundations-token-pipeline-edge1" class="edge">
+<title>text&#45;&gt;tokens</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M133.07,-54.2C140.58,-54.2 148.41,-54.2 156.36,-54.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="156.34,-56.48 162.84,-54.2 156.34,-51.93 156.34,-56.48"/>
+</g>
+<!-- vectors -->
+<g id="aws-ai-foundations-figure-3-aws-ai-foundations-token-pipeline-node3" class="node">
+<title>vectors</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M605.05,-122.4C605.05,-122.4 437.2,-122.4 437.2,-122.4 431.2,-122.4 425.2,-116.4 425.2,-110.4 425.2,-110.4 425.2,-84 425.2,-84 425.2,-78 431.2,-72 437.2,-72 437.2,-72 605.05,-72 605.05,-72 611.05,-72 617.05,-78 617.05,-84 617.05,-84 617.05,-110.4 617.05,-110.4 617.05,-116.4 611.05,-122.4 605.05,-122.4"/>
+<text xml:space="preserve" text-anchor="middle" x="521.12" y="-100.95" font-family="Georgia" font-size="15.00">Embeddings</text>
+<text xml:space="preserve" text-anchor="middle" x="521.12" y="-82.95" font-family="Georgia" font-size="15.00">high&#45;dimensional vectors</text>
+</g>
+<!-- tokens&#45;&gt;vectors -->
+<g id="aws-ai-foundations-figure-3-aws-ai-foundations-token-pipeline-edge2" class="edge">
+<title>tokens&#45;&gt;vectors</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M393.68,-74.57C401.5,-75.97 409.36,-77.37 417.12,-78.76"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="416.56,-80.97 423.35,-79.88 417.36,-76.49 416.56,-80.97"/>
+</g>
+<!-- note -->
+<g id="aws-ai-foundations-figure-3-aws-ai-foundations-token-pipeline-node6" class="node">
+<title>note</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M604.3,-50.4C604.3,-50.4 437.95,-50.4 437.95,-50.4 431.95,-50.4 425.95,-44.4 425.95,-38.4 425.95,-38.4 425.95,-12 425.95,-12 425.95,-6 431.95,0 437.95,0 437.95,0 604.3,0 604.3,0 610.3,0 616.3,-6 616.3,-12 616.3,-12 616.3,-38.4 616.3,-38.4 616.3,-44.4 610.3,-50.4 604.3,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="521.12" y="-28.95" font-family="Georgia" font-size="15.00">Different operations</text>
+<text xml:space="preserve" text-anchor="middle" x="521.12" y="-10.95" font-family="Georgia" font-size="15.00">representation ≠ training</text>
+</g>
+<!-- tokens&#45;&gt;note -->
+<g id="aws-ai-foundations-figure-3-aws-ai-foundations-token-pipeline-edge5" class="edge">
+<title>tokens&#45;&gt;note</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" stroke-dasharray="5,2" d="M393.68,-40.46C404.35,-39.18 415.09,-37.88 425.56,-36.62"/>
+</g>
+<!-- model -->
+<g id="aws-ai-foundations-figure-3-aws-ai-foundations-token-pipeline-node4" class="node">
+<title>model</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M797.4,-151.4C797.4,-151.4 661.05,-151.4 661.05,-151.4 655.05,-151.4 649.05,-145.4 649.05,-139.4 649.05,-139.4 649.05,-113 649.05,-113 649.05,-107 655.05,-101 661.05,-101 661.05,-101 797.4,-101 797.4,-101 803.4,-101 809.4,-107 809.4,-113 809.4,-113 809.4,-139.4 809.4,-139.4 809.4,-145.4 803.4,-151.4 797.4,-151.4"/>
+<text xml:space="preserve" text-anchor="middle" x="729.23" y="-129.95" font-family="Georgia" font-size="15.00">Model processing</text>
+<text xml:space="preserve" text-anchor="middle" x="729.23" y="-111.95" font-family="Georgia" font-size="15.00">uses representations</text>
+</g>
+<!-- vectors&#45;&gt;model -->
+<g id="aws-ai-foundations-figure-3-aws-ai-foundations-token-pipeline-edge3" class="edge">
+<title>vectors&#45;&gt;model</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M617.33,-110.6C625.24,-111.71 633.22,-112.83 641.06,-113.94"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="640.61,-116.17 647.36,-114.82 641.24,-111.66 640.61,-116.17"/>
+</g>
+<!-- training -->
+<g id="aws-ai-foundations-figure-3-aws-ai-foundations-token-pipeline-node5" class="node">
+<title>training</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M367.7,-166.4C367.7,-166.4 190.1,-166.4 190.1,-166.4 184.1,-166.4 178.1,-160.4 178.1,-154.4 178.1,-154.4 178.1,-128 178.1,-128 178.1,-122 184.1,-116 190.1,-116 190.1,-116 367.7,-116 367.7,-116 373.7,-116 379.7,-122 379.7,-128 379.7,-128 379.7,-154.4 379.7,-154.4 379.7,-160.4 373.7,-166.4 367.7,-166.4"/>
+<text xml:space="preserve" text-anchor="middle" x="278.9" y="-144.95" font-family="Georgia" font-size="15.00">Learned model parameters</text>
+<text xml:space="preserve" text-anchor="middle" x="278.9" y="-126.95" font-family="Georgia" font-size="15.00">from prior training</text>
+</g>
+<!-- training&#45;&gt;model -->
+<g id="aws-ai-foundations-figure-3-aws-ai-foundations-token-pipeline-edge4" class="edge">
+<title>training&#45;&gt;model</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M379.88,-139.85C446.99,-138.7 537.35,-136.65 617.05,-133.2 624.73,-132.87 632.71,-132.47 640.7,-132.03"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="640.82,-134.31 647.18,-131.67 640.56,-129.76 640.82,-134.31"/>
+</g>
+<!-- training&#45;&gt;note -->
+<g id="aws-ai-foundations-figure-3-aws-ai-foundations-token-pipeline-edge6" class="edge">
+<title>training&#45;&gt;note</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" stroke-dasharray="5,2" d="M346.15,-115.57C362.08,-108.28 378.67,-99.71 393.2,-90.2 409.26,-79.69 408.83,-71.22 425.2,-61.2 431.36,-57.43 437.99,-53.94 444.77,-50.74"/>
+</g>
+</g>
+</svg>
+</div><figcaption>At inference, text is split into tokens and represented as vectors for model processing, which uses learned model parameters. The earlier learning-workflow diagram shows training data and the process that learns those parameters separately.</figcaption></figure>
+<h3>Context changes a next-token prediction</h3>
+<p>The course illustrates how surrounding words change which continuation is more likely. “The cat jumped onto the…” leaves a range of plausible continuations. “Sleepy” can make a soft resting place more likely; “curious” and nearby mention of a fish plate can make a table more plausible; a story about a performing cat balancing on round objects can make a bowling ball plausible. The point is that the model conditions its prediction on the whole context, not that it applies a fixed word-to-word rule.</p>
+<p>The slide places three numeric values beside several different prompt contexts without assigning them to a single conditional distribution. Those values are therefore omitted here. A probability is conditional on a context; a displayed score is not automatically a probability, and neither is deterministic truth.</p>
+<h3>Supplying more task-relevant information</h3>
+<p>The course lays out a rough continuum for influencing an FM: (1) add relevant information, instructions, examples, or reference material in the prompt; (2) let the model refer to an external source such as internal policy documents; or (3) further train or customize a model with a smaller task-specific dataset. Its classroom analogy is a worksheet, an open-book test, and a subject tutor. The sequence generally adds complexity and often requires more resources and cost; it is a conceptual comparison, not a prescribed implementation. The detailed mechanics belong to the separate prompting and FM-use companions.</p>
+<p>The course also contrasts more restrictive inference settings, described as producing more deterministic outputs, with less restrictive settings that allow more creative variation. Model parameters are model-specific. Less variation does not establish factual accuracy; outputs still need evaluation against the task and evidence.</p>
+<h2 id="section-5">Model families: a brief architecture survey</h2>
+<p>The course offers a short comparison rather than a full treatment. It also notes that these are common approaches, not an exhaustive list; architectures can be adapted across tasks and combined, and choices depend on the task, data, and computational resources.</p>
+<div class="table-scroll" aria-label="Generative model architecture families"><table class="named-table" aria-label="Comparison of generative model families">
+<caption>Brief course survey of common generative model families</caption>
+<thead><tr><th scope="col">Family</th><th scope="col">High-level idea</th><th scope="col">Course use examples</th></tr></thead>
+<tbody>
+<tr><th scope="row">Diffusion</th><td>Learn to add noise to clean input and then reverse the process to generate new data.</td><td>High-quality, diverse, realistic-looking images; novel molecular structures; audio.</td></tr>
+<tr><th scope="row">Generative adversarial networks (GANs)</th><td>A generator creates samples to fool a discriminator; the discriminator learns to classify samples as real or fake. They are trained competitively.</td><td>Photorealistic images, image-to-image translation and style transfer, audio.</td></tr>
+<tr><th scope="row">Variational autoencoders (VAEs)</th><td>Learn a latent representation of input data and generate new samples resembling the original. A latent space is a compressed, lower-dimensional representation.</td><td>Image generation, image interpolation and style transfer, audio.</td></tr>
+<tr><th scope="row">Transformers</th><td>Can focus on relevant parts of an input and attend to different parts simultaneously; process sequences in parallel in the course's comparison.</td><td>LLMs, natural-language processing, translation, and multimodal tasks such as image captioning.</td></tr>
+</tbody></table></div>
+
+<p>The course most closely associates transformer-based models with modern LLMs because they process sequences in parallel and attend to different parts of an input. This is a brief orientation only; it does not establish a universal winner among architectures.</p>
+<h2 id="section-6">Choosing a suitable generative task</h2>
+<p>Work backward from the business problem. Generative AI may fit when a task needs analysis of diverse, unstructured sources; synthesis of complex information; creative or repetitive content creation; high-resolution image generation; or personalized content at scale. Examples include virtual assistants, personalized search, code generation, summarization, extraction, and content creation.</p>
+<p>Potential benefits must be made measurable. The course groups possible impact areas as customer experience, employee productivity, research and creativity, and operational processes. It suggests starting where a baseline is already tracked and where a change can be measured in a short period. Examples of candidate measures include help-desk call time and the number of deployments in a period. These are measurement scenarios, not promised improvements or results.</p>
+<div class="table-scroll" aria-label="Generative AI applications, benefits, and impact areas"><table class="named-table" aria-label="Business task examples and possible impact areas">
+<caption>Course examples: tasks and possible business impacts</caption>
+<thead><tr><th scope="col">Application</th><th scope="col">Illustrative benefit</th><th scope="col">Possible impact area</th></tr></thead>
+<tbody>
+<tr><th scope="row">Virtual assistants and chat applications</th><td>Self-service; responses to common questions; fewer help-desk calls.</td><td>Customer experience, employee productivity, operations.</td></tr>
+<tr><th scope="row">Personalization and enhanced search</th><td>Use data and interactions for contextualized recommendations and search results.</td><td>Customer experience, employee productivity, operations.</td></tr>
+<tr><th scope="row">Code generation</th><td>Reduce repetitive work and support developers.</td><td>Employee productivity, operations.</td></tr>
+<tr><th scope="row">Summarization and extraction</th><td>Reduce time spent processing information and support decisions.</td><td>Customer experience, employee productivity, research and creativity.</td></tr>
+<tr><th scope="row">Content creation</th><td>Draft reports, product designs, or brainstorming material more quickly.</td><td>Customer experience, employee productivity, research and creativity, operations.</td></tr>
+</tbody></table></div>
+
+<p>Role scenarios in the course include a customer-service representative generating tailored responses, troubleshooting common issues, recommending options, or summarizing calls; a developer generating code snippets, debugging, writing unit tests or documentation, and automating repetitive tasks; and a marketing analyst drafting social-media and website copy, personalizing campaigns, or extracting key elements from customer data. These are candidate workflows: output review and subject expertise still matter.</p>
+<p>The course also presents vendor examples such as a shopping assistant, review highlights, and pharmacy workflows, along with the course team's use of generative AI in drafting course material. These are course-era illustrations, not independent evidence that a product delivers a particular measured benefit. The course team explicitly recommends reviewing generated outputs and using AI as support rather than a replacement for critical thinking.</p>
+<p>More specifically, the course describes Rufus as a shopping assistant, customer-review highlights, and an Amazon Pharmacy workflow that interprets handwritten or digital prescriptions, extracts information such as dosage and frequency, and provides instructions to pharmacists. These remain course-version examples; they are not endorsements, measurements, or current product descriptions.</p>
+<h3>When the fit is poor</h3>
+<p>Generative AI may be a poor fit when a task requires high accuracy and consistency, a transparent explanation, or dependable handling of a rapidly changing or poorly defined problem. It is also a weak choice when high-quality data, necessary skills, or resources are missing, or when the business value is too unclear to justify implementation and operating costs. Ethical concerns matter too: if risks such as offensive output, bias, or misuse of protected or private data cannot be tolerated or mitigated, the use case may not be acceptable. High-stakes medical or legal decisions and content for children are examples where errors or offensive content may have very low tolerance.</p>
+<p>The course names hallucinations (plausible but verifiably incorrect output), toxicity, bias, and content resembling protected intellectual property as challenges. What counts as acceptable can depend on audience and context; even a quotation may be appropriate in one setting and unsuitable in another. Model choice, prompt design, data quality, safeguards, human review, and lifecycle data protection all affect output quality. Detailed prompting, adaptation, responsible-AI practice, and security/governance belong in the related AWS companions.</p>
+<h2 id="section-7">Course-era AWS service map</h2>
+<p>The following comparisons summarize how the 2025 course positioned named AWS capabilities. They are historical course context, not current recommendations or statements about present availability, pricing, privacy, security, or guaranteed quality. Current decisions require checking current official primary documentation.</p>
+<div class="table-scroll" aria-label="AWS service comparison in the 2025 course material"><table class="named-table" aria-label="AWS AI and generative AI service comparison as presented in 2025 course material">
+<caption>AWS service map in the 2025 course material</caption>
+<thead><tr><th scope="col">Course-era need</th><th scope="col">Named service or capability</th><th scope="col">Course description</th></tr></thead>
+<tbody>
+<tr><th scope="row">Compute infrastructure for AI workloads</th><td>Amazon EC2 instance types, including Trn1/Trn2, Inf1/Inf2, and P4/P5.</td><td>Compute choices described for AI workloads, with types associated with different performance and cost needs.</td></tr>
+<tr><th scope="row">Build, train, and deploy ML models</th><td>Amazon SageMaker AI, including SageMaker JumpStart in the course-era examples.</td><td>Integrated ML development environment and tools across the lifecycle; the GenAI module describes broader control over model customization and training/deployment pipelines.</td></tr>
+<tr><th scope="row">Access FMs and build generative applications</th><td>Amazon Bedrock.</td><td>The course presents access to multiple FMs and application building through a common API, and describes evaluation, model choice, knowledge-base use, and customization as course-era capabilities.</td></tr>
+<tr><th scope="row">Use packaged AI applications</th><td>Amazon Q, including Q Business and Q Developer.</td><td>The course describes Q Business for workplace chat over enterprise data; Q Developer for generating or explaining code, finding bugs, and generating functional tests; and integrations including QuickSight and Connect.</td></tr>
+<tr><th scope="row">Use task-specific pre-trained capabilities</th><td>Amazon Transcribe, Translate, Polly, Textract, Comprehend, and Rekognition.</td><td>Course examples include speech-to-text, translation, synthesized speech, document/text analysis, and computer vision.</td></tr>
+</tbody></table></div>
+
+<p>One written course example chains Transcribe to create a transcript, Translate to translate text, and Polly to create synthesized speech. It illustrates that several specialized capabilities can be combined in a workflow. It does not establish present service availability or a present-day architecture recommendation.</p>
+<p>In the course's generative-AI comparison, Amazon Q is positioned for prompt-based use and knowledge-base reference, Bedrock adds model customization, and SageMaker AI spans those options plus building a model. This is the course's increasing-complexity continuum, with task, resources, and team skills affecting fit. Do not read the course's surrounding service diagrams as a blanket privacy or security assurance.</p>
+
+<details class="worked"><summary>Written course scenario: choose a service for comparing FMs</summary><p><strong>Scenario:</strong> a research team wants to compare several language models on a task and avoid managing the underlying infrastructure. The written course-version answer is <strong>Amazon Bedrock</strong>, because the course describes it as providing access to multiple FMs and supporting evaluation without the same infrastructure management described for building and deploying with SageMaker AI.</p>
+<p>This is a practice answer about the dated course scenario, not a live assessment, a current vendor recommendation, or evidence of university exam coverage.</p></details>
+
+<h2 id="section-8">Common mistakes</h2>
+<ul>
+<li><strong>Treating AI, ML, deep learning, and generative AI as interchangeable:</strong> use them at their proper levels in the introductory map, and remember the map is not exhaustive.</li>
+<li><strong>Confusing training with inference:</strong> training changes what the model has learned; inference applies a trained model to new input.</li>
+<li><strong>Calling an output a fact:</strong> a model output is a prediction that needs evaluation; fluent wording is not verification.</li>
+<li><strong>Selecting ML before checking data and constraints:</strong> evaluate relevance, quality, representation, timeliness, data preparation, required accuracy/transparency/speed, resources, and cost.</li>
+<li><strong>Assuming a file extension determines data structure:</strong> look at the schema and how content is organized for the task.</li>
+<li><strong>Treating the learning paradigms as mutually exclusive:</strong> a project can combine them or use them in separate phases.</li>
+<li><strong>Assuming every FM handles all modalities:</strong> task and output capabilities vary by model.</li>
+<li><strong>Reading the token sketch as a coordinate chart:</strong> it is a schematic geometry only; the actual vectors are high-dimensional and their coordinates are not supplied.</li>
+<li><strong>Treating next-token values as a universal distribution across prompts:</strong> each prediction is conditioned on its context; the slide's numbers are not assigned to one context here.</li>
+<li><strong>Assuming generative AI is automatically a good fit:</strong> test quality needs, tolerable risks, measurement, resources, and business value first.</li>
+<li><strong>Treating a 2025 service map as current advice:</strong> service comparisons here describe the course edition only.</li>
+</ul>
+<h2 id="section-9">Concept review</h2>
+<ul>
+<li>AI is the broad field; ML learns patterns from data; deep learning uses layered neural networks; generative AI produces requested content using learned patterns.</li>
+<li>Training fits a model from training data. Inference produces a prediction for a new input. Evaluation and monitoring check whether predictions remain useful as conditions change.</li>
+<li>Structured, semistructured, and unstructured describe different organization/schema conditions. Labels identify targets; supervised, unsupervised, and reinforcement learning use different signals and can coexist in one project.</li>
+<li>FMs are broadly pretrained, but task and modality support differs. LLMs process text as tokens represented by high-dimensional embeddings.</li>
+<li>Context affects generated continuations. Generated output remains a prediction and must be assessed for the task.</li>
+<li>Use-case fit depends on data, quality requirements, risks, skills, resources, cost, and measurable impact.</li>
+<li>AWS service descriptions are retained as 2025 course context only.</li>
+</ul>
+<h2 id="section-10">Practice questions</h2>
+<p class="question">1. A rule-based monthly inventory forecast can meet a retailer’s needs. What should the team compare before choosing ML?</p>
+<details class="worked"><summary>Check your answer</summary><p>Check whether analytics and statistical forecasting already meet accuracy and timing needs. ML also requires relevant high-quality data, sufficient skills and resources, lifecycle management, and a cost justified by the likely impact. The retail example uses monthly historical sales rather than a real-time task.</p></details>
+
+<p class="question">2. What is the difference between training and inference?</p>
+<details class="worked"><summary>Check your answer</summary><p>Training uses examples and a learning method to produce or adjust a model. Inference applies a trained model to a new input and returns a prediction for that case.</p></details>
+
+<p class="question">3. A transaction has no fraud label, but the team wants to find unusual spending patterns. Which learning approach matches the question, and what can its output establish?</p>
+<details class="worked"><summary>Check your answer</summary><p>An unsupervised approach such as anomaly detection matches the unlabelled pattern-finding task. It can surface unusual cases for review; an anomaly alone does not establish that a transaction is fraud.</p></details>
+
+<p class="question">4. Why can the same data file be described differently for a learning task?</p>
+<details class="worked"><summary>Check your answer</summary><p>The category depends on its organization and schema. A spreadsheet with consistent fields and rows is structured; a file with tagged elements or flexible records can be semistructured; free-form text, audio, or images without a shared schema are unstructured. The extension alone does not decide the category.</p></details>
+
+<p class="question">5. Name the six LLM task types in the course and one distinct purpose for each.</p>
+<details class="worked"><summary>Check your answer</summary><p>Text generation composes new text; question answering responds to a question; summarization condenses existing content; extraction returns requested details; conversation uses the ongoing thread; code generation writes or audits development code.</p></details>
+
+<p class="question">6. What do tokenization and embedding do, and how are they different from training?</p>
+<details class="worked"><summary>Check your answer</summary><p>Tokenization divides text into words, subwords, or characters. Embedding maps tokens to numerical vectors. Training uses data to teach learned model parameters and patterns; the text's token and vector representations are not themselves the training process.</p></details>
+
+<p class="question">7. Why does context matter for a next-token prediction?</p>
+<details class="worked"><summary>Check your answer</summary><p>The model conditions likely continuations on the sequence and surrounding information. A “sleepy cat” context can favor a different continuation than a “curious cat” near a fish plate, and a performance story can change the likely object again. These are predictions, not fixed rules or deterministic facts.</p></details>
+
+<p class="question">8. Give one reason a generative-AI task may be a poor fit and one way to assess a candidate benefit.</p>
+<details class="worked"><summary>Check your answer</summary><p>A task may be unsuitable when it requires strict accuracy, consistency, explainability, or low tolerance for harmful errors, or when data, skills, resources, or clear value are missing. For a candidate benefit, start from an existing baseline—such as help-desk call duration—and define a measurable outcome and time window before claiming improvement.</p></details>
+
+<p class="question">9. A team needs to categorize incoming support tickets using the content of each ticket and a history of categorized examples. Which approach does the written course scenario favor, and why?</p>
+<details class="worked"><summary>Check your answer</summary><p>The course-version answer is traditional ML: it can learn from historical ticket data to categorize new tickets by their content. The course contrasts this with rigid software rules, manual sorting, and generative AI as a less cost-effective fit for this specific classification task. This is concept practice based on the dated written scenario, not a live assessment or a claim about university exam coverage.</p></details>
+
+<p class="question">10. In the written course scenario about comparing multiple FMs without managing infrastructure, what is the course-version answer and why?</p>
+<details class="worked"><summary>Check your answer</summary><p>The course-version answer is Amazon Bedrock because that edition describes it as giving access to multiple FMs for evaluation without managing the underlying infrastructure. This answer belongs to the dated written scenario; it is not live assessment activity or current product guidance.</p></details>
+
+<h2 id="section-11">Related optional companions</h2>
+<p>Continue with <a href="aws-prompting-foundation-models.html">AWS Companion: Prompting and Foundation Model Use</a> for prompt construction, inference parameters, and more detailed FM use; <a href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a> for deeper treatment of responsible-use and protection concerns; and <a href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a> for the course's application-design material. These are separate optional readings, not assumed CS4681 exam coverage.</p></article><nav class="pager" aria-label="Study sequence"><a href="q-learning.html"><small>Previous</small>Q-Learning and Temporal-Difference Updates <span aria-hidden="true">↗</span></a><a href="aws-prompting-foundation-models.html"><small>Next</small>AWS Companion: Prompt Engineering and Foundation Models <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

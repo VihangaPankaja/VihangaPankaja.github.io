@@ -1,0 +1,691 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Rare events can be easy to miss even when a classifier is correct on most rows. This guide connects the shape and causes of imbalance to class-aware metrics, sampling choices, threshold decisions, and leakage-safe evaluation."><title>Imbalanced Data: Metrics and Resampling · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html" aria-current="page">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Explainability and data quality <span>/</span> Lecture 8</div><h1>Imbalanced Data: Metrics and Resampling</h1><p class="lead">Rare events can be easy to miss even when a classifier is correct on most rows. This guide connects the shape and causes of imbalance to class-aware metrics, sampling choices, threshold decisions, and leakage-safe evaluation.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">What imbalance means and why difficulty is more than a ratio</a><a href="#section-2">Why ordinary loss and accuracy can hide missed positives</a><a href="#section-3">Read the confusion matrix before comparing scores</a><a href="#section-4">Choose what to change: reduce negatives or add positives</a><a href="#section-5">SMOTE and its variants</a><a href="#section-6">Split first and keep evaluation honest</a><a href="#section-7">Common mistakes</a><a href="#section-8">Exam focus</a><a href="#section-9">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Class imbalance means one label has far fewer examples than another. The small class is often the event we care most about, such as fraud, a rare disease, a manufacturing defect, customer churn, spam, or intrusion. A model can be correct on nearly every row by predicting the common class every time, yet fail at the important task. The useful response is to define the event, inspect class-aware metrics, choose a decision rule for the costs and goal, and compare resampling only through a leakage-safe evaluation.</p>
+
+<h2 id="section-1">What imbalance means and why difficulty is more than a ratio</h2>
+<p>The lecture calls the more frequent label the <strong>majority</strong> class and the underrepresented label the <strong>minority</strong> class. In its convention these correspond to negative and positive, respectively. In an application, positive should name the event being monitored; it does not mean “good.” Define that event before interpreting any metric.</p>
+<p>Imbalance may arise because an event is naturally rare, collecting positive cases costs more, or the sampling process under-represents a class or subgroup. The resulting data may distort associations as well as counts. Imbalance is common in fraud detection, rare-disease screening, defect detection, churn, spam, and intrusion detection.</p>
+
+<figure><div class="diagram-frame" style="--diagram-width:276.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="The lecture lists four governing factors. It emphasizes imbalance degree and concept complexity; overlap and small disjuncts shape complexity." width="276pt" height="318pt"
+ viewBox="0.00 0.00 276.00 318.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="class-imbalance-figure-1-class-imbalance-factors-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 307)">
+<title>G</title>
+<!-- degree -->
+<g id="class-imbalance-figure-1-class-imbalance-factors-node1" class="node">
+<title>degree</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M96.98,-50.4C96.98,-50.4 30.38,-50.4 30.38,-50.4 24.38,-50.4 18.38,-44.4 18.38,-38.4 18.38,-38.4 18.38,-12 18.38,-12 18.38,-6 24.38,0 30.38,0 30.38,0 96.98,0 96.98,0 102.98,0 108.98,-6 108.98,-12 108.98,-12 108.98,-38.4 108.98,-38.4 108.98,-44.4 102.98,-50.4 96.98,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="63.68" y="-28.95" font-family="Georgia" font-size="15.00">Degree of</text>
+<text xml:space="preserve" text-anchor="middle" x="63.68" y="-10.95" font-family="Georgia" font-size="15.00">imbalance</text>
+</g>
+<!-- complexity -->
+<g id="class-imbalance-figure-1-class-imbalance-factors-node2" class="node">
+<title>complexity</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M242.45,-144.4C242.45,-144.4 171.35,-144.4 171.35,-144.4 165.35,-144.4 159.35,-138.4 159.35,-132.4 159.35,-132.4 159.35,-106 159.35,-106 159.35,-100 165.35,-94 171.35,-94 171.35,-94 242.45,-94 242.45,-94 248.45,-94 254.45,-100 254.45,-106 254.45,-106 254.45,-132.4 254.45,-132.4 254.45,-138.4 248.45,-144.4 242.45,-144.4"/>
+<text xml:space="preserve" text-anchor="middle" x="206.9" y="-122.95" font-family="Georgia" font-size="15.00">Concept</text>
+<text xml:space="preserve" text-anchor="middle" x="206.9" y="-104.95" font-family="Georgia" font-size="15.00">complexity</text>
+</g>
+<!-- overlap -->
+<g id="class-imbalance-figure-1-class-imbalance-factors-node3" class="node">
+<title>overlap</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M106.73,-166.2C106.73,-166.2 20.62,-166.2 20.62,-166.2 14.62,-166.2 8.63,-160.2 8.63,-154.2 8.63,-154.2 8.63,-142.2 8.63,-142.2 8.63,-136.2 14.63,-130.2 20.63,-130.2 20.63,-130.2 106.73,-130.2 106.73,-130.2 112.73,-130.2 118.73,-136.2 118.73,-142.2 118.73,-142.2 118.73,-154.2 118.73,-154.2 118.73,-160.2 112.73,-166.2 106.73,-166.2"/>
+<text xml:space="preserve" text-anchor="middle" x="63.68" y="-142.95" font-family="Georgia" font-size="15.00">Class overlap</text>
+</g>
+<!-- overlap&#45;&gt;complexity -->
+<g id="class-imbalance-figure-1-class-imbalance-factors-edge1" class="edge">
+<title>overlap&#45;&gt;complexity</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M118.87,-137.07C129.51,-134.89 140.68,-132.59 151.33,-130.41"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="151.59,-132.67 157.5,-129.14 150.68,-128.22 151.59,-132.67"/>
+</g>
+<!-- disjuncts -->
+<g id="class-imbalance-figure-1-class-imbalance-factors-node4" class="node">
+<title>disjuncts</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M113.85,-108.2C113.85,-108.2 13.5,-108.2 13.5,-108.2 7.5,-108.2 1.5,-102.2 1.5,-96.2 1.5,-96.2 1.5,-84.2 1.5,-84.2 1.5,-78.2 7.5,-72.2 13.5,-72.2 13.5,-72.2 113.85,-72.2 113.85,-72.2 119.85,-72.2 125.85,-78.2 125.85,-84.2 125.85,-84.2 125.85,-96.2 125.85,-96.2 125.85,-102.2 119.85,-108.2 113.85,-108.2"/>
+<text xml:space="preserve" text-anchor="middle" x="63.68" y="-84.95" font-family="Georgia" font-size="15.00">Small disjuncts</text>
+</g>
+<!-- disjuncts&#45;&gt;complexity -->
+<g id="class-imbalance-figure-1-class-imbalance-factors-edge2" class="edge">
+<title>disjuncts&#45;&gt;complexity</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M126.21,-102.84C134.54,-104.55 143.05,-106.29 151.26,-107.98"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="150.71,-110.19 157.53,-109.27 151.62,-105.73 150.71,-110.19"/>
+</g>
+<!-- size -->
+<g id="class-imbalance-figure-1-class-imbalance-factors-node5" class="node">
+<title>size</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M115.35,-238.4C115.35,-238.4 12,-238.4 12,-238.4 6,-238.4 0,-232.4 0,-226.4 0,-226.4 0,-200 0,-200 0,-194 6,-188 12,-188 12,-188 115.35,-188 115.35,-188 121.35,-188 127.35,-194 127.35,-200 127.35,-200 127.35,-226.4 127.35,-226.4 127.35,-232.4 121.35,-238.4 115.35,-238.4"/>
+<text xml:space="preserve" text-anchor="middle" x="63.68" y="-216.95" font-family="Georgia" font-size="15.00">Overall training</text>
+<text xml:space="preserve" text-anchor="middle" x="63.68" y="-198.95" font-family="Georgia" font-size="15.00">set size</text>
+</g>
+<!-- learner -->
+<g id="class-imbalance-figure-1-class-imbalance-factors-node6" class="node">
+<title>learner</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M110.1,-296.2C110.1,-296.2 17.25,-296.2 17.25,-296.2 11.25,-296.2 5.25,-290.2 5.25,-284.2 5.25,-284.2 5.25,-272.2 5.25,-272.2 5.25,-266.2 11.25,-260.2 17.25,-260.2 17.25,-260.2 110.1,-260.2 110.1,-260.2 116.1,-260.2 122.1,-266.2 122.1,-272.2 122.1,-272.2 122.1,-284.2 122.1,-284.2 122.1,-290.2 116.1,-296.2 110.1,-296.2"/>
+<text xml:space="preserve" text-anchor="middle" x="63.68" y="-272.95" font-family="Georgia" font-size="15.00">Classifier type</text>
+</g>
+</g>
+</svg>
+</div><figcaption>The lecture lists four governing factors. It emphasizes imbalance degree and concept complexity; overlap and small disjuncts shape complexity.</figcaption></figure>
+
+<p>The lecture lists four factors: degree of imbalance, concept complexity, overall training-set size, and classifier type. It emphasizes the first two: a large ratio need not make an easy-to-learn concept unlearnable, while overlap between classes or <strong>small disjuncts</strong> (small, separate pockets of a class) can make the minority pattern difficult to learn. The same ratio can therefore describe very different problems.</p>
+
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>IR</mo><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>N</mi><mrow><mrow><mi mathvariant="normal">n</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">e</mi></mrow></mrow></msub></mrow><mrow><msub><mi>N</mi><mrow><mrow><mi mathvariant="normal">p</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">e</mi></mrow></mrow></msub></mrow></mfrac></mrow></math></div>
+
+<p>This lecture defines IR as negative count divided by positive count. For example, an IR of 99 means 99 negatives for each positive. State the convention whenever reporting a ratio because other sources may define its reciprocal.</p>
+
+<h2 id="section-2">Why ordinary loss and accuracy can hide missed positives</h2>
+<p>If most examples are negative, getting those right can make the average loss look small even when the learner misses many positives. Distance-based voting can also be dominated by the majority points nearby, and probability-based decisions can be affected by how class prevalence appears in training. These effects explain why inspecting the positive class matters before selecting a classifier.</p>
+
+<p>A probability threshold turns a score into an action. A threshold of </p>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.5</mn></mrow></math>
+<p>does <strong>not</strong> require balanced class priors: with calibrated posterior probabilities and equal costs for false positives and false negatives, </p>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.5</mn></mrow></math>
+<p>is the equal-cost decision boundary even when priors are unequal. The posterior already reflects the prior. Different error costs, goals, or poor calibration can make another threshold more useful.</p>
+
+<details class="worked"><summary>Supplemental decision rule: how unequal error costs move a threshold</summary><p>Assume calibrated posterior probability <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><mo>&#x0003D;</mo><mi>P</mi><mo stretchy="false">&#x00028;</mo><mtext>positive</mtext><mo>&#x02223;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math>, zero cost for a correct decision, false-positive cost <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mrow><mi>F</mi><mi>P</mi></mrow></msub></mrow></math>, and false-negative cost <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mrow><mi>F</mi><mi>N</mi></mrow></msub></mrow></math>. Predict positive when expected false-positive cost <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mi>p</mi><mo stretchy="false">&#x00029;</mo><msub><mi>C</mi><mrow><mi>F</mi><mi>P</mi></mrow></msub></mrow></math> is no greater than expected false-negative cost <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><msub><mi>C</mi><mrow><mi>F</mi><mi>N</mi></mrow></msub></mrow></math>.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mi>p</mi><mo stretchy="false">&#x00029;</mo><msub><mi>C</mi><mrow><mi>F</mi><mi>P</mi></mrow></msub><mo>&#x02264;</mo><mi>p</mi><msub><mi>C</mi><mrow><mi>F</mi><mi>N</mi></mrow></msub><mspace width="1em" /><mi>&#x027FA;</mi><mspace width="1em" /><mi>p</mi><mo>&#x02265;</mo><mfrac><mrow><msub><mi>C</mi><mrow><mi>F</mi><mi>P</mi></mrow></msub></mrow><mrow><msub><mi>C</mi><mrow><mi>F</mi><mi>P</mi></mrow></msub><mo>&#x0002B;</mo><msub><mi>C</mi><mrow><mi>F</mi><mi>N</mi></mrow></msub></mrow></mfrac></mrow></math></div>
+<p>Equal costs give threshold <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mrow></math>. If missing a positive costs more, the threshold falls. This is a labeled decision-theory supplement, not a new threshold claim from the lecture.</p></details>
+
+<p>Changing a threshold often trades precision against recall for a fixed scoring model, but there is no universal inverse relationship across all models or datasets. Choose thresholds on validation data for the intended operating goal; do not tune them on the final test set.</p>
+
+<h2 id="section-3">Read the confusion matrix before comparing scores</h2>
+<p>Use a fixed orientation so the denominators are visible. Rows are actual labels; columns are predicted labels. Here the positive class is the event of interest.</p>
+
+<div class="table-scroll" role="region" tabindex="0" aria-label="Binary confusion matrix: rows actual, columns predicted"><table aria-label="Binary confusion matrix: rows actual, columns predicted"><caption>Binary confusion matrix: rows actual, columns predicted</caption><thead><tr><th scope="col">Actual class</th><th scope="col">Predicted positive</th><th scope="col">Predicted negative</th></tr></thead><tbody><tr><th scope="row">Positive</th><td>True positive (<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>P</mi></mrow></math>)</td><td>False negative (<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>F</mi><mi>N</mi></mrow></math>)</td></tr><tr><th scope="row">Negative</th><td>False positive (<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>F</mi><mi>P</mi></mrow></math>)</td><td>True negative (<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>N</mi></mrow></math>)</td></tr></tbody></table></div>
+
+<p>A false negative is a missed positive; a false positive is an unnecessary positive alert. Total rows equal TP + FN + FP + TN. The following measures answer different questions, so report the ones that match the use case rather than treating one number as a complete verdict.</p>
+
+<div class="table-scroll" role="region" tabindex="0" aria-label="Class-aware metric definitions and questions"><table aria-label="Class-aware metric definitions"><caption>Metrics, formulas, and the question each answers</caption><thead><tr><th scope="col">Metric</th><th scope="col">Formula</th><th scope="col">Interpretation</th></tr></thead><tbody><tr><th scope="row">Accuracy</th><td><div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mfrac><mrow><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>T</mi><mi>N</mi></mrow><mrow><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>T</mi><mi>N</mi><mo>&#x0002B;</mo><mi>F</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>N</mi></mrow></mfrac></mrow></math></div></td><td>What fraction of all rows is correct?</td></tr><tr><th scope="row">Precision</th><td><div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mfrac><mrow><mi>T</mi><mi>P</mi></mrow><mrow><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>P</mi></mrow></mfrac></mrow></math></div></td><td>Among positive predictions, what fraction is correct?</td></tr><tr><th scope="row">Recall / sensitivity</th><td><div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mfrac><mrow><mi>T</mi><mi>P</mi></mrow><mrow><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>N</mi></mrow></mfrac></mrow></math></div></td><td>Among actual positives, what fraction is found?</td></tr><tr><th scope="row">Specificity</th><td><div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mfrac><mrow><mi>T</mi><mi>N</mi></mrow><mrow><mi>T</mi><mi>N</mi><mo>&#x0002B;</mo><mi>F</mi><mi>P</mi></mrow></mfrac></mrow></math></div></td><td>Among actual negatives, what fraction is rejected correctly?</td></tr><tr><th scope="row">F1</th><td><div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mfrac><mrow><mn>2</mn><mi>P</mi><mi>R</mi></mrow><mrow><mi>P</mi><mo>&#x0002B;</mo><mi>R</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn><mi>T</mi><mi>P</mi></mrow><mrow><mn>2</mn><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>N</mi></mrow></mfrac></mrow></math></div></td><td>Harmonic mean of positive precision and recall.</td></tr><tr><th scope="row">F-beta</th><td><div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><msup><mi>&#x003B2;</mi><mn>2</mn></msup><mo stretchy="false">&#x00029;</mo><mi>P</mi><mi>R</mi></mrow><mrow><msup><mi>&#x003B2;</mi><mn>2</mn></msup><mi>P</mi><mo>&#x0002B;</mo><mi>R</mi></mrow></mfrac><mo>&#x0002C;</mo><mspace width="1em" /><mi>&#x003B2;</mi><mo>&#x0003E;</mo><mn>0</mn></mrow></math></div></td><td>Above one, the weighting parameter gives recall more relative weight; below one, it gives precision more.</td></tr><tr><th scope="row">Balanced accuracy</th><td><div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mfrac><mrow><msub><mo>Recall</mo><mrow><mo>&#x0002B;</mo></mrow></msub><mo>&#x0002B;</mo><msub><mo>Recall</mo><mrow><mo>&#x02212;</mo></mrow></msub></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mo>Sensitivity</mo><mo>&#x0002B;</mo><mo>Specificity</mo></mrow><mrow><mn>2</mn></mrow></mfrac></mrow></math></div></td><td>Average recall over the two classes, giving each class equal weight.</td></tr></tbody></table></div>
+
+<details class="worked"><summary>Recompute the lecture’s 1,000-row all-negative prediction</summary><p><strong>Lecture example:</strong> 100 actual positives and 900 actual negatives; predict negative for all 1,000 rows.</p>
+<div class="table-scroll" role="region" tabindex="0" aria-label="Lecture example: actual rows and predicted columns"><table aria-label="Lecture example: actual rows and predicted columns"><caption>Lecture example: actual rows and predicted columns</caption><thead><tr><th scope="col">Actual class</th><th scope="col">Predicted positive</th><th scope="col">Predicted negative</th></tr></thead><tbody><tr><th scope="row">Actual positive</th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>P</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>F</mi><mi>N</mi><mo>&#x0003D;</mo><mn>100</mn></mrow></math></td></tr><tr><th scope="row">Actual negative</th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>F</mi><mi>P</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>N</mi><mo>&#x0003D;</mo><mn>900</mn></mrow></math></td></tr></tbody></table></div>
+<p><strong>Accuracy:</strong> correct <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>T</mi><mi>N</mi><mo>&#x0003D;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>900</mn><mo>&#x0003D;</mo><mn>900</mn></mrow></math>; total <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>100</mn><mo>&#x0002B;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>900</mn><mo>&#x0003D;</mo><mn>1000</mn></mrow></math>; accuracy <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>900</mn></mrow><mrow><mn>1000</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.9</mn><mo>&#x0003D;</mo><mn>90</mn><mi>&#x00025;</mi></mrow></math>.</p>
+<p><strong>Precision:</strong> predicted positives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>P</mi><mo>&#x0003D;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>0</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, so precision <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>0</mn></mrow><mrow><mn>0</mn></mrow></mfrac></mrow></math> is undefined: no row was predicted positive.</p>
+<p><strong>Recall:</strong> actual positives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>N</mi><mo>&#x0003D;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>100</mn><mo>&#x0003D;</mo><mn>100</mn></mrow></math>, so recall <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>0</mn></mrow><mrow><mn>100</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0</mn></mrow></math>. The model finds none.</p>
+<p><strong>Specificity:</strong> actual negatives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>N</mi><mo>&#x0002B;</mo><mi>F</mi><mi>P</mi><mo>&#x0003D;</mo><mn>900</mn><mo>&#x0002B;</mo><mn>0</mn><mo>&#x0003D;</mo><mn>900</mn></mrow></math>, so specificity <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>900</mn></mrow><mrow><mn>900</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>1</mn></mrow></math>.</p>
+<p><strong>Balanced accuracy:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.5</mn></mrow></math>.</p>
+<p><strong>F1 boundary correction:</strong> the harmonic-mean expression cannot directly use undefined precision. But the equivalent count form has denominator <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>N</mi><mo>&#x0003D;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>100</mn><mo>&#x0003D;</mo><mn>100</mn></mrow></math>, so <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>F</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn><mi>T</mi><mi>P</mi></mrow><mrow><mn>2</mn><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>N</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>0</mn></mrow><mrow><mn>100</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0</mn></mrow></math>. F1 is algebraically undefined when <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>P</mi><mo>&#x0003D;</mo><mi>F</mi><mi>P</mi><mo>&#x0003D;</mo><mi>F</mi><mi>N</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>; that is a different case. <a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html">The standard count-form definition</a> makes the distinction explicit. Some tools apply a declared zero-division convention when a score denominator is zero.</p>
+<p><strong>Check:</strong> 90% accuracy coexists with zero positive recall. The metric list makes the missed-event failure visible.</p></details>
+
+<details class="worked"><summary>Supplemental calculation: a complete skewed-matrix metric worksheet</summary><section class="walk" tabindex="0" aria-label="Calculate class-aware metrics from one skewed matrix"><h3>Calculate class-aware metrics from one skewed matrix</h3><div class="example-input"><strong>Given:</strong> Supplemental matrix; actual positive / negative rows and predicted positive / negative columns. Illustrative counts, not source observations: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>P</mi><mo>&#x0003D;</mo><mn>6</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mi>F</mi><mi>N</mi><mo>&#x0003D;</mo><mn>4</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mi>F</mi><mi>P</mi><mo>&#x0003D;</mo><mn>9</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mi>T</mi><mi>N</mi><mo>&#x0003D;</mo><mn>981</mn></mrow></math></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Read the axes and identify all four counts</h4><p>Supplemental teaching example. Rows are actual labels; columns are predictions. The positive event is the minority class.</p>
+<div class="table-scroll" role="region" tabindex="0" aria-label="Supplemental confusion matrix: rows actual, columns predicted"><table aria-label="Supplemental confusion matrix: rows actual, columns predicted"><caption>Supplemental confusion matrix: rows actual, columns predicted</caption><thead><tr><th scope="col">Actual class</th><th scope="col">Predicted positive</th><th scope="col">Predicted negative</th></tr></thead><tbody><tr><th scope="row">Positive</th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>P</mi><mo>&#x0003D;</mo><mn>6</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>F</mi><mi>N</mi><mo>&#x0003D;</mo><mn>4</mn></mrow></math></td></tr><tr><th scope="row">Negative</th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>F</mi><mi>P</mi><mo>&#x0003D;</mo><mn>9</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>N</mi><mo>&#x0003D;</mo><mn>981</mn></mrow></math></td></tr></tbody></table></div>
+<p>Positive support: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>6</mn><mo>&#x0002B;</mo><mn>4</mn><mo>&#x0003D;</mo><mn>10</mn></mrow></math>. Negative support: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>9</mn><mo>&#x0002B;</mo><mn>981</mn><mo>&#x0003D;</mo><mn>990</mn></mrow></math>. Total: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>10</mn><mo>&#x0002B;</mo><mn>990</mn><mo>&#x0003D;</mo><mn>1000</mn></mrow></math>.</p></section><section class="step"><h4>Accuracy counts correct rows, including the majority</h4><p>Correct predictions are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>T</mi><mi>N</mi><mo>&#x0003D;</mo><mn>6</mn><mo>&#x0002B;</mo><mn>981</mn><mo>&#x0003D;</mo><mn>987</mn></mrow></math>.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>Accuracy</mo><mo>&#x0003D;</mo><mfrac><mrow><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>T</mi><mi>N</mi></mrow><mrow><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>N</mi><mo>&#x0002B;</mo><mi>F</mi><mi>P</mi><mo>&#x0002B;</mo><mi>T</mi><mi>N</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>6</mn><mo>&#x0002B;</mo><mn>981</mn></mrow><mrow><mn>1000</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>987</mn></mrow><mrow><mn>1000</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.987</mn></mrow></math></div>
+<p>So 98.7% of all rows are correct. That alone does not show how many positives were found.</p></section><section class="step"><h4>Precision asks how many predicted positives are right</h4><p>Predicted-positive total is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>P</mi><mo>&#x0003D;</mo><mn>6</mn><mo>&#x0002B;</mo><mn>9</mn><mo>&#x0003D;</mo><mn>15</mn></mrow></math>; 6 of these are truly positive.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>Precision</mo><mo>&#x0003D;</mo><mfrac><mrow><mi>T</mi><mi>P</mi></mrow><mrow><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>P</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>6</mn></mrow><mrow><mn>6</mn><mo>&#x0002B;</mo><mn>9</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>6</mn></mrow><mrow><mn>15</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn></mrow><mrow><mn>5</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.4</mn></mrow></math></div>
+<p>Of flagged rows, 40% are positive; the other 9 of 15 are false alarms.</p></section><section class="step"><h4>Recall asks how many actual positives were found</h4><p>Actual-positive total is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>N</mi><mo>&#x0003D;</mo><mn>6</mn><mo>&#x0002B;</mo><mn>4</mn><mo>&#x0003D;</mo><mn>10</mn></mrow></math>; 6 were found.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>Recall</mo><mo>&#x0003D;</mo><mfrac><mrow><mi>T</mi><mi>P</mi></mrow><mrow><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>N</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>6</mn></mrow><mrow><mn>6</mn><mo>&#x0002B;</mo><mn>4</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>6</mn></mrow><mrow><mn>10</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>3</mn></mrow><mrow><mn>5</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.6</mn></mrow></math></div>
+<p>The model finds 60% of positives and misses 4 of 10. For this binary task, positive recall is sensitivity.</p></section><section class="step"><h4>Specificity measures correct negative decisions</h4><p>Actual-negative total is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>N</mi><mo>&#x0002B;</mo><mi>F</mi><mi>P</mi><mo>&#x0003D;</mo><mn>981</mn><mo>&#x0002B;</mo><mn>9</mn><mo>&#x0003D;</mo><mn>990</mn></mrow></math>.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>Specificity</mo><mo>&#x0003D;</mo><mfrac><mrow><mi>T</mi><mi>N</mi></mrow><mrow><mi>T</mi><mi>N</mi><mo>&#x0002B;</mo><mi>F</mi><mi>P</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>981</mn></mrow><mrow><mn>981</mn><mo>&#x0002B;</mo><mn>9</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>981</mn></mrow><mrow><mn>990</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>109</mn></mrow><mrow><mn>110</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.9909</mn></mrow></math></div>
+<p>It correctly rejects about 99.09% of actual negatives.</p></section><section class="step"><h4>Balanced accuracy gives both classes equal weight</h4><p>Average the two class recalls. Convert to a shared denominator first: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>3</mn></mrow><mrow><mn>5</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>66</mn></mrow><mrow><mn>110</mn></mrow></mfrac></mrow></math>.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>BalancedAccuracy</mo><mo>&#x0003D;</mo><mfrac><mrow><mo>Recall</mo><mo>&#x0002B;</mo><mo>Specificity</mo></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mfrac><mrow><mn>66</mn></mrow><mrow><mn>110</mn></mrow></mfrac><mo>&#x0002B;</mo><mfrac><mrow><mn>109</mn></mrow><mrow><mn>110</mn></mrow></mfrac></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>175</mn></mrow><mrow><mn>220</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>35</mn></mrow><mrow><mn>44</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.79545</mn></mrow></math></div>
+<p>This is lower than raw accuracy because it does not let the 990 negatives dominate the summary.</p></section><section class="step"><h4>F1 combines precision and recall</h4><p>Substitute the exact precision and recall. The equivalent count form avoids dividing by precision first.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>F</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn><mi>P</mi><mi>R</mi></mrow><mrow><mi>P</mi><mo>&#x0002B;</mo><mi>R</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn><mo>&#x000B7;</mo><mfrac><mrow><mn>2</mn></mrow><mrow><mn>5</mn></mrow></mfrac><mo>&#x000B7;</mo><mfrac><mrow><mn>3</mn></mrow><mrow><mn>5</mn></mrow></mfrac></mrow><mrow><mfrac><mrow><mn>2</mn></mrow><mrow><mn>5</mn></mrow></mfrac><mo>&#x0002B;</mo><mfrac><mrow><mn>3</mn></mrow><mrow><mn>5</mn></mrow></mfrac></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>12</mn></mrow><mrow><mn>25</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.48</mn></mrow></math></div>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>F</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn><mi>T</mi><mi>P</mi></mrow><mrow><mn>2</mn><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>N</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>12</mn></mrow><mrow><mn>12</mn><mo>&#x0002B;</mo><mn>9</mn><mo>&#x0002B;</mo><mn>4</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>12</mn></mrow><mrow><mn>25</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.48</mn></mrow></math></div>
+<p>Check: both forms agree. This score emphasizes the positive class and does not use TN.</p></section><section class="step"><h4>F-beta changes the precision–recall emphasis</h4><p>For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B2;</mi><mo>&#x0003D;</mo><mn>2</mn></mrow></math>, recall receives more relative weight. From <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn></mrow><mrow><mn>5</mn></mrow></mfrac></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>R</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>3</mn></mrow><mrow><mn>5</mn></mrow></mfrac></mrow></math>:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>F</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><msup><mn>2</mn><mn>2</mn></msup><mo stretchy="false">&#x00029;</mo><mi>P</mi><mi>R</mi></mrow><mrow><msup><mn>2</mn><mn>2</mn></msup><mi>P</mi><mo>&#x0002B;</mo><mi>R</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>5</mn><mo>&#x000B7;</mo><mfrac><mrow><mn>2</mn></mrow><mrow><mn>5</mn></mrow></mfrac><mo>&#x000B7;</mo><mfrac><mrow><mn>3</mn></mrow><mrow><mn>5</mn></mrow></mfrac></mrow><mrow><mn>4</mn><mo>&#x000B7;</mo><mfrac><mrow><mn>2</mn></mrow><mrow><mn>5</mn></mrow></mfrac><mo>&#x0002B;</mo><mfrac><mrow><mn>3</mn></mrow><mrow><mn>5</mn></mrow></mfrac></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>6</mn></mrow><mrow><mn>11</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.54545</mn></mrow></math></div>
+<p>Count-form check: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>5</mn><mi>T</mi><mi>P</mi></mrow><mrow><mn>5</mn><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mn>4</mn><mi>F</mi><mi>N</mi><mo>&#x0002B;</mo><mi>F</mi><mi>P</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>30</mn></mrow><mrow><mn>30</mn><mo>&#x0002B;</mo><mn>16</mn><mo>&#x0002B;</mo><mn>9</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>6</mn></mrow><mrow><mn>11</mn></mrow></mfrac></mrow></math>.</p></section><section class="step"><h4>Check the counts and interpret together</h4><p>Cell check: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>6</mn><mo>&#x0002B;</mo><mn>4</mn><mo>&#x0002B;</mo><mn>9</mn><mo>&#x0002B;</mo><mn>981</mn><mo>&#x0003D;</mo><mn>1000</mn></mrow></math>. Class recalls are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.6</mn></mrow></math> for positives and about <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.9909</mn></mrow></math> for negatives; their average is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>35</mn></mrow><mrow><mn>44</mn></mrow></mfrac></mrow></math>. Accuracy is high, but 4 of 10 positives are still missed and precision is only <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.4</mn></mrow></math>.</p>
+<p>The right operating point depends on the cost of missed positives versus false alarms, not accuracy alone.</p></section></section></details>
+
+<p>The worksheet uses explicitly labeled teaching counts, not values from the lecture or a downloaded dataset. Each denominator follows from the row or column the metric asks about; the final count check verifies the matrix total.</p>
+
+<h2 id="section-4">Choose what to change: reduce negatives or add positives</h2>
+<p>The lecture groups sampling into under-sampling and over-sampling. These techniques change the training examples seen by a learner; they do not by themselves change the real-world error costs or make the evaluation distribution representative.</p>
+
+<div class="table-scroll" role="region" tabindex="0" aria-label="Comparison of imbalance sampling methods"><table aria-label="Imbalance sampling methods, actions, and tradeoffs"><caption>Sampling choices from the lecture and their main trade-offs</caption><thead><tr><th scope="col">Method</th><th scope="col">What changes</th><th scope="col">Trade-off or limit</th></tr></thead><tbody><tr><th scope="row">Random under-sampling</th><td>Remove selected majority examples at random.</td><td>Can discard useful information and variation.</td></tr><tr><th scope="row">Cluster-centroid under-sampling</th><td>The overview groups majority examples and keeps cluster centroids.</td><td>Brief overview only; the lecture gives no further procedure.</td></tr><tr><th scope="row">Edited nearest neighbours</th><td>The overview removes majority examples misclassified by their nearest neighbors.</td><td>Brief overview only; the lecture gives no further procedure.</td></tr><tr><th scope="row">Tomek-link cleaning</th><td>Find mutual nearest neighbors from opposite classes; under the majority-only policy remove the majority member.</td><td>Boundary cleanup may remove informative cases; nearest-neighbor results depend on representation and distance.</td></tr><tr><th scope="row">Random over-sampling</th><td>Duplicate minority examples by sampling with replacement.</td><td>Repeating records adds no new information and may encourage overfitting.</td></tr><tr><th scope="row">Shrinkage perturbation</th><td>The lecture’s illustration labels a shrinkage value of 0.2.</td><td>The slide does not define its perturbation procedure; keep it distinct from exact duplication.</td></tr><tr><th scope="row">SMOTE</th><td>Interpolate between a minority seed and one of its minority neighbors; the lecture gives a typical neighbor count of five.</td><td>May create overlap; validity and distance scale depend on the domain and features.</td></tr></tbody></table></div>
+
+<p>Random under-sampling lowers the majority count by removing examples, so the learner may lose useful regions of the majority distribution. Random over-sampling raises minority frequency by drawing minority records with replacement; exact copies can lead to overfitting. The lecture’s plot also labels a shrinkage setting, but does not explain the perturbation, so it should not be described as the same operation as duplication.</p>
+
+<figure><div class="diagram-frame" style="--diagram-width:389.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Qualitative Tomek-link sketch: M and m have different labels and are each other’s nearest neighbor. Under the stated majority-cleaning policy, remove M only." width="389pt" height="93pt"
+ viewBox="0.00 0.00 389.00 93.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="class-imbalance-figure-2-class-imbalance-tomek-pair-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 82.08)">
+<title>G</title>
+<!-- maj -->
+<g id="class-imbalance-figure-2-class-imbalance-tomek-pair-node1" class="node">
+<title>maj</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M70.35,-60.84C70.35,-60.84 12,-60.84 12,-60.84 6,-60.84 0,-54.84 0,-48.84 0,-48.84 0,-22.44 0,-22.44 0,-16.44 6,-10.44 12,-10.44 12,-10.44 70.35,-10.44 70.35,-10.44 76.35,-10.44 82.35,-16.44 82.35,-22.44 82.35,-22.44 82.35,-48.84 82.35,-48.84 82.35,-54.84 76.35,-60.84 70.35,-60.84"/>
+<text xml:space="preserve" text-anchor="middle" x="41.18" y="-39.39" font-family="Georgia" font-size="15.00">Majority</text>
+<text xml:space="preserve" text-anchor="middle" x="41.18" y="-21.39" font-family="Georgia" font-size="15.00">record M</text>
+</g>
+<!-- min -->
+<g id="class-imbalance-figure-2-class-imbalance-tomek-pair-node2" class="node">
+<title>min</title>
+<ellipse fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" cx="309.3" cy="-35.64" rx="57.7" ry="35.64"/>
+<text xml:space="preserve" text-anchor="middle" x="309.3" y="-39.39" font-family="Georgia" font-size="15.00">Minority</text>
+<text xml:space="preserve" text-anchor="middle" x="309.3" y="-21.39" font-family="Georgia" font-size="15.00">record m</text>
+</g>
+<!-- maj&#45;&gt;min -->
+<g id="class-imbalance-figure-2-class-imbalance-tomek-pair-edge1" class="edge">
+<title>maj&#45;&gt;min</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" stroke-width="2" d="M91.9,-35.64C134.2,-35.64 195.29,-35.64 241.79,-35.64"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" stroke-width="2" points="92.12,-33.36 85.62,-35.64 92.12,-37.91 92.12,-33.36"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" stroke-width="2" points="241.65,-37.91 248.15,-35.64 241.65,-33.36 241.65,-37.91"/>
+<text xml:space="preserve" text-anchor="middle" x="166.98" y="-38.49" font-family="Georgia" font-size="12.00">mutual nearest neighbors</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Qualitative Tomek-link sketch: M and m have different labels and are each other’s nearest neighbor. Under the stated majority-cleaning policy, remove M only.</figcaption></figure>
+
+<p>A <strong>Tomek link</strong> is a pair of examples from different classes that are mutual nearest neighbors. The lecture presents removing the majority point near a minority point; that is the policy used in this sketch. Other software may support removing both members, so the policy matters. “Close to a minority example” by itself is not the full mutual-neighbor definition. <a href="https://imbalanced-learn.org/stable/under_sampling.html">The imbalanced-learn guide</a> states both the definition and the majority-only versus both-points choices.</p>
+
+<h2 id="section-5">SMOTE and its variants</h2>
+<p>SMOTE grows the minority class by interpolating between a minority example and a nearby minority example. In the lecture, nearest neighbors are drawn only from minority examples, with a typical neighbor count of five. For a selected pair, interpolation creates a point along their feature-space segment. The method assumes that the chosen distance is meaningful and the intermediate feature combinations are valid.</p>
+
+<details class="worked"><summary>Supplemental calculation: find neighbors and interpolate one SMOTE point</summary><section class="walk" tabindex="0" aria-label="Trace one SMOTE interpolation"><h3>Trace one SMOTE interpolation</h3><div class="example-input"><strong>Given:</strong><strong>Minority points:</strong><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></math></span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>A</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x0002C;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></math></span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>B</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow></math></span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>C</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo></mrow></math></span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>D</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>4</mn><mo>&#x0002C;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow></math></span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>E</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>4</mn><mo>&#x0002C;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo></mrow></math></span><span>Euclidean distance</span><span>Minority-only neighbors</span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi><mo>&#x0003D;</mo><mn>5</mn></mrow></math></span><span>Chosen neighbor B</span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>4</mn></mrow></mfrac></mrow></math></span></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Set up the minority-only neighbor set</h4><p>Supplemental teaching example in two continuous features with Euclidean distance. All six listed points are minority training examples; P is the seed, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi><mo>&#x0003D;</mo><mn>5</mn></mrow></math> means compare these five candidates.</p>
+<p>Points (all minority training examples):</p>
+<ul><li><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></math></li><li><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>A</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x0002C;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></math></li><li><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>B</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow></math></li><li><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>C</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo></mrow></math></li><li><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>D</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>4</mn><mo>&#x0002C;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow></math></li><li><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>E</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>4</mn><mo>&#x0002C;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo></mrow></math></li></ul>
+<p>Distances from P: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo>&#x0002C;</mo><mi>A</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msqrt><mrow><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x02212;</mo><mn>2</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x02212;</mo><mn>2</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></msqrt><mo>&#x0003D;</mo><mn>1</mn></mrow></math>; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo>&#x0002C;</mo><mi>B</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msqrt><mrow><mn>2</mn></mrow></msqrt><mo>&#x02248;</mo><mn>1.4142</mn></mrow></math>; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo>&#x0002C;</mo><mi>C</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2</mn></mrow></math>; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo>&#x0002C;</mo><mi>D</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msqrt><mrow><mn>5</mn></mrow></msqrt><mo>&#x02248;</mo><mn>2.2361</mn></mrow></math>; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo>&#x0002C;</mo><mi>E</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msqrt><mrow><mn>8</mn></mrow></msqrt><mo>&#x02248;</mo><mn>2.8284</mn></mrow></math>.</p>
+<p>These are the five nearest candidates here, ordered A, B, C, D, E. Select B for this deterministic illustration.</p></section><section class="step"><h4>Choose the neighbor and interpolation fraction</h4><p>SMOTE chooses a minority neighbor and a point on the segment joining it to the seed. For this illustration, choose <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>B</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>4</mn></mrow></mfrac></mrow></math>. The source gives the neighbor/interpolation procedure and typical <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi><mo>&#x0003D;</mo><mn>5</mn></mrow></math>; these coordinates and λ are teaching values.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>X</mi><mrow><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msub><mo>&#x0003D;</mo><mi>P</mi><mo>&#x0002B;</mo><mi>&#x003BB;</mi><mo stretchy="false">&#x00028;</mo><mi>B</mi><mo>&#x02212;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>P</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="1em" /><mi>B</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="1em" /><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>4</mn></mrow></mfrac></mrow></math></div></section><section class="step"><h4>Compute the feature-wise difference</h4><p>Subtract P coordinate by coordinate:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>B</mi><mo>&#x02212;</mo><mi>P</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mn>2</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>3</mn><mo>&#x02212;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>The first feature changes by <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></math> toward B; the second changes by <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn></mrow></math>.</p></section><section class="step"><h4>Scale each difference and add it to P</h4><p>Multiply both differences by <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mn>4</mn></mrow></mfrac></mrow></math>, then add to the corresponding P coordinates:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>X</mi><mrow><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002B;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>2</mn><mo>&#x0002B;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1.75</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>2.25</mn><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>Coordinate 1: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mo>&#x02212;</mo><mn>0.25</mn><mo>&#x0003D;</mo><mn>1.75</mn></mrow></math>. Coordinate 2: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mo>&#x0002B;</mo><mn>0.25</mn><mo>&#x0003D;</mo><mn>2.25</mn></mrow></math>.</p></section><section class="step"><h4>Check that the point lies on the chosen segment</h4><p>Because <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x02264;</mo><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x02264;</mo><mn>1</mn></mrow></math>, the result lies between P and B. It is one quarter of the way from P toward B, closer to P. This geometric check confirms the interpolation arithmetic, not that the synthetic record is valid for the real domain.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mi>&#x003BB;</mi><mo stretchy="false">&#x00029;</mo><mi>P</mi><mo>&#x0002B;</mo><mi>&#x003BB;</mi><mi>B</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>3</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1.75</mn><mo>&#x0002C;</mo><mn>2.25</mn><mo stretchy="false">&#x00029;</mo></mrow></math></div></section></section></details>
+
+<p>The coordinates are chosen only to make the procedure calculable; they are not measurements from the lecture. With the stated continuous features and Euclidean distance, the five candidate distances order as A, B, C, D, E. Feature scaling can change that ordering, so the distance metric and scaling should be justified. Ordinary numeric interpolation is not appropriate for category labels; use a variant designed for feature types.</p>
+
+<p>SMOTE does not check the majority distribution before adding a point. A segment can cross a majority region or create an implausible combination, increasing overlap. Validity also depends on domain rules and, where relevant, causal constraints. On large or high-dimensional data, neighbor search and repeated pipeline fitting can add runtime.</p>
+
+<div class="table-scroll" role="region" tabindex="0" aria-label="SMOTE variants and intended feature setting"><table aria-label="SMOTE variants"><caption>Choose a variant for the feature type or sampling focus</caption><thead><tr><th scope="col">Variant</th><th scope="col">Purpose described in the lecture</th></tr></thead><tbody><tr><th scope="row">Borderline-SMOTE</th><td>Creates synthetic examples near minority samples close to the class boundary; the lecture’s picture is qualitative.</td></tr><tr><th scope="row">SMOTE-NC</th><td>For data containing both continuous and nominal (categorical) features.</td></tr><tr><th scope="row">SMOTEN</th><td>For nominal-only features.</td></tr><tr><th scope="row">ADASYN</th><td>Allocates more synthetic examples to harder-to-classify minority cases, using a difficulty-weighted distribution.</td></tr></tbody></table></div>
+
+<p>ADASYN’s emphasis on difficult examples can be useful near a boundary, but difficult cases may also be noisy or ambiguous; inspect whether that region contains trustworthy labels. The original <a href="https://ieeexplore.ieee.org/document/4633969">ADASYN paper</a> describes its difficulty-weighted distribution. The original <a href="https://www.cs.cmu.edu/afs/cs/project/jair/pub/volume16/chawla02a.pdf">SMOTE paper</a> provides the minority-neighbor interpolation method. These references clarify definitions; the lecture’s figures remain qualitative and do not supply coordinates for the teaching calculation.</p>
+
+<h2 id="section-6">Split first and keep evaluation honest</h2>
+<p>Resampling must happen after the evaluation split and only within each training fold. Fit learned preprocessing on that training fold too. Then fit the classifier and use validation data to choose a model and threshold. Keep the final test set untouched and at its natural distribution so the reported result reflects the task the model will face.</p>
+
+<figure><div class="diagram-frame" style="--diagram-width:196.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Keep preprocessing and resampling within each training fold. Validation selects; the untouched test distribution estimates final performance." width="196pt" height="538pt"
+ viewBox="0.00 0.00 196.00 538.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="class-imbalance-figure-3-class-imbalance-training-fold-pipeline-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 526.8)">
+<title>G</title>
+<!-- raw -->
+<g id="class-imbalance-figure-3-class-imbalance-training-fold-pipeline-node1" class="node">
+<title>raw</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M128.47,-516C128.47,-516 46.12,-516 46.12,-516 40.12,-516 34.12,-510 34.12,-504 34.12,-504 34.12,-492 34.12,-492 34.12,-486 40.12,-480 46.12,-480 46.12,-480 128.47,-480 128.47,-480 134.47,-480 140.47,-486 140.47,-492 140.47,-492 140.47,-504 140.47,-504 140.47,-510 134.47,-516 128.47,-516"/>
+<text xml:space="preserve" text-anchor="middle" x="87.3" y="-492.75" font-family="Georgia" font-size="15.00">Labeled data</text>
+</g>
+<!-- split -->
+<g id="class-imbalance-figure-3-class-imbalance-training-fold-pipeline-node2" class="node">
+<title>split</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M162.6,-448C162.6,-448 12,-448 12,-448 6,-448 0,-442 0,-436 0,-436 0,-409.6 0,-409.6 0,-403.6 6,-397.6 12,-397.6 12,-397.6 162.6,-397.6 162.6,-397.6 168.6,-397.6 174.6,-403.6 174.6,-409.6 174.6,-409.6 174.6,-436 174.6,-436 174.6,-442 168.6,-448 162.6,-448"/>
+<text xml:space="preserve" text-anchor="middle" x="87.3" y="-426.55" font-family="Georgia" font-size="15.00">Split first</text>
+<text xml:space="preserve" text-anchor="middle" x="87.3" y="-408.55" font-family="Georgia" font-size="15.00">(time&#45;aware if needed)</text>
+</g>
+<!-- raw&#45;&gt;split -->
+<g id="class-imbalance-figure-3-class-imbalance-training-fold-pipeline-edge1" class="edge">
+<title>raw&#45;&gt;split</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M87.3,-479.65C87.3,-472.61 87.3,-464.25 87.3,-456.16"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="89.58,-456.24 87.3,-449.74 85.03,-456.24 89.58,-456.24"/>
+</g>
+<!-- prep -->
+<g id="class-imbalance-figure-3-class-imbalance-training-fold-pipeline-node3" class="node">
+<title>prep</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M149.85,-365.6C149.85,-365.6 24.75,-365.6 24.75,-365.6 18.75,-365.6 12.75,-359.6 12.75,-353.6 12.75,-353.6 12.75,-327.2 12.75,-327.2 12.75,-321.2 18.75,-315.2 24.75,-315.2 24.75,-315.2 149.85,-315.2 149.85,-315.2 155.85,-315.2 161.85,-321.2 161.85,-327.2 161.85,-327.2 161.85,-353.6 161.85,-353.6 161.85,-359.6 155.85,-365.6 149.85,-365.6"/>
+<text xml:space="preserve" text-anchor="middle" x="87.3" y="-344.15" font-family="Georgia" font-size="15.00">Fit preprocessing</text>
+<text xml:space="preserve" text-anchor="middle" x="87.3" y="-326.15" font-family="Georgia" font-size="15.00">inside training fold</text>
+</g>
+<!-- split&#45;&gt;prep -->
+<g id="class-imbalance-figure-3-class-imbalance-training-fold-pipeline-edge2" class="edge">
+<title>split&#45;&gt;prep</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M87.3,-397.24C87.3,-389.83 87.3,-381.58 87.3,-373.74"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="89.58,-374.1 87.3,-367.6 85.03,-374.1 89.58,-374.1"/>
+</g>
+<!-- sample -->
+<g id="class-imbalance-figure-3-class-imbalance-training-fold-pipeline-node4" class="node">
+<title>sample</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M147.6,-283.2C147.6,-283.2 27,-283.2 27,-283.2 21,-283.2 15,-277.2 15,-271.2 15,-271.2 15,-244.8 15,-244.8 15,-238.8 21,-232.8 27,-232.8 27,-232.8 147.6,-232.8 147.6,-232.8 153.6,-232.8 159.6,-238.8 159.6,-244.8 159.6,-244.8 159.6,-271.2 159.6,-271.2 159.6,-277.2 153.6,-283.2 147.6,-283.2"/>
+<text xml:space="preserve" text-anchor="middle" x="87.3" y="-261.75" font-family="Georgia" font-size="15.00">Resample training</text>
+<text xml:space="preserve" text-anchor="middle" x="87.3" y="-243.75" font-family="Georgia" font-size="15.00">fold only</text>
+</g>
+<!-- prep&#45;&gt;sample -->
+<g id="class-imbalance-figure-3-class-imbalance-training-fold-pipeline-edge3" class="edge">
+<title>prep&#45;&gt;sample</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M87.3,-314.84C87.3,-307.43 87.3,-299.18 87.3,-291.34"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="89.58,-291.7 87.3,-285.2 85.03,-291.7 89.58,-291.7"/>
+</g>
+<!-- fit -->
+<g id="class-imbalance-figure-3-class-imbalance-training-fold-pipeline-node5" class="node">
+<title>fit</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M127.35,-200.8C127.35,-200.8 47.25,-200.8 47.25,-200.8 41.25,-200.8 35.25,-194.8 35.25,-188.8 35.25,-188.8 35.25,-176.8 35.25,-176.8 35.25,-170.8 41.25,-164.8 47.25,-164.8 47.25,-164.8 127.35,-164.8 127.35,-164.8 133.35,-164.8 139.35,-170.8 139.35,-176.8 139.35,-176.8 139.35,-188.8 139.35,-188.8 139.35,-194.8 133.35,-200.8 127.35,-200.8"/>
+<text xml:space="preserve" text-anchor="middle" x="87.3" y="-177.55" font-family="Georgia" font-size="15.00">Fit classifier</text>
+</g>
+<!-- sample&#45;&gt;fit -->
+<g id="class-imbalance-figure-3-class-imbalance-training-fold-pipeline-edge4" class="edge">
+<title>sample&#45;&gt;fit</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M87.3,-232.63C87.3,-225.05 87.3,-216.69 87.3,-209.05"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="89.58,-209.14 87.3,-202.64 85.03,-209.14 89.58,-209.14"/>
+</g>
+<!-- valid -->
+<g id="class-imbalance-figure-3-class-imbalance-training-fold-pipeline-node6" class="node">
+<title>valid</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M155.47,-132.8C155.47,-132.8 19.12,-132.8 19.12,-132.8 13.12,-132.8 7.12,-126.8 7.12,-120.8 7.12,-120.8 7.12,-94.4 7.12,-94.4 7.12,-88.4 13.12,-82.4 19.12,-82.4 19.12,-82.4 155.47,-82.4 155.47,-82.4 161.47,-82.4 167.47,-88.4 167.47,-94.4 167.47,-94.4 167.47,-120.8 167.47,-120.8 167.47,-126.8 161.47,-132.8 155.47,-132.8"/>
+<text xml:space="preserve" text-anchor="middle" x="87.3" y="-111.35" font-family="Georgia" font-size="15.00">Validation: choose</text>
+<text xml:space="preserve" text-anchor="middle" x="87.3" y="-93.35" font-family="Georgia" font-size="15.00">model and threshold</text>
+</g>
+<!-- fit&#45;&gt;valid -->
+<g id="class-imbalance-figure-3-class-imbalance-training-fold-pipeline-edge5" class="edge">
+<title>fit&#45;&gt;valid</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M87.3,-164.45C87.3,-157.41 87.3,-149.05 87.3,-140.96"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="89.58,-141.04 87.3,-134.54 85.03,-141.04 89.58,-141.04"/>
+</g>
+<!-- test -->
+<g id="class-imbalance-figure-3-class-imbalance-training-fold-pipeline-node7" class="node">
+<title>test</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M151.35,-50.4C151.35,-50.4 23.25,-50.4 23.25,-50.4 17.25,-50.4 11.25,-44.4 11.25,-38.4 11.25,-38.4 11.25,-12 11.25,-12 11.25,-6 17.25,0 23.25,0 23.25,0 151.35,0 151.35,0 157.35,0 163.35,-6 163.35,-12 163.35,-12 163.35,-38.4 163.35,-38.4 163.35,-44.4 157.35,-50.4 151.35,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="87.3" y="-28.95" font-family="Georgia" font-size="15.00">Untouched test set:</text>
+<text xml:space="preserve" text-anchor="middle" x="87.3" y="-10.95" font-family="Georgia" font-size="15.00">report metrics</text>
+</g>
+<!-- valid&#45;&gt;test -->
+<g id="class-imbalance-figure-3-class-imbalance-training-fold-pipeline-edge6" class="edge">
+<title>valid&#45;&gt;test</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M87.3,-82.04C87.3,-74.63 87.3,-66.38 87.3,-58.54"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="89.58,-58.9 87.3,-52.4 85.03,-58.9 89.58,-58.9"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Keep preprocessing and resampling within each training fold. Validation selects; the untouched test distribution estimates final performance.</figcaption></figure>
+
+<p>If records have a meaningful time order, split chronologically before preprocessing or resampling; never synthesize across the time boundary. In cross-validation, each fold gets its own training-only preprocessing and resampling. Resampling the full dataset before splitting can let duplicated or generated relatives leak into validation or test data.</p>
+
+<p>Balancing counts is only one possible intervention. It does not fix mislabeled positives, sampling bias, distribution shift, concept overlap, or unequal decision costs. Compare resampling against alternatives such as a suitable decision threshold or cost-sensitive learning on the same untouched validation/test distributions.</p>
+
+<details class="worked"><summary>Optional study exercise: reason from the lecture’s fraud counts without accessing a dataset</summary><p>The lecture describes <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>284315</mn></mrow></math> transactions over two days, of which <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>492</mn></mrow></math> are labeled fraud. Using only those stated counts:</p>
+<ol><li>Compute the number of negatives: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>284315</mn><mo>&#x02212;</mo><mn>492</mn><mo>&#x0003D;</mo><mn>283823</mn></mrow></math>.</li><li>Compute the positive rate: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>492</mn></mrow><mrow><mn>284315</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.001730475</mn><mo>&#x0003D;</mo><mn>0.1730475</mn><mi>&#x00025;</mi></mrow></math>.</li><li>Compute the negative-to-positive ratio: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>283823</mn></mrow><mrow><mn>492</mn></mrow></mfrac><mo>&#x02248;</mo><mn>576.876</mn><mo>&#x02248;</mo><mn>577</mn><mi>:</mi><mn>1</mn></mrow></math>.</li><li>Sketch an evaluation plan: choose a time-aware split if the prediction setting is chronological; fit preprocessing and resample only training folds; keep validation and test rows untouched; choose the threshold on validation; report class-aware metrics on the test set.</li></ol>
+<p>This is an arithmetic and study-design exercise. It does not access the named dataset or produce before/after visualizations or model results.</p></details>
+
+<h2 id="section-7">Common mistakes</h2>
+<ul>
+<li>Calling the minority event “negative” because negative sounds undesirable, or assuming positive means beneficial. Define the event explicitly.</li>
+<li>Reporting only accuracy on a skewed task. A high value can hide missed positives.</li>
+<li>Reading a confusion matrix without checking which axis is actual and which is predicted.</li>
+<li>Treating undefined precision as zero without stating a reporting convention. In the all-negative example precision has no predicted-positive cases, while count-form F1 evaluates to zero because actual positives were missed.</li>
+<li>Calling F1 undefined in that all-negative example. Its count-form denominator is positive because false negatives remain. F1 is algebraically undefined only when there are no true positives, false positives, or false negatives.</li>
+<li>Claiming a half-probability threshold requires balanced class priors. With calibrated posterior probabilities and equal error costs, that remains the equal-cost threshold.</li>
+<li>Assuming precision and recall are always inversely related across different model comparisons.</li>
+<li>Treating a Tomek link as any close cross-class pair; it requires mutual nearest neighbors, and the removal policy must be stated.</li>
+<li>Confusing random duplication with the lecture’s unexplained shrinkage illustration.</li>
+<li>Assuming SMOTE creates realistic points or checks the majority class. It interpolates in the chosen feature space and may increase overlap.</li>
+<li>Applying continuous interpolation to nominal values or comparing unscaled features without checking whether the distance is meaningful.</li>
+<li>Resampling before a split or balancing validation/test data, which leaks information or hides natural prevalence.</li>
+<li>Expecting resampling to fix label noise, shift, overlap, collection bias, or the costs of errors by itself.</li>
+</ul>
+
+<h2 id="section-8">Exam focus</h2>
+<p>Be able to define the positive event, explain the negative-to-positive IR convention, and name the four factors governing difficulty. Explain why a majority-only classifier can achieve high accuracy while finding no positives.</p>
+<p>Given an actual-row/predicted-column matrix, identify TP, FN, FP, and TN before calculating accuracy, precision, recall, specificity, F1, F-beta, and balanced accuracy. Show each denominator and flag undefined cases accurately.</p>
+<p>Compare random under-sampling, Tomek links, random duplication, SMOTE, and the named SMOTE variants by what changes, their assumptions, and their risks. Show the neighbor and coordinate arithmetic for SMOTE. Keep preprocessing and resampling inside training folds, threshold choice on validation, and final evaluation on untouched test data.</p>
+
+<h2 id="section-9">Practice questions</h2>
+
+<p class="question">1. A dataset has 9,900 negatives and 100 positives. What is IR under the lecture’s convention, and what accuracy does an all-negative classifier get?</p>
+<details class="worked"><summary>Check your answer</summary><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>IR</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>9900</mn></mrow><mrow><mn>100</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>99</mn><mi>:</mi><mn>1</mn></mrow></math>. The classifier is correct on 9,900 of 10,000 rows, so accuracy is 99%, but positive recall is zero.</p></details>
+
+<p class="question">2. With <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>P</mi><mo>&#x0003D;</mo><mn>0</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mi>F</mi><mi>N</mi><mo>&#x0003D;</mo><mn>100</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mi>F</mi><mi>P</mi><mo>&#x0003D;</mo><mn>0</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mi>T</mi><mi>N</mi><mo>&#x0003D;</mo><mn>900</mn></mrow></math>, which of precision, recall, specificity, balanced accuracy, and count-form F1 are defined? Give each value where defined.</p>
+<details class="worked"><summary>Check your answer</summary><p>Precision is undefined because <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>P</mi><mo>&#x0002B;</mo><mi>F</mi><mi>P</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>. Recall <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002F;</mo><mn>100</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math>; specificity <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>900</mn><mo>&#x0002F;</mo><mn>900</mn><mo>&#x0003D;</mo><mn>1</mn></mrow></math>; balanced accuracy <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>0.5</mn></mrow></math>; count-form F1 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>100</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math>.</p></details>
+
+<p class="question">3. For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mi>P</mi><mo>&#x0003D;</mo><mn>6</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mi>F</mi><mi>N</mi><mo>&#x0003D;</mo><mn>4</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mi>F</mi><mi>P</mi><mo>&#x0003D;</mo><mn>9</mn><mo>&#x0002C;</mo><mspace width="0.278em" /><mi>T</mi><mi>N</mi><mo>&#x0003D;</mo><mn>981</mn></mrow></math>, calculate precision, recall, and balanced accuracy.</p>
+<details class="worked"><summary>Check your answer</summary><p>Precision <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>6</mn><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>6</mn><mo>&#x0002B;</mo><mn>9</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2</mn><mo>&#x0002F;</mo><mn>5</mn></mrow></math>. Recall <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>6</mn><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>6</mn><mo>&#x0002B;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>3</mn><mo>&#x0002F;</mo><mn>5</mn></mrow></math>. Specificity <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>981</mn><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>981</mn><mo>&#x0002B;</mo><mn>9</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>109</mn><mo>&#x0002F;</mo><mn>110</mn></mrow></math>. Balanced accuracy <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x0002F;</mo><mn>5</mn><mo>&#x0002B;</mo><mn>109</mn><mo>&#x0002F;</mo><mn>110</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>35</mn><mo>&#x0002F;</mo><mn>44</mn><mo>&#x02248;</mo><mn>0.79545</mn></mrow></math>.</p></details>
+
+<p class="question">4. What makes two opposite-class examples a Tomek link, and which point is removed under the majority-only policy used here?</p>
+<details class="worked"><summary>Check your answer</summary><p>They are mutual nearest neighbors and have different labels. The stated majority-only cleaning policy removes the majority member; some configurations can remove both, so name the policy.</p></details>
+
+<p class="question">5. In the supplemental SMOTE example, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>B</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>4</mn></mrow></mfrac></mrow></math>. Compute the new point and give a segment check.</p>
+<details class="worked"><summary>Check your answer</summary><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>B</mi><mo>&#x02212;</mo><mi>P</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo>&#x0002B;</mo><mi>&#x003BB;</mi><mo stretchy="false">&#x00028;</mo><mi>B</mi><mo>&#x02212;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x02212;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x0002C;</mo><mn>2</mn><mo>&#x0002B;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1.75</mn><mo>&#x0002C;</mo><mn>2.25</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. Since <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x02264;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x02264;</mo><mn>1</mn></mrow></math>, it lies on segment P–B.</p></details>
+
+<p class="question">6. A calibrated model estimates <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mtext>positive</mtext><mo>&#x02223;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.35</mn></mrow></math>. With equal false-positive and false-negative costs, is the positive class chosen at threshold <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.5</mn></mrow></math>? What changes if missing a positive is more costly?</p>
+<details class="worked"><summary>Check your answer</summary><p>No: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.35</mn></mrow></math> is below the equal-cost threshold <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.5</mn></mrow></math>. If false negatives cost more, the cost-based threshold <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mrow><mi>F</mi><mi>P</mi></mrow></msub><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><msub><mi>C</mi><mrow><mi>F</mi><mi>P</mi></mrow></msub><mo>&#x0002B;</mo><msub><mi>C</mi><mrow><mi>F</mi><mi>N</mi></mrow></msub><mo stretchy="false">&#x00029;</mo></mrow></math> is lower, so <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.35</mn></mrow></math> may qualify. The threshold is a decision choice, not a consequence of balanced priors.</p></details>
+
+<p class="question">7. Why must resampling and learned preprocessing be fitted separately inside each training fold?</p>
+<details class="worked"><summary>Check your answer</summary><p>Fitting them before splitting can expose information from validation/test rows or create related examples on both sides. Split first; fit preprocessing and resampling on training rows only; keep evaluation rows untouched.</p></details>
+
+<p class="question">8. Name two things ordinary resampling cannot fix by itself.</p>
+<details class="worked"><summary>Check your answer</summary><p>Examples include label noise, distribution shift, class overlap, collection bias, and unequal error costs. Resampling changes the training sample counts; it does not repair these underlying problems.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="xai-attribution-methods.html"><small>Previous</small>Integrated Gradients, SHAP, and Grad-CAM <span aria-hidden="true">↗</span></a><a href="data-augmentation.html"><small>Next</small>Data Augmentation for Images and Text <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

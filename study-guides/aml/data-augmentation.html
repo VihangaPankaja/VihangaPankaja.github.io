@@ -1,0 +1,635 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Augmentation creates varied training examples only when their task-relevant meaning and labels stay valid; this guide connects text strategies to a controlled image-classification assignment."><title>Data Augmentation for Images and Text · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html" aria-current="page">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Explainability and data quality <span>/</span> Lecture 8</div><h1>Data Augmentation for Images and Text</h1><p class="lead">Augmentation creates varied training examples only when their task-relevant meaning and labels stay valid; this guide connects text strategies to a controlled image-classification assignment.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">What makes an augmented example useful?</a><a href="#section-2">Text strategies, from small edits to generated examples</a><a href="#section-3">Flower assignment: make the comparison trustworthy</a><a href="#section-4">Preprocessing and training-only normalization</a><a href="#section-5">Baseline CNN: shapes and parameter count</a><a href="#section-6">Image transforms and controlled ablations</a><a href="#section-7">What to record and how to interpret evidence</a><a href="#section-8">Common mistakes</a><a href="#section-9">Exam focus</a><a href="#section-10">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Data augmentation makes additional training examples from existing examples. The goal is to expose a learner to useful variation so it can generalize beyond the exact training items. A transformation is useful only when it preserves the information the task depends on and keeps the label correct. More examples are not automatically better: a fluent sentence can change its meaning, and an image transform can change the visual cue that defines its class.</p>
+<p>Augmentation depends on the kind of data and on what the task asks a model to recognize. The introductory multimodal illustration gives these concrete examples:</p>
+<ul>
+<li><strong>Images:</strong> a butterfly image is flipped or rotated, de-texturized, de-colored, edge-enhanced, or converted to a salient-edge map. These changes vary orientation or visual features; a useful transformation must retain the cues required by the image label.</li>
+<li><strong>Text:</strong> an airport example distinguishes the events “capture” and “airlifting” and their participant roles. Rule-based, generative, text-aware, and event-aware variants can alter the wording, event, or who fills a role. Check the event and its participants against the required annotation; changed roles or events can invalidate the original label even when the text remains grammatical.</li>
+<li><strong>Audio:</strong> adding noise, stretching in time, and shifting a signal produce different views of an original recording. Their suitability depends on whether the task's essential sound information remains intact. No numerical settings are assumed for these illustrations.</li>
+</ul>
+<p>The separate flower assignment supplies a concrete image-classification workflow. Its split, preprocessing, model, and experiment numbers below describe the canonical instructional notebook, not mandatory choices for every valid student design.</p>
+<p><strong>Prerequisites:</strong> review <a href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a> and <a href="cnn-architectures.html">Convolutional Neural Networks</a> first.</p>
+<h2 id="section-1">What makes an augmented example useful?</h2>
+<p>An original training example can produce one or more transformed descendants. Each descendant should add variation while remaining a valid example of the same task. This is <strong>label preservation</strong>: the target attached to the example remains correct after the change. If that condition fails, the training set gains conflicting supervision instead of useful diversity.</p>
+<p>Augmentation is especially attractive when annotated examples are limited, models can overfit small training sets, or high-quality labels are costly to obtain. NLP applications include machine translation, text classification, question answering, and sentiment analysis. Each task requires its own meaning and label checks. Augmentation varies the training view; it does not create independent source facts or guarantee generalization. Keep validation and test examples separate from augmentation so they remain evidence about examples the learner did not train on.</p>
+<h2 id="section-2">Text strategies, from small edits to generated examples</h2>
+<p>The lecture groups text augmentation by the scale of the change. Moving from a word edit toward synthetic examples can create more surface diversity, while also increasing the chance that intended meaning or the task label changes. The labels in the comparison table are qualitative judgments from the lecture, not measured quantities.</p>
+<h3>Word-level changes</h3>
+<p>Word-level methods modify individual words while trying to preserve the sentence meaning. The lecture's sentiment example changes “The movie was <strong>good</strong>” to “The movie was <strong>excellent</strong>.” Its semantic-similarity example changes “The <strong>student</strong> completed the assignment” to “The <strong>learner</strong> completed the assignment.” Other listed techniques are synonym replacement, random insertion, random deletion, word swapping, word replacement, and spelling or grammar correction.</p>
+<p>A nearby synonym is not always equivalent in context. Check sentiment, entities, relations, negation, and the task label. A spelling correction may be safe for one task but harmful when spelling itself is the label.</p>
+
+<details class="worked"><summary>Teaching example: check a word replacement against the task label</summary><p><strong>Givens.</strong> The original is “The movie was good.” and the task is sentiment classification. The proposed replacement is “The movie was excellent.”</p>
+<ol>
+<li>Identify what the label depends on: the sentence's positive or negative sentiment.</li>
+<li>Compare the changed word in context: both “good” and “excellent” express positive sentiment, with “excellent” often stronger.</li>
+<li>Check the complete sentence and its label. The example remains positive, so the label is preserved for this stated task.</li>
+</ol>
+<p><strong>Final check.</strong> The replacement is a plausible positive-sentiment example, but this one check does not prove every synonym replacement is safe. A different task, such as exact semantic similarity, may require a stricter equivalence test.</p></details>
+
+<h3>Phrase-level changes</h3>
+<p>Phrase-level augmentation changes groups of words rather than isolated tokens. The lecture lists phrase replacement, phrase paraphrasing, insertion or deletion, and entity replacement. Its example adds a modifier: “The government introduced a new policy” becomes “The government introduced a new environmental policy.” The added phrase must be grammatical, semantically appropriate, and consistent with the task label. Phrase edits can also alter which entity did what, so verify the full relation rather than checking only grammaticality.</p>
+
+<details class="worked"><summary>Teaching example: audit the phrase “environmental policy”</summary><p><strong>Givens.</strong> Original: “The government introduced a new policy.” Augmented: “The government introduced a new environmental policy.”</p>
+<ol>
+<li><strong>Grammar:</strong> the inserted adjective phrase fits before “policy.”</li>
+<li><strong>Meaning:</strong> “environmental” narrows the kind of policy; it adds a claim that was not explicit in the original.</li>
+<li><strong>Task label:</strong> retain the example only if that narrower claim is compatible with the original label and the task does not require exact semantic equivalence.</li>
+</ol>
+<p><strong>Final check.</strong> The sentence is grammatical, but grammaticality alone is insufficient. If the new domain claim is unsupported or changes the label, reject the augmentation.</p></details>
+
+<h3>Sentence-level paraphrasing</h3>
+<p>A paraphrase is a different sentence intended to express approximately the same meaning. The lecture lists rule-based, synonym-based, neural, and LLM-based paraphrasing. Its example is “The meeting was postponed because of heavy rain” → “The meeting was delayed due to heavy rainfall.” The benefit is linguistic diversity without completely new source information; the risk is unintended meaning change.</p>
+<p>When checking a generated sentence, compare the event, participants, time, quantities, negation, and causal relation. Fluent output can still change an entity, role, or polarity. For example, changing who postponed a meeting or removing “not” can reverse a label even if the result reads naturally.</p>
+
+<details class="worked"><summary>Teaching example: compare the heavy-rain paraphrase</summary><p><strong>Givens.</strong> Original: “The meeting was postponed because of heavy rain.” Candidate: “The meeting was delayed due to heavy rainfall.”</p>
+<ol>
+<li><strong>Event:</strong> “postponed” and “delayed” both describe moving the meeting to a later time.</li>
+<li><strong>Cause:</strong> both sentences attribute the change to heavy rain.</li>
+<li><strong>Participants and polarity:</strong> the meeting remains the affected event; neither sentence introduces a negation or a new participant.</li>
+<li><strong>Label check:</strong> keep the candidate only if the task label depends on this preserved event and cause rather than exact wording.</li>
+</ol>
+<p><strong>Final check.</strong> These two sentences are a plausible paraphrase pair. Review generated paraphrases case by case; approximate similarity does not certify label preservation.</p></details>
+
+<h3>Translation-based and language-model methods</h3>
+<p><strong>Back-translation</strong> is a translation-based strategy: translate a sentence through another language and back to obtain a differently worded candidate. The lecture does not specify a language pair, model, or round-trip settings, so none are assumed here. Translation errors can change meaning, entities, or labels; compare the returned text against the original before retaining it.</p>
+<p>Contextual methods use a surrounding sentence to propose alternatives. In the lecture's masked-language-model example, “The government announced a new [MASK]” can be completed with “policy,” “regulation,” or “initiative.” Transformer or LLM-based methods can also generate paraphrases, new synthetic sentences, question-answer pairs, and synthetic labeled examples. Context can make a proposal more appropriate than a context-free word swap, but it does not validate factual content or labels. Inspect each generated example, including who acts, what happened, and whether negation or quantities changed.</p>
+<h3>Compare diversity with meaning risk</h3>
+<p>The lecture's table is a qualitative guide to the trade-off. Higher diversity is not a quality score; the practical choice depends on whether a task can tolerate the method's meaning risk.</p>
+<div class="table-scroll" tabindex="0" aria-label="Lecture comparison: qualitative text-augmentation diversity and meaning risk"><table><caption>Lecture comparison: qualitative text-augmentation diversity and meaning risk</caption><thead><tr><th scope="col">Strategy</th><th scope="col">Diversity</th><th scope="col">Risk of changing meaning</th></tr></thead><tbody><tr><th scope="row">Word replacement</th><td>Low–Medium</td><td>Medium</td></tr><tr><th scope="row">Word/phrase insertion</th><td>Medium</td><td>Medium</td></tr><tr><th scope="row">Paraphrasing</th><td>High</td><td>Medium–High</td></tr><tr><th scope="row">Back-translation</th><td>High</td><td>Medium</td></tr><tr><th scope="row">Language-model generation</th><td>High</td><td>Medium–High</td></tr><tr><th scope="row">Synthetic-data generation</th><td>Very High</td><td>High</td></tr></tbody></table></div>
+<p>A useful review question is not “How much text did this method generate?” but “What task-relevant information changed, and is the original label still defensible?”</p>
+<h2 id="section-3">Flower assignment: make the comparison trustworthy</h2>
+<p>The assignment uses 400 images from five 80-image class blocks in the Oxford 17 flower collection. Before use, it asks the student to verify those blocks against the dataset category figure. This is an assignment instruction; this guide does not download or verify an external dataset. The class order used by the canonical notebook is alphabetical so integer labels align with <code>ImageFolder</code> ordering.</p>
+<div class="table-scroll" tabindex="0" aria-label="Flower subset specified by the assignment and notebook class order"><table><caption>Flower subset specified by the assignment and notebook class order</caption><thead><tr><th scope="col">Class</th><th scope="col">Image filename range</th><th scope="col">Images</th></tr></thead><tbody><tr><th scope="row">Daffodil</th><td><code>image_0001.jpg–image_0080.jpg</code></td><td>80</td></tr><tr><th scope="row">Daisy</th><td><code>image_0801.jpg–image_0880.jpg</code></td><td>80</td></tr><tr><th scope="row">Iris</th><td><code>image_0401.jpg–image_0480.jpg</code></td><td>80</td></tr><tr><th scope="row">Sunflower</th><td><code>image_0721.jpg–image_0800.jpg</code></td><td>80</td></tr><tr><th scope="row">Tulip</th><td><code>image_0561.jpg–image_0640.jpg</code></td><td>80</td></tr><tr><th scope="row">Total</th><td>Five classes</td><td>400</td></tr></tbody></table></div>
+
+<details class="worked"><summary>Worked example: calculate and check the saved split</summary><section class="walk" tabindex="0" aria-label="Fixed, per-class split calculation"><h3>Fixed, per-class split calculation</h3><div class="example-input"><p><strong>Teaching example — assignment quantities.</strong> Five classes, 80 originals per class, and a <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>60</mn><mo>&#x0002F;</mo><mn>20</mn><mo>&#x0002F;</mo><mn>20</mn></mrow></math> split with seed 42.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Count the selected images</h4><p>There are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>5</mn><mo>&#x000D7;</mo><mn>80</mn><mo>&#x0003D;</mo><mn>400</mn></mrow></math> originals. The class-block verification remains an instruction to the student before using a dataset.</p></section><section class="step"><h4>2. Allocate each class with the fixed ratio</h4><p>For each class, the <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>60</mn><mo>&#x0002F;</mo><mn>20</mn><mo>&#x0002F;</mo><mn>20</mn></mrow></math> split gives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.60</mn><mo>&#x000D7;</mo><mn>80</mn><mo>&#x0003D;</mo><mn>48</mn></mrow></math> training, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.20</mn><mo>&#x000D7;</mo><mn>80</mn><mo>&#x0003D;</mo><mn>16</mn></mrow></math> validation, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.20</mn><mo>&#x000D7;</mo><mn>80</mn><mo>&#x0003D;</mo><mn>16</mn></mrow></math> test images. Check: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>48</mn><mo>&#x0002B;</mo><mn>16</mn><mo>&#x0002B;</mo><mn>16</mn><mo>&#x0003D;</mo><mn>80</mn></mrow></math> for every class.</p></section><section class="step"><h4>3. Check the overall totals</h4><p>Training: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>5</mn><mo>&#x000D7;</mo><mn>48</mn><mo>&#x0003D;</mo><mn>240</mn></mrow></math>. Validation: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>5</mn><mo>&#x000D7;</mo><mn>16</mn><mo>&#x0003D;</mo><mn>80</mn></mrow></math>. Test: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>5</mn><mo>&#x000D7;</mo><mn>16</mn><mo>&#x0003D;</mo><mn>80</mn></mrow></math>. Final check: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>240</mn><mo>&#x0002B;</mo><mn>80</mn><mo>&#x0002B;</mo><mn>80</mn><mo>&#x0003D;</mo><mn>400</mn></mrow></math>, with the same <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>48</mn><mo>&#x0002F;</mo><mn>16</mn><mo>&#x0002F;</mo><mn>16</mn></mrow></math> class counts in each split.</p></section><section class="step"><h4>4. Freeze the split before augmentation</h4><p>Use seed 42 to shuffle each class and save the selected file lists once. Reuse those lists in every experiment. Create augmented descendants only from the 240 original training images. Validation is for checkpoint selection; evaluate the untouched test set after selection.</p></section></section></details>
+
+<figure><div class="diagram-frame" style="--diagram-width:555.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Keep the saved validation and test sets fixed. Only original training examples feed the transform bank; test evaluation follows checkpoint selection." width="555pt" height="719pt"
+ viewBox="0.00 0.00 555.00 719.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 708.5)">
+<title>G</title>
+<!-- subset -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-node1" class="node">
+<title>subset</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M468.48,-697.7C468.48,-697.7 370.38,-697.7 370.38,-697.7 364.38,-697.7 358.38,-691.7 358.38,-685.7 358.38,-685.7 358.38,-659.3 358.38,-659.3 358.38,-653.3 364.38,-647.3 370.38,-647.3 370.38,-647.3 468.48,-647.3 468.48,-647.3 474.48,-647.3 480.48,-653.3 480.48,-659.3 480.48,-659.3 480.48,-685.7 480.48,-685.7 480.48,-691.7 474.48,-697.7 468.48,-697.7"/>
+<text xml:space="preserve" text-anchor="middle" x="419.43" y="-676.25" font-family="Georgia" font-size="15.00">Verified subset</text>
+<text xml:space="preserve" text-anchor="middle" x="419.43" y="-658.25" font-family="Georgia" font-size="15.00">400 images</text>
+</g>
+<!-- split -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-node2" class="node">
+<title>split</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M508.6,-601.05C508.6,-601.05 330.25,-601.05 330.25,-601.05 324.25,-601.05 318.25,-595.05 318.25,-589.05 318.25,-589.05 318.25,-562.65 318.25,-562.65 318.25,-556.65 324.25,-550.65 330.25,-550.65 330.25,-550.65 508.6,-550.65 508.6,-550.65 514.6,-550.65 520.6,-556.65 520.6,-562.65 520.6,-562.65 520.6,-589.05 520.6,-589.05 520.6,-595.05 514.6,-601.05 508.6,-601.05"/>
+<text xml:space="preserve" text-anchor="middle" x="419.43" y="-579.6" font-family="Georgia" font-size="15.00">Saved split</text>
+<text xml:space="preserve" text-anchor="middle" x="419.43" y="-561.6" font-family="Georgia" font-size="15.00">seed 42; 48/16/16 per class</text>
+</g>
+<!-- subset&#45;&gt;split -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-edge1" class="edge">
+<title>subset&#45;&gt;split</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M419.43,-647.13C419.43,-635.62 419.43,-621.73 419.43,-609.35"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="421.7,-609.48 419.43,-602.98 417.15,-609.48 421.7,-609.48"/>
+<text xml:space="preserve" text-anchor="middle" x="445.3" y="-619.9" font-family="Georgia" font-size="12.00">split once</text>
+</g>
+<!-- train -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-node3" class="node">
+<title>train</title>
+<path fill="#dcefe5" stroke="#4b8063" d="M309.6,-517.65C309.6,-517.65 221.25,-517.65 221.25,-517.65 215.25,-517.65 209.25,-511.65 209.25,-505.65 209.25,-505.65 209.25,-479.25 209.25,-479.25 209.25,-473.25 215.25,-467.25 221.25,-467.25 221.25,-467.25 309.6,-467.25 309.6,-467.25 315.6,-467.25 321.6,-473.25 321.6,-479.25 321.6,-479.25 321.6,-505.65 321.6,-505.65 321.6,-511.65 315.6,-517.65 309.6,-517.65"/>
+<text xml:space="preserve" text-anchor="middle" x="265.43" y="-496.2" font-family="Georgia" font-size="15.00">Original train</text>
+<text xml:space="preserve" text-anchor="middle" x="265.43" y="-478.2" font-family="Georgia" font-size="15.00">240 images</text>
+</g>
+<!-- split&#45;&gt;train -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-edge2" class="edge">
+<title>split&#45;&gt;train</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M372.8,-550.21C355.76,-541.2 336.36,-530.95 318.78,-521.65"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="320.04,-519.74 313.23,-518.72 317.91,-523.77 320.04,-519.74"/>
+</g>
+<!-- validation -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-node8" class="node">
+<title>validation</title>
+<path fill="#fff1cc" stroke="#9b7a29" d="M452.73,-451.25C452.73,-451.25 386.12,-451.25 386.12,-451.25 380.12,-451.25 374.12,-445.25 374.12,-439.25 374.12,-439.25 374.12,-412.85 374.12,-412.85 374.12,-406.85 380.12,-400.85 386.12,-400.85 386.12,-400.85 452.73,-400.85 452.73,-400.85 458.73,-400.85 464.73,-406.85 464.73,-412.85 464.73,-412.85 464.73,-439.25 464.73,-439.25 464.73,-445.25 458.73,-451.25 452.73,-451.25"/>
+<text xml:space="preserve" text-anchor="middle" x="419.43" y="-429.8" font-family="Georgia" font-size="15.00">Validation</text>
+<text xml:space="preserve" text-anchor="middle" x="419.43" y="-411.8" font-family="Georgia" font-size="15.00">80 images</text>
+</g>
+<!-- split&#45;&gt;validation -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-edge10" class="edge">
+<title>split&#45;&gt;validation</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M419.43,-550.44C419.43,-525.52 419.43,-486.69 419.43,-459.26"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="421.7,-459.51 419.43,-453.01 417.15,-459.51 421.7,-459.51"/>
+</g>
+<!-- test -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-node10" class="node">
+<title>test</title>
+<path fill="#f5e4df" stroke="#9c6151" d="M479.98,-50.4C479.98,-50.4 360.88,-50.4 360.88,-50.4 354.88,-50.4 348.88,-44.4 348.88,-38.4 348.88,-38.4 348.88,-12 348.88,-12 348.88,-6 354.88,0 360.88,0 360.88,0 479.98,0 479.98,0 485.98,0 491.98,-6 491.98,-12 491.98,-12 491.98,-38.4 491.98,-38.4 491.98,-44.4 485.98,-50.4 479.98,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="420.43" y="-28.95" font-family="Georgia" font-size="15.00">Test</text>
+<text xml:space="preserve" text-anchor="middle" x="420.43" y="-10.95" font-family="Georgia" font-size="15.00">80; after selection</text>
+</g>
+<!-- split&#45;&gt;test -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-edge12" class="edge">
+<title>split&#45;&gt;test</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M489.4,-550.18C512.04,-537.44 531.42,-519.05 531.42,-493.45 531.42,-493.45 531.42,-493.45 531.42,-146.05 531.42,-109.94 538.25,-94.38 515.42,-66.4 510.67,-60.57 504.92,-55.57 498.62,-51.29"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="500.16,-49.57 493.45,-48.05 497.75,-53.43 500.16,-49.57"/>
+</g>
+<!-- baseline -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-node4" class="node">
+<title>baseline</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M104.85,-332.85C104.85,-332.85 12,-332.85 12,-332.85 6,-332.85 0,-326.85 0,-320.85 0,-320.85 0,-308.85 0,-308.85 0,-302.85 6,-296.85 12,-296.85 12,-296.85 104.85,-296.85 104.85,-296.85 110.85,-296.85 116.85,-302.85 116.85,-308.85 116.85,-308.85 116.85,-320.85 116.85,-320.85 116.85,-326.85 110.85,-332.85 104.85,-332.85"/>
+<text xml:space="preserve" text-anchor="middle" x="58.43" y="-309.6" font-family="Georgia" font-size="15.00">Train baseline</text>
+</g>
+<!-- train&#45;&gt;baseline -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-edge3" class="edge">
+<title>train&#45;&gt;baseline</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M236.64,-467.03C196.36,-432.86 123.75,-371.26 84.8,-338.23"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="86.43,-336.63 80.01,-334.16 83.49,-340.1 86.43,-336.63"/>
+</g>
+<!-- bank -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-node5" class="node">
+<title>bank</title>
+<path fill="#dcefe5" stroke="#4b8063" d="M338.48,-384.85C338.48,-384.85 192.38,-384.85 192.38,-384.85 186.38,-384.85 180.38,-378.85 180.38,-372.85 180.38,-372.85 180.38,-360.85 180.38,-360.85 180.38,-354.85 186.38,-348.85 192.38,-348.85 192.38,-348.85 338.48,-348.85 338.48,-348.85 344.48,-348.85 350.48,-354.85 350.48,-360.85 350.48,-360.85 350.48,-372.85 350.48,-372.85 350.48,-378.85 344.48,-384.85 338.48,-384.85"/>
+<text xml:space="preserve" text-anchor="middle" x="265.43" y="-361.6" font-family="Georgia" font-size="15.00">Train&#45;only transforms</text>
+</g>
+<!-- train&#45;&gt;bank -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-edge4" class="edge">
+<title>train&#45;&gt;bank</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M265.43,-467.03C265.43,-445.57 265.43,-414.48 265.43,-392.85"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="267.7,-393.07 265.43,-386.57 263.15,-393.07 267.7,-393.07"/>
+</g>
+<!-- select -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-node9" class="node">
+<title>select</title>
+<path fill="#e8e2f4" stroke="#73628f" d="M299.38,-192.75C299.38,-192.75 203.12,-151.75 203.12,-151.75 197.6,-149.4 197.6,-144.7 203.12,-142.35 203.12,-142.35 299.38,-101.35 299.38,-101.35 304.9,-99 315.95,-99 321.47,-101.35 321.47,-101.35 417.73,-142.35 417.73,-142.35 423.25,-144.7 423.25,-149.4 417.73,-151.75 417.73,-151.75 321.47,-192.75 321.47,-192.75 315.95,-195.1 304.9,-195.1 299.38,-192.75"/>
+<text xml:space="preserve" text-anchor="middle" x="310.43" y="-150.8" font-family="Georgia" font-size="15.00">Select by</text>
+<text xml:space="preserve" text-anchor="middle" x="310.43" y="-132.8" font-family="Georgia" font-size="15.00">validation loss</text>
+</g>
+<!-- baseline&#45;&gt;select -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-edge7" class="edge">
+<title>baseline&#45;&gt;select</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M48.6,-296.45C39.78,-278.26 30.23,-249.71 44.43,-230.45 65.66,-201.64 151.29,-178.6 219.74,-164.28"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="220.18,-166.51 226.09,-162.97 219.26,-162.06 220.18,-166.51"/>
+</g>
+<!-- amount -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-node6" class="node">
+<title>amount</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M201.85,-280.85C201.85,-280.85 67,-280.85 67,-280.85 61,-280.85 55,-274.85 55,-268.85 55,-268.85 55,-242.45 55,-242.45 55,-236.45 61,-230.45 67,-230.45 67,-230.45 201.85,-230.45 201.85,-230.45 207.85,-230.45 213.85,-236.45 213.85,-242.45 213.85,-242.45 213.85,-268.85 213.85,-268.85 213.85,-274.85 207.85,-280.85 201.85,-280.85"/>
+<text xml:space="preserve" text-anchor="middle" x="134.43" y="-259.4" font-family="Georgia" font-size="15.00">Amount runs</text>
+<text xml:space="preserve" text-anchor="middle" x="134.43" y="-241.4" font-family="Georgia" font-size="15.00">combined 1×, 2×, 4×</text>
+</g>
+<!-- bank&#45;&gt;amount -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-edge5" class="edge">
+<title>bank&#45;&gt;amount</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M244.67,-348.55C224.58,-331.8 193.74,-306.1 169.79,-286.13"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="171.47,-284.56 165.02,-282.15 168.55,-288.06 171.47,-284.56"/>
+</g>
+<!-- types -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-node7" class="node">
+<title>types</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M372.98,-280.85C372.98,-280.85 247.88,-280.85 247.88,-280.85 241.88,-280.85 235.88,-274.85 235.88,-268.85 235.88,-268.85 235.88,-242.45 235.88,-242.45 235.88,-236.45 241.88,-230.45 247.88,-230.45 247.88,-230.45 372.98,-230.45 372.98,-230.45 378.98,-230.45 384.98,-236.45 384.98,-242.45 384.98,-242.45 384.98,-268.85 384.98,-268.85 384.98,-274.85 378.98,-280.85 372.98,-280.85"/>
+<text xml:space="preserve" text-anchor="middle" x="310.43" y="-259.4" font-family="Georgia" font-size="15.00">Type runs</text>
+<text xml:space="preserve" text-anchor="middle" x="310.43" y="-241.4" font-family="Georgia" font-size="15.00">four methods at 1×</text>
+</g>
+<!-- bank&#45;&gt;types -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-edge6" class="edge">
+<title>bank&#45;&gt;types</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M272.46,-348.79C279.08,-332.72 289.16,-308.26 297.27,-288.58"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="299.32,-289.57 299.69,-282.69 295.11,-287.84 299.32,-289.57"/>
+</g>
+<!-- amount&#45;&gt;select -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-edge8" class="edge">
+<title>amount&#45;&gt;select</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M174.8,-230.19C198.75,-215.69 229.44,-197.1 255.56,-181.28"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="256.42,-183.42 260.8,-178.1 254.07,-179.53 256.42,-183.42"/>
+</g>
+<!-- types&#45;&gt;select -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-edge9" class="edge">
+<title>types&#45;&gt;select</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M310.43,-230.19C310.43,-222.76 310.43,-214.25 310.43,-205.59"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="312.7,-205.64 310.43,-199.14 308.15,-205.64 312.7,-205.64"/>
+</g>
+<!-- validation&#45;&gt;select -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-edge11" class="edge">
+<title>validation&#45;&gt;select</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M418.58,-400.48C416.67,-355.02 411.03,-259.76 396.43,-230.45 387.71,-212.97 373.72,-197.17 359.53,-184.19"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="361.39,-182.79 355.02,-180.18 358.37,-186.19 361.39,-182.79"/>
+<text xml:space="preserve" text-anchor="middle" x="462.07" y="-310.58" font-family="Georgia" font-size="12.00">checkpoint choice</text>
+</g>
+<!-- select&#45;&gt;test -->
+<g id="data-augmentation-figure-1-data-augmentation-train-validation-test-workflow-edge13" class="edge">
+<title>select&#45;&gt;test</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M343.13,-110.42C358.81,-93.33 377.4,-73.08 392.42,-56.71"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="394.04,-58.32 396.76,-51.99 390.69,-55.24 394.04,-58.32"/>
+<text xml:space="preserve" text-anchor="middle" x="445.83" y="-69.25" font-family="Georgia" font-size="12.00">evaluate selected model</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Keep the saved validation and test sets fixed. Only original training examples feed the transform bank; test evaluation follows checkpoint selection.</figcaption></figure>
+<h2 id="section-4">Preprocessing and training-only normalization</h2>
+<p>The canonical notebook converts each image to RGB, directly resizes it to <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>96</mn><mo>&#x000D7;</mo><mn>96</mn></mrow></math> with bilinear interpolation, and scales unsigned pixel values by <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>255</mn></mrow></math> into <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">]</mo></mrow></math>. It computes a separate mean and <strong>population</strong> standard deviation for each RGB channel from only the 240 original training images. Those same fixed values normalize training, validation, and test tensors. Statistics must not be refit on validation or test, because those sets are held out for model selection and final evaluation.</p>
+<p>Labels are integer values <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mtext>–</mtext><mn>4</mn></mrow></math> in alphabetical class order. The notebook uses cross-entropy loss, which consumes integer class targets; one-hot encoding is unnecessary for that loss. The assignment permits one-hot labels where a chosen loss requires them.</p>
+
+<details class="worked"><summary>Supplemental calculation: fit channel statistics on training originals</summary><section class="walk" tabindex="0" aria-label="Population mean and standard deviation"><h3>Population mean and standard deviation</h3><div class="example-input"><p><strong>Givens.</strong> Two synthetic scaled RGB pixels: A = (0.2, 0.4, 0.6), B = (0.6, 0.8, 1.0). These toy numbers demonstrate the calculation only.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. State a tiny synthetic training set</h4><p><strong>Supplemental calculation — synthetic values, not flower measurements.</strong> Use two one-pixel RGB training examples after scaling: A = (0.2, 0.4, 0.6), B = (0.6, 0.8, 1.0). Compute each channel independently over these N = 2 training pixels.</p></section><section class="step"><h4>2. Compute the channel means</h4><p>Red: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>0.2</mn><mo>&#x0002B;</mo><mn>0.6</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>0.4</mn></mrow></math>. Green: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>0.4</mn><mo>&#x0002B;</mo><mn>0.8</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>0.6</mn></mrow></math>. Blue: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>0.6</mn><mo>&#x0002B;</mo><mn>1.0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>0.8</mn></mrow></math>. The population denominator is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>N</mi><mo>&#x0003D;</mo><mn>2</mn></mrow></math>.</p></section><section class="step"><h4>3. Compute population standard deviations</h4><p>For red, the deviations from 0.4 are −0.2 and +0.2, so <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mi mathvariant="normal">v</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">e</mi></mrow><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>0.2</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mn>0.2</mn><mn>2</mn></msup><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>0.04</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi><mo>&#x0003D;</mo><mn>0.2</mn></mrow></math>. Green and blue have the same deviations and standard deviation 0.2. This uses denominator <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>N</mi></mrow></math>, not <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>N</mi><mo>&#x02212;</mo><mn>1</mn></mrow></math>.</p></section><section class="step"><h4>4. Apply the same fixed statistics</h4><p>Normalize A channel by channel: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>0.2</mn><mo>&#x02212;</mo><mn>0.4</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>0.2</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>0.4</mn><mo>&#x02212;</mo><mn>0.6</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>0.2</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn></mrow></math>, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>0.6</mn><mo>&#x02212;</mo><mn>0.8</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mn>0.2</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn></mrow></math>. Thus A becomes <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002C;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; B becomes <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. Apply these training-derived values unchanged to every split.</p>
+<p><strong>Check.</strong> The two normalized values in each channel have mean 0 and population standard deviation 1. In the assignment, the statistics instead use all pixels of the 240 original training images only.</p></section></section></details>
+
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x003BC;</mi><mi>c</mi></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>N</mi></mrow></mfrac><munderover><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>N</mi></mrow></munderover><msub><mi>x</mi><mrow><mi>i</mi><mo>&#x0002C;</mo><mi>c</mi></mrow></msub><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>&#x003C3;</mi><mi>c</mi></msub><mo>&#x0003D;</mo><msqrt><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mi>N</mi></mrow></mfrac><msubsup><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>N</mi></mrow></msubsup><mo stretchy="false">&#x00028;</mo><msub><mi>x</mi><mrow><mi>i</mi><mo>&#x0002C;</mo><mi>c</mi></mrow></msub><mo>&#x02212;</mo><msub><mi>&#x003BC;</mi><mi>c</mi></msub><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></msqrt><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>z</mi><mrow><mi>i</mi><mo>&#x0002C;</mo><mi>c</mi></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>x</mi><mrow><mi>i</mi><mo>&#x0002C;</mo><mi>c</mi></mrow></msub><mo>&#x02212;</mo><msub><mi>&#x003BC;</mi><mi>c</mi></msub></mrow><mrow><msub><mi>&#x003C3;</mi><mi>c</mi></msub></mrow></mfrac></mrow></math></div>
+<h2 id="section-5">Baseline CNN: shapes and parameter count</h2>
+<p>The assignment asks students to design and justify a CNN from scratch; it does not require this exact architecture. The following is the canonical notebook’s concrete instructional baseline. Each convolution uses a <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>3</mn><mo>&#x000D7;</mo><mn>3</mn></mrow></math> kernel, padding 1, then ReLU; each block has two convolutions followed by <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mo>&#x000D7;</mo><mn>2</mn></mrow></math> max pooling. Padding keeps height and width unchanged at convolution layers, while each pooling layer halves them.</p>
+<div class="table-scroll" tabindex="0" aria-label="Canonical instructional CNN shape and trainable-parameter trace"><table><caption>Canonical instructional CNN shape and trainable-parameter trace</caption><thead><tr><th scope="col">Stage</th><th scope="col">Output shape per image (channels × height × width, then features)</th><th scope="col">Trainable parameters</th></tr></thead><tbody><tr><th scope="row">Input</th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>3</mn><mo>&#x000D7;</mo><mn>96</mn><mo>&#x000D7;</mo><mn>96</mn></mrow></math></td><td>0</td></tr><tr><th scope="row"><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mtext>&#x000A0;convolutions:&#x000A0;</mtext><mn>3</mn><mo>&#x02192;</mo><mn>16</mn><mo>&#x02192;</mo><mn>16</mn><mi>;</mi><mtext>&#x000A0;pool</mtext></mrow></math></th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>16</mn><mo>&#x000D7;</mo><mn>48</mn><mo>&#x000D7;</mo><mn>48</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>448</mn><mo>&#x0002B;</mo><mn>2</mn><mrow><mo>&#x0002C;</mo></mrow><mn>320</mn><mo>&#x0003D;</mo><mn>2</mn><mrow><mo>&#x0002C;</mo></mrow><mn>768</mn></mrow></math></td></tr><tr><th scope="row"><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mtext>&#x000A0;convolutions:&#x000A0;</mtext><mn>16</mn><mo>&#x02192;</mo><mn>32</mn><mo>&#x02192;</mo><mn>32</mn><mi>;</mi><mtext>&#x000A0;pool</mtext></mrow></math></th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>32</mn><mo>&#x000D7;</mo><mn>24</mn><mo>&#x000D7;</mo><mn>24</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>4</mn><mrow><mo>&#x0002C;</mo></mrow><mn>640</mn><mo>&#x0002B;</mo><mn>9</mn><mrow><mo>&#x0002C;</mo></mrow><mn>248</mn><mo>&#x0003D;</mo><mn>13</mn><mrow><mo>&#x0002C;</mo></mrow><mn>888</mn></mrow></math></td></tr><tr><th scope="row"><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mtext>&#x000A0;convolutions:&#x000A0;</mtext><mn>32</mn><mo>&#x02192;</mo><mn>64</mn><mo>&#x02192;</mo><mn>64</mn><mi>;</mi><mtext>&#x000A0;pool</mtext></mrow></math></th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>64</mn><mo>&#x000D7;</mo><mn>12</mn><mo>&#x000D7;</mo><mn>12</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>18</mn><mrow><mo>&#x0002C;</mo></mrow><mn>496</mn><mo>&#x0002B;</mo><mn>36</mn><mrow><mo>&#x0002C;</mo></mrow><mn>928</mn><mo>&#x0003D;</mo><mn>55</mn><mrow><mo>&#x0002C;</mo></mrow><mn>424</mn></mrow></math></td></tr><tr><th scope="row">Average pool <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>4</mn><mo>&#x000D7;</mo><mn>4</mn></mrow></math>; flatten</th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>64</mn><mo>&#x000D7;</mo><mn>3</mn><mo>&#x000D7;</mo><mn>3</mn><mo>&#x02192;</mo><mn>576</mn></mrow></math></td><td>0</td></tr><tr><th scope="row">Dense <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>576</mn><mo>&#x02192;</mo><mn>64</mn></mrow></math>; ReLU; dropout 0.3</th><td>64</td><td>36,928</td></tr><tr><th scope="row">Dense <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>64</mn><mo>&#x02192;</mo><mn>5</mn></mrow></math> logits</th><td>5</td><td>325</td></tr><tr><th scope="row">Total</th><td>Five class scores (logits)</td><td>109,333</td></tr></tbody></table></div>
+
+<details class="worked"><summary>Supplemental calculation: verify the CNN parameter total</summary><section class="walk" tabindex="0" aria-label="Convolution and classifier parameter count"><h3>Convolution and classifier parameter count</h3><div class="example-input"><p><strong>Givens.</strong> Six padded 3×3 convolutions in channel pairs 3→16→16, 16→32→32, 32→64→64; then 576→64→5 linear layers. Count one bias per output channel/unit.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Count one convolution</h4><p>For a <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>3</mn><mo>&#x000D7;</mo><mn>3</mn></mrow></math> convolution with <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mrow><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></mrow></msub></mrow></math> input channels and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mrow><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">t</mi></mrow></mrow></msub></mrow></math> output channels, each output filter has <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>3</mn><mo>&#x000D7;</mo><mn>3</mn><mo>&#x000D7;</mo><msub><mi>C</mi><mrow><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></mrow></msub></mrow></math> weights and one bias: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x000D7;</mo><mn>3</mn><mo>&#x000D7;</mo><msub><mi>C</mi><mrow><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></mrow></msub><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x000D7;</mo><msub><mi>C</mi><mrow><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">t</mi></mrow></mrow></msub></mrow></math>.</p></section><section class="step"><h4>2. Count the first block</h4><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>3</mn><mo>&#x02192;</mo><mn>16</mn><mi>:</mi><mo stretchy="false">&#x00028;</mo><mn>9</mn><mo>&#x000D7;</mo><mn>3</mn><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x000D7;</mo><mn>16</mn><mo>&#x0003D;</mo><mn>448</mn></mrow></math>. <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>16</mn><mo>&#x02192;</mo><mn>16</mn><mi>:</mi><mo stretchy="false">&#x00028;</mo><mn>9</mn><mo>&#x000D7;</mo><mn>16</mn><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x000D7;</mo><mn>16</mn><mo>&#x0003D;</mo><mn>2</mn><mrow><mo>&#x0002C;</mo></mrow><mn>320</mn></mrow></math>. Block total = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>448</mn><mo>&#x0002B;</mo><mn>2</mn><mrow><mo>&#x0002C;</mo></mrow><mn>320</mn><mo>&#x0003D;</mo><mn>2</mn><mrow><mo>&#x0002C;</mo></mrow><mn>768</mn></mrow></math>.</p></section><section class="step"><h4>3. Count the second and third blocks</h4><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>16</mn><mo>&#x02192;</mo><mn>32</mn><mi>:</mi><mo stretchy="false">&#x00028;</mo><mn>9</mn><mo>&#x000D7;</mo><mn>16</mn><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x000D7;</mo><mn>32</mn><mo>&#x0003D;</mo><mn>4</mn><mrow><mo>&#x0002C;</mo></mrow><mn>640</mn></mrow></math>; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>32</mn><mo>&#x02192;</mo><mn>32</mn><mi>:</mi><mo stretchy="false">&#x00028;</mo><mn>9</mn><mo>&#x000D7;</mo><mn>32</mn><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x000D7;</mo><mn>32</mn><mo>&#x0003D;</mo><mn>9</mn><mrow><mo>&#x0002C;</mo></mrow><mn>248</mn></mrow></math>; subtotal <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>4</mn><mrow><mo>&#x0002C;</mo></mrow><mn>640</mn><mo>&#x0002B;</mo><mn>9</mn><mrow><mo>&#x0002C;</mo></mrow><mn>248</mn><mo>&#x0003D;</mo><mn>13</mn><mrow><mo>&#x0002C;</mo></mrow><mn>888</mn></mrow></math>. <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>32</mn><mo>&#x02192;</mo><mn>64</mn><mi>:</mi><mo stretchy="false">&#x00028;</mo><mn>9</mn><mo>&#x000D7;</mo><mn>32</mn><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x000D7;</mo><mn>64</mn><mo>&#x0003D;</mo><mn>18</mn><mrow><mo>&#x0002C;</mo></mrow><mn>496</mn></mrow></math>; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>64</mn><mo>&#x02192;</mo><mn>64</mn><mi>:</mi><mo stretchy="false">&#x00028;</mo><mn>9</mn><mo>&#x000D7;</mo><mn>64</mn><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x000D7;</mo><mn>64</mn><mo>&#x0003D;</mo><mn>36</mn><mrow><mo>&#x0002C;</mo></mrow><mn>928</mn></mrow></math>; subtotal <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>18</mn><mrow><mo>&#x0002C;</mo></mrow><mn>496</mn><mo>&#x0002B;</mo><mn>36</mn><mrow><mo>&#x0002C;</mo></mrow><mn>928</mn><mo>&#x0003D;</mo><mn>55</mn><mrow><mo>&#x0002C;</mo></mrow><mn>424</mn></mrow></math>.</p></section><section class="step"><h4>4. Count the classifier and total</h4><p>After pooling: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>64</mn><mo>&#x000D7;</mo><mn>12</mn><mo>&#x000D7;</mo><mn>12</mn></mrow></math> becomes <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>64</mn><mo>&#x000D7;</mo><mn>3</mn><mo>&#x000D7;</mo><mn>3</mn><mo>&#x0003D;</mo><mn>576</mn></mrow></math> features. Dense <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>576</mn><mo>&#x02192;</mo><mn>64</mn><mi>:</mi><mo stretchy="false">&#x00028;</mo><mn>576</mn><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x000D7;</mo><mn>64</mn><mo>&#x0003D;</mo><mn>36</mn><mrow><mo>&#x0002C;</mo></mrow><mn>928</mn></mrow></math>. Dense <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>64</mn><mo>&#x02192;</mo><mn>5</mn><mi>:</mi><mo stretchy="false">&#x00028;</mo><mn>64</mn><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x000D7;</mo><mn>5</mn><mo>&#x0003D;</mo><mn>325</mn></mrow></math>. Sum all six convolutions and two dense layers: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mrow><mo>&#x0002C;</mo></mrow><mn>768</mn><mo>&#x0002B;</mo><mn>13</mn><mrow><mo>&#x0002C;</mo></mrow><mn>888</mn><mo>&#x0002B;</mo><mn>55</mn><mrow><mo>&#x0002C;</mo></mrow><mn>424</mn><mo>&#x0002B;</mo><mn>36</mn><mrow><mo>&#x0002C;</mo></mrow><mn>928</mn><mo>&#x0002B;</mo><mn>325</mn><mo>&#x0003D;</mo><mn>109</mn><mrow><mo>&#x0002C;</mo></mrow><mn>333</mn></mrow></math>.</p>
+<p><strong>Final check.</strong> ReLU, max/average pooling, flattening, and dropout add no trainable parameters. The total matches the independently recounted layer counts.</p></section></section></details>
+
+<p>The notebook trains with Adam, learning rate 0.001, weight decay 0.0001, batch size 32, 40 epochs, and cross-entropy. The lowest validation-loss checkpoint is retained. It reports accuracy and macro-F1; macro-F1 gives each class equal weight. The test set is evaluated only after checkpoint selection. These are notebook choices for an instructional baseline, not measured outcomes or compulsory assignment-wide settings.</p>
+<h2 id="section-6">Image transforms and controlled ablations</h2>
+<p>Every run keeps the 240 original training images. Transformed descendants are added only to training; validation and test remain fixed. The notebook uses a horizontal mirror, a rotation with angle magnitude from 8° to 30° whose sign alternates by variant, bilinear interpolation and black fill, and color jitter with brightness 0.2, contrast 0.2, saturation 0.15, and unchanged hue. The combined transform applies rotation, color jitter, and alternating mirror. The notebook preserves hue because it may distinguish flower categories.</p>
+<p>The <strong>amount ablation</strong> varies how many combined variants are added per original. The separate <strong>type ablation</strong> compares flip, rotation, color, and combined methods with one added variant per original. Both use the same saved split, model initialization, epochs, batch size, and other training settings. This keeps those controls fixed, but same epochs do not mean the optimizer makes the same number of updates.</p>
+<div class="table-scroll" tabindex="0" aria-label="Canonical notebook augmentation counts and optimizer updates"><table><caption>Canonical notebook augmentation counts and optimizer updates</caption><thead><tr><th scope="col">Experiment</th><th scope="col">Original:added ratio</th><th scope="col">Original train</th><th scope="col">Added train</th><th scope="col">Total train</th><th scope="col">Updates at 40 epochs</th></tr></thead><tbody><tr><th scope="row">Baseline</th><td>1:0</td><td>240</td><td>0</td><td>240</td><td>320</td></tr><tr><th scope="row">Combined 1×</th><td>1:1</td><td>240</td><td>240</td><td>480</td><td>600</td></tr><tr><th scope="row">Combined 2×</th><td>1:2</td><td>240</td><td>480</td><td>720</td><td>920</td></tr><tr><th scope="row">Combined 4×</th><td>1:4</td><td>240</td><td>960</td><td>1,200</td><td>1,520</td></tr><tr><th scope="row">Flip 1×</th><td>1:1</td><td>240</td><td>240</td><td>480</td><td>600</td></tr><tr><th scope="row">Rotation 1×</th><td>1:1</td><td>240</td><td>240</td><td>480</td><td>600</td></tr><tr><th scope="row">Colour 1×</th><td>1:1</td><td>240</td><td>240</td><td>480</td><td>600</td></tr></tbody></table></div>
+
+<details class="worked"><summary>Supplemental calculation: derive optimizer updates from training-set size</summary><section class="walk" tabindex="0" aria-label="Training examples to optimizer updates"><h3>Training examples to optimizer updates</h3><div class="example-input"><p><strong>Givens.</strong> Batch size 32, 40 epochs, final partial batch retained. Training totals: 240, 480, 720, and 1,200.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Count batches for the baseline</h4><p>The loader keeps a final partial batch, so batches per epoch = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x02308;</mi><mi>N</mi><mo>&#x0002F;</mo><mn>32</mn><mi>&#x02309;</mi></mrow></math>. For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>N</mi><mo>&#x0003D;</mo><mn>240</mn></mrow></math>: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x02308;</mi><mn>240</mn><mo>&#x0002F;</mo><mn>32</mn><mi>&#x02309;</mi><mo>&#x0003D;</mo><mi>&#x02308;</mi><mn>7.5</mn><mi>&#x02309;</mi><mo>&#x0003D;</mo><mn>8</mn></mrow></math> batches. Across 40 epochs: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>8</mn><mo>&#x000D7;</mo><mn>40</mn><mo>&#x0003D;</mo><mn>320</mn></mrow></math> optimizer updates.</p></section><section class="step"><h4>2. Count the combined 1× run</h4><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>240</mn><mo>&#x0002B;</mo><mn>240</mn><mo>&#x0003D;</mo><mn>480</mn></mrow></math>, so <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>N</mi><mo>&#x0003D;</mo><mn>480</mn></mrow></math>. <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x02308;</mi><mn>480</mn><mo>&#x0002F;</mo><mn>32</mn><mi>&#x02309;</mi><mo>&#x0003D;</mo><mn>15</mn></mrow></math> batches per epoch; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>15</mn><mo>&#x000D7;</mo><mn>40</mn><mo>&#x0003D;</mo><mn>600</mn></mrow></math> updates.</p></section><section class="step"><h4>3. Count combined 2× and 4×</h4><p>For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>N</mi><mo>&#x0003D;</mo><mn>720</mn></mrow></math>: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x02308;</mi><mn>720</mn><mo>&#x0002F;</mo><mn>32</mn><mi>&#x02309;</mi><mo>&#x0003D;</mo><mi>&#x02308;</mi><mn>22.5</mn><mi>&#x02309;</mi><mo>&#x0003D;</mo><mn>23</mn></mrow></math>, so <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>23</mn><mo>&#x000D7;</mo><mn>40</mn><mo>&#x0003D;</mo><mn>920</mn></mrow></math> updates. For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>N</mi><mo>&#x0003D;</mo><mn>1</mn><mrow><mo>&#x0002C;</mo></mrow><mn>200</mn></mrow></math>: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x02308;</mi><mn>1</mn><mrow><mo>&#x0002C;</mo></mrow><mn>200</mn><mo>&#x0002F;</mo><mn>32</mn><mi>&#x02309;</mi><mo>&#x0003D;</mo><mi>&#x02308;</mi><mn>37.5</mn><mi>&#x02309;</mi><mo>&#x0003D;</mo><mn>38</mn></mrow></math>, so <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>38</mn><mo>&#x000D7;</mo><mn>40</mn><mo>&#x0003D;</mo><mn>1</mn><mrow><mo>&#x0002C;</mo></mrow><mn>520</mn></mrow></math> updates.</p></section><section class="step"><h4>4. Interpret the control fairly</h4><p>The runs share an epoch budget and batch size, not an optimizer-update budget. Larger sets receive more parameter updates over 40 epochs. Record update count beside scores and describe this limit when interpreting an amount trend. Do not change the assigned protocol or claim that one control makes the outcomes invalid.</p>
+<p><strong>Check.</strong> For each run, total = original + added; updates = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x02308;</mi><mi>N</mi><mo>&#x0002F;</mo><mn>32</mn><mi>&#x02309;</mi><mo>&#x000D7;</mo><mn>40</mn></mrow></math>.</p></section></section></details>
+
+<h2 id="section-7">What to record and how to interpret evidence</h2>
+<p>The notebook's comparison fields make the experiment auditable: experiment name and technique, original-to-augmented ratio, original/added/total training sizes, epochs, batch size, optimizer updates, best epoch, validation loss/accuracy/macro-F1, test loss/accuracy/macro-F1, run time, initial-weight hash, and split-manifest hash. The compact comparison focuses on experiment, ratio, sizes, updates, best epoch, validation loss/accuracy, and test accuracy/macro-F1. Supporting outputs include per-class reports, a confusion matrix, training/validation accuracy and loss curves, example transform views, split and augmented-class counts, and training-set pixel statistics.</p>
+<p>For an amount comparison, look for a consistent change across the combined 1×, 2×, and 4× runs while remembering that update counts rise with set size. For a type comparison, hold the 1× ratio fixed and compare flip, rotation, color, and combined. Use validation results to select a checkpoint; use the untouched test set only for the final evaluation after that choice. A single score is not the whole explanation: inspect per-class metrics and the confusion matrix for uneven errors, and compare training with validation curves for signs of overfitting.</p>
+<p>The assignment asks the student to justify the model and training settings, show curves and original-versus-augmented examples, compare augmentation amount and type, and submit their own notebook, image folder, and discussion. This guide provides the fields and reasoning questions, not the student's results, ablation conclusions, discussion, or submission artifacts.</p>
+<div class="table-scroll" tabindex="0" aria-label="Result fields to populate from the student’s own runs; no scores are supplied here"><table><caption>Result fields to populate from the student’s own runs; no scores are supplied here</caption><thead><tr><th scope="col">Run</th><th scope="col">Original + added = total</th><th scope="col">Optimizer updates</th><th scope="col">Best epoch</th><th scope="col">Validation loss / accuracy</th><th scope="col">Test accuracy / macro-F1</th></tr></thead><tbody><tr><th scope="row">Baseline</th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>240</mn><mo>&#x0002B;</mo><mn>0</mn><mo>&#x0003D;</mo><mn>240</mn></mrow></math></td><td>320</td><td>Fill from run</td><td>Fill from run</td><td>Fill after checkpoint selection</td></tr><tr><th scope="row">Combined 1×</th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>240</mn><mo>&#x0002B;</mo><mn>240</mn><mo>&#x0003D;</mo><mn>480</mn></mrow></math></td><td>600</td><td>Fill from run</td><td>Fill from run</td><td>Fill after checkpoint selection</td></tr><tr><th scope="row">Combined 2×</th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>240</mn><mo>&#x0002B;</mo><mn>480</mn><mo>&#x0003D;</mo><mn>720</mn></mrow></math></td><td>920</td><td>Fill from run</td><td>Fill from run</td><td>Fill after checkpoint selection</td></tr><tr><th scope="row">Combined 4×</th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>240</mn><mo>&#x0002B;</mo><mn>960</mn><mo>&#x0003D;</mo><mn>1</mn><mrow><mo>&#x0002C;</mo></mrow><mn>200</mn></mrow></math></td><td>1,520</td><td>Fill from run</td><td>Fill from run</td><td>Fill after checkpoint selection</td></tr><tr><th scope="row">Each type 1×</th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>240</mn><mo>&#x0002B;</mo><mn>240</mn><mo>&#x0003D;</mo><mn>480</mn></mrow></math></td><td>600</td><td>Fill from run</td><td>Fill from run</td><td>Fill after checkpoint selection</td></tr></tbody></table></div>
+<h2 id="section-8">Common mistakes</h2>
+<ul>
+<li>Treating fluent text as proof that the meaning or label stayed the same; explicitly inspect entities, roles, negation, quantities, and relations.</li>
+<li>Assuming more or more diverse examples must improve generalization; noisy or label-changing descendants can make training worse.</li>
+<li>Inventing a back-translation language pair or settings that the lecture does not state.</li>
+<li>Augmenting before splitting, or fitting channel statistics on validation/test data; both leak held-out information into training.</li>
+<li>Re-splitting between experiments; this makes score differences harder to attribute to the augmentation change.</li>
+<li>Confusing integer labels with one-hot labels; cross-entropy in the notebook uses integer targets.</li>
+<li>Calling the notebook CNN a mandatory architecture; the assignment allows students to design and justify their own.</li>
+<li>Comparing augmentation ratios as if equal epochs implied equal optimizer updates; record <code>optimizer_steps</code>.</li>
+<li>Selecting a checkpoint with test performance or repeatedly consulting test results; validation selects, test evaluates after selection.</li>
+<li>Treating planned comparison fields or code as evidence of measured scores; only actual student runs can fill the outcome columns.</li>
+</ul>
+<h2 id="section-9">Exam focus</h2>
+<ul>
+<li>Define augmentation and label preservation; explain why diversity can help while meaning drift can hurt.</li>
+<li>Distinguish word, phrase, sentence, translation-based, and language-model-based strategies, and name the source examples.</li>
+<li>State the qualitative diversity/meaning-risk ranking without describing it as measured data.</li>
+<li>Reproduce the five class blocks, fixed 48/16/16 per-class split, and totals 240/80/80.</li>
+<li>Explain why split files are saved/reused, why augmentation is training-only, and why validation selects the checkpoint before test evaluation.</li>
+<li>Describe 96 × 96 RGB bilinear resize, scaling, training-only per-channel population statistics, and integer labels with cross-entropy.</li>
+<li>Trace the canonical CNN shapes and independently check its 109,333 trainable parameters.</li>
+<li>Distinguish amount ablation from type ablation; calculate updates with ceil(N/32)×40 and explain the same-epochs limitation.</li>
+<li>Interpret result-table fields, curves, per-class reports, and a confusion matrix without inventing outcomes.</li>
+</ul>
+<h2 id="section-10">Practice questions</h2>
+<p class="question">1. A paraphrase reads fluently but changes “The agency did not approve the request” to “The agency approved the request.” Should the original label be copied?</p>
+<details class="worked"><summary>Check your answer</summary><p>No. Removing “not” reverses the proposition. Fluency does not preserve meaning; reject the candidate or assign a label only after task-specific verification.</p></details>
+
+<p class="question">2. For five classes of 80 images each, how many examples go to each split under a 60/20/20 per-class allocation?</p>
+<details class="worked"><summary>Check your answer</summary><p>Each class contributes <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>48</mn></mrow></math> training, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>16</mn></mrow></math> validation, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>16</mn></mrow></math> test images. Across five classes the totals are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>240</mn><mo>&#x0002C;</mo><mn>80</mn><mo>&#x0002C;</mo><mn>80</mn></mrow></math>, which sum to <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>400</mn></mrow></math>.</p></details>
+
+<p class="question">3. Why should channel means and standard deviations be estimated from the original training split only?</p>
+<details class="worked"><summary>Check your answer</summary><p>They are learned preprocessing values. Using validation or test pixels would let held-out data influence training. Estimate them from the 240 original training images, then reuse the fixed values on every split.</p></details>
+
+<p class="question">4. After the third max-pool layer, what is the canonical notebook’s spatial shape and how many values reach the dense layer?</p>
+<details class="worked"><summary>Check your answer</summary><p>The spatial tensor is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>64</mn><mo>&#x000D7;</mo><mn>12</mn><mo>&#x000D7;</mo><mn>12</mn></mrow></math>. Average pooling by <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>4</mn></mrow></math> gives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>64</mn><mo>&#x000D7;</mo><mn>3</mn><mo>&#x000D7;</mo><mn>3</mn></mrow></math>, which flattens to <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>64</mn><mo>&#x000D7;</mo><mn>3</mn><mo>&#x000D7;</mo><mn>3</mn><mo>&#x0003D;</mo><mn>576</mn></mrow></math> values.</p></details>
+
+<p class="question">5. How many optimizer updates does a 720-example training set receive over 40 epochs with batch size 32 and a retained final partial batch?</p>
+<details class="worked"><summary>Check your answer</summary><p>There are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x02308;</mi><mn>720</mn><mo>&#x0002F;</mo><mn>32</mn><mi>&#x02309;</mi><mo>&#x0003D;</mo><mi>&#x02308;</mi><mn>22.5</mn><mi>&#x02309;</mi><mo>&#x0003D;</mo><mn>23</mn></mrow></math> batches each epoch. Over 40 epochs: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>23</mn><mo>&#x000D7;</mo><mn>40</mn><mo>&#x0003D;</mo><mn>920</mn></mrow></math> updates.</p></details>
+
+<p class="question">6. Which experiment answers an augmentation-amount question, and which answers a transform-type question?</p>
+<details class="worked"><summary>Check your answer</summary><p>Amount compares combined augmentation at 1×, 2×, and 4× (with baseline 1:0). Type compares flip, rotation, color, and combined at 1×. The split and other training controls are reused.</p></details>
+
+<p class="question">7. What may be inferred from the canonical notebook’s table schema before running it?</p>
+<details class="worked"><summary>Check your answer</summary><p>Only what fields and comparisons are planned, along with the specified dataset counts and settings. The schema does not establish accuracy, macro-F1, a winning transform, or an augmentation trend.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="class-imbalance.html"><small>Previous</small>Imbalanced Data: Metrics and Resampling <span aria-hidden="true">↗</span></a><a href="machine-translation-classical.html"><small>Next</small>Machine Translation: Rule-Based and Statistical Methods <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

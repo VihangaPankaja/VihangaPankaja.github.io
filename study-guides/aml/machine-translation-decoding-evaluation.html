@@ -1,0 +1,543 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Translation systems must search through possible outputs, share evidence across languages, and be evaluated for meaning as well as surface overlap."><title>Translation Decoding, Multilingual Models, and Evaluation · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html" aria-current="page">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Language and self-supervision <span>/</span> Lecture 9</div><h1>Translation Decoding, Multilingual Models, and Evaluation</h1><p class="lead">Translation systems must search through possible outputs, share evidence across languages, and be evaluated for meaning as well as surface overlap.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Autoregressive decoding: build a completed hypothesis</a><a href="#section-2">Multilingual models: transfer, direct paths, and capacity</a><a href="#section-3">LLM translation: instructions, examples, and context</a><a href="#section-4">Human judgment: adequacy and fluency are separate</a><a href="#section-5">BLEU: modified precision, geometric mean, and brevity penalty</a><a href="#section-6">Beyond BLEU: useful signals with boundaries</a><a href="#section-7">Common mistakes</a><a href="#section-8">Exam focus</a><a href="#section-9">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>A translation model assigns probabilities to possible target sequences, but the decoder must choose one sequence from an enormous space. Greedy decoding commits to the best next token; beam search keeps several partial hypotheses and prunes them by cumulative score. Multilingual pre-training and prompting try to reuse evidence across languages and contexts, while translation evaluation asks whether the output preserves meaning and reads naturally.</p>
+<p>These stages answer different questions: decoding chooses an output, a multilingual model provides learned representations, and evaluation estimates quality. A high sequence score or a fluent sentence alone does not prove that the source meaning survived.</p>
+
+<h2 id="section-1">Autoregressive decoding: build a completed hypothesis</h2>
+<p>An autoregressive decoder generates one token at a time. At each step, its distribution depends on the source and the prefix already generated. The end-of-sequence token, written <code>EOS</code>, is a prediction that the sentence is complete; it is not an ordinary visible word in the translation.</p>
+<p>A partial hypothesis is not yet a translation. Its score accumulates the log probability of every token, including <code>EOS</code> when it terminates. Since probabilities are at most one, their logarithms are non-positive; a higher (less negative) cumulative log score is better.</p>
+
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>S</mi><mo stretchy="false">&#x00028;</mo><msubsup><mi>y</mi><mn>1</mn><mi>T</mi></msubsup><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><munderover><mo>&#x02211;</mo><mrow><mi>t</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>T</mi></mrow></munderover><mi>log</mi><mi>P</mi><mo stretchy="false">&#x00028;</mo><msub><mi>y</mi><mi>t</mi></msub><mo>&#x02223;</mo><msub><mi>y</mi><mrow><mo>&#x0003C;</mo><mi>t</mi></mrow></msub><mo>&#x0002C;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+
+<p>Here <code>x</code> is the source, <code>y₁ … y_T</code> is the generated target sequence, and a completed sequence includes its final <code>EOS</code> decision. Review the neural prerequisite's <a href="machine-translation-neural.html#bpe-subword-tokenization">BPE subword-tokenization example</a> for the token representation; this page focuses on search and evaluation.</p>
+
+<h3>Greedy choice versus beam search</h3>
+<p>Greedy decoding chooses the highest-probability token at each step and discards every other prefix. It is fast, but a locally attractive token may lead to a weaker complete sentence. Beam search retains the <code>k</code> highest-scoring partial hypotheses after expansion at each step. It explores more alternatives, but pruning still makes it an approximation to the global sequence search.</p>
+<p>The lecture's normalization divides cumulative log probability by length raised to <code>α</code>. At <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, the score is the unnormalized sum. At <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math>, it is the average log probability per token. The formula below follows the lecture's token count; a finished hypothesis counts its <code>EOS</code> token in <code>T</code> for the worked toy example.</p>
+
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>S</mi><mrow><mrow><mi mathvariant="normal">n</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">m</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><msubsup><mi>y</mi><mn>1</mn><mi>T</mi></msubsup><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><msup><mi>T</mi><mi>&#x003B1;</mi></msup></mrow></mfrac><munderover><mo>&#x02211;</mo><mrow><mi>t</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>T</mi></mrow></munderover><mi>log</mi><mi>P</mi><mo stretchy="false">&#x00028;</mo><msub><mi>y</mi><mi>t</mi></msub><mo>&#x02223;</mo><msub><mi>y</mi><mrow><mo>&#x0003C;</mo><mi>t</mi></mrow></msub><mo>&#x0002C;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+
+<section class="walk" tabindex="0" aria-label="Supplemental calculation: greedy choice and a complete width-two beam"><h3>Supplemental calculation: greedy choice and a complete width-two beam</h3><div class="example-input"><p><strong>Given:</strong> beam width <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi><mo>&#x0003D;</mo><mn>2</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, and only the conditional probabilities stated in each step. For this trace, keep completed candidates separately. Stop when every live partial prefix has an upper bound below the best completed score; because future factors are at most one, a prefix probability is such an upper bound. This explicit finite stopping rule belongs to the supplemental toy calculation, not to the lecture sketch.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Start: greedy and beam retain prefixes</h4><p><strong>Supplemental calculation.</strong> This made-up model has first-token probabilities <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>A</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.6</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>B</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.4</mn></mrow></math>. Greedy keeps A. A width-two beam keeps both. Their cumulative probabilities are 0.6 and 0.4; log scores are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>ln</mi><mo stretchy="false">&#x00028;</mo><mn>0.6</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.510826</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>ln</mi><mo stretchy="false">&#x00028;</mo><mn>0.4</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.916291</mn></mrow></math>. Higher log score ranks first. Next, expand both prefixes.</p></section><section class="step"><h4>2. Expand A and B, then prune</h4><p>From A, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mrow><mi mathvariant="normal">E</mi><mi mathvariant="normal">O</mi><mi mathvariant="normal">S</mi></mrow><mo>&#x02223;</mo><mi>A</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.4</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo>&#x02223;</mo><mi>A</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.6</mn></mrow></math>, giving A EOS with probability <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.6</mn><mo>&#x000B7;</mo><mn>0.4</mn><mo>&#x0003D;</mo><mn>0.24</mn></mrow></math>, log score <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>ln</mi><mo stretchy="false">&#x00028;</mo><mn>0.24</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1.427116</mn></mrow></math>, and a completed sentence; Ax has probability <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.6</mn><mo>&#x000B7;</mo><mn>0.6</mn><mo>&#x0003D;</mo><mn>0.36</mn></mrow></math>, log score <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>ln</mi><mo stretchy="false">&#x00028;</mo><mn>0.36</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1.021651</mn></mrow></math>, and remains partial. From B, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mrow><mi mathvariant="normal">E</mi><mi mathvariant="normal">O</mi><mi mathvariant="normal">S</mi></mrow><mo>&#x02223;</mo><mi>B</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.99</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo>&#x02223;</mo><mi>B</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.01</mn></mrow></math>, giving B EOS at <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.4</mn><mo>&#x000B7;</mo><mn>0.99</mn><mo>&#x0003D;</mo><mn>0.396</mn></mrow></math>, log score <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>ln</mi><mo stretchy="false">&#x00028;</mo><mn>0.396</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.926341</mn></mrow></math>, completed; By at <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.4</mn><mo>&#x000B7;</mo><mn>0.01</mn><mo>&#x0003D;</mo><mn>0.004</mn></mrow></math>, log score <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>ln</mi><mo stretchy="false">&#x00028;</mo><mn>0.004</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>5.521461</mn></mrow></math>, partial. Each listed conditional distribution sums to one. Ranking all four, retain completed B EOS and partial Ax. The other two are pruned.</p></section><section class="step"><h4>3. Expand the retained unfinished prefix Ax</h4><p>B EOS is already completed, so keep it as a final candidate rather than expanding it. From Ax, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mrow><mi mathvariant="normal">E</mi><mi mathvariant="normal">O</mi><mi mathvariant="normal">S</mi></mrow><mo>&#x02223;</mo><mi>A</mi><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.8</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo>&#x02223;</mo><mi>A</mi><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.2</mn></mrow></math>. Therefore Ax EOS has probability <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.36</mn><mo>&#x000B7;</mo><mn>0.8</mn><mo>&#x0003D;</mo><mn>0.288</mn></mrow></math>, log score <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>ln</mi><mo stretchy="false">&#x00028;</mo><mn>0.288</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1.244795</mn></mrow></math>, completed; Axz has probability <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.36</mn><mo>&#x000B7;</mo><mn>0.2</mn><mo>&#x0003D;</mo><mn>0.072</mn></mrow></math>, log score <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>ln</mi><mo stretchy="false">&#x00028;</mo><mn>0.072</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>2.631090</mn></mrow></math>, partial. These conditional probabilities also sum to one. Keep both the completed candidate and the unfinished prefix until a stopping check justifies termination.</p></section><section class="step"><h4>4. Stop with a valid bound and compare completed candidates</h4><p>Under <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, every future conditional probability is at most one, so extending Axz cannot raise its cumulative probability above <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.072</mn></mrow></math>. It cannot beat the completed candidate at <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.396</mn></mrow></math>; thus this toy search can stop without discarding a potentially better completion. Compare completed outputs: B EOS has probability <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.396</mn></mrow></math> and score <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>ln</mi><mo stretchy="false">&#x00028;</mo><mn>0.396</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.926341</mn></mrow></math>; Ax EOS has probability <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.288</mn></mrow></math> and score <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>ln</mi><mo stretchy="false">&#x00028;</mo><mn>0.288</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1.244795</mn></mrow></math>. The beam winner is B EOS. Greedy chose A, then its best continuation x, then EOS: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.6</mn><mo>&#x000B7;</mo><mn>0.6</mn><mo>&#x000B7;</mo><mn>0.8</mn><mo>&#x0003D;</mo><mn>0.288</mn></mrow></math>. Check: the beam's completed candidate is better than greedy's completion, but this toy example does not make beam search an exact global method in general.</p></section></section>
+
+<h3>What the lecture's beam sketch does and does not show</h3>
+<p>The lecture labels <code>the (−0.2)</code>, <code>a (−1.6)</code>, <code>the house (−0.5)</code>, <code>the home (−2.1)</code>, <code>a house (−2.4)</code>, and <code>a home (−3.5)</code> beside <code>beam k=2</code>. If those displayed values are comparable cumulative log scores at the same step, the numeric top two are <code>the house (−0.5)</code> and <code>the home (−2.1)</code>. The drawing is schematic and does not give all conditional probabilities or a terminal/tie policy. It supports this ranking only; it is not enough to reconstruct a complete original search run.</p>
+<p>Beam search remains approximate. The lecture notes that larger beams can sometimes lower BLEU; a wider search must not be described as guaranteed to improve translation quality or the automatic metric.</p>
+
+<h2 id="section-2">Multilingual models: transfer, direct paths, and capacity</h2>
+<p>Multilingual pre-training exposes a shared model to text from many languages. When languages share useful patterns, representations learned from a higher-resource language may help a related lower-resource language. This benefit depends on the languages, data, model, and task; the lecture's “few tens of thousands” fine-tuning example is not a guarantee.</p>
+<p>The model counts below describe specific paper-era systems, not present-day service recommendations.</p>
+
+<div class="table-scroll" role="region" aria-label="Paper-era multilingual model and language coverage comparison"><table aria-label="Paper-era multilingual model and language coverage comparison"><thead><tr><th scope="col">System</th><th scope="col">Paper-era description</th><th scope="col">Translation path or role</th></tr></thead><tbody><tr><th scope="row">mBART (2020)</th><td>Denoising over 25 monolingual languages with a shared vocabulary and target-language marker; mBART-50 later extended coverage to 50</td><td>Multilingual sequence-to-sequence pre-training</td></tr><tr><th scope="row">mT5 (2021)</th><td>Text-to-text pre-training on mC4, covering 101 languages; tasks use a text-to-text format</td><td>General multilingual text-to-text transfer</td></tr><tr><th scope="row">M2M-100 (2020 paper; 2021 publication)</th><td>Direct many-to-many translation among 100 languages</td><td>Avoids requiring English as the intermediate pivot</td></tr><tr><th scope="row">NLLB-200 (2022 preprint; 2024 journal publication)</th><td>200-language translation effort and FLORES-200 evaluation</td><td>Explicit attention to low-resource language coverage</td></tr></tbody></table></div>
+
+<figure><div class="diagram-frame" style="--diagram-width:678.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="A pivot uses two translation stages; a direct route uses one. Either route can fail, so this comparison describes possible error paths rather than a universal quality ranking." width="678pt" height="144pt"
+ viewBox="0.00 0.00 678.00 144.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="machine-translation-decoding-evaluation-figure-1-machine-translation-decoding-evaluation-pivot-paths-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 133.2)">
+<title>G</title>
+<!-- si -->
+<g id="machine-translation-decoding-evaluation-figure-1-machine-translation-decoding-evaluation-pivot-paths-node1" class="node">
+<title>si</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M86.85,-78.2C86.85,-78.2 12,-78.2 12,-78.2 6,-78.2 0,-72.2 0,-66.2 0,-66.2 0,-54.2 0,-54.2 0,-48.2 6,-42.2 12,-42.2 12,-42.2 86.85,-42.2 86.85,-42.2 92.85,-42.2 98.85,-48.2 98.85,-54.2 98.85,-54.2 98.85,-66.2 98.85,-66.2 98.85,-72.2 92.85,-78.2 86.85,-78.2"/>
+<text xml:space="preserve" text-anchor="middle" x="49.42" y="-54.95" font-family="Georgia" font-size="15.00">Sinhala (si)</text>
+</g>
+<!-- direct -->
+<g id="machine-translation-decoding-evaluation-figure-1-machine-translation-decoding-evaluation-pivot-paths-node4" class="node">
+<title>direct</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M416.05,-50.4C416.05,-50.4 248.95,-50.4 248.95,-50.4 242.95,-50.4 236.95,-44.4 236.95,-38.4 236.95,-38.4 236.95,-12 236.95,-12 236.95,-6 242.95,0 248.95,0 248.95,0 416.05,0 416.05,0 422.05,0 428.05,-6 428.05,-12 428.05,-12 428.05,-38.4 428.05,-38.4 428.05,-44.4 422.05,-50.4 416.05,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="332.5" y="-28.95" font-family="Georgia" font-size="15.00">Sinhala (si) → Tamil (ta)</text>
+<text xml:space="preserve" text-anchor="middle" x="332.5" y="-10.95" font-family="Georgia" font-size="15.00">direct path</text>
+</g>
+<!-- si&#45;&gt;direct -->
+<g id="machine-translation-decoding-evaluation-figure-1-machine-translation-decoding-evaluation-pivot-paths-edge5" class="edge">
+<title>si&#45;&gt;direct</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M99.06,-54.14C134.56,-49.72 183.99,-43.57 228.15,-38.07"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="228.37,-40.33 234.54,-37.27 227.81,-35.82 228.37,-40.33"/>
+</g>
+<!-- first -->
+<g id="machine-translation-decoding-evaluation-figure-1-machine-translation-decoding-evaluation-pivot-paths-node5" class="node">
+<title>first</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M192.95,-118.4C192.95,-118.4 142.85,-118.4 142.85,-118.4 136.85,-118.4 130.85,-112.4 130.85,-106.4 130.85,-106.4 130.85,-80 130.85,-80 130.85,-74 136.85,-68 142.85,-68 142.85,-68 192.95,-68 192.95,-68 198.95,-68 204.95,-74 204.95,-80 204.95,-80 204.95,-106.4 204.95,-106.4 204.95,-112.4 198.95,-118.4 192.95,-118.4"/>
+<text xml:space="preserve" text-anchor="middle" x="167.9" y="-96.95" font-family="Georgia" font-size="15.00">Stage 1</text>
+<text xml:space="preserve" text-anchor="middle" x="167.9" y="-78.95" font-family="Georgia" font-size="15.00">si → en</text>
+</g>
+<!-- si&#45;&gt;first -->
+<g id="machine-translation-decoding-evaluation-figure-1-machine-translation-decoding-evaluation-pivot-paths-edge1" class="edge">
+<title>si&#45;&gt;first</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M99.15,-74C106.91,-76.2 114.9,-78.47 122.55,-80.64"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="121.74,-82.77 128.62,-82.35 122.98,-78.39 121.74,-82.77"/>
+</g>
+<!-- en -->
+<g id="machine-translation-decoding-evaluation-figure-1-machine-translation-decoding-evaluation-pivot-paths-node2" class="node">
+<title>en</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M372.93,-122.4C372.93,-122.4 292.07,-122.4 292.07,-122.4 286.07,-122.4 280.07,-116.4 280.07,-110.4 280.07,-110.4 280.07,-84 280.07,-84 280.07,-78 286.07,-72 292.07,-72 292.07,-72 372.93,-72 372.93,-72 378.93,-72 384.93,-78 384.93,-84 384.93,-84 384.93,-110.4 384.93,-110.4 384.93,-116.4 378.93,-122.4 372.93,-122.4"/>
+<text xml:space="preserve" text-anchor="middle" x="332.5" y="-100.95" font-family="Georgia" font-size="15.00">English (en)</text>
+<text xml:space="preserve" text-anchor="middle" x="332.5" y="-82.95" font-family="Georgia" font-size="15.00">pivot</text>
+</g>
+<!-- second -->
+<g id="machine-translation-decoding-evaluation-figure-1-machine-translation-decoding-evaluation-pivot-paths-node6" class="node">
+<title>second</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M523.65,-118.4C523.65,-118.4 472.05,-118.4 472.05,-118.4 466.05,-118.4 460.05,-112.4 460.05,-106.4 460.05,-106.4 460.05,-80 460.05,-80 460.05,-74 466.05,-68 472.05,-68 472.05,-68 523.65,-68 523.65,-68 529.65,-68 535.65,-74 535.65,-80 535.65,-80 535.65,-106.4 535.65,-106.4 535.65,-112.4 529.65,-118.4 523.65,-118.4"/>
+<text xml:space="preserve" text-anchor="middle" x="497.85" y="-96.95" font-family="Georgia" font-size="15.00">Stage 2</text>
+<text xml:space="preserve" text-anchor="middle" x="497.85" y="-78.95" font-family="Georgia" font-size="15.00">en → ta</text>
+</g>
+<!-- en&#45;&gt;second -->
+<g id="machine-translation-decoding-evaluation-figure-1-machine-translation-decoding-evaluation-pivot-paths-edge3" class="edge">
+<title>en&#45;&gt;second</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M385.18,-95.93C406.39,-95.42 430.73,-94.82 451.26,-94.32"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="451.26,-96.59 457.71,-94.16 451.15,-92.04 451.26,-96.59"/>
+</g>
+<!-- ta -->
+<g id="machine-translation-decoding-evaluation-figure-1-machine-translation-decoding-evaluation-pivot-paths-node3" class="node">
+<title>ta</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M644.75,-78.2C644.75,-78.2 579.65,-78.2 579.65,-78.2 573.65,-78.2 567.65,-72.2 567.65,-66.2 567.65,-66.2 567.65,-54.2 567.65,-54.2 567.65,-48.2 573.65,-42.2 579.65,-42.2 579.65,-42.2 644.75,-42.2 644.75,-42.2 650.75,-42.2 656.75,-48.2 656.75,-54.2 656.75,-54.2 656.75,-66.2 656.75,-66.2 656.75,-72.2 650.75,-78.2 644.75,-78.2"/>
+<text xml:space="preserve" text-anchor="middle" x="612.2" y="-54.95" font-family="Georgia" font-size="15.00">Tamil (ta)</text>
+</g>
+<!-- direct&#45;&gt;ta -->
+<g id="machine-translation-decoding-evaluation-figure-1-machine-translation-decoding-evaluation-pivot-paths-edge6" class="edge">
+<title>direct&#45;&gt;ta</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M428.68,-37.2C472.65,-42.74 523.14,-49.1 559.85,-53.73"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="559.23,-55.94 565.96,-54.5 559.8,-51.43 559.23,-55.94"/>
+</g>
+<!-- first&#45;&gt;en -->
+<g id="machine-translation-decoding-evaluation-figure-1-machine-translation-decoding-evaluation-pivot-paths-edge2" class="edge">
+<title>first&#45;&gt;en</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M205.8,-94.11C225.33,-94.59 249.79,-95.19 271.93,-95.73"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="271.58,-98 278.14,-95.89 271.69,-93.45 271.58,-98"/>
+</g>
+<!-- second&#45;&gt;ta -->
+<g id="machine-translation-decoding-evaluation-figure-1-machine-translation-decoding-evaluation-pivot-paths-edge4" class="edge">
+<title>second&#45;&gt;ta</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M536.57,-82.12C543.94,-79.96 551.77,-77.65 559.5,-75.39"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="560.12,-77.58 565.71,-73.56 558.84,-73.21 560.12,-77.58"/>
+</g>
+</g>
+</svg>
+</div><figcaption>A pivot uses two translation stages; a direct route uses one. Either route can fail, so this comparison describes possible error paths rather than a universal quality ranking.</figcaption></figure>
+
+<p>A Sinhala → English → Tamil pivot can compound errors across two translation steps. It can also lose a distinction that English does not express before the second step. Direct translation avoids that intermediate bottleneck, but it is not automatically better: the available data and model quality for that direction still matter.</p>
+<p>Sharing a fixed parameter budget across more languages creates a capacity trade-off, sometimes called the curse of multilinguality. This is a risk, not a universal law that every added language degrades every other language. Multilingual transfer and capacity pressure can coexist; which dominates must be measured for the task.</p>
+
+<h2 id="section-3">LLM translation: instructions, examples, and context</h2>
+<p>Zero-shot translation supplies an instruction and source text. Few-shot (in-context) translation adds example input–output pairs to the prompt. Those examples condition the current generation; they do not update model weights. Similar examples can show the expected format, disambiguate the task, and carry domain terminology or register more clearly than a broad instruction.</p>
+<p>Document context can help maintain pronouns, tense, and terms across sentences. Prompts may request formality, dialect, register, or target terminology. The lecture also names post-editing, quality estimation, grammar correction, and explanation of a translation choice as related tasks that can be requested with different instructions.</p>
+
+<details class="worked"><summary>Teaching example: use context and a terminology constraint</summary><p><strong>Teaching example.</strong> A document uses “bank” to mean a financial institution and must use one consistent target term.</p>
+<ol><li>Give the target language, audience, and output format.</li><li>Include the surrounding sentence that establishes the intended sense and provide the chosen glossary term.</li><li>If using few-shot examples, include a similar sentence with its approved translation.</li><li>Check names, numbers, negation, pronouns, tense, and the required term against the source.</li><li>Reject or revise an output that changes the meaning or answers in the wrong language. Natural phrasing alone is not evidence of faithfulness.</li></ol></details>
+
+<p>The lecture frames several limitations: low-resource language coverage may be weak; output can drift into the wrong language; and fluent hallucinations can diverge from the source. <strong>Prompt sensitivity</strong> means that changing the instruction's wording can change the output. This differs from <strong>nondeterminism</strong>, where the same input produces different outputs across runs. Latency, cost, and reproducibility also matter in production.</p>
+<p>For a low-resource language pair, a dedicated NMT system trained on the available parallel data may still outperform an LLM. Model size or fluency alone does not settle that comparison; evaluate both on the language pair and task. These are qualifications from the lecture-era discussion, not measurements of a particular current system.</p>
+
+<h2 id="section-4">Human judgment: adequacy and fluency are separate</h2>
+<p>There is often more than one acceptable translation, so a single reference is not a complete definition of correctness. Human evaluation separates two questions: <strong>adequacy</strong> asks how much source meaning is preserved; <strong>fluency</strong> asks whether the target is well formed without consulting the source. A fluent but off-target sentence may score well on fluency and poorly on adequacy.</p>
+<p>The lecture treats human judgment as the gold standard for these dimensions, while noting that it takes time, costs money, and varies between annotators. Automatic metrics are cheaper and repeatable, yet score proxies for quality. Their output must be interpreted with the language pair, references, tokenization, and evaluation setup in view.</p>
+
+<h2 id="section-5">BLEU: modified precision, geometric mean, and brevity penalty</h2>
+<p>BLEU compares candidate n-grams with reference n-grams. <strong>Modified precision</strong> clips each candidate count to the maximum count for that n-gram in any one reference. For one reference, that maximum is simply its count. Clipping prevents repetition such as <code>the the the the</code> from earning unlimited unigram credit. The lecture calculates orders one through four and combines them with a geometric mean; without smoothing, a zero precision at any included order makes the product zero.</p>
+<p>The exact lecture example uses reference “The way to make people trustworthy is to trust them” and candidate “To make people trustworthy, you need to trust them.” For the displayed counts, lowercase, split on whitespace, and strip the comma after <code>trustworthy</code>. This gives reference length <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi><mo>&#x0003D;</mo><mn>10</mn></mrow></math> and candidate length <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi><mo>&#x0003D;</mo><mn>9</mn></mrow></math>.</p>
+
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>BP</mo><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007B;</mo><mtable><mtr><mtd columnalign="left"><mn>1</mn><mo>&#x0002C;</mo></mtd><mtd columnalign="left"><mi>c</mi><mo>&#x02265;</mo><mi>r</mi></mtd></mtr><mtr><mtd columnalign="left"><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mi>r</mi><mo>&#x0002F;</mo><mi>c</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo></mtd><mtd columnalign="left"><mi>c</mi><mo>&#x0003C;</mo><mi>r</mi></mtd></mtr></mtable></mrow></mrow></math></div>
+
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo>BLEU</mo><mo>&#x0003D;</mo><mo>BP</mo><mo>&#x000B7;</mo><mi>exp</mi><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>4</mn></mrow></mfrac><msubsup><mo>&#x02211;</mo><mrow><mi>n</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mn>4</mn></mrow></msubsup><mi>log</mi><msub><mi>p</mi><mi>n</mi></msub><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow></mrow></math></div>
+
+<section class="walk" tabindex="0" aria-label="Worked calculation: the lecture BLEU example, every candidate n-gram"><h3>Worked calculation: the lecture BLEU example, every candidate n-gram</h3><div class="example-input"><p><strong>Given:</strong> one reference, one candidate, lowercase + punctuation stripping + whitespace tokens; count n-grams with multiplicity, clip to reference counts, use all four orders without smoothing. Reference length <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi><mo>&#x0003D;</mo><mn>10</mn></mrow></math>, candidate length <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi><mo>&#x0003D;</mo><mn>9</mn></mrow></math>. The slide shows the four precisions and geometric mean; the brevity penalty and final score below are labeled as the standard BLEU completion.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Normalize text and list unigrams</h4><p><strong>Givens.</strong> Reference tokens: <code>the way to make people trustworthy is to trust them</code> (10 tokens). Candidate tokens: <code>to make people trustworthy you need to trust them</code> (9 tokens). We lowercase and remove punctuation before whitespace tokenization. Candidate unigram occurrences are: <code>to, make, people, trustworthy, you, need, to, trust, them</code>. Reference counts are <code>the:2</code>, <code>to:2</code>, and <code>way, make, people, trustworthy, is, trust, them:1 each</code>. Clip each candidate count to its reference count: matched occurrences are <code>to, make, people, trustworthy, to, trust, them</code>, giving 7 matches / 9 candidates = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>p</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>7</mn></mrow><mrow><mn>9</mn></mrow></mfrac></mrow></math>. The repeated <code>to</code> gets only two matches because the reference has two.</p></section><section class="step"><h4>2. List bigrams and clip counts</h4><p>Candidate bigrams (8): <code>to make</code>, <code>make people</code>, <code>people trustworthy</code>, <code>trustworthy you</code>, <code>you need</code>, <code>need to</code>, <code>to trust</code>, <code>trust them</code>. Reference bigrams include <code>the way</code>, <code>way to</code>, <code>to make</code>, <code>make people</code>, <code>people trustworthy</code>, <code>trustworthy is</code>, <code>is to</code>, <code>to trust</code>, <code>trust them</code>. The reference count is 1 for each of these five matches and 0 for the other three candidate bigrams. Thus the clipped match count is 5 and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>p</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>5</mn></mrow><mrow><mn>8</mn></mrow></mfrac></mrow></math>.</p></section><section class="step"><h4>3. List trigrams and clip counts</h4><p>Candidate trigrams (7): <code>to make people</code>, <code>make people trustworthy</code>, <code>people trustworthy you</code>, <code>trustworthy you need</code>, <code>you need to</code>, <code>need to trust</code>, <code>to trust them</code>. The reference contains <code>to make people</code>, <code>make people trustworthy</code>, and <code>to trust them</code> among its trigrams. The reference count is 1 for each of these three matches and 0 for the other four candidate trigrams. Thus there are 3 clipped matches and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>p</mi><mn>3</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>3</mn></mrow><mrow><mn>7</mn></mrow></mfrac></mrow></math>.</p></section><section class="step"><h4>4. List four-grams and clip counts</h4><p>Candidate four-grams (6): <code>to make people trustworthy</code>, <code>make people trustworthy you</code>, <code>people trustworthy you need</code>, <code>trustworthy you need to</code>, <code>you need to trust</code>, <code>need to trust them</code>. The reference count is 1 for <code>to make people trustworthy</code> and 0 for the other five candidate four-grams. Thus there is 1 clipped match and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>p</mi><mn>4</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>6</mn></mrow></mfrac></mrow></math>. Check the four orders against the lecture table: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>7</mn></mrow><mrow><mn>9</mn></mrow></mfrac><mo>&#x0002C;</mo><mfrac><mrow><mn>5</mn></mrow><mrow><mn>8</mn></mrow></mfrac><mo>&#x0002C;</mo><mfrac><mrow><mn>3</mn></mrow><mrow><mn>7</mn></mrow></mfrac><mo>&#x0002C;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>6</mn></mrow></mfrac></mrow></math>.</p></section><section class="step"><h4>5. Combine precisions with the geometric mean</h4><p>Multiply the four unsmoothed precisions and take the fourth root: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>GM</mo><mo>&#x0003D;</mo><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mfrac><mrow><mn>7</mn></mrow><mrow><mn>9</mn></mrow></mfrac><mo>&#x000B7;</mo><mfrac><mrow><mn>5</mn></mrow><mrow><mn>8</mn></mrow></mfrac><mo>&#x000B7;</mo><mfrac><mrow><mn>3</mn></mrow><mrow><mn>7</mn></mrow></mfrac><mo>&#x000B7;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>6</mn></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mrow><mn>1</mn><mo>&#x0002F;</mo><mn>4</mn></mrow></msup><mo>&#x0003D;</mo><mn>0.4316700106852252</mn></mrow></math>. The slide prints this geometric-mean component. If any precision were zero, this unsmoothed geometric mean would be zero; no smoothing or effective-order change is applied here.</p></section><section class="step"><h4>6. Complete standard BLEU with the brevity penalty</h4><p><strong>Supplemental standard completion.</strong> The slide does not include a brevity penalty or a completed BLEU score. Since <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi><mo>&#x0003D;</mo><mn>9</mn></mrow></math> is shorter than <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi><mo>&#x0003D;</mo><mn>10</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>BP</mo><mo>&#x0003D;</mo><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mi>r</mi><mo>&#x0002F;</mo><mi>c</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mn>10</mn><mo>&#x0002F;</mo><mn>9</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002F;</mo><mn>9</mn><mo stretchy="false">&#x00029;</mo><mo>&#x02248;</mo><mn>0.8948393168</mn></mrow></math>. Multiply by the geometric mean: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>BLEU</mo><mo>&#x02248;</mo><mn>0.3862752975</mn></mrow></math>, or 38.6275 on a 0–100 scale. Check: the penalty is below one because the candidate is shorter; if it were at least as long as the reference, standard BLEU would use BP = 1.</p></section></section>
+
+<h3>BLEU at corpus level and with multiple references</h3>
+<p>For multiple references, clip each candidate n-gram to the <strong>largest count found in any one reference</strong>, not the sum of counts across references. Different n-grams may take their maximum from different references. At corpus level, add clipped match counts and candidate n-gram totals over sentences first, then calculate each precision; do not average sentence BLEU scores. The effective reference length adds the closest reference length for each candidate sentence.</p>
+<p>These aggregation rules matter because sentence BLEU can be brittle: a short candidate with no four-gram match gets zero under the lecture's unsmoothed four-order convention. Do not silently add smoothing or drop higher orders; those choices define a different evaluation setup.</p>
+
+<details class="worked"><summary>Supplemental calculation: clipping repeated words</summary><p><strong>Supplemental calculation.</strong> Suppose the one reference contains <code>the</code> twice, but the candidate says <code>the the the the</code>. The candidate has four unigram occurrences; the reference count is two. Clipping allows two matches, so modified unigram precision is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>2</mn></mrow><mrow><mn>4</mn></mrow></mfrac></mrow></math>, not <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>4</mn></mrow><mrow><mn>4</mn></mrow></mfrac></mrow></math>. This illustrates why counting only whether a word appears at least once would over-credit repetition.</p></details>
+
+<h2 id="section-6">Beyond BLEU: useful signals with boundaries</h2>
+<p>BLEU uses word n-grams, so it can penalize a correct synonym or legitimate reordering. Word-form overlap is also fragile across morphologically rich languages. <strong>chrF</strong> compares character n-grams, which can capture shared subword forms and morphology more flexibly. <strong>COMET</strong> and <strong>BLEURT</strong> use learned evaluators rather than only string overlap and may correlate better with human judgment in the settings where they were evaluated.</p>
+<p>No metric proves that a translation is faithful. Learned metrics depend on their training coverage; low-resource language pairs may be exactly where their estimates are least dependable. Compare metrics only with a stated benchmark setup and retain human adequacy and fluency checks.</p>
+
+<h2 id="section-7">Common mistakes</h2>
+<ul>
+<li>Treating the locally best next token as the globally best complete sentence.</li>
+<li>Counting a partial prefix as a completed candidate before its <code>EOS</code> decision.</li>
+<li>Assuming beam search is exact, or that a larger beam must improve BLEU.</li>
+<li>Reading old language counts as current product availability or as guaranteed quality for a language pair.</li>
+<li>Treating multilingual capacity pressure as inevitable degradation, or direct translation as universally superior to pivoting.</li>
+<li>Calling few-shot prompting fine-tuning: examples condition a prompt without updating weights.</li>
+<li>Equating fluent wording with preserved meaning.</li>
+<li>Summing reference counts for BLEU clipping, averaging sentence BLEU to obtain corpus BLEU, or hiding a zero precision with unstated smoothing.</li>
+</ul>
+
+<h2 id="section-8">Exam focus</h2>
+<ul>
+<li>Explain autoregressive next-token conditioning and why a complete candidate includes an <code>EOS</code> choice.</li>
+<li>Compare greedy pruning with width-<code>k</code> beam search; rank cumulative log scores and apply the lecture's <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math> rules.</li>
+<li>State why beam search is approximate and why BLEU can behave unexpectedly as beam width grows.</li>
+<li>Describe the paper-era roles/counts of mBART, mT5, M2M-100, and NLLB-200, plus conditional transfer and capacity trade-offs.</li>
+<li>Distinguish zero-shot instructions from few-shot in-context examples and identify context, terminology, register, and failure limits.</li>
+<li>Separate adequacy from fluency.</li>
+<li>Compute BLEU's clipped counts, each p₁…p₄, geometric mean, brevity penalty, and completed score; state the tokenization and smoothing convention.</li>
+<li>Explain corpus aggregation, maximum-count clipping across references, and why chrF, COMET, and BLEURT remain imperfect proxies.</li>
+</ul>
+
+<h2 id="section-9">Practice questions</h2>
+
+<p class="question">1. A prefix has cumulative probability 0.07. Can any extension with ordinary conditional probabilities exceed 0.07 under α=0?</p>
+<details class="worked"><summary>Check your answer</summary><p>No. Each future conditional probability is at most one, so multiplying by more conditional probabilities cannot increase the prefix probability. The bound does not directly apply to a different length-normalized ranking objective.</p></details>
+
+<p class="question">2. In the lecture beam sketch, which two displayed candidates have the highest scores if all labels are same-step cumulative log scores?</p>
+<details class="worked"><summary>Check your answer</summary><p><code>the house (−0.5)</code> and <code>the home (−2.1)</code>. This is only a numeric ranking of the shown labels; the sketch lacks the conditionals and terminal policy needed to reconstruct a full run.</p></details>
+
+<p class="question">3. What changes when α moves from 0 to 1 in the lecture score?</p>
+<details class="worked"><summary>Check your answer</summary><p>At α=0, cumulative log probability is unchanged. At α=1, divide the sum by token count to get the average log probability per token. The preference over lengths may change.</p></details>
+
+<p class="question">4. How can Sinhala → English → Tamil lose information even if each stage is fluent?</p>
+<details class="worked"><summary>Check your answer</summary><p>An English intermediate can omit a distinction that English grammar does not express, leaving the second stage unable to recover it. Errors from the first translation can also propagate into the second.</p></details>
+
+<p class="question">5. Do few-shot examples update model weights? What can they contribute?</p>
+<details class="worked"><summary>Check your answer</summary><p>No. They condition generation in the prompt. Similar examples can clarify the task and format, and provide domain terminology or register.</p></details>
+
+<p class="question">6. A translation reads naturally but changes who performed the action. Which human evaluation dimension detects the problem?</p>
+<details class="worked"><summary>Check your answer</summary><p>Adequacy: it checks preservation of source meaning. Fluency asks whether the target is well formed, which can remain high despite the meaning change.</p></details>
+
+<p class="question">7. A candidate four-gram appears twice in the candidate and once in the only reference. How many clipped matches count?</p>
+<details class="worked"><summary>Check your answer</summary><p>One. Modified precision clips the candidate multiplicity at the maximum reference count, which here is one.</p></details>
+
+<p class="question">8. Why should corpus BLEU not be computed by averaging sentence BLEU values?</p>
+<details class="worked"><summary>Check your answer</summary><p>Corpus BLEU first aggregates clipped match counts and candidate n-gram totals across sentences, then computes the precisions and geometric mean. Averaging sentence scores is a different calculation and is especially distorted by sentence-level zeros.</p></details>
+
+<p class="question">9. If an unsmoothed four-order BLEU precision is zero, what is the score under the lecture convention?</p>
+<details class="worked"><summary>Check your answer</summary><p>Zero, because the geometric mean includes that zero precision. Adding smoothing or changing effective order would be a different stated setup.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="machine-translation-neural.html"><small>Previous</small>Neural Machine Translation, Attention, and Transformers <span aria-hidden="true">↗</span></a><a href="self-supervised-vision.html"><small>Next</small>Self-Supervised Learning for Vision <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

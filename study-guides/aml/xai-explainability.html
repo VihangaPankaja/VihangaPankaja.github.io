@@ -1,0 +1,517 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Choose an explanation by starting with the human question, then match its scope, model assumptions, and presentation to the person who must use it."><title>Explainable AI: Questions, Methods, and Presentation · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html" aria-current="page">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Explainability and data quality <span>/</span> Lecture 7</div><h1>Explainable AI: Questions, Methods, and Presentation</h1><p class="lead">Choose an explanation by starting with the human question, then match its scope, model assumptions, and presentation to the person who must use it.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">What is the person trying to understand?</a><a href="#section-2">Keep the three method dimensions independent</a><a href="#section-3">Which input or internal signal is associated with a prediction?</a><a href="#section-4">Can a readable model imitate the complex model?</a><a href="#section-5">Which past cases resemble this prediction?</a><a href="#section-6">What input change would flip the model’s output?</a><a href="#section-7">What can the model’s own structure or signals show?</a><a href="#section-8">How should the explanation be presented?</a><a href="#section-9">Common mistakes</a><a href="#section-10">Exam focus</a><a href="#section-11">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>An accurate prediction can still be hard to trust when it affects a diagnosis, loan, crop decision, or another important outcome. Modern CNNs, LSTMs, and Transformers may contain millions of parameters and complex internal logic, so a person can see an input and output without being able to follow the calculation in between. Explainable AI (XAI) uses techniques to make model behaviour inspectable and communicable. The useful starting point is a stakeholder question: <strong>what needs explaining, to whom, and when?</strong></p>
+<p>An explanation can describe the whole model, one prediction, similar past cases, or a change that would flip an output. It can then be shown as a picture, rule, sentence, score, or interactive view. Those choices are separate: no single method or display suits every question.</p>
+<h2 id="section-1">What is the person trying to understand?</h2>
+<p>Interpretability is the degree to which a person can follow a model's own operation and see how it arrives at predictions without an external explanation tool. It is a spectrum. A linear regression or decision tree can often be read directly; a deep network is much harder to follow. The lecture's “black-box problem” names this gap: high accuracy does not by itself mean high trust.</p>
+<p>Explainability uses a method to translate complex or opaque model behaviour into something a person can inspect and communicate, commonly after the model has produced a prediction. In the lecturer's concise distinction, <strong>interpretability is clarity; explainability is translation</strong>. A simple model can still benefit from explanation and presentation, and a post-hoc explanation does not make the original model intrinsically transparent.</p>
+<div class="table-scroll" role="region" aria-label="Explanation questions and audiences"><table aria-label="Explanation questions and audiences"><thead><tr><th scope="col">Question</th><th scope="col">What the answer needs</th><th scope="col">Example audience</th></tr></thead><tbody><tr><td>How does the model behave overall?</td><td>A view across many cases</td><td>Developer checking model behaviour</td></tr><tr><td>Why this prediction?</td><td>An explanation tied to one input and output</td><td>Doctor reviewing one patient prediction</td></tr><tr><td>What would change the result?</td><td>A contrast between the stated input and a changed input</td><td>Applicant asking about a loan decision</td></tr><tr><td>When and for whom?</td><td>Timing and presentation fitted to the task</td><td>Debugging before deployment or communicating after deployment</td></tr></tbody></table></div>
+<p>The same model may need different explanations for a developer, doctor, policy maker, student, or user. First specify the question and audience; then choose the scope and method.</p>
+<h2 id="section-2">Keep the three method dimensions independent</h2>
+<p>The lecture gives three distinct ways to describe a method. They answer different questions and should be recorded separately. For example, calling a technique <strong>local</strong> does not tell us whether it is model-specific, and calling a model a <strong>black box</strong> does not tell us whether an explanation is global or local.</p>
+<div class="table-scroll" role="region" aria-label="Three independent explanation dimensions"><table aria-label="Three independent explanation dimensions"><thead><tr><th scope="col">Axis</th><th scope="col">Choice A</th><th scope="col">Choice B</th><th scope="col">Question</th></tr></thead><tbody><tr><th scope="row">Granularity</th><td><strong>Global:</strong> behaviour across the dataset</td><td><strong>Local:</strong> one input or prediction</td><td>What is being explained?</td></tr><tr><th scope="row">Model type</th><td><strong>White box:</strong> structure is directly readable</td><td><strong>Black box:</strong> complex behaviour needs extra tools</td><td>What kind of model is involved?</td></tr><tr><th scope="row">Model dependence</th><td><strong>Specific:</strong> uses a particular model structure</td><td><strong>Agnostic:</strong> usable across model types</td><td>Must the method know the model internals?</td></tr></tbody></table></div>
+
+<details class="worked"><summary>Worked comparison: global and local answer different diabetes questions</summary><p><strong>Global question:</strong> Across the diabetes model’s dataset, which patterns matter? The lecture’s illustration names age and BMI as strong overall influencers.</p>
+<p><strong>Local question:</strong> Why was this patient’s prediction made? In the lecture’s illustration, high sugar level triggered the prediction for that patient.</p>
+<p>These are different scopes. The example supplies no numerical model or effect size, so it supports the distinction but no quantitative comparison. Either explanation could still come from a white-box or black-box model, and the method’s dependence must be considered separately.</p></details>
+
+<p>A decision tree or linear regression is a white-box example; a deep neural network or ensemble is a black-box example in the lecture. Grad-CAM is CNN-specific, while LIME and SHAP are presented as model-agnostic examples. These labels describe model type and method dependence respectively; they do not form one exclusive ranking.</p>
+<h2 id="section-3">Which input or internal signal is associated with a prediction?</h2>
+<p><strong>Feature attribution</strong> asks which inputs, regions, tokens, or internal neurons are associated with a selected output. Depending on the method and data, the unit can be a tabular feature, image region or pixel, word, audio region, or neuron. Attribution is often local to a prediction and a specified output; aggregating across cases can describe a dataset, but a signed mean may hide cases with opposing directions. Sign and magnitude convey different information, and neither alone establishes a causal effect.</p>
+
+<details class="worked"><summary>Worked reading: the source prediction, attribution labels, and image maps</summary><p>The lecture’s tabular display labels the outcome <strong>YES</strong> and gives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><mo stretchy="false">&#x00028;</mo><mtext>survived</mtext><mo>&#x0003D;</mo><mtext>yes</mtext><mo>&#x02223;</mo><mi>X</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.671</mn></mrow></math>. It lists PClass (value 3rd) with contribution −0.344, Age (value 52) with −0.034, and Sex (value female) with +1.194.</p>
+<p>Read these as the chart’s displayed contributions for that example. The chart does not define the contribution scale or baseline, so do not add these numbers directly to 0.671 or interpret them as probability changes.</p>
+<p>Beside it, the lecture shows an original dog-and-cat image and two Grad-CAM maps captioned “Cat” and “Dog.” They illustrate that a target-specific heatmap can differ by class. The image is schematic: it supplies no pixel values or validated causal regions.</p>
+<p>Other named attribution methods are SHAP (game-theory-based contribution), Integrated Gradients (gradient-based attribution), gradient saliency maps (simple gradients), and Grad-CAM. Their detailed calculations are covered separately.</p></details>
+
+<h2 id="section-4">Can a readable model imitate the complex model?</h2>
+<p>A <strong>surrogate</strong> is a simpler interpretable model trained to approximate another model's behaviour. It uses the same inputs as the complex model and treats that model's predictions as imitation targets. The target is therefore the black box's output, not ground-truth labels and not a transcript of its exact internal reasoning.</p>
+<figure style="max-width:560px"><div class="diagram-frame" style="--diagram-width:238.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="A surrogate learns to imitate queried black-box outputs; its readable structure approximates the black box." width="238pt" height="358pt"
+ viewBox="0.00 0.00 238.00 358.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="xai-explainability-figure-1-xai-explainability-surrogate-flow-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 347.6)">
+<title>G</title>
+<!-- x -->
+<g id="xai-explainability-figure-1-xai-explainability-surrogate-flow-node1" class="node">
+<title>x</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M153.23,-336.8C153.23,-336.8 103.88,-336.8 103.88,-336.8 97.88,-336.8 91.88,-330.8 91.88,-324.8 91.88,-324.8 91.88,-312.8 91.88,-312.8 91.88,-306.8 97.88,-300.8 103.88,-300.8 103.88,-300.8 153.23,-300.8 153.23,-300.8 159.23,-300.8 165.23,-306.8 165.23,-312.8 165.23,-312.8 165.23,-324.8 165.23,-324.8 165.23,-330.8 159.23,-336.8 153.23,-336.8"/>
+<text xml:space="preserve" text-anchor="middle" x="128.55" y="-313.55" font-family="Georgia" font-size="15.00">Input X</text>
+</g>
+<!-- blackbox -->
+<g id="xai-explainability-figure-1-xai-explainability-surrogate-flow-node2" class="node">
+<title>blackbox</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M137.1,-268.8C137.1,-268.8 12,-268.8 12,-268.8 6,-268.8 0,-262.8 0,-256.8 0,-256.8 0,-230.4 0,-230.4 0,-224.4 6,-218.4 12,-218.4 12,-218.4 137.1,-218.4 137.1,-218.4 143.1,-218.4 149.1,-224.4 149.1,-230.4 149.1,-230.4 149.1,-256.8 149.1,-256.8 149.1,-262.8 143.1,-268.8 137.1,-268.8"/>
+<text xml:space="preserve" text-anchor="middle" x="74.55" y="-247.35" font-family="Georgia" font-size="15.00">Complex black&#45;box</text>
+<text xml:space="preserve" text-anchor="middle" x="74.55" y="-229.35" font-family="Georgia" font-size="15.00">model</text>
+</g>
+<!-- x&#45;&gt;blackbox -->
+<g id="xai-explainability-figure-1-xai-explainability-surrogate-flow-edge1" class="edge">
+<title>x&#45;&gt;blackbox</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M115.75,-300.45C110.24,-292.97 103.61,-283.99 97.3,-275.45"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="99.16,-274.12 93.47,-270.24 95.49,-276.82 99.16,-274.12"/>
+</g>
+<!-- surrogate -->
+<g id="xai-explainability-figure-1-xai-explainability-surrogate-flow-node4" class="node">
+<title>surrogate</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M204.48,-118.4C204.48,-118.4 54.62,-118.4 54.62,-118.4 48.62,-118.4 42.63,-112.4 42.63,-106.4 42.63,-106.4 42.63,-80 42.63,-80 42.63,-74 48.63,-68 54.63,-68 54.63,-68 204.48,-68 204.48,-68 210.48,-68 216.48,-74 216.48,-80 216.48,-80 216.48,-106.4 216.48,-106.4 216.48,-112.4 210.48,-118.4 204.48,-118.4"/>
+<text xml:space="preserve" text-anchor="middle" x="129.55" y="-96.95" font-family="Georgia" font-size="15.00">Train simple surrogate</text>
+<text xml:space="preserve" text-anchor="middle" x="129.55" y="-78.95" font-family="Georgia" font-size="15.00">on X and ŷ</text>
+</g>
+<!-- x&#45;&gt;surrogate -->
+<g id="xai-explainability-figure-1-xai-explainability-surrogate-flow-edge3" class="edge">
+<title>x&#45;&gt;surrogate</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M143.44,-300.45C150.06,-291.6 157.13,-280.29 160.55,-268.8 175.56,-218.36 173.67,-201.36 160.55,-150.4 158.38,-141.97 154.65,-133.46 150.51,-125.69"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="152.54,-124.66 147.37,-120.11 148.58,-126.89 152.54,-124.66"/>
+</g>
+<!-- yhat -->
+<g id="xai-explainability-figure-1-xai-explainability-surrogate-flow-node3" class="node">
+<title>yhat</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M137.35,-186.4C137.35,-186.4 13.75,-186.4 13.75,-186.4 7.75,-186.4 1.75,-180.4 1.75,-174.4 1.75,-174.4 1.75,-162.4 1.75,-162.4 1.75,-156.4 7.75,-150.4 13.75,-150.4 13.75,-150.4 137.35,-150.4 137.35,-150.4 143.35,-150.4 149.35,-156.4 149.35,-162.4 149.35,-162.4 149.35,-174.4 149.35,-174.4 149.35,-180.4 143.35,-186.4 137.35,-186.4"/>
+<text xml:space="preserve" text-anchor="middle" x="75.55" y="-163.15" font-family="Georgia" font-size="15.00">Black&#45;box output ŷ</text>
+</g>
+<!-- blackbox&#45;&gt;yhat -->
+<g id="xai-explainability-figure-1-xai-explainability-surrogate-flow-edge2" class="edge">
+<title>blackbox&#45;&gt;yhat</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M74.88,-218.23C74.99,-210.65 75.1,-202.29 75.2,-194.65"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="77.48,-194.77 75.29,-188.24 72.93,-194.71 77.48,-194.77"/>
+</g>
+<!-- yhat&#45;&gt;surrogate -->
+<g id="xai-explainability-figure-1-xai-explainability-surrogate-flow-edge4" class="edge">
+<title>yhat&#45;&gt;surrogate</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M88.35,-150.05C93.86,-142.57 100.49,-133.59 106.8,-125.05"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="108.61,-126.42 110.63,-119.84 104.94,-123.72 108.61,-126.42"/>
+</g>
+<!-- yprime -->
+<g id="xai-explainability-figure-1-xai-explainability-surrogate-flow-node5" class="node">
+<title>yprime</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M198.85,-36C198.85,-36 60.25,-36 60.25,-36 54.25,-36 48.25,-30 48.25,-24 48.25,-24 48.25,-12 48.25,-12 48.25,-6 54.25,0 60.25,0 60.25,0 198.85,0 198.85,0 204.85,0 210.85,-6 210.85,-12 210.85,-12 210.85,-24 210.85,-24 210.85,-30 204.85,-36 198.85,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="129.55" y="-12.75" font-family="Georgia" font-size="15.00">Approximation ŷ′ ≈ ŷ</text>
+</g>
+<!-- surrogate&#45;&gt;yprime -->
+<g id="xai-explainability-figure-1-xai-explainability-surrogate-flow-edge5" class="edge">
+<title>surrogate&#45;&gt;yprime</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M129.55,-67.83C129.55,-60.25 129.55,-51.89 129.55,-44.25"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="131.83,-44.34 129.55,-37.84 127.28,-44.34 131.83,-44.34"/>
+</g>
+</g>
+</svg>
+</div><figcaption>A surrogate learns to imitate queried black-box outputs; its readable structure approximates the black box.</figcaption></figure>
+
+<details class="worked"><summary>Worked reasoning: a small tree approximates a loan model</summary><p>Suppose a complex loan model returns approve/reject predictions for applicant inputs. Give the same applicant inputs and those model predictions to a small decision-tree surrogate. The tree is fitted to reproduce the complex model’s outputs as closely as its chosen training sample and structure allow; one can then inspect its branch rules.</p>
+<p>This explains the surrogate’s approximation. It does not establish why the black box internally produced each output, whether the surrogate agrees everywhere, or whether either model is correct against real outcomes. In the source’s notation, the surrogate output <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover><mi>&#x02032;</mi></mrow></math> should approximate the black-box output <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover accent="true"><mrow><mi>y</mi></mrow><mo>&#x0005E;</mo></mover></mrow></math>.</p>
+<p>The lecture names LIME as a local linear surrogate and decision-tree surrogates as global approximations. It also names RuleFit for rule-based explanations, Anchors for high-precision decision rules, and Probing as an MLP classifier used to measure what a layer encodes.</p></details>
+
+<h2 id="section-5">Which past cases resemble this prediction?</h2>
+<p>An <strong>example-based explanation</strong> selects relevant cases from training data so a person can compare a new prediction with familiar examples. Search may use distance in input space or embedding space, similarity patterns, or influence scores. A prototype is a representative example; a criticism is an example the model finds difficult; influential samples are training cases that affected a prediction. The selected comparison is an explanation through resemblance, not necessarily the model’s actual decision path.</p>
+
+<details class="worked"><summary>Worked reasoning: the yellow query and its five nearest neighbours</summary><p>In the lecture’s schematic, a yellow new point is classified as red. Select its five nearest training samples using Euclidean distance; the diagram shows that most of those five are red. The resulting explanation is: “The model predicted red because it resembles these examples.”</p>
+<p>The figure gives no exact coordinates or distances, so none are needed to follow the reasoning. In another task, the distance could be measured in an embedding space; the meaning of “similar” depends on the chosen representation and metric. The lecture also names k-nearest neighbours, prototype-and-criticism selection, influence functions, embedding-space search, and case-based reasoning.</p></details>
+
+<h2 id="section-6">What input change would flip the model’s output?</h2>
+<p>A <strong>counterfactual explanation</strong> compares the original input with a changed input that produces a different model output. The lecture’s workflow is to start with the original, try small realistic variations, query the model, and present a minimal, realistic change that flips the prediction. Contrastive explanations answer a related “why this rather than that?” question. Actionable recourse adds a need to consider which changes a person can actually make.</p>
+
+<details class="worked"><summary>Worked reasoning: the loan counterfactual with other listed inputs fixed</summary><div class="table-scroll" role="region" aria-label="Loan counterfactual inputs and model outputs"><table aria-label="Loan counterfactual inputs and model outputs"><thead><tr><th scope="col">Input</th><th scope="col">Original model result</th><th scope="col">Counterfactual model result</th></tr></thead><tbody><tr><th scope="row">Salary</th><td>50,000</td><td>60,000</td></tr><tr><th scope="row">Debt</th><td>20,000</td><td>20,000 (unchanged)</td></tr><tr><th scope="row">Credit score</th><td>580</td><td>580 (unchanged)</td></tr><tr><th scope="row">Output</th><td>Rejected</td><td>Approved</td></tr></tbody></table></div>
+<p>Only the listed salary changes, by 10,000; debt and credit score stay fixed. The lecture’s user-facing wording is: “If your salary increased by 10,000, the model would approve your loan.” This is illustrative model behaviour, not a decision function, causal claim, real-world feasibility finding, or guarantee of approval or recourse.</p>
+<p>Named methods include Wachter counterfactuals, DiCE, actionable recourse methods, and contrastive explanations.</p></details>
+
+<h2 id="section-7">What can the model’s own structure or signals show?</h2>
+<p>Some models expose structure that can be inspected directly. A tree gives a rule path; a linear model exposes weights. The lecture also points to CNN filters/activations and Transformer attention maps as useful internal views. A visible signal is evidence to examine, not automatically a faithful human rationale, causal explanation, or fairness guarantee.</p>
+
+<details class="worked"><summary>Worked reading: follow the decision-tree branch shown in the lecture</summary><p>The tree first tests <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>X</mi><mn>2</mn></msub><mo>&#x02264;</mo><mn>5.0</mn></mrow></math>. Follow the matching branch:</p>
+<ul><li>When <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>X</mi><mn>2</mn></msub><mo>&#x02264;</mo><mn>5.0</mn></mrow></math>, test whether <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>X</mi><mn>1</mn></msub><mo>&#x02264;</mo><mn>4.5</mn></mrow></math> holds. A true result reaches LM1. Otherwise, test <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>X</mi><mn>2</mn></msub><mo>&#x02264;</mo><mn>2.5</mn></mrow></math>: true reaches LM2; false reaches LM3.</li><li>When <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>X</mi><mn>2</mn></msub><mo>&#x0003E;</mo><mn>5.0</mn></mrow></math>, test whether <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>X</mi><mn>1</mn></msub><mo>&#x02264;</mo><mn>7.5</mn></mrow></math> holds. A false result, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>X</mi><mn>1</mn></msub><mo>&#x0003E;</mo><mn>7.5</mn></mrow></math>, reaches LM4. A true result leads to <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>X</mi><mn>2</mn></msub><mo>&#x02264;</mo><mn>8.0</mn></mrow></math>: true reaches LM5; false reaches LM6.</li></ul>
+<p>Each branch condition narrows the path to a leaf. The figure’s thresholds and leaf labels are the explanation; it gives no new applicant values to classify. Follow this path only for the tree represented in the figure.</p>
+<p><strong>Taxonomy clarification:</strong> the lecture groups CNN Grad-CAM with internal model signals on this slide. Grad-CAM uses gradients and convolutional activations, but it is still a post-hoc attribution procedure; it should not be called an intrinsically interpretable predictor.</p></details>
+
+<h2 id="section-8">How should the explanation be presented?</h2>
+<p>An explanation is not automatically understanding. Even a white-box path, attention map, score list, or counterfactual can fail if it is too technical, confusing, or mismatched to the audience. The same output may need a different presentation for a developer and a patient. Presentation is the bridge between a model signal and a person’s ability to reason with it.</p>
+<p><strong>Supplemental reading on attention.</strong> The lecture lists attention maps as a possible internal view. Research has debated when those weights support an explanation: <a href="https://aclanthology.org/N19-1357/">Jain and Wallace (2019)</a> report limits for standard attention as a rationale, while <a href="https://aclanthology.org/D19-1002/">Wiegreffe and Pinter (2019)</a> argue that conclusions depend on how explanation is defined and tested. The practical lesson here is to label an attention map as a displayed model signal and validate any stronger claim.</p>
+<div class="table-scroll" role="region" aria-label="Explanation presentation formats and uses"><table aria-label="Explanation presentation formats and uses"><thead><tr><th scope="col">Presentation</th><th scope="col">What it can make visible</th><th scope="col">Lecture examples</th><th scope="col">Concrete use</th></tr></thead><tbody><tr><th scope="row">Visual</th><td>Focus, patterns, relative values</td><td>Heatmaps, line/bar/scatter plots, embeddings (PCA, t-SNE, UMAP)</td><td>Compare model/task accuracy in a heatmap, or explore clusters and similarity in an embedding projection</td></tr><tr><th scope="row">Symbolic</th><td>Explicit branching logic or constraints</td><td>If–then rules, decision lists, trees, logic programs, Boolean constraints</td><td>Show the path through a model tree or a readable surrogate</td></tr><tr><th scope="row">Textual</th><td>A short account or selected input tokens</td><td>Generated natural-language explanation, highlighted tokens, question-answer pairs</td><td>“The model predicted spam because the email contained ‘lottery’”; highlight tokens in a text input</td></tr><tr><th scope="row">Numerical</th><td>Scores, thresholds, or a prediction breakdown</td><td>IG/SHAP/LIME score tables, thresholds, additive decomposition</td><td>Compare feature scores while stating the target and reference convention</td></tr><tr><th scope="row">Interactive or multimodal</th><td>Exploration and multiple communication channels</td><td>Dashboards, clickable layer/token/attention views, text + audio + image</td><td>Explore a view interactively or provide spoken feedback for a blind user</td></tr></tbody></table></div>
+<p>The lecture’s numerical-presentation slide includes this descending bar-chart example of mean absolute SHAP values. The chart displays magnitudes, not signed case-level contributions.</p>
+<div class="table-scroll" role="region" aria-label="Mean absolute SHAP values by feature"><table aria-label="Mean absolute SHAP values by feature"><thead><tr><th scope="col">Feature label</th><th scope="col">Displayed mean absolute value</th></tr></thead><tbody><tr><td>Relationship</td><td>+0.94</td></tr><tr><td>Age</td><td>+0.77</td></tr><tr><td>Capital Gain</td><td>+0.45</td></tr><tr><td>Education-Num</td><td>+0.44</td></tr><tr><td>Hours per week</td><td>+0.35</td></tr><tr><td>Occupation</td><td>+0.34</td></tr><tr><td>Sex</td><td>+0.22</td></tr><tr><td>Capital Loss</td><td>+0.19</td></tr><tr><td>Marital Status</td><td>+0.13</td></tr><tr><td>Sum of 3 other features</td><td>+0.11</td></tr></tbody></table></div>
+<p>The slide gives no model, dataset, output target, or background/reference convention for this chart. Keep it as an example of numerical presentation; do not attribute it to the Titanic example or interpret these bars as signed per-prediction effects.</p>
+
+<details class="worked"><summary>Worked choice: match a stakeholder and question to a display</summary><p>A developer asking how model errors vary across tasks can use a visual heatmap or numerical comparison to inspect patterns. A person asking why one decision occurred needs a local explanation, such as a clearly labeled feature display, a tree path, or a counterfactual, with wording suited to that person. A text-input explanation may show selected tokens or a short generated sentence. If a user benefits from spoken feedback, an interactive multimodal view can combine text, audio, and image.</p>
+<p>These formats communicate different evidence. A heatmap’s color should be accompanied by labels or a scale; a highlighted token should identify whether it displays attention or contribution; a numerical score needs its target and reference context. Clear presentation helps a human inspect an explanation, but it cannot by itself prove the explanation faithful or the conclusion correct.</p></details>
+
+<h2 id="section-9">Common mistakes</h2>
+<ul>
+<li><strong>Collapsing the three axes:</strong> global/local, white/black-box, and specific/agnostic answer independent questions. Record all three where known.</li>
+<li><strong>Treating higher scores as the only story:</strong> signed attribution can be negative; direction and magnitude differ, and a mean can cancel mixed case-level values.</li>
+<li><strong>Reading attribution as causation:</strong> attribution describes a model-relative association for an output and method, not what would happen in the real world after changing a feature.</li>
+<li><strong>Calling a surrogate the original model:</strong> it is trained on black-box outputs as imitation targets. It approximates behavior over its sampled region and does not reveal exact internal reasoning.</li>
+<li><strong>Treating similar examples as the model’s path:</strong> example-based methods compare selected cases; the similarity metric and representation matter.</li>
+<li><strong>Treating a counterfactual as a promise:</strong> the example reports a changed model output under one stated input change. It does not prove feasibility, causal impact, fairness, or guaranteed recourse.</li>
+<li><strong>Calling every internal signal intrinsic explanation:</strong> attention, weights, and activations need interpretation and validation; Grad-CAM is post-hoc even though it uses internal CNN information.</li>
+<li><strong>Equating explanation and understanding:</strong> the audience, purpose, and display determine whether a person can use what is shown.</li>
+<li><strong>Over-reading the source’s plots:</strong> the Titanic contribution chart does not define a baseline or scale, and the nearest-neighbor schematic gives no coordinates or distances.</li>
+</ul>
+<h2 id="section-10">Exam focus</h2>
+<ul>
+<li>Explain why accuracy alone does not settle trust in a high-stakes prediction.</li>
+<li>Distinguish built-in interpretability from post-hoc explainability and recognize interpretability as a spectrum.</li>
+<li>Classify an explanation on three independent axes: global/local, white/black box, and model-specific/model-agnostic.</li>
+<li>For each family, name the question it answers: attribution (what inputs/signals?), surrogate (can a simple model imitate?), example-based (which cases resemble it?), counterfactual (what input change flips it?), and intrinsic structure (what can be read directly?).</li>
+<li>State that a surrogate learns from black-box predictions; it does not learn ground-truth labels unless those are separately used.</li>
+<li>Preserve the distinction between an output change in a counterfactual and a causal intervention or feasible recourse.</li>
+<li>Match visual, symbolic, textual, numerical, and interactive/multimodal formats to the evidence and audience.</li>
+<li>Remember that a presented explanation does not automatically establish human understanding, faithfulness, correctness, causality, or fairness.</li>
+</ul>
+<h2 id="section-11">Practice questions</h2>
+<p class="question">1. Why can a highly accurate model still need an explanation?</p>
+<details class="worked"><summary>Check your answer</summary><p>Accuracy reports predictive performance under an evaluation setup; it does not show a person how a particular decision was reached or make the model’s internal operation understandable. This matters when decisions affect people or resources.</p></details>
+
+<p class="question">2. A report explains the whole diabetes dataset, uses a deep neural network, and queries no internal structure. Which dimensions does that describe?</p>
+<details class="worked"><summary>Check your answer</summary><p>Global describes the scope. Black box describes the model type. Model-agnostic describes the method’s dependence if it can be used across model types. These are separate labels; the report does not give enough information to infer a method’s dependence merely from “global.”</p></details>
+
+<p class="question">3. What does a surrogate use as its imitation target, and what does that target not establish?</p>
+<details class="worked"><summary>Check your answer</summary><p>It uses the complex model’s predictions for the same inputs as targets. This aims to imitate black-box outputs; it does not establish agreement with ground-truth labels or reveal the black box’s exact internal reasoning.</p></details>
+
+<p class="question">4. In the source nearest-neighbor example, why is the yellow point labeled red?</p>
+<details class="worked"><summary>Check your answer</summary><p>The five most similar training samples are selected using Euclidean distance, and most are red. The lecture’s explanation is that the query resembles these examples; it supplies no exact coordinates or distances.</p></details>
+
+<p class="question">5. In the loan counterfactual, which values change and what is the proper interpretation?</p>
+<details class="worked"><summary>Check your answer</summary><p>Salary changes from 50,000 to 60,000; debt remains 20,000 and credit score remains 580. The model changes from Rejected to Approved in the illustration. This is a conditional model-output example, not a causal or feasibility guarantee.</p></details>
+
+<p class="question">6. Name three distinct ways to present an explanation and one suitable example for each.</p>
+<details class="worked"><summary>Check your answer</summary><p>Visual: a heatmap for image regions. Symbolic: a decision-tree path. Textual: a short natural-language reason or highlighted token. Other valid forms include numerical score tables and interactive or multimodal dashboards.</p></details>
+
+<p class="question">7. Why is Grad-CAM not automatically an intrinsically interpretable model?</p>
+<details class="worked"><summary>Check your answer</summary><p>It uses gradients and internal convolutional activations to create a post-hoc attribution map. The procedure depends on CNN internals, but the existence of an internal signal does not make the predictor itself inherently transparent or prove the map is faithful or causal.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="time-series-analysis.html"><small>Previous</small>Time Series Analysis and Forecasting <span aria-hidden="true">↗</span></a><a href="xai-attribution-methods.html"><small>Next</small>Integrated Gradients, SHAP, and Grad-CAM <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

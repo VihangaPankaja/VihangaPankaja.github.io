@@ -1,0 +1,793 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Neural machine translation learns one sequence-to-sequence model, then uses attention to connect target predictions to source information. The Transformer replaces recurrence with masked and unmasked attention, while subword units help keep rare words representable."><title>Neural Machine Translation, Attention, and Transformers · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html" aria-current="page">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Language and self-supervision <span>/</span> Lecture 9</div><h1>Neural Machine Translation, Attention, and Transformers</h1><p class="lead">Neural machine translation learns one sequence-to-sequence model, then uses attention to connect target predictions to source information. The Transformer replaces recurrence with masked and unmasked attention, while subword units help keep rare words representable.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Recurrent encoder–decoder: source to target</a><a href="#section-2">Fixed-vector bottleneck and attention</a><a href="#section-3">Scaled dot-product attention</a><a href="#section-4">Multi-head attention and positional information</a><a href="#section-5">Transformer encoder and decoder blocks</a><a href="#section-6">Byte-pair encoding builds subword pieces</a><a href="#section-7">Common mistakes</a><a href="#section-8">Exam focus</a><a href="#section-9">Practice questions</a><a href="#section-10">Further reading</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Machine translation must produce a target sequence that preserves the source meaning. Classical phrase-based systems combine separate translation, language-model, and search components. Neural machine translation (NMT) instead trains one model end to end: an encoder reads the source, and a decoder generates the target token by token. The first recurrent design squeezed the whole source into one fixed-size context. Attention gave the decoder access to source states while it generated. The Transformer then removed recurrence by using attention throughout its encoder and decoder. Subword tokenization addresses a separate vocabulary problem: rare or unseen whole words can still be represented as smaller pieces.</p>
+<p>This topic builds on <a href="machine-translation-classical.html">classical machine translation</a> and <a href="sequence-models.html">sequence models</a>. It ends with BPE, which the next topic uses when discussing decoding.</p>
+<h2 id="section-1">Recurrent encoder–decoder: source to target</h2>
+<p>The encoder reads source words in order and compresses them into a fixed-length context vector <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi></mrow></math>. The decoder is a conditional language model: it predicts each next target word using <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi></mrow></math> and the target history generated so far. For the lecture's schematic example, source <code>A B C D</code> is translated into <code>X Y Z EOS</code>, where <code>EOS</code> marks that generation is finished. Words enter as embeddings, dense vectors in which distributionally similar words are geometrically close. This lets learned patterns generalize across related words instead of treating each word as an unrelated symbol.</p>
+<figure><div class="diagram-frame" style="--diagram-width:1073.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="The encoder compresses the source into c. In the source example the first decoder input is &lt;eos&gt;; later inputs are the previous target tokens. The predictions are X, Y, Z, then &lt;eos&gt;." width="1073pt" height="72pt"
+ viewBox="0.00 0.00 1073.00 72.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="machine-translation-neural-figure-1-machine-translation-neural-encoder-decoder-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 61.2)">
+<title>G</title>
+<!-- src -->
+<g id="machine-translation-neural-figure-1-machine-translation-neural-encoder-decoder-node1" class="node">
+<title>src</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M124.35,-50.4C124.35,-50.4 12,-50.4 12,-50.4 6,-50.4 0,-44.4 0,-38.4 0,-38.4 0,-12 0,-12 0,-6 6,0 12,0 12,0 124.35,0 124.35,0 130.35,0 136.35,-6 136.35,-12 136.35,-12 136.35,-38.4 136.35,-38.4 136.35,-44.4 130.35,-50.4 124.35,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="68.17" y="-28.95" font-family="Georgia" font-size="15.00">Source tokens</text>
+<text xml:space="preserve" text-anchor="middle" x="68.17" y="-10.95" font-family="Georgia" font-size="15.00">A → B → C → D</text>
+</g>
+<!-- enc -->
+<g id="machine-translation-neural-figure-1-machine-translation-neural-encoder-decoder-node2" class="node">
+<title>enc</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M319.95,-50.4C319.95,-50.4 181.35,-50.4 181.35,-50.4 175.35,-50.4 169.35,-44.4 169.35,-38.4 169.35,-38.4 169.35,-12 169.35,-12 169.35,-6 175.35,0 181.35,0 181.35,0 319.95,0 319.95,0 325.95,0 331.95,-6 331.95,-12 331.95,-12 331.95,-38.4 331.95,-38.4 331.95,-44.4 325.95,-50.4 319.95,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="250.65" y="-28.95" font-family="Georgia" font-size="15.00">Recurrent encoder</text>
+<text xml:space="preserve" text-anchor="middle" x="250.65" y="-10.95" font-family="Georgia" font-size="15.00">reads source in order</text>
+</g>
+<!-- src&#45;&gt;enc -->
+<g id="machine-translation-neural-figure-1-machine-translation-neural-encoder-decoder-edge1" class="edge">
+<title>src&#45;&gt;enc</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M136.63,-25.2C144.6,-25.2 152.82,-25.2 161.02,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="160.86,-27.48 167.36,-25.2 160.86,-22.93 160.86,-27.48"/>
+</g>
+<!-- context -->
+<g id="machine-translation-neural-figure-1-machine-translation-neural-encoder-decoder-node3" class="node">
+<title>context</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M512.55,-50.4C512.55,-50.4 376.95,-50.4 376.95,-50.4 370.95,-50.4 364.95,-44.4 364.95,-38.4 364.95,-38.4 364.95,-12 364.95,-12 364.95,-6 370.95,0 376.95,0 376.95,0 512.55,0 512.55,0 518.55,0 524.55,-6 524.55,-12 524.55,-12 524.55,-38.4 524.55,-38.4 524.55,-44.4 518.55,-50.4 512.55,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="444.75" y="-28.95" font-family="Georgia" font-size="15.00">Fixed&#45;length context</text>
+<text xml:space="preserve" text-anchor="middle" x="444.75" y="-10.95" font-family="Georgia" font-size="15.00">c</text>
+</g>
+<!-- enc&#45;&gt;context -->
+<g id="machine-translation-neural-figure-1-machine-translation-neural-encoder-decoder-edge2" class="edge">
+<title>enc&#45;&gt;context</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M332.28,-25.2C340.21,-25.2 348.29,-25.2 356.29,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="356.23,-27.48 362.73,-25.2 356.23,-22.93 356.23,-27.48"/>
+</g>
+<!-- dec -->
+<g id="machine-translation-neural-figure-1-machine-translation-neural-encoder-decoder-node4" class="node">
+<title>dec</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M720.15,-50.4C720.15,-50.4 569.55,-50.4 569.55,-50.4 563.55,-50.4 557.55,-44.4 557.55,-38.4 557.55,-38.4 557.55,-12 557.55,-12 557.55,-6 563.55,0 569.55,0 569.55,0 720.15,0 720.15,0 726.15,0 732.15,-6 732.15,-12 732.15,-12 732.15,-38.4 732.15,-38.4 732.15,-44.4 726.15,-50.4 720.15,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="644.85" y="-28.95" font-family="Georgia" font-size="15.00">Recurrent decoder</text>
+<text xml:space="preserve" text-anchor="middle" x="644.85" y="-10.95" font-family="Georgia" font-size="15.00">c + shifted target input</text>
+</g>
+<!-- context&#45;&gt;dec -->
+<g id="machine-translation-neural-figure-1-machine-translation-neural-encoder-decoder-edge3" class="edge">
+<title>context&#45;&gt;dec</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M525.47,-25.2C533.21,-25.2 541.11,-25.2 548.98,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="548.82,-27.48 555.32,-25.2 548.82,-22.93 548.82,-27.48"/>
+</g>
+<!-- out -->
+<g id="machine-translation-neural-figure-1-machine-translation-neural-encoder-decoder-node5" class="node">
+<title>out</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M1039.25,-50.4C1039.25,-50.4 896.9,-50.4 896.9,-50.4 890.9,-50.4 884.9,-44.4 884.9,-38.4 884.9,-38.4 884.9,-12 884.9,-12 884.9,-6 890.9,0 896.9,0 896.9,0 1039.25,0 1039.25,0 1045.25,0 1051.25,-6 1051.25,-12 1051.25,-12 1051.25,-38.4 1051.25,-38.4 1051.25,-44.4 1045.25,-50.4 1039.25,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="968.07" y="-28.95" font-family="Georgia" font-size="15.00">Target predictions</text>
+<text xml:space="preserve" text-anchor="middle" x="968.07" y="-10.95" font-family="Georgia" font-size="15.00">X → Y → Z → &lt;eos&gt;</text>
+</g>
+<!-- dec&#45;&gt;out -->
+<g id="machine-translation-neural-figure-1-machine-translation-neural-encoder-decoder-edge4" class="edge">
+<title>dec&#45;&gt;out</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M732.78,-25.2C777.3,-25.2 831.46,-25.2 876.5,-25.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="876.49,-27.48 882.99,-25.2 876.49,-22.93 876.49,-27.48"/>
+</g>
+<!-- out&#45;&gt;dec -->
+<g id="machine-translation-neural-figure-1-machine-translation-neural-encoder-decoder-edge5" class="edge">
+<title>out&#45;&gt;dec</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" stroke-dasharray="5,2" d="M884.49,-7.82C879.23,-7.08 874,-6.45 868.9,-5.95 815.48,-0.76 801.58,-0.97 748.15,-5.95 745.68,-6.18 743.17,-6.44 740.65,-6.73"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="740.71,-4.43 734.54,-7.49 741.27,-8.95 740.71,-4.43"/>
+<text xml:space="preserve" text-anchor="middle" x="808.52" y="-8.8" font-family="Georgia" font-size="12.00">previous target tokens</text>
+</g>
+</g>
+</svg>
+</div><figcaption>The encoder compresses the source into c. In the source example the first decoder input is &lt;eos&gt;; later inputs are the previous target tokens. The predictions are X, Y, Z, then &lt;eos&gt;.</figcaption></figure>
+
+<details class="worked"><summary>Worked example: follow the source and target dependencies</summary><p><strong>Given:</strong> source tokens <code>A B C D</code>; decoder inputs <code>&lt;eos&gt;, X, Y, Z</code>; predicted targets <code>X, Y, Z, &lt;eos&gt;</code>.</p>
+<ol>
+<li>The recurrent encoder consumes <code>A</code>, then <code>B</code>, <code>C</code>, and <code>D</code> in source order. Its final fixed-length representation is the context <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi></mrow></math>.</li>
+<li>The decoder receives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi></mrow></math> and the initial <code>&lt;eos&gt;</code> input to predict <code>X</code>. In this figure, that input marks the boundary before the target sentence starts.</li>
+<li>To predict <code>Y</code>, it uses <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi></mrow></math> and the preceding target token <code>X</code>. To predict <code>Z</code>, it uses <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi></mrow></math> and the prefix <code>X Y</code>.</li>
+<li>With <code>Z</code> as the next input and the previous target history in its recurrent state, it predicts <code>&lt;eos&gt;</code>; that output marker ends generation.</li>
+<li><strong>Check:</strong> decoder inputs are shifted one step behind their predictions. Source order determines the encoder input; target history conditions each decoder step. The diagram's feedback arrow means prior target tokens are available, not that the source is read again.</li>
+</ol>
+<div class="table-scroll" role="region" aria-label="Decoder input and predicted output timing"><table aria-label="Decoder input and predicted output timing"><thead><tr><th scope="col">Decoder step</th><th scope="col">Input token</th><th scope="col">Predicted token</th></tr></thead><tbody><tr><th scope="row">1</th><td><code>&lt;eos&gt;</code></td><td><code>X</code></td></tr><tr><th scope="row">2</th><td><code>X</code></td><td><code>Y</code></td></tr><tr><th scope="row">3</th><td><code>Y</code></td><td><code>Z</code></td></tr><tr><th scope="row">4</th><td><code>Z</code></td><td><code>&lt;eos&gt;</code></td></tr></tbody></table></div></details>
+
+<h2 id="section-2">Fixed-vector bottleneck and attention</h2>
+<p>In the plain recurrent encoder–decoder, the entire source sentence must pass through one fixed-length vector <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi></mrow></math>. Information from early words must survive many recurrent updates, and once generation begins the decoder cannot return to separate source states. The lecture reports Cho et al. (2014) observing BLEU degradation for sentences beyond roughly 30 tokens. That is a reported result for that setting, not a universal length threshold for NMT.</p>
+<p>Attention changes the information path: the source states remain available, and each target step forms a context from the source states that matter for that step. This does not remove the fixed-vector bottleneck from the basic model retroactively; it describes a different conditioning pathway.</p>
+<h3>Global and local attention</h3>
+<p>Luong et al. (2015) contrast two alignment scopes. <strong>Global attention</strong> scores all encoder states for the current decoder state and takes their weighted average. <strong>Local attention</strong> first predicts a source position <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>p</mi><mi>t</mi></msub></mrow></math>, then scores a window around that position and averages only states in that window. In both cases, the alignment weights say how much each eligible source state contributes to the context <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>c</mi><mi>t</mi></msub></mrow></math>; the context then informs the current target prediction.</p>
+<figure><div class="diagram-frame" style="--diagram-width:1016.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Luong local attention predicts a source position and scores a window around it; global attention scores every source state. Each path first forms alignment weights, then uses them to build the current target step context." width="1016pt" height="248pt"
+ viewBox="0.00 0.00 1016.00 248.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="machine-translation-neural-figure-2-machine-translation-neural-local-global-attention-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 237.2)">
+<title>G</title>
+<!-- target -->
+<g id="machine-translation-neural-figure-2-machine-translation-neural-local-global-attention-node1" class="node">
+<title>target</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M154.35,-167.4C154.35,-167.4 12,-167.4 12,-167.4 6,-167.4 0,-161.4 0,-155.4 0,-155.4 0,-129 0,-129 0,-123 6,-117 12,-117 12,-117 154.35,-117 154.35,-117 160.35,-117 166.35,-123 166.35,-129 166.35,-129 166.35,-155.4 166.35,-155.4 166.35,-161.4 160.35,-167.4 154.35,-167.4"/>
+<text xml:space="preserve" text-anchor="middle" x="83.17" y="-145.95" font-family="Georgia" font-size="15.00">Current decoder state</text>
+<text xml:space="preserve" text-anchor="middle" x="83.17" y="-127.95" font-family="Georgia" font-size="15.00">hₜ</text>
+</g>
+<!-- localpos -->
+<g id="machine-translation-neural-figure-2-machine-translation-neural-local-global-attention-node2" class="node">
+<title>localpos</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M366.2,-226.4C366.2,-226.4 210.35,-226.4 210.35,-226.4 204.35,-226.4 198.35,-220.4 198.35,-214.4 198.35,-214.4 198.35,-188 198.35,-188 198.35,-182 204.35,-176 210.35,-176 210.35,-176 366.2,-176 366.2,-176 372.2,-176 378.2,-182 378.2,-188 378.2,-188 378.2,-214.4 378.2,-214.4 378.2,-220.4 372.2,-226.4 366.2,-226.4"/>
+<text xml:space="preserve" text-anchor="middle" x="288.27" y="-204.95" font-family="Georgia" font-size="15.00">Predict aligned position</text>
+<text xml:space="preserve" text-anchor="middle" x="288.27" y="-186.95" font-family="Georgia" font-size="15.00">pₜ</text>
+</g>
+<!-- target&#45;&gt;localpos -->
+<g id="machine-translation-neural-figure-2-machine-translation-neural-local-global-attention-edge1" class="edge">
+<title>target&#45;&gt;localpos</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M166.78,-166.2C174.36,-168.4 182.08,-170.64 189.78,-172.88"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="189.12,-175.06 196,-174.68 190.39,-170.69 189.12,-175.06"/>
+</g>
+<!-- localweights -->
+<g id="machine-translation-neural-figure-2-machine-translation-neural-local-global-attention-node5" class="node">
+<title>localweights</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M774.9,-141.4C774.9,-141.4 669.3,-141.4 669.3,-141.4 663.3,-141.4 657.3,-135.4 657.3,-129.4 657.3,-129.4 657.3,-103 657.3,-103 657.3,-97 663.3,-91 669.3,-91 669.3,-91 774.9,-91 774.9,-91 780.9,-91 786.9,-97 786.9,-103 786.9,-103 786.9,-129.4 786.9,-129.4 786.9,-135.4 780.9,-141.4 774.9,-141.4"/>
+<text xml:space="preserve" text-anchor="middle" x="722.1" y="-119.95" font-family="Georgia" font-size="15.00">Local alignment</text>
+<text xml:space="preserve" text-anchor="middle" x="722.1" y="-101.95" font-family="Georgia" font-size="15.00">weights</text>
+</g>
+<!-- target&#45;&gt;localweights -->
+<g id="machine-translation-neural-figure-2-machine-translation-neural-local-global-attention-edge4" class="edge">
+<title>target&#45;&gt;localweights</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M166.79,-138.83C292.61,-133.69 530.16,-123.99 649.24,-119.13"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="648.99,-121.42 655.4,-118.88 648.81,-116.87 648.99,-121.42"/>
+</g>
+<!-- globalweights -->
+<g id="machine-translation-neural-figure-2-machine-translation-neural-local-global-attention-node6" class="node">
+<title>globalweights</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M345.2,-56.4C345.2,-56.4 231.35,-56.4 231.35,-56.4 225.35,-56.4 219.35,-50.4 219.35,-44.4 219.35,-44.4 219.35,-18 219.35,-18 219.35,-12 225.35,-6 231.35,-6 231.35,-6 345.2,-6 345.2,-6 351.2,-6 357.2,-12 357.2,-18 357.2,-18 357.2,-44.4 357.2,-44.4 357.2,-50.4 351.2,-56.4 345.2,-56.4"/>
+<text xml:space="preserve" text-anchor="middle" x="288.27" y="-34.95" font-family="Georgia" font-size="15.00">Global alignment</text>
+<text xml:space="preserve" text-anchor="middle" x="288.27" y="-16.95" font-family="Georgia" font-size="15.00">weights</text>
+</g>
+<!-- target&#45;&gt;globalweights -->
+<g id="machine-translation-neural-figure-2-machine-translation-neural-local-global-attention-edge7" class="edge">
+<title>target&#45;&gt;globalweights</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M131.03,-116.59C161.65,-99.86 201.73,-77.95 233.63,-60.52"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="234.37,-62.71 238.98,-57.59 232.19,-58.72 234.37,-62.71"/>
+</g>
+<!-- window -->
+<g id="machine-translation-neural-figure-2-machine-translation-neural-local-global-attention-node3" class="node">
+<title>window</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M613.3,-108.2C613.3,-108.2 422.2,-108.2 422.2,-108.2 416.2,-108.2 410.2,-102.2 410.2,-96.2 410.2,-96.2 410.2,-84.2 410.2,-84.2 410.2,-78.2 416.2,-72.2 422.2,-72.2 422.2,-72.2 613.3,-72.2 613.3,-72.2 619.3,-72.2 625.3,-78.2 625.3,-84.2 625.3,-84.2 625.3,-96.2 625.3,-96.2 625.3,-102.2 619.3,-108.2 613.3,-108.2"/>
+<text xml:space="preserve" text-anchor="middle" x="517.75" y="-84.95" font-family="Georgia" font-size="15.00">Select nearby source window</text>
+</g>
+<!-- localpos&#45;&gt;window -->
+<g id="machine-translation-neural-figure-2-machine-translation-neural-local-global-attention-edge2" class="edge">
+<title>localpos&#45;&gt;window</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M342.9,-175.04C382.18,-155.87 434.89,-130.15 471.93,-112.07"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="472.92,-114.12 477.76,-109.22 470.93,-110.03 472.92,-114.12"/>
+</g>
+<!-- window&#45;&gt;localweights -->
+<g id="machine-translation-neural-figure-2-machine-translation-neural-local-global-attention-edge5" class="edge">
+<title>window&#45;&gt;localweights</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M625.55,-103.92C633.61,-104.96 641.61,-105.99 649.36,-106.98"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="648.78,-109.2 655.52,-107.77 649.36,-104.69 648.78,-109.2"/>
+</g>
+<!-- all -->
+<g id="machine-translation-neural-figure-2-machine-translation-neural-local-global-attention-node4" class="node">
+<title>all</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M136.72,-72.2C136.72,-72.2 29.62,-72.2 29.62,-72.2 23.62,-72.2 17.62,-66.2 17.62,-60.2 17.62,-60.2 17.62,-48.2 17.62,-48.2 17.62,-42.2 23.62,-36.2 29.62,-36.2 29.62,-36.2 136.72,-36.2 136.72,-36.2 142.72,-36.2 148.72,-42.2 148.72,-48.2 148.72,-48.2 148.72,-60.2 148.72,-60.2 148.72,-66.2 142.72,-72.2 136.72,-72.2"/>
+<text xml:space="preserve" text-anchor="middle" x="83.17" y="-48.95" font-family="Georgia" font-size="15.00">All source states</text>
+</g>
+<!-- all&#45;&gt;window -->
+<g id="machine-translation-neural-figure-2-machine-translation-neural-local-global-attention-edge3" class="edge">
+<title>all&#45;&gt;window</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M149.04,-62.06C165.14,-63.88 182.36,-65.71 198.35,-67.2 265.82,-73.48 341.48,-79 402.1,-83.07"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="401.65,-85.32 408.29,-83.48 401.96,-80.78 401.65,-85.32"/>
+</g>
+<!-- all&#45;&gt;globalweights -->
+<g id="machine-translation-neural-figure-2-machine-translation-neural-local-global-attention-edge8" class="edge">
+<title>all&#45;&gt;globalweights</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M149,-46.86C168.76,-44.62 190.67,-42.14 211.11,-39.82"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="211.16,-42.11 217.36,-39.12 210.65,-37.59 211.16,-42.11"/>
+</g>
+<!-- localctx -->
+<g id="machine-translation-neural-figure-2-machine-translation-neural-local-global-attention-node7" class="node">
+<title>localctx</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M982.25,-141.4C982.25,-141.4 830.9,-141.4 830.9,-141.4 824.9,-141.4 818.9,-135.4 818.9,-129.4 818.9,-129.4 818.9,-103 818.9,-103 818.9,-97 824.9,-91 830.9,-91 830.9,-91 982.25,-91 982.25,-91 988.25,-91 994.25,-97 994.25,-103 994.25,-103 994.25,-129.4 994.25,-129.4 994.25,-135.4 988.25,-141.4 982.25,-141.4"/>
+<text xml:space="preserve" text-anchor="middle" x="906.58" y="-119.95" font-family="Georgia" font-size="15.00">Local weighted context</text>
+<text xml:space="preserve" text-anchor="middle" x="906.58" y="-101.95" font-family="Georgia" font-size="15.00">cₜ</text>
+</g>
+<!-- localweights&#45;&gt;localctx -->
+<g id="machine-translation-neural-figure-2-machine-translation-neural-local-global-attention-edge6" class="edge">
+<title>localweights&#45;&gt;localctx</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M787.18,-116.2C794.65,-116.2 802.39,-116.2 810.17,-116.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="809.94,-118.48 816.44,-116.2 809.94,-113.93 809.94,-118.48"/>
+</g>
+<!-- globalctx -->
+<g id="machine-translation-neural-figure-2-machine-translation-neural-local-global-attention-node8" class="node">
+<title>globalctx</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M597.55,-50.4C597.55,-50.4 437.95,-50.4 437.95,-50.4 431.95,-50.4 425.95,-44.4 425.95,-38.4 425.95,-38.4 425.95,-12 425.95,-12 425.95,-6 431.95,0 437.95,0 437.95,0 597.55,0 597.55,0 603.55,0 609.55,-6 609.55,-12 609.55,-12 609.55,-38.4 609.55,-38.4 609.55,-44.4 603.55,-50.4 597.55,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="517.75" y="-28.95" font-family="Georgia" font-size="15.00">Global weighted context</text>
+<text xml:space="preserve" text-anchor="middle" x="517.75" y="-10.95" font-family="Georgia" font-size="15.00">cₜ</text>
+</g>
+<!-- globalweights&#45;&gt;globalctx -->
+<g id="machine-translation-neural-figure-2-machine-translation-neural-local-global-attention-edge9" class="edge">
+<title>globalweights&#45;&gt;globalctx</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M357.53,-29.4C376.24,-28.91 396.92,-28.36 417.02,-27.83"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="417.03,-30.11 423.47,-27.66 416.91,-25.56 417.03,-30.11"/>
+</g>
+</g>
+</svg>
+</div><figcaption>Luong local attention predicts a source position and scores a window around it; global attention scores every source state. Each path first forms alignment weights, then uses them to build the current target step context.</figcaption></figure>
+
+<details class="worked"><summary>Worked example: distinguish local and global context</summary><p><strong>Given:</strong> a current target decoder state <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>h</mi><mi>t</mi></msub></mrow></math> and an ordered sequence of encoder states.</p>
+<ol>
+<li>For <strong>global</strong> attention, compare <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>h</mi><mi>t</mi></msub></mrow></math> with every source state. The resulting alignment vector has one weight for each source position; combine all states using those weights to obtain <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>c</mi><mi>t</mi></msub></mrow></math>.</li>
+<li>For <strong>local</strong> attention, first predict the aligned position <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>p</mi><mi>t</mi></msub></mrow></math>. Select the source window around <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>p</mi><mi>t</mi></msub></mrow></math>, score states inside that window, and combine only those states into <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>c</mi><mi>t</mi></msub></mrow></math>.</li>
+<li>In either case, the weights are associated with source positions, and the weighted sum is the context. A new target step can have a different alignment and context.</li>
+<li><strong>Check:</strong> the key distinction is the set of source states eligible for weighting: every state for global, a predicted window for local. The lecture diagrams provide no numeric alignment weights, so none are assumed here.</li>
+</ol></details>
+
+<h2 id="section-3">Scaled dot-product attention</h2>
+<p>The Transformer projects vectors into <strong>queries</strong> (Q), <strong>keys</strong> (K), and <strong>values</strong> (V). A query is compared with keys to produce compatibility scores; softmax converts each query row into weights; those weights combine the value vectors. In self-attention, Q, K, and V come from the same sequence. In encoder–decoder cross-attention, Q comes from decoder states, while K and V come from encoder outputs.</p>
+<p>For query length <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>L</mi><mi>q</mi></msub></mrow></math>, key/value length <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>L</mi><mi>k</mi></msub></mrow></math>, key width <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mi>k</mi></msub></mrow></math>, and value width <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mi>v</mi></msub></mrow></math>, the shapes are Q: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>L</mi><mi>q</mi></msub><mo>&#x000D7;</mo><msub><mi>d</mi><mi>k</mi></msub></mrow></math>, K: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>L</mi><mi>k</mi></msub><mo>&#x000D7;</mo><msub><mi>d</mi><mi>k</mi></msub></mrow></math>, V: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>L</mi><mi>k</mi></msub><mo>&#x000D7;</mo><msub><mi>d</mi><mi>v</mi></msub></mrow></math>. Scores and normalized weights have shape <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>L</mi><mi>q</mi></msub><mo>&#x000D7;</mo><msub><mi>L</mi><mi>k</mi></msub></mrow></math>; the result has shape <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>L</mi><mi>q</mi></msub><mo>&#x000D7;</mo><msub><mi>d</mi><mi>v</mi></msub></mrow></math>. Each row corresponds to one query position. Its weights span key positions, and that row's weighted sum is taken over the corresponding rows of V.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="center"><mo>Attention</mo><mo stretchy="false">&#x00028;</mo><mi>Q</mi><mo>&#x0002C;</mo><mi>K</mi><mo>&#x0002C;</mo><mi>V</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo></mtd></mtr><mtr><mtd columnalign="center"><mo>softmax</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mfrac><mrow><mi>Q</mi><msup><mi>K</mi><mrow><mi mathvariant="sans-serif">T</mi></mrow></msup></mrow><mrow><msqrt><mrow><msub><mi>d</mi><mi>k</mi></msub></mrow></msqrt></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mi>V</mi></mtd></mtr></mtable></mrow></math></div>
+<p>The scale by <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msqrt><mrow><msub><mi>d</mi><mi>k</mi></msub></mrow></msqrt></mrow></math> keeps dot products from growing just because key vectors have more components. In decoder masked self-attention, scores for future target positions are set to negative infinity <strong>before</strong> softmax. Their normalized weight is therefore zero, so a position cannot use a later target token it is meant to predict. This is the causal future mask used during target generation.</p>
+
+<details class="worked"><summary>Supplemental calculation: one query attends to two values</summary><p>This <strong>Supplemental calculation</strong> makes the score → softmax → weighted-value dependencies explicit; its numbers are instructional, not lecture weights.</p>
+<p><strong>Givens:</strong> scalar query <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>q</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math>; keys <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>k</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>k</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mi>ln</mi><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow></math>; values <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>v</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mn>2</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>v</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mn>10</mn></mrow></math>; key dimension <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mi>k</mi></msub><mo>&#x0003D;</mo><mn>1</mn></mrow></math>.</p>
+<ol>
+<li><strong>Scores.</strong> The scale is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msqrt><mrow><mn>1</mn></mrow></msqrt><mo>&#x0003D;</mo><mn>1</mn></mrow></math>. Thus <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>q</mi><msub><mi>k</mi><mn>1</mn></msub></mrow><mrow><msqrt><mrow><msub><mi>d</mi><mi>k</mi></msub></mrow></msqrt></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn><mo>&#x000B7;</mo><mn>0</mn></mrow><mrow><mn>1</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>q</mi><msub><mi>k</mi><mn>2</mn></msub></mrow><mrow><msqrt><mrow><msub><mi>d</mi><mi>k</mi></msub></mrow></msqrt></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn><mo>&#x000B7;</mo><mi>ln</mi><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>1</mn></mrow></mfrac><mo>&#x0003D;</mo><mi>ln</mi><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow></math>. The score row is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mi>ln</mi><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo></mrow></math>.</li>
+<li><strong>Exponentials.</strong> Softmax uses <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mi>ln</mi><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>3</mn></mrow></math>. Their denominator is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002B;</mo><mn>3</mn><mo>&#x0003D;</mo><mn>4</mn></mrow></math>.</li>
+<li><strong>Weights.</strong> Divide each exponential by 4: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B1;</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>4</mn></mrow></mfrac></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B1;</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>3</mn></mrow><mrow><mn>4</mn></mrow></mfrac></mrow></math>. Check normalization: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mn>1</mn><mn>4</mn></mfrac><mo>&#x0002B;</mo><mfrac><mn>3</mn><mn>4</mn></mfrac><mo>&#x0003D;</mo><mn>1</mn></mrow></math>.</li>
+<li><strong>Weighted values.</strong> The first contribution is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mn>1</mn><mn>4</mn></mfrac><mo>&#x000B7;</mo><mn>2</mn><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></math>; the second is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mn>3</mn><mn>4</mn></mfrac><mo>&#x000B7;</mo><mn>10</mn><mo>&#x0003D;</mo><mfrac><mrow><mn>15</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mrow></math>.</li>
+<li><strong>Context.</strong> Add the contributions: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>&#x0002B;</mo><mfrac><mrow><mn>15</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>8</mn></mrow></math>. Because the weights are nonnegative and sum to one, 8 lies between the input values 2 and 10. This is a convex-average check.</li>
+</ol>
+<p>For a <strong>supplemental causal-mask check</strong>, suppose key 2 is a forbidden future target position. Replace its score <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>ln</mi><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow></math> with <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mo>&#x0221E;</mo></mrow></math> before softmax. The exponentials become <code>1</code> and <code>0</code>; the weights become <code>1</code> and <code>0</code>; the context is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x000B7;</mo><mn>2</mn><mo>&#x0002B;</mo><mn>0</mn><mo>&#x000B7;</mo><mn>10</mn><mo>&#x0003D;</mo><mn>2</mn></mrow></math>. The future value contributes nothing.</p></details>
+
+<h2 id="section-4">Multi-head attention and positional information</h2>
+<p>A single attention distribution can express one set of pairwise relationships. Multi-head attention runs <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>H</mi></mrow></math> attention operations on learned lower-dimensional projections, concatenates their outputs, then applies an output projection. With model width <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mrow><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">l</mi></mrow></mrow></msub></mrow></math> split evenly across <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>H</mi></mrow></math> heads, each head's projected width is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mrow><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">l</mi></mrow></mrow></msub><mo>&#x0002F;</mo><mi>H</mi></mrow></math>; the concatenated width returns to <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mrow><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">l</mi></mrow></mrow></msub></mrow></math> before the output projection. The matrices below show how each head uses its own Q, K, and V projections.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="center"><msub><mi>Q</mi><mi>h</mi></msub><mo>&#x0003D;</mo><mi>Q</mi><msubsup><mi>W</mi><mi>h</mi><mi>Q</mi></msubsup></mtd></mtr><mtr><mtd columnalign="center"><msub><mi>K</mi><mi>h</mi></msub><mo>&#x0003D;</mo><mi>K</mi><msubsup><mi>W</mi><mi>h</mi><mi>K</mi></msubsup></mtd></mtr><mtr><mtd columnalign="center"><msub><mi>V</mi><mi>h</mi></msub><mo>&#x0003D;</mo><mi>V</mi><msubsup><mi>W</mi><mi>h</mi><mi>V</mi></msubsup></mtd></mtr><mtr><mtd columnalign="center"><msub><mo>head</mo><mi>h</mi></msub><mo>&#x0003D;</mo><mo>Attention</mo><mo stretchy="false">&#x00028;</mo><msub><mi>Q</mi><mi>h</mi></msub><mo>&#x0002C;</mo><msub><mi>K</mi><mi>h</mi></msub><mo>&#x0002C;</mo><msub><mi>V</mi><mi>h</mi></msub><mo stretchy="false">&#x00029;</mo></mtd></mtr><mtr><mtd columnalign="center"><mo>MultiHead</mo><mo stretchy="false">&#x00028;</mo><mi>Q</mi><mo>&#x0002C;</mo><mi>K</mi><mo>&#x0002C;</mo><mi>V</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo></mtd></mtr><mtr><mtd columnalign="center"><mo stretchy="false">[</mo><msub><mo>head</mo><mn>1</mn></msub><mi>;</mi><mi>&#x02026;</mi><mi>;</mi><msub><mo>head</mo><mi>H</mi></msub><mo stretchy="false">]</mo><msup><mi>W</mi><mi>O</mi></msup></mtd></mtr></mtable></mrow></math></div>
+<p>Unmasked self-attention without positional information is <strong>permutation-equivariant</strong>: permuting input positions reorders the output positions in the same way. It does not make the per-token output tensor invariant to reordering, and it does not encode token order by itself. This statement does not apply to causally masked decoder self-attention, whose position-indexed mask imposes a left-to-right constraint. The lecture adds positional encodings to token embeddings so the model receives position information. The sinusoidal formulas use position <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><mi>o</mi><mi>s</mi></mrow></math>, model width <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mrow><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">l</mi></mrow></mrow></msub></mrow></math>, and pair index <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi></mrow></math>; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mi>i</mi></mrow></math> selects an even dimension and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mi>i</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></math> the following odd dimension.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="center"><mi>P</mi><msub><mi>E</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>p</mi><mi>o</mi><mi>s</mi><mo>&#x0002C;</mo><mn>2</mn><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><mo>&#x0003D;</mo></mtd></mtr><mtr><mtd columnalign="center"><mi>sin</mi><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mfrac><mrow><mi>p</mi><mi>o</mi><mi>s</mi></mrow><mrow><msup><mn>10000</mn><mrow><mn>2</mn><mi>i</mi><mo>&#x0002F;</mo><msub><mi>d</mi><mrow><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">l</mi></mrow></mrow></msub></mrow></msup></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow></mtd></mtr><mtr><mtd columnalign="center"><mi>P</mi><msub><mi>E</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>p</mi><mi>o</mi><mi>s</mi><mo>&#x0002C;</mo><mn>2</mn><mi>i</mi><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></msub><mo>&#x0003D;</mo></mtd></mtr><mtr><mtd columnalign="center"><mi>cos</mi><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mfrac><mrow><mi>p</mi><mi>o</mi><mi>s</mi></mrow><mrow><msup><mn>10000</mn><mrow><mn>2</mn><mi>i</mi><mo>&#x0002F;</mo><msub><mi>d</mi><mrow><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">l</mi></mrow></mrow></msub></mrow></msup></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow></mtd></mtr></mtable></mrow></math></div>
+
+<details class="worked"><summary>Worked example: evaluate the first sinusoidal pair</summary><p><strong>Givens:</strong> first pair index <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>; positions <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><mi>o</mi><mi>s</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><mi>o</mi><mi>s</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math>.</p>
+<ol>
+<li>For <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, the denominator is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mn>10000</mn><mrow><mn>0</mn><mo>&#x0002F;</mo><msub><mi>d</mi><mrow><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">l</mi></mrow></mrow></msub></mrow></msup><mo>&#x0003D;</mo><mn>1</mn></mrow></math>, for any positive model width.</li>
+<li>At position 0, the even component is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>sin</mi><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002F;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math>; the following odd component is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>cos</mi><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002F;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn></mrow></math>. The pair is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>.</li>
+<li>At position 1, the even component is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>sin</mi><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x02248;</mo><mn>0.8415</mn></mrow></math>; the odd component is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>cos</mi><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x02248;</mo><mn>0.5403</mn></mrow></math> (angles in radians).</li>
+<li>Add each position vector to the embedding at that position. Even the first dimension pair differs between these two positions.</li>
+<li><strong>Check:</strong> the calculation uses the same dimension pair at both positions; only <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><mi>o</mi><mi>s</mi></mrow></math> changes.</li>
+</ol></details>
+
+<h2 id="section-5">Transformer encoder and decoder blocks</h2>
+<p>The encoder block consists of multi-head self-attention followed by a position-wise feed-forward network. The decoder block orders masked self-attention first, encoder cross-attention second, then the feed-forward network. Cross-attention receives decoder queries and encoder keys and values, connecting the target stream to the encoded source. Each side stacks <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>N</mi></mrow></math> blocks; the original 2017 paper used six encoder blocks and six decoder blocks.</p>
+<p>The original Transformer motivation was to remove recurrence's sequential computation and shorten paths between distant positions, enabling more parallel computation. A shorter path between two positions does not make the full attention computation constant-time; attention still computes interactions across positions.</p>
+<figure><div class="diagram-frame" style="--diagram-width:352.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="One encoder and decoder layer in the source order. The encoder supplies K and V to cross-attention; the current decoder stream supplies Q. Each side repeats its block N times." width="352pt" height="545pt"
+ viewBox="0.00 0.00 352.00 545.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="machine-translation-neural-figure-3-machine-translation-neural-transformer-blocks-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 534.17)">
+<title>G</title>
+<!-- src -->
+<g id="machine-translation-neural-figure-3-machine-translation-neural-transformer-blocks-node1" class="node">
+<title>src</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M127.15,-523.37C127.15,-523.37 13.12,-523.37 13.12,-523.37 7.12,-523.37 1.12,-517.37 1.12,-511.37 1.12,-511.37 1.12,-489.35 1.12,-489.35 1.12,-483.35 7.12,-477.35 13.12,-477.35 13.12,-477.35 127.15,-477.35 127.15,-477.35 133.15,-477.35 139.15,-483.35 139.15,-489.35 139.15,-489.35 139.15,-511.37 139.15,-511.37 139.15,-517.37 133.15,-523.37 127.15,-523.37"/>
+<text xml:space="preserve" text-anchor="middle" x="70.14" y="-504.31" font-family="Georgia" font-size="14.00">Source embeddings</text>
+<text xml:space="preserve" text-anchor="middle" x="70.14" y="-487.06" font-family="Georgia" font-size="14.00">+ positions</text>
+</g>
+<!-- encatt -->
+<g id="machine-translation-neural-figure-3-machine-translation-neural-transformer-blocks-node2" class="node">
+<title>encatt</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M128.28,-444.35C128.28,-444.35 12,-444.35 12,-444.35 6,-444.35 0,-438.35 0,-432.35 0,-432.35 0,-410.33 0,-410.33 0,-404.33 6,-398.33 12,-398.33 12,-398.33 128.28,-398.33 128.28,-398.33 134.28,-398.33 140.28,-404.33 140.28,-410.33 140.28,-410.33 140.28,-432.35 140.28,-432.35 140.28,-438.35 134.28,-444.35 128.28,-444.35"/>
+<text xml:space="preserve" text-anchor="middle" x="70.14" y="-425.29" font-family="Georgia" font-size="14.00">Encoder multi&#45;head</text>
+<text xml:space="preserve" text-anchor="middle" x="70.14" y="-408.04" font-family="Georgia" font-size="14.00">self&#45;attention</text>
+</g>
+<!-- src&#45;&gt;encatt -->
+<g id="machine-translation-neural-figure-3-machine-translation-neural-transformer-blocks-edge1" class="edge">
+<title>src&#45;&gt;encatt</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M70.14,-477.08C70.14,-469.55 70.14,-461.01 70.14,-452.95"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="72.42,-453.12 70.14,-446.62 67.87,-453.12 72.42,-453.12"/>
+</g>
+<!-- encff -->
+<g id="machine-translation-neural-figure-3-machine-translation-neural-transformer-blocks-node3" class="node">
+<title>encff</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M107.65,-365.33C107.65,-365.33 32.62,-365.33 32.62,-365.33 26.62,-365.33 20.62,-359.33 20.62,-353.33 20.62,-353.33 20.62,-331.31 20.62,-331.31 20.62,-325.31 26.62,-319.31 32.62,-319.31 32.62,-319.31 107.65,-319.31 107.65,-319.31 113.65,-319.31 119.65,-325.31 119.65,-331.31 119.65,-331.31 119.65,-353.33 119.65,-353.33 119.65,-359.33 113.65,-365.33 107.65,-365.33"/>
+<text xml:space="preserve" text-anchor="middle" x="70.14" y="-346.27" font-family="Georgia" font-size="14.00">Position&#45;wise</text>
+<text xml:space="preserve" text-anchor="middle" x="70.14" y="-329.02" font-family="Georgia" font-size="14.00">feed&#45;forward</text>
+</g>
+<!-- encatt&#45;&gt;encff -->
+<g id="machine-translation-neural-figure-3-machine-translation-neural-transformer-blocks-edge2" class="edge">
+<title>encatt&#45;&gt;encff</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M70.14,-397.65C70.14,-390.06 70.14,-381.48 70.14,-373.42"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="72.42,-373.6 70.14,-367.1 67.87,-373.6 72.42,-373.6"/>
+</g>
+<!-- encout -->
+<g id="machine-translation-neural-figure-3-machine-translation-neural-transformer-blocks-node4" class="node">
+<title>encout</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M134.16,-281.3C134.16,-281.3 38.12,-281.3 38.12,-281.3 32.12,-281.3 26.12,-275.3 26.12,-269.3 26.12,-269.3 26.12,-257.3 26.12,-257.3 26.12,-251.3 32.12,-245.3 38.12,-245.3 38.12,-245.3 134.16,-245.3 134.16,-245.3 140.16,-245.3 146.16,-251.3 146.16,-257.3 146.16,-257.3 146.16,-269.3 146.16,-269.3 146.16,-275.3 140.16,-281.3 134.16,-281.3"/>
+<text xml:space="preserve" text-anchor="middle" x="86.14" y="-258.62" font-family="Georgia" font-size="14.00">Encoder outputs</text>
+</g>
+<!-- encff&#45;&gt;encout -->
+<g id="machine-translation-neural-figure-3-machine-translation-neural-transformer-blocks-edge3" class="edge">
+<title>encff&#45;&gt;encout</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M74.77,-319.04C76.7,-309.74 78.95,-298.89 80.94,-289.32"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="83.14,-289.94 82.23,-283.12 78.68,-289.02 83.14,-289.94"/>
+</g>
+<!-- cross -->
+<g id="machine-translation-neural-figure-3-machine-translation-neural-transformer-blocks-node7" class="node">
+<title>cross</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M200.03,-194.04C200.03,-194.04 112.25,-194.04 112.25,-194.04 106.25,-194.04 100.25,-188.04 100.25,-182.04 100.25,-182.04 100.25,-170.04 100.25,-170.04 100.25,-164.04 106.25,-158.04 112.25,-158.04 112.25,-158.04 200.03,-158.04 200.03,-158.04 206.03,-158.04 212.03,-164.04 212.03,-170.04 212.03,-170.04 212.03,-182.04 212.03,-182.04 212.03,-188.04 206.03,-194.04 200.03,-194.04"/>
+<text xml:space="preserve" text-anchor="middle" x="156.14" y="-171.36" font-family="Georgia" font-size="14.00">Cross&#45;attention</text>
+</g>
+<!-- encout&#45;&gt;cross -->
+<g id="machine-translation-neural-figure-3-machine-translation-neural-transformer-blocks-edge6" class="edge">
+<title>encout&#45;&gt;cross</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M99.53,-245.24C107.65,-234.97 118.27,-221.67 127.89,-210.04 130.47,-206.92 133.22,-203.65 135.94,-200.44"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="137.31,-202.33 139.8,-195.91 133.85,-199.38 137.31,-202.33"/>
+<text xml:space="preserve" text-anchor="middle" x="162.01" y="-212.89" font-family="Georgia" font-size="12.00">encoder K, V</text>
+</g>
+<!-- tgt -->
+<g id="machine-translation-neural-figure-3-machine-translation-neural-transformer-blocks-node5" class="node">
+<title>tgt</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M318.65,-365.33C318.65,-365.33 153.62,-365.33 153.62,-365.33 147.62,-365.33 141.62,-359.33 141.62,-353.33 141.62,-353.33 141.62,-331.31 141.62,-331.31 141.62,-325.31 147.62,-319.31 153.62,-319.31 153.62,-319.31 318.65,-319.31 318.65,-319.31 324.65,-319.31 330.65,-325.31 330.65,-331.31 330.65,-331.31 330.65,-353.33 330.65,-353.33 330.65,-359.33 324.65,-365.33 318.65,-365.33"/>
+<text xml:space="preserve" text-anchor="middle" x="236.14" y="-346.27" font-family="Georgia" font-size="14.00">Previous target embeddings</text>
+<text xml:space="preserve" text-anchor="middle" x="236.14" y="-329.02" font-family="Georgia" font-size="14.00">+ positions</text>
+</g>
+<!-- masked -->
+<g id="machine-translation-neural-figure-3-machine-translation-neural-transformer-blocks-node6" class="node">
+<title>masked</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M280.4,-286.31C280.4,-286.31 185.88,-286.31 185.88,-286.31 179.88,-286.31 173.88,-280.31 173.88,-274.31 173.88,-274.31 173.88,-252.29 173.88,-252.29 173.88,-246.29 179.88,-240.29 185.88,-240.29 185.88,-240.29 280.4,-240.29 280.4,-240.29 286.4,-240.29 292.4,-246.29 292.4,-252.29 292.4,-252.29 292.4,-274.31 292.4,-274.31 292.4,-280.31 286.4,-286.31 280.4,-286.31"/>
+<text xml:space="preserve" text-anchor="middle" x="233.14" y="-267.25" font-family="Georgia" font-size="14.00">Masked decoder</text>
+<text xml:space="preserve" text-anchor="middle" x="233.14" y="-250" font-family="Georgia" font-size="14.00">self&#45;attention</text>
+</g>
+<!-- tgt&#45;&gt;masked -->
+<g id="machine-translation-neural-figure-3-machine-translation-neural-transformer-blocks-edge4" class="edge">
+<title>tgt&#45;&gt;masked</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M235.27,-319.04C234.98,-311.51 234.65,-302.97 234.33,-294.91"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="236.61,-294.98 234.09,-288.57 232.07,-295.16 236.61,-294.98"/>
+</g>
+<!-- masked&#45;&gt;cross -->
+<g id="machine-translation-neural-figure-3-machine-translation-neural-transformer-blocks-edge5" class="edge">
+<title>masked&#45;&gt;cross</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M219.41,-239.36C213.19,-229.82 205.38,-218.92 197.14,-210.04 193.88,-206.52 190.23,-203.06 186.49,-199.78"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="188.17,-198.22 181.74,-195.77 185.23,-201.7 188.17,-198.22"/>
+</g>
+<!-- decff -->
+<g id="machine-translation-neural-figure-3-machine-translation-neural-transformer-blocks-node8" class="node">
+<title>decff</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M193.65,-125.04C193.65,-125.04 118.62,-125.04 118.62,-125.04 112.62,-125.04 106.62,-119.04 106.62,-113.04 106.62,-113.04 106.62,-91.02 106.62,-91.02 106.62,-85.02 112.62,-79.02 118.62,-79.02 118.62,-79.02 193.65,-79.02 193.65,-79.02 199.65,-79.02 205.65,-85.02 205.65,-91.02 205.65,-91.02 205.65,-113.04 205.65,-113.04 205.65,-119.04 199.65,-125.04 193.65,-125.04"/>
+<text xml:space="preserve" text-anchor="middle" x="156.14" y="-105.98" font-family="Georgia" font-size="14.00">Position&#45;wise</text>
+<text xml:space="preserve" text-anchor="middle" x="156.14" y="-88.73" font-family="Georgia" font-size="14.00">feed&#45;forward</text>
+</g>
+<!-- cross&#45;&gt;decff -->
+<g id="machine-translation-neural-figure-3-machine-translation-neural-transformer-blocks-edge7" class="edge">
+<title>cross&#45;&gt;decff</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M156.14,-157.24C156.14,-150.06 156.14,-141.56 156.14,-133.45"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="158.42,-133.55 156.14,-127.05 153.87,-133.55 158.42,-133.55"/>
+</g>
+<!-- next -->
+<g id="machine-translation-neural-figure-3-machine-translation-neural-transformer-blocks-node9" class="node">
+<title>next</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M207.91,-46.02C207.91,-46.02 104.37,-46.02 104.37,-46.02 98.37,-46.02 92.37,-40.02 92.37,-34.02 92.37,-34.02 92.37,-12 92.37,-12 92.37,-6 98.37,0 104.37,0 104.37,0 207.91,0 207.91,0 213.91,0 219.91,-6 219.91,-12 219.91,-12 219.91,-34.02 219.91,-34.02 219.91,-40.02 213.91,-46.02 207.91,-46.02"/>
+<text xml:space="preserve" text-anchor="middle" x="156.14" y="-26.96" font-family="Georgia" font-size="14.00">Next&#45;token scores</text>
+<text xml:space="preserve" text-anchor="middle" x="156.14" y="-9.71" font-family="Georgia" font-size="14.00">(including EOS)</text>
+</g>
+<!-- decff&#45;&gt;next -->
+<g id="machine-translation-neural-figure-3-machine-translation-neural-transformer-blocks-edge8" class="edge">
+<title>decff&#45;&gt;next</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M156.14,-78.75C156.14,-71.16 156.14,-62.53 156.14,-54.4"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="158.42,-54.52 156.14,-48.02 153.87,-54.52 158.42,-54.52"/>
+</g>
+</g>
+</svg>
+</div><figcaption>One encoder and decoder layer in the source order. The encoder supplies K and V to cross-attention; the current decoder stream supplies Q. Each side repeats its block N times.</figcaption></figure>
+
+<details class="worked"><summary>Worked example: trace one decoder block in order</summary><p><strong>Given:</strong> source encoder outputs; a target prefix whose next token is being predicted.</p>
+<ol>
+<li>Add positional encodings to the target-prefix embeddings and pass them through <strong>masked self-attention</strong>. Future target positions receive <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mo>&#x0221E;</mo></mrow></math> scores before softmax.</li>
+<li>Pass those decoder states as Q to <strong>cross-attention</strong>. Use encoder outputs as K and V; the decoder can retrieve source information relevant to its target state.</li>
+<li>Pass the cross-attention result through the position-wise <strong>feed-forward</strong> network.</li>
+<li>Repeat this ordered decoder block through the stack. At the top, the representation is used to score the next token, including <code>EOS</code>.</li>
+<li><strong>Check:</strong> decoder order is masked self-attention → cross-attention → feed-forward. The encoder's corresponding order is self-attention → feed-forward, and encoder outputs feed cross-attention as K and V.</li>
+</ol></details>
+
+<p><a id="bpe-subword-tokenization"></a></p>
+<h2 id="section-6">Byte-pair encoding builds subword pieces</h2>
+<p>A softmax over a large whole-word vocabulary is expensive, and a fixed word list can leave rare words out of vocabulary. Byte-pair encoding (BPE) starts from character symbols and repeatedly merges adjacent pairs according to a learned merge list, stopping after a fixed number of merges. Frequent words may become single tokens, while rarer words can remain sequences of pieces. This supports open-vocabulary representation, but learned subword boundaries are <strong>not guaranteed to be morpheme boundaries</strong>. The supplied merge sequence below illustrates applying operations; it does not provide corpus pair counts or claim to be a complete learned vocabulary.</p>
+<p>The literal <code>&lt;/w&gt;</code> symbol marks a word ending in this example. The table shows every word state after each printed merge. BPE addresses the representation of rare or unseen word combinations; it does not guarantee that each piece has a linguistic meaning or that the model will translate it correctly. A character absent from the starting inventory still needs a handling policy.</p>
+<section class="walk" tabindex="0" aria-label="Source-aligned BPE merge states"><h3>Source-aligned BPE merge states</h3><div class="example-input"><p><strong>Starting strings:</strong> <code>low</code>, <code>lower</code>, <code>newest</code>, <code>widest</code>. Split into characters and append <code>&lt;/w&gt;</code>. Apply the supplied merges in this order: <code>(e,s) → es</code>, <code>(es,t) → est</code>, <code>(est,&lt;/w&gt;) → est&lt;/w&gt;</code>, <code>(l,o) → lo</code>.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Start: characters</h4><p><strong>Given words:</strong> <code>low</code>, <code>lower</code>, <code>newest</code>, and <code>widest</code>. Start with each character as a symbol and append the word-end marker <code>&lt;/w&gt;</code>.</p>
+<table><thead><tr><th>Word</th><th>Symbols</th></tr></thead><tbody><tr><th>low</th><td><code>l o w &lt;/w&gt;</code></td></tr><tr><th>lower</th><td><code>l o w e r &lt;/w&gt;</code></td></tr><tr><th>newest</th><td><code>n e w e s t &lt;/w&gt;</code></td></tr><tr><th>widest</th><td><code>w i d e s t &lt;/w&gt;</code></td></tr></tbody></table>
+<p>This is the supplied starting state, not a frequency table.</p></section><section class="step"><h4>Merge (e, s) → es</h4><p>Apply the printed adjacent-symbol merge <code>(e, s) → es</code> wherever that pair occurs.</p>
+<table><thead><tr><th>Word</th><th>Symbols after merge</th></tr></thead><tbody><tr><th>low</th><td><code>l o w &lt;/w&gt;</code></td></tr><tr><th>lower</th><td><code>l o w e r &lt;/w&gt;</code></td></tr><tr><th>newest</th><td><code>n e w es t &lt;/w&gt;</code></td></tr><tr><th>widest</th><td><code>w i d es t &lt;/w&gt;</code></td></tr></tbody></table>
+<p>Both words containing the adjacent pair now use the symbol <code>es</code>.</p></section><section class="step"><h4>Merge (es, t) → est</h4><p>Now merge <code>es</code> followed by <code>t</code>. This only changes the two words whose current states contain that adjacent pair.</p>
+<table><thead><tr><th>Word</th><th>Symbols after merge</th></tr></thead><tbody><tr><th>low</th><td><code>l o w &lt;/w&gt;</code></td></tr><tr><th>lower</th><td><code>l o w e r &lt;/w&gt;</code></td></tr><tr><th>newest</th><td><code>n e w est &lt;/w&gt;</code></td></tr><tr><th>widest</th><td><code>w i d est &lt;/w&gt;</code></td></tr></tbody></table></section><section class="step"><h4>Merge (est, &lt;/w&gt;) → est&lt;/w&gt;</h4><p>Merge the ending symbol with the word-end marker: <code>(est, &lt;/w&gt;) → est&lt;/w&gt;</code>.</p>
+<table><thead><tr><th>Word</th><th>Symbols after merge</th></tr></thead><tbody><tr><th>low</th><td><code>l o w &lt;/w&gt;</code></td></tr><tr><th>lower</th><td><code>l o w e r &lt;/w&gt;</code></td></tr><tr><th>newest</th><td><code>n e w est&lt;/w&gt;</code></td></tr><tr><th>widest</th><td><code>w i d est&lt;/w&gt;</code></td></tr></tbody></table>
+<p>The word-end marker is now part of that merged token for these two states.</p></section><section class="step"><h4>Merge (l, o) → lo</h4><p>Apply the final printed operation to <code>l</code> followed by <code>o</code>.</p>
+<table><thead><tr><th>Word</th><th>Symbols after merge</th></tr></thead><tbody><tr><th>low</th><td><code>lo w &lt;/w&gt;</code></td></tr><tr><th>lower</th><td><code>lo w e r &lt;/w&gt;</code></td></tr><tr><th>newest</th><td><code>n e w est&lt;/w&gt;</code></td></tr><tr><th>widest</th><td><code>w i d est&lt;/w&gt;</code></td></tr></tbody></table>
+<p><strong>Check:</strong> every row follows the preceding state; only adjacent occurrences of the current pair merge. A fixed merge list is then reused on input, and a new word&#x27;s pieces need not correspond to meaningful morphemes.</p></section></section>
+<p>Continue to <a href="machine-translation-decoding-evaluation.html">translation decoding and evaluation</a> to see how these subword pieces enter the next stage.</p>
+<h2 id="section-7">Common mistakes</h2>
+<ul>
+<li>Treating the recurrent fixed-context model and attention as one unchanged path. The first has a single context vector; attention forms a context from source states for each target step.</li>
+<li>Calling the roughly 30-token observation a universal cutoff. It is a particular reported result, not a general law.</li>
+<li>Confusing global attention's all-source scope with local attention's predicted window.</li>
+<li>Swapping cross-attention roles: decoder states provide Q; encoder outputs provide K and V.</li>
+<li>Applying a future mask after softmax. Future scores must be removed before normalization so their weights become zero.</li>
+<li>Saying position-free self-attention gives an identical output tensor under permutation. It is permutation-equivariant: outputs reorder with inputs, and order is not encoded by attention alone.</li>
+<li>Treating the block diagram as including residual and normalization layers. The lecture's shown order covers attention and feed-forward components only.</li>
+<li>Reading BPE pieces as guaranteed morphemes, or inferring pair frequencies from the displayed merge sequence. Neither is justified by these states.</li>
+</ul>
+<h2 id="section-8">Exam focus</h2>
+<ul>
+<li><strong>Basic recurrent NMT:</strong> encoder reads the source into fixed-size <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi></mrow></math>; decoder predicts each next target token from <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi></mrow></math> and the target prefix, ending with <code>EOS</code>.</li>
+<li><strong>Attention:</strong> global scores all source states; local predicts <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>p</mi><mi>t</mi></msub></mrow></math> and scores a surrounding window. Both form a weighted context.</li>
+<li><strong>Scaled dot-product:</strong> scores are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>Q</mi><msup><mi>K</mi><mrow><mi mathvariant="sans-serif">T</mi></mrow></msup></mrow><mrow><msqrt><mrow><msub><mi>d</mi><mi>k</mi></msub></mrow></msqrt></mrow></mfrac></mrow></math>; row-wise softmax gives key-position weights; multiplying by V forms one output row per query.</li>
+<li><strong>Roles:</strong> self-attention draws Q/K/V from one sequence; encoder–decoder cross-attention draws Q from decoder states and K/V from encoder outputs. Future target positions are masked before softmax.</li>
+<li><strong>Multi-head:</strong> independently project, attend, concatenate, and output-project. Positional encoding supplies order information; the sinusoidal even/odd components use sine/cosine.</li>
+<li><strong>Blocks:</strong> encoder self-attention → feed-forward; decoder masked self-attention → cross-attention → feed-forward. Stack N per side; six per side in the original paper.</li>
+<li><strong>BPE:</strong> start with characters and word-end markers, apply a fixed merge sequence, and reuse it. Open-vocabulary pieces need not be morphemes.</li>
+</ul>
+<h2 id="section-9">Practice questions</h2>
+<p class="question">1. In the basic recurrent encoder–decoder, what does the decoder use to predict the next target token?</p>
+<details class="worked"><summary>Check your answer</summary><p>The fixed source context <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi></mrow></math> and the target history generated so far. It emits one token at a time and eventually predicts <code>EOS</code>.</p></details>
+
+<p class="question">2. A local-attention model predicts <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>p</mi><mi>t</mi></msub></mrow></math>. Which source states are eligible for its context, and how does that differ from global attention?</p>
+<details class="worked"><summary>Check your answer</summary><p>Local attention scores states in a window around <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>p</mi><mi>t</mi></msub></mrow></math>; global attention scores all source states. In either case, the weights combine eligible source states into a context vector.</p></details>
+
+<p class="question">3. If <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi></mrow></math> has shape <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>5</mn><mo>&#x000D7;</mo><mn>8</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>K</mi></mrow></math> has shape <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>7</mn><mo>&#x000D7;</mo><mn>8</mn></mrow></math>, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>V</mi></mrow></math> has shape <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>7</mn><mo>&#x000D7;</mo><mn>12</mn></mrow></math>, what are the score and attention-output shapes? What does one row mean?</p>
+<details class="worked"><summary>Check your answer</summary><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><msup><mi>K</mi><mrow><mi mathvariant="sans-serif">T</mi></mrow></msup></mrow></math> has shape <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>5</mn><mo>&#x000D7;</mo><mn>7</mn></mrow></math>. After row-wise softmax, multiplying by <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>V</mi></mrow></math> gives <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>5</mn><mo>&#x000D7;</mo><mn>12</mn></mrow></math>. Each of the five rows belongs to one query position; its seven weights refer to the seven key positions, and its output is a weighted sum of the seven value rows.</p></details>
+
+<p class="question">4. In decoder cross-attention, where do <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>K</mi></mrow></math>, and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>V</mi></mrow></math> come from? When must the causal mask be applied?</p>
+<details class="worked"><summary>Check your answer</summary><p>Cross-attention <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi></mrow></math> comes from decoder states; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>K</mi></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>V</mi></mrow></math> come from encoder outputs. For masked decoder self-attention, set future-position scores to negative infinity before softmax, making their weights zero.</p></details>
+
+<p class="question">5. Without positional information, what does permutation-equivariance say about unmasked self-attention outputs?</p>
+<details class="worked"><summary>Check your answer</summary><p>If input positions are permuted, the output positions are permuted in the same way. The per-token output tensor is not generally invariant, and attention alone does not encode sequence order.</p></details>
+
+<p class="question">6. Apply the first two supplied BPE merges to newest. What symbols remain, and what can you infer about whether the final piece is a morpheme?</p>
+<details class="worked"><summary>Check your answer</summary><p>Starting with <code>n e w e s t &lt;/w&gt;</code>, merge <code>(e,s) → es</code> to get <code>n e w es t &lt;/w&gt;</code>, then merge <code>(es,t) → est</code> to get <code>n e w est &lt;/w&gt;</code>. This merge trace alone does not establish that <code>est</code> is a morpheme.</p></details>
+
+<h2 id="section-10">Further reading</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/1409.0473">Neural Machine Translation by Jointly Learning to Align and Translate — Bahdanau, Cho, and Bengio (2014)</a> introduces soft source alignment to address the fixed-vector bottleneck.</li>
+<li><a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need — Vaswani et al. (2017)</a> presents the Transformer architecture and its scaled attention and block ordering.</li>
+<li><a href="https://aclanthology.org/P16-1162/">Neural Machine Translation of Rare Words with Subword Units — Sennrich, Haddow, and Birch (2016)</a> studies subword units for rare and unknown words.</li>
+</ul></article><nav class="pager" aria-label="Study sequence"><a href="machine-translation-classical.html"><small>Previous</small>Machine Translation: Rule-Based and Statistical Methods <span aria-hidden="true">↗</span></a><a href="machine-translation-decoding-evaluation.html"><small>Next</small>Translation Decoding, Multilingual Models, and Evaluation <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

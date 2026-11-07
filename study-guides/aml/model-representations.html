@@ -1,0 +1,1023 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="How the model’s representation shapes the boundaries and regions it can learn, illustrated with Spam/Ham email examples."><title>Classifier boundaries and decision-tree representations · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html" aria-current="page">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Foundations and classical learning <span>/</span> Lecture 1</div><h1>Classifier boundaries and decision-tree representations</h1><p class="lead">How the model’s representation shapes the boundaries and regions it can learn, illustrated with Spam/Ham email examples.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Representation and hypothesis families</a><a href="#section-2">Linear scores, decision boundaries, and margins</a><a href="#section-3">Decision trees: tests, branches, and leaves</a><a href="#section-4">Compact comparison</a><a href="#section-5">Common confusions</a><a href="#section-6">Revision reminders</a><a href="#section-7">Further study</a><a href="#section-8">Practice</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>A learning method chooses both a <strong>representation</strong> for possible models and a way to search among them. Those choices determine which patterns it can express. A linear classifier draws one straight boundary in feature space; a decision tree builds a set of feature tests whose branches carve that space into labeled regions. Email Spam/Ham classification illustrates how these representations fit training examples—and why lower training error alone does not settle which model is best.</p>
+<h2 id="section-1">Representation and hypothesis families</h2>
+<p>A <strong>hypothesis</strong> is one candidate model: a possible function from inputs to predictions. The <strong>hypothesis family</strong> is the set of candidates allowed by a representation. Learning searches within that family using examples and an evaluation rule. If the family is too restricted, no candidate may describe the pattern; if it is very flexible, a candidate can match peculiarities of the training set.</p>
+<p>Common representation families include:</p>
+<table>
+<thead>
+<tr>
+<th>Representation family</th>
+<th>What the model stores or computes</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Numerical functions</td>
+<td>A numeric mapping from features to a score or value</td>
+<td>Linear regression, neural networks, support vector machines</td>
+</tr>
+<tr>
+<td>Symbolic functions</td>
+<td>Explicit tests or rules that partition cases</td>
+<td>Decision trees; propositional and first-order logic rules</td>
+</tr>
+<tr>
+<td>Instance-based functions</td>
+<td>Keeps examples/cases and predicts from similar stored instances</td>
+<td>Nearest-neighbour, case-based methods</td>
+</tr>
+<tr>
+<td>Probabilistic graphical models</td>
+<td>Represents variables and probabilistic relationships</td>
+<td>Naïve Bayes, Bayesian networks, HMMs, PCFGs, Markov networks</td>
+</tr>
+<tr>
+<td>Ensembles</td>
+<td>Combines multiple models</td>
+<td>Model ensembles</td>
+</tr>
+</tbody>
+</table>
+<p>A numerical score, symbolic rule set, remembered-neighbour rule, probability graph, and ensemble can all solve prediction tasks, but they express different kinds of structure. “Representation” answers what forms a candidate model may take; “evaluation” says how candidates are judged; “optimization” describes how the search is carried out. These are the three components of a machine-learning algorithm; the focus here is their role, not deriving a search procedure.</p>
+<h2 id="section-2">Linear scores, decision boundaries, and margins</h2>
+<p><strong>Supplemental formalization:</strong> a standard mathematical description of a linear classifier uses a weighted score. With feature vector <strong>x</strong>, weights <strong>w</strong>, and offset <strong>b</strong>, its boundary is where the score is zero:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>f</mi><mo stretchy="false">&#x00028;</mo><mi>&#x1D431;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msup><mi>&#x1D430;</mi><mrow><mi>&#x1D5B3;</mi></mrow></msup><mi>&#x1D431;</mi><mo>&#x0002B;</mo><mi>b</mi></mrow></math></div>
+<p>One side has a positive score and the other a negative score; the classifier maps the two sides to class labels. The boundary itself satisfies <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>f</mi><mo stretchy="false">&#x00028;</mo><mi>&#x1D431;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math>. For email classification, the feature axes are <strong>New Recipients</strong> horizontally and <strong>Email Length</strong> vertically. Place a new email at its feature values and assign the label associated with the side containing it. The next schematic uses different line styles to show alternative separators; circles and squares distinguish two illustrative class groups, and a diamond marks a constructed new email on the square side.</p>
+<figure class="feature-space"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 490" width="100%" style="width:100%;height:auto;max-width:760px;max-height:none!important;display:block;margin:0 auto" role="img" aria-label="Schematic feature space with two example classes, a new email marker, and three alternative straight separators">
+<title>Alternative straight separators in a feature space</title>
+<g fill="none" stroke="var(--diagram-edge,#547b86)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M90 410H665 M90 410V65"/>
+  <path d="m665 410-12-7v14z M90 65l-7 12h14z" fill="var(--diagram-edge,#547b86)"/>
+  <path d="M285 400 495 82" stroke-dasharray="" stroke-width="3"/>
+  <path d="M250 400 473 82" stroke-dasharray="10 7"/>
+  <path d="M320 400 518 82" stroke-dasharray="3 7"/>
+  <circle cx="150" cy="112" r="8" fill="var(--diagram-fill,#e8f1f3)"/><circle cx="190" cy="142" r="8" fill="var(--diagram-fill,#e8f1f3)"/><circle cx="135" cy="190" r="8" fill="var(--diagram-fill,#e8f1f3)"/><circle cx="230" cy="205" r="8" fill="var(--diagram-fill,#e8f1f3)"/><circle cx="175" cy="265" r="8" fill="var(--diagram-fill,#e8f1f3)"/><circle cx="250" cy="155" r="8" fill="var(--diagram-fill,#e8f1f3)"/>
+  <rect x="430" y="265" width="16" height="16" rx="1" fill="var(--diagram-fill,#e8f1f3)"/><rect x="500" y="300" width="16" height="16" rx="1" fill="var(--diagram-fill,#e8f1f3)"/><rect x="555" y="230" width="16" height="16" rx="1" fill="var(--diagram-fill,#e8f1f3)"/><rect x="460" y="345" width="16" height="16" rx="1" fill="var(--diagram-fill,#e8f1f3)"/><rect x="600" y="315" width="16" height="16" rx="1" fill="var(--diagram-fill,#e8f1f3)"/><rect x="535" y="365" width="16" height="16" rx="1" fill="var(--diagram-fill,#e8f1f3)"/>
+  <path d="M560 190l11 11-11 11-11-11z" fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="3"/>
+</g>
+<g fill="var(--foreground,#26363a)" font-family="Candara,Segoe UI,sans-serif" font-size="30">
+  <text x="360" y="462" text-anchor="middle">New Recipients</text>
+  <text x="26" y="238" text-anchor="middle" transform="rotate(-90 26 238)">Email Length</text>
+  <text x="118" y="80">○ Class A</text><text x="246" y="80">□ Class B</text><text x="360" y="80">◇ New email</text>
+  <text x="530" y="112">Candidate 1</text><text x="500" y="139">Candidate 2</text><text x="515" y="166">Candidate 3</text>
+</g>
+</svg>
+<figcaption>Teaching schematic with reconstructed class symbols and point positions; these are not source observations or scaled data. The three candidate lines each separate the two illustrative groups. The diamond is a constructed new-email example on the Class B side.</figcaption></figure>
+<p>Each of the three candidate lines in the schematic leaves its two constructed groups on opposite sides, so several separators can fit one training arrangement. Their clearances differ. The <strong>margin</strong> is the width through which the boundary could move before it hits a training example. The next figure marks a centered maximum-margin separator and the two limits of its margin band. The lecture introduces this maximum-margin linear classifier as the simplest kind of SVM (LSVM).</p>
+<figure class="feature-space"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 490" width="100%" style="width:100%;height:auto;max-width:760px;max-height:none!important;display:block;margin:0 auto" role="img" aria-label="Schematic feature space showing a maximum-margin separator centered between nearest examples">
+<title>Margin and maximum-margin separator</title>
+<g fill="none" stroke="var(--diagram-edge,#547b86)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M90 410H665 M90 410V65"/>
+  <path d="m665 410-12-7v14z M90 65l-7 12h14z" fill="var(--diagram-edge,#547b86)"/>
+  <polygon points="286,343 354,387 534,112 466,68" fill="var(--accent,#d7e9ed)" stroke="none" opacity=".72"/>
+  <path d="M286 343 466 68" stroke-dasharray="9 7"/>
+  <path d="M354 387 534 112" stroke-dasharray="9 7"/>
+  <path d="M320 365 500 90" stroke="var(--primary,#315e6a)" stroke-width="4"/>
+  <circle cx="150" cy="112" r="8" fill="var(--diagram-fill,#e8f1f3)"/><circle cx="190" cy="142" r="8" fill="var(--diagram-fill,#e8f1f3)"/><circle cx="135" cy="190" r="8" fill="var(--diagram-fill,#e8f1f3)"/><circle cx="235" cy="200" r="8" fill="var(--diagram-fill,#e8f1f3)"/><circle cx="175" cy="265" r="8" fill="var(--diagram-fill,#e8f1f3)"/><circle cx="245" cy="148" r="8" fill="var(--diagram-fill,#e8f1f3)"/>
+  <rect x="436" y="241" width="16" height="16" rx="1" fill="var(--diagram-fill,#e8f1f3)"/><rect x="500" y="300" width="16" height="16" rx="1" fill="var(--diagram-fill,#e8f1f3)"/><rect x="565" y="230" width="16" height="16" rx="1" fill="var(--diagram-fill,#e8f1f3)"/><rect x="465" y="345" width="16" height="16" rx="1" fill="var(--diagram-fill,#e8f1f3)"/><rect x="605" y="315" width="16" height="16" rx="1" fill="var(--diagram-fill,#e8f1f3)"/>
+  <circle cx="377" cy="206" r="11" fill="var(--diagram-fill,#e8f1f3)" stroke="var(--primary,#315e6a)" stroke-width="4"/>
+  <rect x="433" y="238" width="22" height="22" fill="var(--diagram-fill,#e8f1f3)" stroke="var(--primary,#315e6a)" stroke-width="4"/>
+  <path d="M383 210 447 251 M377 200l6 10 4-11 M451 257l-4-11-6 10" stroke="var(--primary,#315e6a)" stroke-width="2.5"/>
+</g>
+<g fill="var(--foreground,#26363a)" font-family="Candara,Segoe UI,sans-serif" font-size="30">
+  <text x="360" y="462" text-anchor="middle">New Recipients</text>
+  <text x="26" y="238" text-anchor="middle" transform="rotate(-90 26 238)">Email Length</text>
+  <text x="114" y="80">○ Class A</text><text x="242" y="80">□ Class B</text>
+  <text x="490" y="172">Maximum-margin</text><text x="490" y="197">separator</text>
+  <text x="448" y="290">margin width</text>
+</g>
+</svg>
+<figcaption>Teaching schematic with constructed point positions. The solid line is centered between the nearest illustrative examples; dashed lines mark the margin limits. Geometry is explanatory, not measured source data.</figcaption></figure>
+<details class="worked"><summary>Why several separators can all fit</summary><p>Imagine two labeled groups with a clear gap between them. Any line through that gap leaves every shown point on its original side, yet the distance from the closest points differs. The margin criterion compares that clearance without changing the feature axes or class labels.</p></details>
+<h3>When a straight boundary is not enough</h3>
+<p>The email example then reaches a pattern for which no single linear classifier covers all instances. The final schematic constructs one such case: squares surround circles, so no straight cut can put every square on one side and every circle on the other. A nonlinear closed boundary can separate this constructed arrangement, as a curved boundary can fit a nonseparable pattern. This teaching geometry illustrates the idea; it is not a reconstruction of the lecture’s plotted records.</p>
+<figure class="feature-space"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 490" width="100%" style="width:100%;height:auto;max-width:760px;max-height:none!important;display:block;margin:0 auto" role="img" aria-label="Constructed schematic with an inner circle class, surrounding square class, a failed straight cut, and a nonlinear closed boundary">
+<title>Nonseparable classes and a nonlinear boundary</title>
+<g fill="none" stroke="var(--diagram-edge,#547b86)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M90 410H665 M90 410V65"/>
+  <path d="m665 410-12-7v14z M90 65l-7 12h14z" fill="var(--diagram-edge,#547b86)"/>
+  <path d="M220 400 530 82" stroke-dasharray="10 8" stroke-width="3"/>
+  <ellipse cx="355" cy="235" rx="76" ry="58" stroke="var(--primary,#315e6a)" stroke-width="4"/>
+  <circle cx="335" cy="222" r="8" fill="var(--diagram-fill,#e8f1f3)"/><circle cx="372" cy="220" r="8" fill="var(--diagram-fill,#e8f1f3)"/><circle cx="347" cy="246" r="8" fill="var(--diagram-fill,#e8f1f3)"/><circle cx="374" cy="250" r="8" fill="var(--diagram-fill,#e8f1f3)"/>
+  <rect x="205" y="112" width="16" height="16" rx="1" fill="var(--diagram-fill,#e8f1f3)"/><rect x="500" y="104" width="16" height="16" rx="1" fill="var(--diagram-fill,#e8f1f3)"/><rect x="145" y="220" width="16" height="16" rx="1" fill="var(--diagram-fill,#e8f1f3)"/><rect x="555" y="220" width="16" height="16" rx="1" fill="var(--diagram-fill,#e8f1f3)"/><rect x="215" y="335" width="16" height="16" rx="1" fill="var(--diagram-fill,#e8f1f3)"/><rect x="500" y="340" width="16" height="16" rx="1" fill="var(--diagram-fill,#e8f1f3)"/>
+</g>
+<g fill="var(--foreground,#26363a)" font-family="Candara,Segoe UI,sans-serif" font-size="30">
+  <text x="360" y="462" text-anchor="middle">New Recipients</text>
+  <text x="26" y="238" text-anchor="middle" transform="rotate(-90 26 238)">Email Length</text>
+  <text x="110" y="80">○ Class A</text><text x="238" y="80">□ Class B</text>
+  <text x="445" y="265">nonlinear boundary</text>
+  <text x="465" y="165">one straight cut</text>
+</g>
+</svg>
+<figcaption>Constructed schematic, not the lecture’s point set: surrounding squares and inner circles cannot be separated by one straight line, while a nonlinear closed boundary separates this illustrative arrangement.</figcaption></figure>
+<p>Fitting the observed examples still does not settle performance on novel input. That is the generalization issue; see <a href="evaluation-generalization.html">Evaluation and generalization</a>.</p>
+<h2 id="section-3">Decision trees: tests, branches, and leaves</h2>
+<p>A decision tree is a flow-chart-like symbolic model. Each internal node tests an attribute, each outgoing branch records a test outcome, and each leaf predicts a class (or can represent a class distribution). With numeric features, successive tests form axis-parallel regions in feature space; each terminal region receives a class label. A one-level tree is a <strong>decision stump</strong>.</p>
+<p>The email examples use the class labels <strong>Spam</strong> and <strong>Ham</strong>, and tests on <strong>Email Len</strong> and <strong>New Recip</strong>. Read a path by applying each threshold test in order, then use the leaf prediction. The displayed error count beside each leaf counts training examples in that leaf that disagree with its prediction. To get a tree's total training error, add its leaf counts.</p>
+<p>The deepest tree is wider than a phone screen. Scroll sideways inside its diagram frame to inspect both sides; you can also focus the frame and use the left and right arrow keys. The page itself stays within the screen width.</p>
+<section class="walk" tabindex="0" aria-label="Compare tree training-error states"><h3>Compare tree training-error states</h3><div class="example-input"><strong>Fixed context</strong><span>Target labels: Spam / Ham</span><span>Features: Email Len and New Recip</span><span>Training-error total = sum of the displayed leaf errors</span><span>The two first stumps are alternatives; states 3 and 4 extend the Email Len stump.</span></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Stump A — Email Len at 1.8 (9 errors)</h4><p>One test gives two terminal predictions. The Spam leaf has 1 error and the Ham leaf has 8, so this state totals <strong><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002B;</mo><mn>8</mn><mo>&#x0003D;</mo><mn>9</mn></mrow></math> training errors</strong>.</p>
+<figure><div class="diagram-frame" style="--diagram-width:184.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Email Len split at 1.8; leaf errors 1 + 8 = 9." width="184pt" height="154pt"
+ viewBox="0.00 0.00 184.00 154.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="model-representations-figure-4-model-representations-tree-state-01-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 143.45)">
+<title>G</title>
+<!-- root -->
+<g id="model-representations-figure-4-model-representations-tree-state-01-node1" class="node">
+<title>root</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M115.97,-132.65C115.97,-132.65 41.88,-132.65 41.88,-132.65 35.88,-132.65 29.88,-126.65 29.88,-120.65 29.88,-120.65 29.88,-108.65 29.88,-108.65 29.88,-102.65 35.88,-96.65 41.88,-96.65 41.88,-96.65 115.97,-96.65 115.97,-96.65 121.97,-96.65 127.97,-102.65 127.97,-108.65 127.97,-108.65 127.97,-120.65 127.97,-120.65 127.97,-126.65 121.97,-132.65 115.97,-132.65"/>
+<text xml:space="preserve" text-anchor="middle" x="78.92" y="-109.4" font-family="Georgia" font-size="15.00">Email Len?</text>
+</g>
+<!-- spam_a -->
+<g id="model-representations-figure-4-model-representations-tree-state-01-node2" class="node">
+<title>spam_a</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M53.85,-50.4C53.85,-50.4 12,-50.4 12,-50.4 6,-50.4 0,-44.4 0,-38.4 0,-38.4 0,-12 0,-12 0,-6 6,0 12,0 12,0 53.85,0 53.85,0 59.85,0 65.85,-6 65.85,-12 65.85,-12 65.85,-38.4 65.85,-38.4 65.85,-44.4 59.85,-50.4 53.85,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="32.92" y="-28.95" font-family="Georgia" font-size="15.00">Spam</text>
+<text xml:space="preserve" text-anchor="middle" x="32.92" y="-10.95" font-family="Georgia" font-size="15.00">1 error</text>
+</g>
+<!-- root&#45;&gt;spam_a -->
+<g id="model-representations-figure-4-model-representations-tree-state-01-edge1" class="edge">
+<title>root&#45;&gt;spam_a</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M69.62,-95.95C63.86,-85 56.3,-70.63 49.54,-57.78"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="51.62,-56.86 46.58,-52.17 47.6,-58.98 51.62,-56.86"/>
+<text xml:space="preserve" text-anchor="middle" x="73.02" y="-69.25" font-family="Georgia" font-size="12.00">&lt;1.8</text>
+</g>
+<!-- ham_a -->
+<g id="model-representations-figure-4-model-representations-tree-state-01-node3" class="node">
+<title>ham_a</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M150.35,-50.4C150.35,-50.4 99.5,-50.4 99.5,-50.4 93.5,-50.4 87.5,-44.4 87.5,-38.4 87.5,-38.4 87.5,-12 87.5,-12 87.5,-6 93.5,0 99.5,0 99.5,0 150.35,0 150.35,0 156.35,0 162.35,-6 162.35,-12 162.35,-12 162.35,-38.4 162.35,-38.4 162.35,-44.4 156.35,-50.4 150.35,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="124.92" y="-28.95" font-family="Georgia" font-size="15.00">Ham</text>
+<text xml:space="preserve" text-anchor="middle" x="124.92" y="-10.95" font-family="Georgia" font-size="15.00">8 errors</text>
+</g>
+<!-- root&#45;&gt;ham_a -->
+<g id="model-representations-figure-4-model-representations-tree-state-01-edge2" class="edge">
+<title>root&#45;&gt;ham_a</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M88.23,-95.95C93.99,-85 101.55,-70.63 108.31,-57.78"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="110.25,-58.98 111.27,-52.17 106.23,-56.86 110.25,-58.98"/>
+<text xml:space="preserve" text-anchor="middle" x="114.93" y="-69.25" font-family="Georgia" font-size="12.00">≥1.8</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Email Len split at 1.8; leaf errors 1 + 8 = 9.</figcaption></figure></section><section class="step"><h4>2. Alternative stump — New Recip at 2.3 (15 errors)</h4><p>This is a competing one-test tree, not the next edit to Stump A. Its leaves have 4 and 11 errors: <strong><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>4</mn><mo>&#x0002B;</mo><mn>11</mn><mo>&#x0003D;</mo><mn>15</mn></mrow></math></strong>. It is a different split choice.</p>
+<figure><div class="diagram-frame" style="--diagram-width:197.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Alternative New Recip split at 2.3; leaf errors 4 + 11 = 15." width="197pt" height="154pt"
+ viewBox="0.00 0.00 197.00 154.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="model-representations-figure-5-model-representations-tree-state-02-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 143.45)">
+<title>G</title>
+<!-- root -->
+<g id="model-representations-figure-5-model-representations-tree-state-02-node1" class="node">
+<title>root</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M124.22,-132.65C124.22,-132.65 47.88,-132.65 47.88,-132.65 41.88,-132.65 35.87,-126.65 35.87,-120.65 35.87,-120.65 35.87,-108.65 35.87,-108.65 35.87,-102.65 41.87,-96.65 47.87,-96.65 47.87,-96.65 124.22,-96.65 124.22,-96.65 130.22,-96.65 136.22,-102.65 136.22,-108.65 136.22,-108.65 136.22,-120.65 136.22,-120.65 136.22,-126.65 130.22,-132.65 124.22,-132.65"/>
+<text xml:space="preserve" text-anchor="middle" x="86.05" y="-109.4" font-family="Georgia" font-size="15.00">New Recip?</text>
+</g>
+<!-- spam_a -->
+<g id="model-representations-figure-5-model-representations-tree-state-02-node2" class="node">
+<title>spam_a</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M62.1,-50.4C62.1,-50.4 12,-50.4 12,-50.4 6,-50.4 0,-44.4 0,-38.4 0,-38.4 0,-12 0,-12 0,-6 6,0 12,0 12,0 62.1,0 62.1,0 68.1,0 74.1,-6 74.1,-12 74.1,-12 74.1,-38.4 74.1,-38.4 74.1,-44.4 68.1,-50.4 62.1,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="37.05" y="-28.95" font-family="Georgia" font-size="15.00">Spam</text>
+<text xml:space="preserve" text-anchor="middle" x="37.05" y="-10.95" font-family="Georgia" font-size="15.00">4 errors</text>
+</g>
+<!-- root&#45;&gt;spam_a -->
+<g id="model-representations-figure-5-model-representations-tree-state-02-edge1" class="edge">
+<title>root&#45;&gt;spam_a</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M76.13,-95.95C70,-85 61.95,-70.63 54.75,-57.78"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="56.75,-56.71 51.59,-52.15 52.78,-58.93 56.75,-56.71"/>
+<text xml:space="preserve" text-anchor="middle" x="79.38" y="-69.25" font-family="Georgia" font-size="12.00">&lt;2.3</text>
+</g>
+<!-- ham_a -->
+<g id="model-representations-figure-5-model-representations-tree-state-02-node3" class="node">
+<title>ham_a</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M163.73,-50.4C163.73,-50.4 108.38,-50.4 108.38,-50.4 102.38,-50.4 96.38,-44.4 96.38,-38.4 96.38,-38.4 96.38,-12 96.38,-12 96.38,-6 102.38,0 108.38,0 108.38,0 163.73,0 163.73,0 169.73,0 175.73,-6 175.73,-12 175.73,-12 175.73,-38.4 175.73,-38.4 175.73,-44.4 169.73,-50.4 163.73,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="136.05" y="-28.95" font-family="Georgia" font-size="15.00">Ham</text>
+<text xml:space="preserve" text-anchor="middle" x="136.05" y="-10.95" font-family="Georgia" font-size="15.00">11 errors</text>
+</g>
+<!-- root&#45;&gt;ham_a -->
+<g id="model-representations-figure-5-model-representations-tree-state-02-edge2" class="edge">
+<title>root&#45;&gt;ham_a</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M96.17,-95.95C102.43,-85 110.65,-70.63 117.99,-57.78"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="119.97,-58.91 121.22,-52.14 116.02,-56.66 119.97,-58.91"/>
+<text xml:space="preserve" text-anchor="middle" x="124.55" y="-69.25" font-family="Georgia" font-size="12.00">≥2.3</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Alternative New Recip split at 2.3; leaf errors 4 + 11 = 15.</figcaption></figure></section><section class="step"><h4>3. Extend Stump A — split Email Len ≥ 1.8 at 4 (5 errors)</h4><p>Continue from the first stump. The left Spam leaf remains; the right branch is tested again. The three leaf counts give <strong><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002B;</mo><mn>3</mn><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>5</mn></mrow></math></strong>.</p>
+<figure><div class="diagram-frame" style="--diagram-width:237.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Split the ≥1.8 branch at 4; errors 1 + 3 + 1 = 5." width="237pt" height="251pt"
+ viewBox="0.00 0.00 237.00 251.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="model-representations-figure-6-model-representations-tree-state-03-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 240.1)">
+<title>G</title>
+<!-- root -->
+<g id="model-representations-figure-6-model-representations-tree-state-03-node1" class="node">
+<title>root</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M94.97,-229.3C94.97,-229.3 20.88,-229.3 20.88,-229.3 14.88,-229.3 8.88,-223.3 8.88,-217.3 8.88,-217.3 8.88,-205.3 8.88,-205.3 8.88,-199.3 14.88,-193.3 20.88,-193.3 20.88,-193.3 94.97,-193.3 94.97,-193.3 100.97,-193.3 106.97,-199.3 106.97,-205.3 106.97,-205.3 106.97,-217.3 106.97,-217.3 106.97,-223.3 100.97,-229.3 94.97,-229.3"/>
+<text xml:space="preserve" text-anchor="middle" x="57.92" y="-206.05" font-family="Georgia" font-size="15.00">Email Len?</text>
+</g>
+<!-- branch -->
+<g id="model-representations-figure-6-model-representations-tree-state-03-node2" class="node">
+<title>branch</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M173.98,-139.85C173.98,-139.85 99.88,-139.85 99.88,-139.85 93.88,-139.85 87.88,-133.85 87.88,-127.85 87.88,-127.85 87.88,-115.85 87.88,-115.85 87.88,-109.85 93.88,-103.85 99.88,-103.85 99.88,-103.85 173.98,-103.85 173.98,-103.85 179.98,-103.85 185.98,-109.85 185.98,-115.85 185.98,-115.85 185.98,-127.85 185.98,-127.85 185.98,-133.85 179.98,-139.85 173.98,-139.85"/>
+<text xml:space="preserve" text-anchor="middle" x="136.93" y="-116.6" font-family="Georgia" font-size="15.00">Email Len?</text>
+</g>
+<!-- root&#45;&gt;branch -->
+<g id="model-representations-figure-6-model-representations-tree-state-03-edge2" class="edge">
+<title>root&#45;&gt;branch</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M73.53,-193.02C85.6,-179.66 102.43,-161.03 115.72,-146.32"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="117.12,-148.16 119.79,-141.81 113.75,-145.11 117.12,-148.16"/>
+<text xml:space="preserve" text-anchor="middle" x="111.42" y="-165.9" font-family="Georgia" font-size="12.00">≥1.8</text>
+</g>
+<!-- spam_a -->
+<g id="model-representations-figure-6-model-representations-tree-state-03-node3" class="node">
+<title>spam_a</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M53.85,-147.05C53.85,-147.05 12,-147.05 12,-147.05 6,-147.05 0,-141.05 0,-135.05 0,-135.05 0,-108.65 0,-108.65 0,-102.65 6,-96.65 12,-96.65 12,-96.65 53.85,-96.65 53.85,-96.65 59.85,-96.65 65.85,-102.65 65.85,-108.65 65.85,-108.65 65.85,-135.05 65.85,-135.05 65.85,-141.05 59.85,-147.05 53.85,-147.05"/>
+<text xml:space="preserve" text-anchor="middle" x="32.92" y="-125.6" font-family="Georgia" font-size="15.00">Spam</text>
+<text xml:space="preserve" text-anchor="middle" x="32.92" y="-107.6" font-family="Georgia" font-size="15.00">1 error</text>
+</g>
+<!-- root&#45;&gt;spam_a -->
+<g id="model-representations-figure-6-model-representations-tree-state-03-edge1" class="edge">
+<title>root&#45;&gt;spam_a</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M52.99,-193.02C49.87,-182.12 45.75,-167.71 42.05,-154.78"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="44.33,-154.45 40.35,-148.83 39.95,-155.71 44.33,-154.45"/>
+<text xml:space="preserve" text-anchor="middle" x="60.02" y="-165.9" font-family="Georgia" font-size="12.00">&lt;1.8</text>
+</g>
+<!-- ham_a -->
+<g id="model-representations-figure-6-model-representations-tree-state-03-node4" class="node">
+<title>ham_a</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M115.97,-50.4C115.97,-50.4 65.88,-50.4 65.88,-50.4 59.88,-50.4 53.88,-44.4 53.88,-38.4 53.88,-38.4 53.88,-12 53.88,-12 53.88,-6 59.88,0 65.88,0 65.88,0 115.97,0 115.97,0 121.97,0 127.97,-6 127.97,-12 127.97,-12 127.97,-38.4 127.97,-38.4 127.97,-44.4 121.97,-50.4 115.97,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="90.92" y="-28.95" font-family="Georgia" font-size="15.00">Ham</text>
+<text xml:space="preserve" text-anchor="middle" x="90.92" y="-10.95" font-family="Georgia" font-size="15.00">3 errors</text>
+</g>
+<!-- branch&#45;&gt;ham_a -->
+<g id="model-representations-figure-6-model-representations-tree-state-03-edge3" class="edge">
+<title>branch&#45;&gt;ham_a</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M128.27,-103.05C122.1,-90.35 113.63,-72.92 106.32,-57.87"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="108.39,-56.92 103.5,-52.07 104.29,-58.91 108.39,-56.92"/>
+<text xml:space="preserve" text-anchor="middle" x="123.8" y="-69.25" font-family="Georgia" font-size="12.00">&lt;4</text>
+</g>
+<!-- spam_b -->
+<g id="model-representations-figure-6-model-representations-tree-state-03-node5" class="node">
+<title>spam_b</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M203.85,-50.4C203.85,-50.4 162,-50.4 162,-50.4 156,-50.4 150,-44.4 150,-38.4 150,-38.4 150,-12 150,-12 150,-6 156,0 162,0 162,0 203.85,0 203.85,0 209.85,0 215.85,-6 215.85,-12 215.85,-12 215.85,-38.4 215.85,-38.4 215.85,-44.4 209.85,-50.4 203.85,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="182.93" y="-28.95" font-family="Georgia" font-size="15.00">Spam</text>
+<text xml:space="preserve" text-anchor="middle" x="182.93" y="-10.95" font-family="Georgia" font-size="15.00">1 error</text>
+</g>
+<!-- branch&#45;&gt;spam_b -->
+<g id="model-representations-figure-6-model-representations-tree-state-03-edge4" class="edge">
+<title>branch&#45;&gt;spam_b</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M145.58,-103.05C151.75,-90.35 160.22,-72.92 167.53,-57.87"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="169.56,-58.91 170.35,-52.07 165.46,-56.92 169.56,-58.91"/>
+<text xml:space="preserve" text-anchor="middle" x="169.8" y="-69.25" font-family="Georgia" font-size="12.00">≥4</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Split the ≥1.8 branch at 4; errors 1 + 3 + 1 = 5.</figcaption></figure></section><section class="step"><h4>4. Split the middle branch on New Recip at 1 (3 errors)</h4><p>Only the <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1.8</mn><mo>&#x02264;</mo><mtext>Email&#x000A0;Len</mtext><mo>&#x0003C;</mo><mn>4</mn></mrow></math> branch is split. Its leaves now predict Spam below 1 and Ham at or above 1. Summing all four leaves: <strong><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002B;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>3</mn></mrow></math></strong>.</p>
+<figure><div class="diagram-frame" style="--diagram-width:243.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Split the middle Email Len region on New Recip at 1; errors 1 + 0 + 1 + 1 = 3." width="243pt" height="348pt"
+ viewBox="0.00 0.00 243.00 348.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="model-representations-figure-7-model-representations-tree-state-04-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 336.75)">
+<title>G</title>
+<!-- root -->
+<g id="model-representations-figure-7-model-representations-tree-state-04-node1" class="node">
+<title>root</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M110.47,-325.95C110.47,-325.95 36.38,-325.95 36.38,-325.95 30.38,-325.95 24.38,-319.95 24.38,-313.95 24.38,-313.95 24.38,-301.95 24.38,-301.95 24.38,-295.95 30.38,-289.95 36.38,-289.95 36.38,-289.95 110.47,-289.95 110.47,-289.95 116.47,-289.95 122.47,-295.95 122.47,-301.95 122.47,-301.95 122.47,-313.95 122.47,-313.95 122.47,-319.95 116.47,-325.95 110.47,-325.95"/>
+<text xml:space="preserve" text-anchor="middle" x="73.42" y="-302.7" font-family="Georgia" font-size="15.00">Email Len?</text>
+</g>
+<!-- email -->
+<g id="model-representations-figure-7-model-representations-tree-state-04-node2" class="node">
+<title>email</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M189.48,-236.5C189.48,-236.5 115.38,-236.5 115.38,-236.5 109.38,-236.5 103.38,-230.5 103.38,-224.5 103.38,-224.5 103.38,-212.5 103.38,-212.5 103.38,-206.5 109.38,-200.5 115.38,-200.5 115.38,-200.5 189.48,-200.5 189.48,-200.5 195.48,-200.5 201.48,-206.5 201.48,-212.5 201.48,-212.5 201.48,-224.5 201.48,-224.5 201.48,-230.5 195.48,-236.5 189.48,-236.5"/>
+<text xml:space="preserve" text-anchor="middle" x="152.43" y="-213.25" font-family="Georgia" font-size="15.00">Email Len?</text>
+</g>
+<!-- root&#45;&gt;email -->
+<g id="model-representations-figure-7-model-representations-tree-state-04-edge2" class="edge">
+<title>root&#45;&gt;email</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M89.03,-289.67C101.26,-276.14 118.38,-257.19 131.75,-242.39"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="133.17,-244.21 135.83,-237.86 129.79,-241.16 133.17,-244.21"/>
+<text xml:space="preserve" text-anchor="middle" x="126.92" y="-262.55" font-family="Georgia" font-size="12.00">≥1.8</text>
+</g>
+<!-- spam_a -->
+<g id="model-representations-figure-7-model-representations-tree-state-04-node4" class="node">
+<title>spam_a</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M69.35,-243.7C69.35,-243.7 27.5,-243.7 27.5,-243.7 21.5,-243.7 15.5,-237.7 15.5,-231.7 15.5,-231.7 15.5,-205.3 15.5,-205.3 15.5,-199.3 21.5,-193.3 27.5,-193.3 27.5,-193.3 69.35,-193.3 69.35,-193.3 75.35,-193.3 81.35,-199.3 81.35,-205.3 81.35,-205.3 81.35,-231.7 81.35,-231.7 81.35,-237.7 75.35,-243.7 69.35,-243.7"/>
+<text xml:space="preserve" text-anchor="middle" x="48.42" y="-222.25" font-family="Georgia" font-size="15.00">Spam</text>
+<text xml:space="preserve" text-anchor="middle" x="48.42" y="-204.25" font-family="Georgia" font-size="15.00">1 error</text>
+</g>
+<!-- root&#45;&gt;spam_a -->
+<g id="model-representations-figure-7-model-representations-tree-state-04-edge1" class="edge">
+<title>root&#45;&gt;spam_a</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M68.49,-289.67C65.37,-278.77 61.25,-264.36 57.55,-251.43"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="59.83,-251.1 55.85,-245.48 55.45,-252.36 59.83,-251.1"/>
+<text xml:space="preserve" text-anchor="middle" x="75.52" y="-262.55" font-family="Georgia" font-size="12.00">&lt;1.8</text>
+</g>
+<!-- recip -->
+<g id="model-representations-figure-7-model-representations-tree-state-04-node3" class="node">
+<title>recip</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M121.6,-139.85C121.6,-139.85 45.25,-139.85 45.25,-139.85 39.25,-139.85 33.25,-133.85 33.25,-127.85 33.25,-127.85 33.25,-115.85 33.25,-115.85 33.25,-109.85 39.25,-103.85 45.25,-103.85 45.25,-103.85 121.6,-103.85 121.6,-103.85 127.6,-103.85 133.6,-109.85 133.6,-115.85 133.6,-115.85 133.6,-127.85 133.6,-127.85 133.6,-133.85 127.6,-139.85 121.6,-139.85"/>
+<text xml:space="preserve" text-anchor="middle" x="83.42" y="-116.6" font-family="Georgia" font-size="15.00">New Recip?</text>
+</g>
+<!-- email&#45;&gt;recip -->
+<g id="model-representations-figure-7-model-representations-tree-state-04-edge3" class="edge">
+<title>email&#45;&gt;recip</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M139.77,-200.14C128.92,-185.25 113.16,-163.64 101.07,-147.06"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="103.03,-145.88 97.36,-141.97 99.35,-148.56 103.03,-145.88"/>
+<text xml:space="preserve" text-anchor="middle" x="129.18" y="-165.9" font-family="Georgia" font-size="12.00">&lt;4</text>
+</g>
+<!-- spam_c -->
+<g id="model-representations-figure-7-model-representations-tree-state-04-node7" class="node">
+<title>spam_c</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M209.35,-147.05C209.35,-147.05 167.5,-147.05 167.5,-147.05 161.5,-147.05 155.5,-141.05 155.5,-135.05 155.5,-135.05 155.5,-108.65 155.5,-108.65 155.5,-102.65 161.5,-96.65 167.5,-96.65 167.5,-96.65 209.35,-96.65 209.35,-96.65 215.35,-96.65 221.35,-102.65 221.35,-108.65 221.35,-108.65 221.35,-135.05 221.35,-135.05 221.35,-141.05 215.35,-147.05 209.35,-147.05"/>
+<text xml:space="preserve" text-anchor="middle" x="188.43" y="-125.6" font-family="Georgia" font-size="15.00">Spam</text>
+<text xml:space="preserve" text-anchor="middle" x="188.43" y="-107.6" font-family="Georgia" font-size="15.00">1 error</text>
+</g>
+<!-- email&#45;&gt;spam_c -->
+<g id="model-representations-figure-7-model-representations-tree-state-04-edge4" class="edge">
+<title>email&#45;&gt;spam_c</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M159.03,-200.14C163.88,-187.39 170.6,-169.71 176.4,-154.48"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="178.43,-155.53 178.61,-148.64 174.18,-153.91 178.43,-155.53"/>
+<text xml:space="preserve" text-anchor="middle" x="179.71" y="-165.9" font-family="Georgia" font-size="12.00">≥4</text>
+</g>
+<!-- spam_b -->
+<g id="model-representations-figure-7-model-representations-tree-state-04-node5" class="node">
+<title>spam_b</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M62.85,-50.4C62.85,-50.4 12,-50.4 12,-50.4 6,-50.4 0,-44.4 0,-38.4 0,-38.4 0,-12 0,-12 0,-6 6,0 12,0 12,0 62.85,0 62.85,0 68.85,0 74.85,-6 74.85,-12 74.85,-12 74.85,-38.4 74.85,-38.4 74.85,-44.4 68.85,-50.4 62.85,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="37.42" y="-28.95" font-family="Georgia" font-size="15.00">Spam</text>
+<text xml:space="preserve" text-anchor="middle" x="37.42" y="-10.95" font-family="Georgia" font-size="15.00">0 errors</text>
+</g>
+<!-- recip&#45;&gt;spam_b -->
+<g id="model-representations-figure-7-model-representations-tree-state-04-edge5" class="edge">
+<title>recip&#45;&gt;spam_b</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M74.77,-103.05C68.6,-90.35 60.13,-72.92 52.82,-57.87"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="54.89,-56.92 50,-52.07 50.79,-58.91 54.89,-56.92"/>
+<text xml:space="preserve" text-anchor="middle" x="69.55" y="-69.25" font-family="Georgia" font-size="12.00">&lt;1</text>
+</g>
+<!-- ham_a -->
+<g id="model-representations-figure-7-model-representations-tree-state-04-node6" class="node">
+<title>ham_a</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M150.35,-50.4C150.35,-50.4 108.5,-50.4 108.5,-50.4 102.5,-50.4 96.5,-44.4 96.5,-38.4 96.5,-38.4 96.5,-12 96.5,-12 96.5,-6 102.5,0 108.5,0 108.5,0 150.35,0 150.35,0 156.35,0 162.35,-6 162.35,-12 162.35,-12 162.35,-38.4 162.35,-38.4 162.35,-44.4 156.35,-50.4 150.35,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="129.43" y="-28.95" font-family="Georgia" font-size="15.00">Ham</text>
+<text xml:space="preserve" text-anchor="middle" x="129.43" y="-10.95" font-family="Georgia" font-size="15.00">1 error</text>
+</g>
+<!-- recip&#45;&gt;ham_a -->
+<g id="model-representations-figure-7-model-representations-tree-state-04-edge6" class="edge">
+<title>recip&#45;&gt;ham_a</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M92.08,-103.05C98.25,-90.35 106.72,-72.92 114.03,-57.87"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="116.06,-58.91 116.85,-52.07 111.96,-56.92 116.06,-58.91"/>
+<text xml:space="preserve" text-anchor="middle" x="115.55" y="-69.25" font-family="Georgia" font-size="12.00">≥1</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Split the middle Email Len region on New Recip at 1; errors 1 + 0 + 1 + 1 = 3.</figcaption></figure></section><section class="step"><h4>5. Deeper alternative — nine zero-error leaves</h4><p>The deeper alternative uses thresholds 1.8, 3, 4, 4, 1, 4, 2, and 3 on the labeled features. Each of its nine leaves has 0 errors; therefore its training total is <strong><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>9</mn><mo>&#x000D7;</mo><mn>0</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math></strong>. This is a training-set result, not evidence by itself that the tree will generalize best.</p>
+<figure><div class="diagram-frame" style="--diagram-width:681.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Deeper alternative tree; nine leaves each report 0 errors (total 0)." width="681pt" height="430pt"
+ viewBox="0.00 0.00 681.00 430.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="model-representations-figure-8-model-representations-tree-state-05-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 419)">
+<title>G</title>
+<!-- root -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-node1" class="node">
+<title>root</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M245.48,-408.2C245.48,-408.2 171.38,-408.2 171.38,-408.2 165.38,-408.2 159.38,-402.2 159.38,-396.2 159.38,-396.2 159.38,-384.2 159.38,-384.2 159.38,-378.2 165.38,-372.2 171.38,-372.2 171.38,-372.2 245.48,-372.2 245.48,-372.2 251.48,-372.2 257.48,-378.2 257.48,-384.2 257.48,-384.2 257.48,-396.2 257.48,-396.2 257.48,-402.2 251.48,-408.2 245.48,-408.2"/>
+<text xml:space="preserve" text-anchor="middle" x="208.43" y="-384.95" font-family="Georgia" font-size="15.00">Email Len?</text>
+</g>
+<!-- left -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-node2" class="node">
+<title>left</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M185.6,-325.95C185.6,-325.95 109.25,-325.95 109.25,-325.95 103.25,-325.95 97.25,-319.95 97.25,-313.95 97.25,-313.95 97.25,-301.95 97.25,-301.95 97.25,-295.95 103.25,-289.95 109.25,-289.95 109.25,-289.95 185.6,-289.95 185.6,-289.95 191.6,-289.95 197.6,-295.95 197.6,-301.95 197.6,-301.95 197.6,-313.95 197.6,-313.95 197.6,-319.95 191.6,-325.95 185.6,-325.95"/>
+<text xml:space="preserve" text-anchor="middle" x="147.43" y="-302.7" font-family="Georgia" font-size="15.00">New Recip?</text>
+</g>
+<!-- root&#45;&gt;left -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-edge1" class="edge">
+<title>root&#45;&gt;left</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M194.89,-371.39C186.22,-359.99 174.87,-345.06 165.44,-332.66"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="167.38,-331.44 161.63,-327.64 163.75,-334.19 167.38,-331.44"/>
+<text xml:space="preserve" text-anchor="middle" x="193.2" y="-344.8" font-family="Georgia" font-size="12.00">&lt;1.8</text>
+</g>
+<!-- right -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-node4" class="node">
+<title>right</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M342.48,-325.95C342.48,-325.95 268.38,-325.95 268.38,-325.95 262.38,-325.95 256.38,-319.95 256.38,-313.95 256.38,-313.95 256.38,-301.95 256.38,-301.95 256.38,-295.95 262.38,-289.95 268.38,-289.95 268.38,-289.95 342.48,-289.95 342.48,-289.95 348.48,-289.95 354.48,-295.95 354.48,-301.95 354.48,-301.95 354.48,-313.95 354.48,-313.95 354.48,-319.95 348.48,-325.95 342.48,-325.95"/>
+<text xml:space="preserve" text-anchor="middle" x="305.43" y="-302.7" font-family="Georgia" font-size="15.00">Email Len?</text>
+</g>
+<!-- root&#45;&gt;right -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-edge2" class="edge">
+<title>root&#45;&gt;right</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M229.95,-371.39C244.24,-359.57 263.11,-343.96 278.41,-331.3"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="279.57,-333.3 283.13,-327.4 276.67,-329.79 279.57,-333.3"/>
+<text xml:space="preserve" text-anchor="middle" x="274.36" y="-344.8" font-family="Georgia" font-size="12.00">≥1.8</text>
+</g>
+<!-- leftdeep -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-node3" class="node">
+<title>leftdeep</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M185.6,-236.5C185.6,-236.5 109.25,-236.5 109.25,-236.5 103.25,-236.5 97.25,-230.5 97.25,-224.5 97.25,-224.5 97.25,-212.5 97.25,-212.5 97.25,-206.5 103.25,-200.5 109.25,-200.5 109.25,-200.5 185.6,-200.5 185.6,-200.5 191.6,-200.5 197.6,-206.5 197.6,-212.5 197.6,-212.5 197.6,-224.5 197.6,-224.5 197.6,-230.5 191.6,-236.5 185.6,-236.5"/>
+<text xml:space="preserve" text-anchor="middle" x="147.43" y="-213.25" font-family="Georgia" font-size="15.00">New Recip?</text>
+</g>
+<!-- left&#45;&gt;leftdeep -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-edge4" class="edge">
+<title>left&#45;&gt;leftdeep</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M147.43,-289.67C147.43,-276.74 147.43,-258.85 147.43,-244.38"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="149.7,-244.75 147.43,-238.25 145.15,-244.75 149.7,-244.75"/>
+<text xml:space="preserve" text-anchor="middle" x="154.55" y="-262.55" font-family="Georgia" font-size="12.00">≥3</text>
+</g>
+<!-- spam_a -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-node9" class="node">
+<title>spam_a</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M62.85,-243.7C62.85,-243.7 12,-243.7 12,-243.7 6,-243.7 0,-237.7 0,-231.7 0,-231.7 0,-205.3 0,-205.3 0,-199.3 6,-193.3 12,-193.3 12,-193.3 62.85,-193.3 62.85,-193.3 68.85,-193.3 74.85,-199.3 74.85,-205.3 74.85,-205.3 74.85,-231.7 74.85,-231.7 74.85,-237.7 68.85,-243.7 62.85,-243.7"/>
+<text xml:space="preserve" text-anchor="middle" x="37.43" y="-222.25" font-family="Georgia" font-size="15.00">Spam</text>
+<text xml:space="preserve" text-anchor="middle" x="37.43" y="-204.25" font-family="Georgia" font-size="15.00">0 errors</text>
+</g>
+<!-- left&#45;&gt;spam_a -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-edge3" class="edge">
+<title>left&#45;&gt;spam_a</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M125.43,-289.46C110.8,-277.83 91.23,-262.27 74.25,-248.78"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="75.82,-247.12 69.32,-244.85 72.99,-250.68 75.82,-247.12"/>
+<text xml:space="preserve" text-anchor="middle" x="112.64" y="-262.55" font-family="Georgia" font-size="12.00">&lt;3</text>
+</g>
+<!-- ham_a -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-node10" class="node">
+<title>ham_a</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M75.85,-147.05C75.85,-147.05 25,-147.05 25,-147.05 19,-147.05 13,-141.05 13,-135.05 13,-135.05 13,-108.65 13,-108.65 13,-102.65 19,-96.65 25,-96.65 25,-96.65 75.85,-96.65 75.85,-96.65 81.85,-96.65 87.85,-102.65 87.85,-108.65 87.85,-108.65 87.85,-135.05 87.85,-135.05 87.85,-141.05 81.85,-147.05 75.85,-147.05"/>
+<text xml:space="preserve" text-anchor="middle" x="50.43" y="-125.6" font-family="Georgia" font-size="15.00">Ham</text>
+<text xml:space="preserve" text-anchor="middle" x="50.43" y="-107.6" font-family="Georgia" font-size="15.00">0 errors</text>
+</g>
+<!-- leftdeep&#45;&gt;ham_a -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-edge5" class="edge">
+<title>leftdeep&#45;&gt;ham_a</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M129.63,-200.14C115.97,-186.81 96.79,-168.09 80.73,-152.42"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="82.73,-151.2 76.49,-148.29 79.56,-154.45 82.73,-151.2"/>
+<text xml:space="preserve" text-anchor="middle" x="111.86" y="-165.9" font-family="Georgia" font-size="12.00">&lt;4</text>
+</g>
+<!-- spam_b -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-node11" class="node">
+<title>spam_b</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M172.85,-147.05C172.85,-147.05 122,-147.05 122,-147.05 116,-147.05 110,-141.05 110,-135.05 110,-135.05 110,-108.65 110,-108.65 110,-102.65 116,-96.65 122,-96.65 122,-96.65 172.85,-96.65 172.85,-96.65 178.85,-96.65 184.85,-102.65 184.85,-108.65 184.85,-108.65 184.85,-135.05 184.85,-135.05 184.85,-141.05 178.85,-147.05 172.85,-147.05"/>
+<text xml:space="preserve" text-anchor="middle" x="147.43" y="-125.6" font-family="Georgia" font-size="15.00">Spam</text>
+<text xml:space="preserve" text-anchor="middle" x="147.43" y="-107.6" font-family="Georgia" font-size="15.00">0 errors</text>
+</g>
+<!-- leftdeep&#45;&gt;spam_b -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-edge6" class="edge">
+<title>leftdeep&#45;&gt;spam_b</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M147.43,-200.14C147.43,-187.51 147.43,-170.03 147.43,-154.89"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="149.7,-155.24 147.43,-148.74 145.15,-155.24 149.7,-155.24"/>
+<text xml:space="preserve" text-anchor="middle" x="154.55" y="-165.9" font-family="Georgia" font-size="12.00">≥4</text>
+</g>
+<!-- mid -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-node5" class="node">
+<title>mid</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M343.6,-236.5C343.6,-236.5 267.25,-236.5 267.25,-236.5 261.25,-236.5 255.25,-230.5 255.25,-224.5 255.25,-224.5 255.25,-212.5 255.25,-212.5 255.25,-206.5 261.25,-200.5 267.25,-200.5 267.25,-200.5 343.6,-200.5 343.6,-200.5 349.6,-200.5 355.6,-206.5 355.6,-212.5 355.6,-212.5 355.6,-224.5 355.6,-224.5 355.6,-230.5 349.6,-236.5 343.6,-236.5"/>
+<text xml:space="preserve" text-anchor="middle" x="305.43" y="-213.25" font-family="Georgia" font-size="15.00">New Recip?</text>
+</g>
+<!-- right&#45;&gt;mid -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-edge7" class="edge">
+<title>right&#45;&gt;mid</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M305.43,-289.67C305.43,-276.74 305.43,-258.85 305.43,-244.38"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="307.7,-244.75 305.43,-238.25 303.15,-244.75 307.7,-244.75"/>
+<text xml:space="preserve" text-anchor="middle" x="312.55" y="-262.55" font-family="Georgia" font-size="12.00">&lt;4</text>
+</g>
+<!-- long -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-node7" class="node">
+<title>long</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M502.6,-236.5C502.6,-236.5 426.25,-236.5 426.25,-236.5 420.25,-236.5 414.25,-230.5 414.25,-224.5 414.25,-224.5 414.25,-212.5 414.25,-212.5 414.25,-206.5 420.25,-200.5 426.25,-200.5 426.25,-200.5 502.6,-200.5 502.6,-200.5 508.6,-200.5 514.6,-206.5 514.6,-212.5 514.6,-212.5 514.6,-224.5 514.6,-224.5 514.6,-230.5 508.6,-236.5 502.6,-236.5"/>
+<text xml:space="preserve" text-anchor="middle" x="464.43" y="-213.25" font-family="Georgia" font-size="15.00">New Recip?</text>
+</g>
+<!-- right&#45;&gt;long -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-edge8" class="edge">
+<title>right&#45;&gt;long</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M337.22,-289.46C362.78,-275.4 398.79,-255.6 425.98,-240.65"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="426.76,-242.81 431.36,-237.69 424.57,-238.82 426.76,-242.81"/>
+<text xml:space="preserve" text-anchor="middle" x="396.82" y="-262.55" font-family="Georgia" font-size="12.00">≥4</text>
+</g>
+<!-- middeep -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-node6" class="node">
+<title>middeep</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M392.6,-139.85C392.6,-139.85 316.25,-139.85 316.25,-139.85 310.25,-139.85 304.25,-133.85 304.25,-127.85 304.25,-127.85 304.25,-115.85 304.25,-115.85 304.25,-109.85 310.25,-103.85 316.25,-103.85 316.25,-103.85 392.6,-103.85 392.6,-103.85 398.6,-103.85 404.6,-109.85 404.6,-115.85 404.6,-115.85 404.6,-127.85 404.6,-127.85 404.6,-133.85 398.6,-139.85 392.6,-139.85"/>
+<text xml:space="preserve" text-anchor="middle" x="354.43" y="-116.6" font-family="Georgia" font-size="15.00">New Recip?</text>
+</g>
+<!-- mid&#45;&gt;middeep -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-edge10" class="edge">
+<title>mid&#45;&gt;middeep</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M314.41,-200.14C322.15,-185.2 333.39,-163.48 341.99,-146.87"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="343.83,-148.26 344.8,-141.44 339.79,-146.17 343.83,-148.26"/>
+<text xml:space="preserve" text-anchor="middle" x="339.23" y="-165.9" font-family="Georgia" font-size="12.00">≥1</text>
+</g>
+<!-- spam_c -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-node12" class="node">
+<title>spam_c</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M269.85,-147.05C269.85,-147.05 219,-147.05 219,-147.05 213,-147.05 207,-141.05 207,-135.05 207,-135.05 207,-108.65 207,-108.65 207,-102.65 213,-96.65 219,-96.65 219,-96.65 269.85,-96.65 269.85,-96.65 275.85,-96.65 281.85,-102.65 281.85,-108.65 281.85,-108.65 281.85,-135.05 281.85,-135.05 281.85,-141.05 275.85,-147.05 269.85,-147.05"/>
+<text xml:space="preserve" text-anchor="middle" x="244.43" y="-125.6" font-family="Georgia" font-size="15.00">Spam</text>
+<text xml:space="preserve" text-anchor="middle" x="244.43" y="-107.6" font-family="Georgia" font-size="15.00">0 errors</text>
+</g>
+<!-- mid&#45;&gt;spam_c -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-edge9" class="edge">
+<title>mid&#45;&gt;spam_c</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M294.24,-200.14C285.87,-187.16 274.21,-169.07 264.27,-153.65"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="266.39,-152.73 260.96,-148.5 262.57,-155.2 266.39,-152.73"/>
+<text xml:space="preserve" text-anchor="middle" x="284.95" y="-165.9" font-family="Georgia" font-size="12.00">&lt;1</text>
+</g>
+<!-- ham_b -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-node13" class="node">
+<title>ham_b</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M319.85,-50.4C319.85,-50.4 269,-50.4 269,-50.4 263,-50.4 257,-44.4 257,-38.4 257,-38.4 257,-12 257,-12 257,-6 263,0 269,0 269,0 319.85,0 319.85,0 325.85,0 331.85,-6 331.85,-12 331.85,-12 331.85,-38.4 331.85,-38.4 331.85,-44.4 325.85,-50.4 319.85,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="294.43" y="-28.95" font-family="Georgia" font-size="15.00">Ham</text>
+<text xml:space="preserve" text-anchor="middle" x="294.43" y="-10.95" font-family="Georgia" font-size="15.00">0 errors</text>
+</g>
+<!-- middeep&#45;&gt;ham_b -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-edge11" class="edge">
+<title>middeep&#45;&gt;ham_b</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M343.42,-103.49C335.19,-90.51 323.72,-72.42 313.95,-57"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="316.09,-56.13 310.69,-51.86 312.25,-58.56 316.09,-56.13"/>
+<text xml:space="preserve" text-anchor="middle" x="335.14" y="-69.25" font-family="Georgia" font-size="12.00">&lt;4</text>
+</g>
+<!-- spam_d -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-node14" class="node">
+<title>spam_d</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M416.85,-50.4C416.85,-50.4 366,-50.4 366,-50.4 360,-50.4 354,-44.4 354,-38.4 354,-38.4 354,-12 354,-12 354,-6 360,0 366,0 366,0 416.85,0 416.85,0 422.85,0 428.85,-6 428.85,-12 428.85,-12 428.85,-38.4 428.85,-38.4 428.85,-44.4 422.85,-50.4 416.85,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="391.43" y="-28.95" font-family="Georgia" font-size="15.00">Spam</text>
+<text xml:space="preserve" text-anchor="middle" x="391.43" y="-10.95" font-family="Georgia" font-size="15.00">0 errors</text>
+</g>
+<!-- middeep&#45;&gt;spam_d -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-edge12" class="edge">
+<title>middeep&#45;&gt;spam_d</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M361.21,-103.49C366.2,-90.74 373.11,-73.06 379.06,-57.83"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="381.1,-58.87 381.34,-51.99 376.86,-57.21 381.1,-58.87"/>
+<text xml:space="preserve" text-anchor="middle" x="382.27" y="-69.25" font-family="Georgia" font-size="12.00">≥4</text>
+</g>
+<!-- longdeep -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-node8" class="node">
+<title>longdeep</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M612.6,-139.85C612.6,-139.85 536.25,-139.85 536.25,-139.85 530.25,-139.85 524.25,-133.85 524.25,-127.85 524.25,-127.85 524.25,-115.85 524.25,-115.85 524.25,-109.85 530.25,-103.85 536.25,-103.85 536.25,-103.85 612.6,-103.85 612.6,-103.85 618.6,-103.85 624.6,-109.85 624.6,-115.85 624.6,-115.85 624.6,-127.85 624.6,-127.85 624.6,-133.85 618.6,-139.85 612.6,-139.85"/>
+<text xml:space="preserve" text-anchor="middle" x="574.42" y="-116.6" font-family="Georgia" font-size="15.00">New Recip?</text>
+</g>
+<!-- long&#45;&gt;longdeep -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-edge14" class="edge">
+<title>long&#45;&gt;longdeep</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M484.6,-200.14C502.59,-184.66 529.02,-161.92 548.55,-145.11"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="549.79,-147.05 553.23,-141.09 546.82,-143.6 549.79,-147.05"/>
+<text xml:space="preserve" text-anchor="middle" x="533.14" y="-165.9" font-family="Georgia" font-size="12.00">≥2</text>
+</g>
+<!-- spam_e -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-node15" class="node">
+<title>spam_e</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M489.85,-147.05C489.85,-147.05 439,-147.05 439,-147.05 433,-147.05 427,-141.05 427,-135.05 427,-135.05 427,-108.65 427,-108.65 427,-102.65 433,-96.65 439,-96.65 439,-96.65 489.85,-96.65 489.85,-96.65 495.85,-96.65 501.85,-102.65 501.85,-108.65 501.85,-108.65 501.85,-135.05 501.85,-135.05 501.85,-141.05 495.85,-147.05 489.85,-147.05"/>
+<text xml:space="preserve" text-anchor="middle" x="464.43" y="-125.6" font-family="Georgia" font-size="15.00">Spam</text>
+<text xml:space="preserve" text-anchor="middle" x="464.43" y="-107.6" font-family="Georgia" font-size="15.00">0 errors</text>
+</g>
+<!-- long&#45;&gt;spam_e -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-edge13" class="edge">
+<title>long&#45;&gt;spam_e</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M464.43,-200.14C464.43,-187.51 464.43,-170.03 464.43,-154.89"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="466.7,-155.24 464.43,-148.74 462.15,-155.24 466.7,-155.24"/>
+<text xml:space="preserve" text-anchor="middle" x="471.55" y="-165.9" font-family="Georgia" font-size="12.00">&lt;2</text>
+</g>
+<!-- ham_c -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-node16" class="node">
+<title>ham_c</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M550.85,-50.4C550.85,-50.4 500,-50.4 500,-50.4 494,-50.4 488,-44.4 488,-38.4 488,-38.4 488,-12 488,-12 488,-6 494,0 500,0 500,0 550.85,0 550.85,0 556.85,0 562.85,-6 562.85,-12 562.85,-12 562.85,-38.4 562.85,-38.4 562.85,-44.4 556.85,-50.4 550.85,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="525.42" y="-28.95" font-family="Georgia" font-size="15.00">Ham</text>
+<text xml:space="preserve" text-anchor="middle" x="525.42" y="-10.95" font-family="Georgia" font-size="15.00">0 errors</text>
+</g>
+<!-- longdeep&#45;&gt;ham_c -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-edge15" class="edge">
+<title>longdeep&#45;&gt;ham_c</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M565.44,-103.49C558.78,-90.62 549.52,-72.74 541.58,-57.41"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="543.75,-56.65 538.74,-51.92 539.71,-58.74 543.75,-56.65"/>
+<text xml:space="preserve" text-anchor="middle" x="559.98" y="-69.25" font-family="Georgia" font-size="12.00">&lt;3</text>
+</g>
+<!-- spam_f -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-node17" class="node">
+<title>spam_f</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M647.85,-50.4C647.85,-50.4 597,-50.4 597,-50.4 591,-50.4 585,-44.4 585,-38.4 585,-38.4 585,-12 585,-12 585,-6 591,0 597,0 597,0 647.85,0 647.85,0 653.85,0 659.85,-6 659.85,-12 659.85,-12 659.85,-38.4 659.85,-38.4 659.85,-44.4 653.85,-50.4 647.85,-50.4"/>
+<text xml:space="preserve" text-anchor="middle" x="622.42" y="-28.95" font-family="Georgia" font-size="15.00">Spam</text>
+<text xml:space="preserve" text-anchor="middle" x="622.42" y="-10.95" font-family="Georgia" font-size="15.00">0 errors</text>
+</g>
+<!-- longdeep&#45;&gt;spam_f -->
+<g id="model-representations-figure-8-model-representations-tree-state-05-edge16" class="edge">
+<title>longdeep&#45;&gt;spam_f</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M583.23,-103.49C589.75,-90.62 598.82,-72.74 606.6,-57.41"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="608.47,-58.75 609.38,-51.93 604.41,-56.7 608.47,-58.75"/>
+<text xml:space="preserve" text-anchor="middle" x="608.42" y="-69.25" font-family="Georgia" font-size="12.00">≥3</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Deeper alternative tree; nine leaves each report 0 errors (total 0).</figcaption></figure></section></section>
+<p>The first two trees are alternative stumps: Email Len at 1.8 totals 9 errors, while New Recip at 2.3 totals 15. The later 5-error and 3-error trees grow the Email Len stump. The final 0-error tree is a separate, deeper alternative. Its perfect fit to these training examples does not establish that it is the best model for unseen emails; training fit and generalization are different questions.</p>
+<h2 id="section-4">Compact comparison</h2>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Linear classifier</th>
+<th>Decision tree</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Candidate form</td>
+<td>Weighted score with a straight boundary</td>
+<td>Ordered attribute tests with branch outcomes</td>
+</tr>
+<tr>
+<td>Region shape in this two-feature view</td>
+<td>Two half-spaces</td>
+<td>Axis-parallel regions from threshold tests</td>
+</tr>
+<tr>
+<td>How to classify a new email</td>
+<td>Evaluate its score / side</td>
+<td>Follow tests from root to leaf</td>
+</tr>
+<tr>
+<td>Limitation highlighted here</td>
+<td>A straight line may not separate every training case</td>
+<td>More detailed trees can reduce training errors, but zero training error alone says nothing conclusive about unseen cases</td>
+</tr>
+</tbody>
+</table>
+<h2 id="section-5">Common confusions</h2>
+<ul>
+<li>A <strong>hypothesis family</strong> is the set of model forms a representation permits; it is not the training dataset itself.</li>
+<li>A decision boundary partitions feature space. Keep the feature axes straight: <strong>New Recipients</strong> and <strong>Email Length</strong>.</li>
+<li>A large margin means clearance from the nearest training points, not merely a visually centered line.</li>
+<li>“No linear classifier can cover all instances” means the displayed classes are not perfectly separable by one straight line. It does not mean no classifier can make useful predictions.</li>
+<li>The 9-error and 15-error stumps are alternatives. The 15 is not a step that worsens the 9-error tree.</li>
+<li>Zero training errors describe the training examples only. Generalization to new email is the central aim, not a consequence guaranteed by a perfect training fit.</li>
+<li>A schematic class plot does not provide a learner's exact feature values. Do not infer numeric point coordinates or individual record paths.</li>
+</ul>
+<h2 id="section-6">Revision reminders</h2>
+<ul>
+<li>State the three algorithm components: representation, evaluation, optimization.</li>
+<li>Contrast numerical and symbolic representations; recognize instance-based, probabilistic graphical, and ensemble families.</li>
+<li>Explain how a linear score induces a boundary, what the margin measures, and why different separators may all fit.</li>
+<li>Explain a tree using the terms test, branch, leaf, threshold, prediction, and training error.</li>
+<li>Reproduce the tree totals in order of the displayed states: 9, 15, 5, 3, 0—remembering that the first two are competing stumps.</li>
+<li>Separate training fit from expected performance on novel examples.</li>
+</ul>
+<h2 id="section-7">Further study</h2>
+<p>Detailed greedy impurity/gain calculations and supervised model procedures are covered in <a href="supervised-learning-models.html">Supervised learning models</a>.</p>
+<h2 id="section-8">Practice</h2>
+<p class="question">1. What are the three components of a machine-learning algorithm?</p>
+<details class="worked"><summary>Check your answer</summary><p>Representation (the model form), evaluation (how candidates are judged), and optimization (how the search is carried out).</p></details>
+<p class="question">2. A linear score is positive on one side of its zero set and negative on the other. What does the zero set represent?</p>
+<details class="worked"><summary>Check your answer</summary><p>It is the decision boundary: the locations where the score changes sign and the classifier changes sides.</p></details>
+<p class="question">3. For the Email Len stump at 1.8, what are the two leaf labels and total training errors?</p>
+<details class="worked"><summary>Check your answer</summary><p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mtext>Email&#x000A0;Len</mtext><mo>&#x0003C;</mo><mn>1.8</mn></mrow></math> predicts Spam with 1 error; <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mtext>Email&#x000A0;Len</mtext><mo>&#x02265;</mo><mn>1.8</mn></mrow></math> predicts Ham with 8 errors. Total: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002B;</mo><mn>8</mn><mo>&#x0003D;</mo><mn>9</mn></mrow></math>.</p></details>
+<p class="question">4. Why is the New Recip stump's total of 15 not the next training-error state after 9?</p>
+<details class="worked"><summary>Check your answer</summary><p>It is an alternative stump using a different root test (New Recip at 2.3), not a modification of the Email Len stump.</p></details>
+<p class="question">5. A deeper tree has zero displayed training errors. What conclusion is justified, and what remains unknown?</p>
+<details class="worked"><summary>Check your answer</summary><p>It fits the displayed training examples with zero errors. Its performance on novel emails remains unknown; zero training error does not establish the best generalizing model.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="ml-foundations.html"><small>Previous</small>Machine learning foundations and learning paradigms <span aria-hidden="true">↗</span></a><a href="evaluation-generalization.html"><small>Next</small>Evaluation, generalization and model choice <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

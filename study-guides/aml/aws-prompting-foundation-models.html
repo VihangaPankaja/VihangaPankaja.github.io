@@ -1,0 +1,637 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Optional companion reading on prompt design, foundation-model selection and evaluation, generation controls, retrieval, and adaptation. This material is separate from the assumed CS4681 exam route."><title>AWS Companion: Prompt Engineering and Foundation Models · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html" aria-current="page">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">AWS companion <span>/</span> AWS companion</div><h1>AWS Companion: Prompt Engineering and Foundation Models</h1><p class="lead">Optional companion reading on prompt design, foundation-model selection and evaluation, generation controls, retrieval, and adaptation. This material is separate from the assumed CS4681 exam route.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Build a prompt from the task outward</a><a href="#section-2">Condition the input, refine the output</a><a href="#section-3">Choose and evaluate a foundation model</a><a href="#section-4">Inference controls shape generation</a><a href="#section-5">Adaptation choices change different things</a><a href="#section-6">Course-era AWS service comparison</a><a href="#section-7">Prompt attacks and defensive thinking</a><a href="#section-8">Common mistakes</a><a href="#section-9">Course review</a><a href="#section-10">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>A prompt is the input contract for a foundation model: it describes the task, supplies relevant context, and shapes the response. Prompting can guide a pre-trained model without changing its parameters. When the task or data demands more control, the choices expand to retrieval-augmented generation (RAG), fine-tuning, or continued pretraining. These approaches solve different problems and carry different data, quality, latency, cost, and operational tradeoffs.</p>
+<p>This is an <strong>optional AWS course companion</strong>. It is separate from the assumed CS4681 examination route. The service names below describe the course's 2025-era comparison and are not current availability, price, or suitability recommendations.</p>
+<nav aria-label="AWS companion reading route"><p><a href="aws-ai-foundations.html">← Back to AWS AI Foundations</a></p><p>Optional follow-on reading: <a href="aws-responsible-security.html">Responsible AI and security</a> · <a href="aws-implementation-certification.html">Implementation and certification overview</a></p></nav>
+
+<h2 id="section-1">Build a prompt from the task outward</h2>
+<p>A useful prompt gives the model enough direction to produce a response that can be evaluated. Its parts are building blocks rather than a required fixed order.</p>
+<div class="table-scroll" role="region" aria-label="Prompt components and the question each component answers"><table><caption>Prompt components and the question each component answers</caption><thead><tr><th scope="col">Component</th><th scope="col">Purpose</th><th scope="col">Example cue</th></tr></thead><tbody>
+<tr><th scope="row">Task</th><td>What should the model do?</td><td>“Compare the short-term and long-term impacts.”</td></tr>
+<tr><th scope="row">Instructions / steps</th><td>What process or boundaries should it follow?</td><td>Classify, summarize each side, then conclude.</td></tr>
+<tr><th scope="row">Context / input data</th><td>What situation or material should ground the response?</td><td>A balanced overview of plant-based diets.</td></tr>
+<tr><th scope="row">Examples</th><td>What input/output demonstrations clarify the expected task?</td><td>A representative sample with the desired kind of response.</td></tr>
+<tr><th scope="row">Role</th><td>What perspective should shape the answer?</td><td>An energetic food educator.</td></tr>
+<tr><th scope="row">Audience</th><td>Who should be able to use the answer?</td><td>Teenagers.</td></tr>
+<tr><th scope="row">Tone / style</th><td>How should the response sound?</td><td>High-energy and educational.</td></tr>
+<tr><th scope="row">Output format</th><td>What structure makes the result usable?</td><td>Title, then Introduction, Body, Conclusion.</td></tr>
+<tr><th scope="row">Constraints</th><td>What should be included or avoided?</td><td>Do not discuss weight; do not reveal the audience.</td></tr>
+</tbody></table></div>
+
+<p>The course recommends clear, specific directions, useful context, an explicit outcome, and examples when they clarify expectations. Organizing a prompt so context comes before the task can make the request easier to interpret; it is a practical pattern to test, not a universal guarantee. XML-like tags can mark sections so their purpose is recognizable. Tags organize text; they do not create capabilities or enforce security boundaries.</p>
+<h3>Plant-based diets: a tagged prompt</h3>
+<p>The following preserves the course's tagged prompt structure and its content constraints. Its role and audience guide the voice, while the final task tells the model what response to produce.</p>
+<pre><code>&lt;tone&gt;
+You are a high-energy TV chef who is passionate about food education. Your audience is teenagers.
+&lt;/tone&gt;
+
+&lt;context&gt;
+We are discussing plant-based diets and want to give a balanced view.
+&lt;/context&gt;
+
+&lt;instructions&gt;
+Classify the short-term and long-term impacts of plant-based diets. Summarize each group and finish with a concise conclusion.
+&lt;/instructions&gt;
+
+&lt;constraints&gt;
+Do not discuss weight. Do not reveal that the audience is teenagers.
+&lt;/constraints&gt;
+
+&lt;response_format&gt;
+Start with a title. Then use these labeled sections, each with its section name and a colon:
+Introduction:
+Body:
+Conclusion:
+&lt;/response_format&gt;
+
+&lt;task&gt;
+Using the role, context, instructions, constraints, and response format above, write the response.
+&lt;/task&gt;</code></pre>
+
+<p>The reusable pattern replaces a concrete context, audience, topic, or requirement with a named placeholder, then fills those fields for a new task. After a first response, refine one prompt element at a time, compare against the same criteria, and keep the change only if it improves the desired outcome. A structured output is useful only when the requested labels and content are checked in the actual response.</p>
+<pre><code class="language-text">&lt;tone&gt;{role, energy, and style}&lt;/tone&gt;
+&lt;context&gt;{situation, topic, and background}&lt;/context&gt;
+&lt;instructions&gt;{steps the model should follow}&lt;/instructions&gt;
+&lt;constraints&gt;{required inclusions and exclusions}&lt;/constraints&gt;
+&lt;response_format&gt;{requested structure and labels}&lt;/response_format&gt;
+&lt;task&gt;{specific deliverable using the sections above}&lt;/task&gt;
+</code></pre>
+<details class="scenario"><summary>Worked refinement: tighten an underspecified diet prompt</summary><p><strong>Given:</strong> the starting request is “Tell me about plant-based diets.” The desired response should be balanced, distinguish short-term from long-term impacts, avoid weight, speak in an energetic food-educator voice to teenagers without naming the audience, and use a title plus three labeled sections.</p>
+<ol>
+<li><strong>Check the starting prompt against the requirements.</strong> It states the topic only. It does not define the reader, balance criterion, time horizons, exclusion, role/tone, or output structure.</li>
+<li><strong>Assign each missing requirement to a component.</strong> Put the audience and desired voice in the tone/role section; the balanced topic in context; the classify/summarize/conclude sequence in instructions; the two exclusions in constraints; and the title plus Introduction, Body, Conclusion labels in response format.</li>
+<li><strong>Place the deliverable in a final task.</strong> Ask the model to write the response using those named sections. Keep context before the task so the task can refer to the supplied situation.</li>
+<li><strong>Review the prompt specification before evaluating an output.</strong> Confirm that each requested requirement appears once, the constraints do not contradict the requested structure, and the expected sections are concrete enough to check.</li>
+</ol>
+<p><strong>Static prompt check:</strong> all six requirements above are represented in the tagged example. This checks the prompt design itself; it does not claim a model response has been generated or measured.</p></details>
+
+<h2 id="section-2">Condition the input, refine the output</h2>
+<p>Zero-shot, single-shot, and few-shot prompting differ by the number of examples included in the input: none, one, or several. These examples condition inference; they do <strong>not</strong> update model parameters. Choose examples that represent the requested task and vary the count experimentally when the result is inconsistent.</p>
+<p>Reasoning-oriented prompt labels in the course can be translated into observable request strategies:</p>
+<ul>
+<li><strong>Chain of thought (CoT):</strong> ask for a task broken into explicit, checkable steps, such as listing assumptions before a calculation.</li>
+<li><strong>Tree of thought (ToT):</strong> ask for a small set of candidate approaches, compare each against stated criteria, and select one.</li>
+</ul>
+<p>These are output and decomposition strategies. A generated explanation is not evidence of faithful access to hidden internal reasoning, and either strategy can still produce errors. Check intermediate claims or final results against the task.</p>
+<p>Output refinement can happen in several places. A prompt can be revised and rerun; an ensemble can combine multiple candidate outputs; reranking can score candidates and select one; post-editing can normalize a response; filtering can remove responses that fail a rule. These add work and do not by themselves establish correctness. High-impact decisions need a defined evaluation method and appropriate human review.</p>
+<p>If an application offers tools such as search or an external action, a prompt can request their use only when the application has actually integrated them. Naming a tool in text does not invoke a system, grant access, or authorize an action. The application must enforce permissions and validate arguments and results outside the model.</p>
+<h2 id="section-3">Choose and evaluate a foundation model</h2>
+<p>Model selection begins with the task and the acceptance criteria. A model that is capable in general may still be a poor fit for a particular language, modality, context length, latency budget, or data policy.</p>
+<p>Consider task-specific capability; required modalities and languages; context-window needs; customization options; model size relative to task complexity; throughput and latency; hardware and integration requirements; operational effort; scale; price and licensing; and privacy, data rights, ethics, and regulatory constraints. Pre-trained model training data may not be fully visible to the user, so data quality, coverage, recency, and bias can be difficult to establish from the model description alone.</p>
+<p>For example, a healthcare question-answering use case has a higher consequence of unsupported or misleading output than a low-stakes internal drafting assistant. That changes the required evaluation, oversight, controls, and acceptable cost. A cheaper or faster result is not a successful selection if it misses the task's quality or safety bar.</p>
+<p>Evaluation should use representative examples and metrics tied to the actual job. Compare candidate models with a consistent test set, inspect failures, refine the approach, and document why the selected model meets the criteria. Metrics are evidence about defined behavior, not a general truth certificate.</p>
+<div class="table-scroll" role="region" aria-label="Course metrics: what each can reveal and what to inspect"><table><caption>Course metrics: what each can reveal and what to inspect</caption><thead><tr><th scope="col">Metric or check</th><th scope="col">Useful for</th><th scope="col">Interpretation limit</th></tr></thead><tbody>
+<tr><th scope="row">Perplexity</th><td>How well a model predicts held-out next tokens; lower is better for the same suitable comparison setup.</td><td>Does not directly establish task usefulness, factuality, or safety.</td></tr>
+<tr><th scope="row">ROUGE</th><td>Overlap with reference summaries or text.</td><td>Reference wording overlap can miss semantic quality.</td></tr>
+<tr><th scope="row">BERTScore</th><td>Semantic similarity between generated and reference text.</td><td>Similarity to a reference is not proof that either text is correct.</td></tr>
+<tr><th scope="row">BLEU</th><td>Reference-based n-gram matching, often used for translation comparisons.</td><td>Surface overlap alone can miss meaning and fluency.</td></tr>
+<tr><th scope="row">Semantic robustness</th><td>Whether small, meaning-preserving input changes produce stable behavior.</td><td>A limited perturbation set cannot cover every shift or failure.</td></tr>
+<tr><th scope="row">Human review</th><td>Task quality, usability, unsupported claims, and contextual failure modes.</td><td>Review needs clear criteria and suitable reviewers; it is not automatic proof.</td></tr>
+</tbody></table></div>
+
+<p>In production, keep monitoring behavior and user feedback, revisit the evaluation set as tasks or data change, and reassess after model or system changes. A multi-model design may assign different subtasks to different models, but coordination and end-to-end evaluation still matter.</p>
+<h2 id="section-4">Inference controls shape generation</h2>
+<p>Inference controls affect how a model generates from its current input. They do not teach it new parameters. Temperature changes the sharpness of a next-token distribution: lower positive values make high-logit choices more dominant; higher values spread probability more broadly. Top-k keeps a fixed number of highest-probability candidates. Top-p keeps a probability-ranked prefix until its cumulative mass reaches a threshold, so the number retained can vary. Maximum generation length limits output size, while a stop sequence ends generation when the specified sequence appears.</p>
+<p>The worked calculation below uses a deliberately hypothetical single-context logit vector. It demonstrates the arithmetic, not an AWS model's probabilities. The softmax equation is defined here for positive temperature. A literal T = 0, API ranges, control interactions, and processing order are model-specific; no universal combined-control order is implied. Sampling controls do not ensure a true or safe answer.</p>
+<section class="walk" tabindex="0" aria-label="Generation controls from one hypothetical next-token context"><h3>Generation controls from one hypothetical next-token context</h3><div class="example-input"><strong>Hypothetical inputs</strong><span>One context: <code>The next token is likely to be</code></span><span>Candidates A, B, C, D have logits 2, 1, 0, -1, respectively.</span><span>This is a constructed teaching example, not an AWS probability output.</span><span>Softmax: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>p</mi><mi>i</mi></msub><mo stretchy="false">&#x00028;</mo><mi>T</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mi>exp</mi><mo stretchy="false">&#x00028;</mo><msub><mi>z</mi><mi>i</mi></msub><mo>&#x0002F;</mo><mi>T</mi><mo stretchy="false">&#x00029;</mo></mrow><mrow><msub><mo>&#x02211;</mo><mi>j</mi></msub><mi>exp</mi><mo stretchy="false">&#x00028;</mo><msub><mi>z</mi><mi>j</mi></msub><mo>&#x0002F;</mo><mi>T</mi><mo stretchy="false">&#x00029;</mo></mrow></mfrac></mrow></math>, for T &gt; 0.</span><span>All truncations use the T = 1 baseline, descending order A &gt; B &gt; C &gt; D, no ties, and the first prefix reaching the threshold.</span></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Compute temperature distributions from the same logits</h4><p>For each candidate, divide its logit by T, exponentiate, add the four exponentials to obtain Z, then divide each exponential by Z. Probabilities are shown to eight decimals; later truncation tables use six-decimal displays.</p>
+<div class="table-scroll" role="region" aria-label="T = 0.2; Z = 22,175.88569186"><table><caption>T = 0.2; Z = 22,175.88569186</caption><thead><tr><th scope="col">Candidate: logit / T</th><th scope="col">exp(logit / T)</th><th scope="col">Probability = exp / Z</th></tr></thead><tbody><tr><th scope="row">A: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mo>&#x0002F;</mo><mn>0.2</mn><mo>&#x0003D;</mo><mn>10</mn></mrow></math></th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002F;</mo><mn>0.2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>22026.46579481</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>22026.46579481</mn></mrow><mrow><mn>22175.88569186</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.99326206</mn></mrow></math></td></tr><tr><th scope="row">B: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002F;</mo><mn>0.2</mn><mo>&#x0003D;</mo><mn>5</mn></mrow></math></th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002F;</mo><mn>0.2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>148.41315910</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>148.41315910</mn></mrow><mrow><mn>22175.88569186</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.00669255</mn></mrow></math></td></tr><tr><th scope="row">C: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002F;</mo><mn>0.2</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math></th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1.00000000</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mn>22175.88569186</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.00004509</mn></mrow></math></td></tr><tr><th scope="row">D: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002F;</mo><mn>0.2</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>5</mn></mrow></math></th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002F;</mo><mn>0.2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.00673795</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>0.00673795</mn></mrow><mrow><mn>22175.88569186</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.00000030</mn></mrow></math></td></tr><tr><th scope="row">Check</th><td>sum = Z</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mo>&#x02211;</mo><mi>i</mi></msub><msub><mi>p</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mn>1.00000000</mn></mrow></math></td></tr></tbody></table></div>
+<div class="table-scroll" role="region" aria-label="T = 0.8; Z = 16.95934172"><table><caption>T = 0.8; Z = 16.95934172</caption><thead><tr><th scope="col">Candidate: logit / T</th><th scope="col">exp(logit / T)</th><th scope="col">Probability = exp / Z</th></tr></thead><tbody><tr><th scope="row">A: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mo>&#x0002F;</mo><mn>0.8</mn><mo>&#x0003D;</mo><mn>2.5</mn></mrow></math></th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002F;</mo><mn>0.8</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>12.18249396</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>12.18249396</mn></mrow><mrow><mn>16.95934172</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.71833531</mn></mrow></math></td></tr><tr><th scope="row">B: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002F;</mo><mn>0.8</mn><mo>&#x0003D;</mo><mn>1.25</mn></mrow></math></th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002F;</mo><mn>0.8</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>3.49034296</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>3.49034296</mn></mrow><mrow><mn>16.95934172</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.20580651</mn></mrow></math></td></tr><tr><th scope="row">C: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002F;</mo><mn>0.8</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math></th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1.00000000</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mn>16.95934172</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.05896455</mn></mrow></math></td></tr><tr><th scope="row">D: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002F;</mo><mn>0.8</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1.25</mn></mrow></math></th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002F;</mo><mn>0.8</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.28650480</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>0.28650480</mn></mrow><mrow><mn>16.95934172</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.01689363</mn></mrow></math></td></tr><tr><th scope="row">Check</th><td>sum = Z</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mo>&#x02211;</mo><mi>i</mi></msub><msub><mi>p</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mn>1.00000000</mn></mrow></math></td></tr></tbody></table></div>
+<div class="table-scroll" role="region" aria-label="T = 1.0 baseline; Z = 11.47521737"><table><caption>T = 1.0 baseline; Z = 11.47521737</caption><thead><tr><th scope="col">Candidate: logit / T</th><th scope="col">exp(logit / T)</th><th scope="col">Probability = exp / Z</th></tr></thead><tbody><tr><th scope="row">A: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mo>&#x0002F;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>2</mn></mrow></math></th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>7.38905610</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>7.38905610</mn></mrow><mrow><mn>11.47521737</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.64391426</mn></mrow></math></td></tr><tr><th scope="row">B: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002F;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>1</mn></mrow></math></th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2.71828183</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>2.71828183</mn></mrow><mrow><mn>11.47521737</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.23688282</mn></mrow></math></td></tr><tr><th scope="row">C: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002F;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math></th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1.00000000</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mn>11.47521737</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.08714432</mn></mrow></math></td></tr><tr><th scope="row">D: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002F;</mo><mn>1</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn></mrow></math></th><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>exp</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.36787944</mn></mrow></math></td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>0.36787944</mn></mrow><mrow><mn>11.47521737</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.03205860</mn></mrow></math></td></tr><tr><th scope="row">Check</th><td>sum = Z</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mo>&#x02211;</mo><mi>i</mi></msub><msub><mi>p</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mn>1.00000000</mn></mrow></math></td></tr></tbody></table></div>
+<p>Each vector is computed directly from the original logits and the displayed temperature. Lower positive T concentrates probability on the highest logit here; it does not certify that candidate A is correct.</p></section><section class="step"><h4>2. Apply top-k = 2 independently to the T = 1 baseline</h4><p>Sort the baseline candidates from highest to lowest. Keep A and B, whose baseline mass is 0.643914 + 0.236883 = 0.880797. Renormalize by dividing each retained probability by 0.880797; assign zero to removed candidates.</p>
+<div class="table-scroll" role="region" aria-label="Top-k retained set and renormalization"><table><caption>Top-k retained set and renormalization</caption><thead><tr><th scope="col">Candidate</th><th scope="col">Baseline mass</th><th scope="col">Kept?</th><th scope="col">Renormalized probability</th></tr></thead><tbody><tr><th scope="row">A</th><td>0.643914</td><td>Yes</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>0.643914</mn></mrow><mrow><mn>0.880797</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.731059</mn></mrow></math></td></tr><tr><th scope="row">B</th><td>0.236883</td><td>Yes</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>0.236883</mn></mrow><mrow><mn>0.880797</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.268941</mn></mrow></math></td></tr><tr><th scope="row">C</th><td>0.087144</td><td>No</td><td>0</td></tr><tr><th scope="row">D</th><td>0.032059</td><td>No</td><td>0</td></tr><tr><th scope="row">Check</th><td>retained mass = 0.880797</td><td>2 of 4</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.731059</mn><mo>&#x0002B;</mo><mn>0.268941</mn><mo>&#x0003D;</mo><mn>1</mn></mrow></math></td></tr></tbody></table></div>
+<p>Here top-k keeps exactly two candidates because the chosen k is 2; it does not mean that two candidates contain a fixed probability mass.</p></section><section class="step"><h4>3. Apply top-p = 0.8 independently to the T = 1 baseline</h4><p>Walk down the sorted baseline and keep the first prefix whose cumulative probability mass reaches or exceeds 0.8. A has cumulative mass 0.643914, so include B: 0.643914 + 0.236883 = 0.880797, which reaches the threshold. Stop there and renormalize by 0.880797.</p>
+<div class="table-scroll" role="region" aria-label="Top-p = 0.8 prefix"><table><caption>Top-p = 0.8 prefix</caption><thead><tr><th scope="col">Candidate</th><th scope="col">Baseline mass</th><th scope="col">Cumulative mass</th><th scope="col">Renormalized probability</th></tr></thead><tbody><tr><th scope="row">A</th><td>0.643914</td><td>0.643914</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>0.643914</mn></mrow><mrow><mn>0.880797</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.731059</mn></mrow></math></td></tr><tr><th scope="row">B</th><td>0.236883</td><td>0.880797 (first ≥ 0.8)</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>0.236883</mn></mrow><mrow><mn>0.880797</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.268941</mn></mrow></math></td></tr><tr><th scope="row">C</th><td>0.087144</td><td>not included</td><td>0</td></tr><tr><th scope="row">D</th><td>0.032059</td><td>not included</td><td>0</td></tr><tr><th scope="row">Check</th><td>retained mass = 0.880797</td><td>2 of 4</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.731059</mn><mo>&#x0002B;</mo><mn>0.268941</mn><mo>&#x0003D;</mo><mn>1</mn></mrow></math></td></tr></tbody></table></div>
+<p>Top-p is a threshold on cumulative probability <strong>mass</strong>, not a percentage of the vocabulary or token count.</p></section><section class="step"><h4>4. Apply top-p = 0.9 independently to the T = 1 baseline</h4><p>A gives 0.643914; A + B gives 0.880797, still below 0.9. Include C: 0.880797 + 0.087144 = 0.967941, the first prefix to reach the threshold. Retained mass is 0.967941.</p>
+<div class="table-scroll" role="region" aria-label="Top-p = 0.9 prefix"><table><caption>Top-p = 0.9 prefix</caption><thead><tr><th scope="col">Candidate</th><th scope="col">Baseline mass</th><th scope="col">Cumulative mass</th><th scope="col">Renormalized probability</th></tr></thead><tbody><tr><th scope="row">A</th><td>0.643914</td><td>0.643914</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>0.643914</mn></mrow><mrow><mn>0.967941</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.665241</mn></mrow></math></td></tr><tr><th scope="row">B</th><td>0.236883</td><td>0.880797</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>0.236883</mn></mrow><mrow><mn>0.967941</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.244728</mn></mrow></math></td></tr><tr><th scope="row">C</th><td>0.087144</td><td>0.967941 (first ≥ 0.9)</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>0.087144</mn></mrow><mrow><mn>0.967941</mn></mrow></mfrac><mo>&#x02248;</mo><mn>0.090031</mn></mrow></math></td></tr><tr><th scope="row">D</th><td>0.032059</td><td>not included</td><td>0</td></tr><tr><th scope="row">Check</th><td>retained mass = 0.967941</td><td>3 of 4</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mo>&#x02211;</mo><mi>i</mi></msub><msub><mi>p</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mn>1</mn></mrow></math></td></tr></tbody></table></div>
+<p>All three truncation illustrations start separately from the same T = 1 baseline. They do not model a combined-control order.</p></section></section>
+
+<p>The course illustrates settings such as temperature 0.2 and 0.8, top-p 0.1 and 0.9, and top-k 10 and 50. These are course examples, not universal supported ranges or measured output claims.</p>
+<h2 id="section-5">Adaptation choices change different things</h2>
+<p>Start with a prompt when clearer instructions, examples, or context may be enough. Add retrieval when the task needs relevant external or frequently changing material at inference. Fine-tuning or continued pretraining changes model parameters and requires a suitable training path and data. These are different mechanisms, with different setup and review costs.</p>
+<figure><div class="diagram-frame" style="--diagram-width:334.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Retrieval-augmented generation: documents are prepared separately; at inference the query retrieves passages that are added to the prompt. The pre-trained model generates from that context without updating its parameters." width="334pt" height="551pt"
+ viewBox="0.00 0.00 334.00 551.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="aws-prompting-foundation-models-figure-1-aws-prompting-foundation-models-rag-inference-flow-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 540.3)">
+<title>G</title>
+<!-- docs -->
+<g id="aws-prompting-foundation-models-figure-1-aws-prompting-foundation-models-rag-inference-flow-node1" class="node">
+<title>docs</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M179.1,-529.5C179.1,-529.5 50.25,-529.5 50.25,-529.5 44.25,-529.5 38.25,-523.5 38.25,-517.5 38.25,-517.5 38.25,-505.5 38.25,-505.5 38.25,-499.5 44.25,-493.5 50.25,-493.5 50.25,-493.5 179.1,-493.5 179.1,-493.5 185.1,-493.5 191.1,-499.5 191.1,-505.5 191.1,-505.5 191.1,-517.5 191.1,-517.5 191.1,-523.5 185.1,-529.5 179.1,-529.5"/>
+<text xml:space="preserve" text-anchor="middle" x="114.68" y="-506.25" font-family="Georgia" font-size="15.00">Curated documents</text>
+</g>
+<!-- embed -->
+<g id="aws-prompting-foundation-models-figure-1-aws-prompting-foundation-models-rag-inference-flow-node2" class="node">
+<title>embed</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M217.35,-447.25C217.35,-447.25 12,-447.25 12,-447.25 6,-447.25 0,-441.25 0,-435.25 0,-435.25 0,-423.25 0,-423.25 0,-417.25 6,-411.25 12,-411.25 12,-411.25 217.35,-411.25 217.35,-411.25 223.35,-411.25 229.35,-417.25 229.35,-423.25 229.35,-423.25 229.35,-435.25 229.35,-435.25 229.35,-441.25 223.35,-447.25 217.35,-447.25"/>
+<text xml:space="preserve" text-anchor="middle" x="114.68" y="-424" font-family="Georgia" font-size="15.00">Prepare document embeddings</text>
+</g>
+<!-- docs&#45;&gt;embed -->
+<g id="aws-prompting-foundation-models-figure-1-aws-prompting-foundation-models-rag-inference-flow-edge1" class="edge">
+<title>docs&#45;&gt;embed</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M114.68,-493.09C114.68,-482.05 114.68,-467.58 114.68,-455.31"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="116.95,-455.64 114.68,-449.14 112.4,-455.64 116.95,-455.64"/>
+<text xml:space="preserve" text-anchor="middle" x="146.55" y="-466.1" font-family="Georgia" font-size="12.00">preparation</text>
+</g>
+<!-- store -->
+<g id="aws-prompting-foundation-models-figure-1-aws-prompting-foundation-models-rag-inference-flow-node3" class="node">
+<title>store</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M155.47,-365C155.47,-365 73.88,-365 73.88,-365 67.88,-365 61.88,-359 61.88,-353 61.88,-353 61.88,-341 61.88,-341 61.88,-335 67.88,-329 73.88,-329 73.88,-329 155.47,-329 155.47,-329 161.47,-329 167.47,-335 167.47,-341 167.47,-341 167.47,-353 167.47,-353 167.47,-359 161.47,-365 155.47,-365"/>
+<text xml:space="preserve" text-anchor="middle" x="114.68" y="-341.75" font-family="Georgia" font-size="15.00">Vector index</text>
+</g>
+<!-- embed&#45;&gt;store -->
+<g id="aws-prompting-foundation-models-figure-1-aws-prompting-foundation-models-rag-inference-flow-edge2" class="edge">
+<title>embed&#45;&gt;store</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M114.68,-410.84C114.68,-399.8 114.68,-385.33 114.68,-373.06"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="116.95,-373.39 114.68,-366.89 112.4,-373.39 116.95,-373.39"/>
+<text xml:space="preserve" text-anchor="middle" x="129.3" y="-383.85" font-family="Georgia" font-size="12.00">index</text>
+</g>
+<!-- retrieve -->
+<g id="aws-prompting-foundation-models-figure-1-aws-prompting-foundation-models-rag-inference-flow-node5" class="node">
+<title>retrieve</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M201.98,-282.75C201.98,-282.75 27.38,-282.75 27.38,-282.75 21.38,-282.75 15.38,-276.75 15.38,-270.75 15.38,-270.75 15.38,-258.75 15.38,-258.75 15.38,-252.75 21.38,-246.75 27.38,-246.75 27.38,-246.75 201.98,-246.75 201.98,-246.75 207.98,-246.75 213.98,-252.75 213.98,-258.75 213.98,-258.75 213.98,-270.75 213.98,-270.75 213.98,-276.75 207.98,-282.75 201.98,-282.75"/>
+<text xml:space="preserve" text-anchor="middle" x="114.68" y="-259.5" font-family="Georgia" font-size="15.00">Retrieve relevant passages</text>
+</g>
+<!-- store&#45;&gt;retrieve -->
+<g id="aws-prompting-foundation-models-figure-1-aws-prompting-foundation-models-rag-inference-flow-edge4" class="edge">
+<title>store&#45;&gt;retrieve</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M114.68,-328.59C114.68,-317.8 114.68,-303.75 114.68,-291.67"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="116.95,-291.7 114.68,-285.2 112.4,-291.7 116.95,-291.7"/>
+<text xml:space="preserve" text-anchor="middle" x="131.93" y="-301.6" font-family="Georgia" font-size="12.00">search</text>
+</g>
+<!-- query -->
+<g id="aws-prompting-foundation-models-figure-1-aws-prompting-foundation-models-rag-inference-flow-node4" class="node">
+<title>query</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M282.23,-365C282.23,-365 211.12,-365 211.12,-365 205.12,-365 199.12,-359 199.12,-353 199.12,-353 199.12,-341 199.12,-341 199.12,-335 205.12,-329 211.12,-329 211.12,-329 282.23,-329 282.23,-329 288.23,-329 294.23,-335 294.23,-341 294.23,-341 294.23,-353 294.23,-353 294.23,-359 288.23,-365 282.23,-365"/>
+<text xml:space="preserve" text-anchor="middle" x="246.68" y="-341.75" font-family="Georgia" font-size="15.00">User query</text>
+</g>
+<!-- query&#45;&gt;retrieve -->
+<g id="aws-prompting-foundation-models-figure-1-aws-prompting-foundation-models-rag-inference-flow-edge3" class="edge">
+<title>query&#45;&gt;retrieve</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M217.24,-328.62C208.81,-323.61 199.61,-318.11 191.18,-313 177.65,-304.8 162.84,-295.69 149.89,-287.67"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="151.31,-285.88 144.59,-284.39 148.92,-289.75 151.31,-285.88"/>
+<text xml:space="preserve" text-anchor="middle" x="215.93" y="-301.6" font-family="Georgia" font-size="12.00">inference</text>
+</g>
+<!-- augment -->
+<g id="aws-prompting-foundation-models-figure-1-aws-prompting-foundation-models-rag-inference-flow-node6" class="node">
+<title>augment</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M300.35,-200.5C300.35,-200.5 71,-200.5 71,-200.5 65,-200.5 59,-194.5 59,-188.5 59,-188.5 59,-176.5 59,-176.5 59,-170.5 65,-164.5 71,-164.5 71,-164.5 300.35,-164.5 300.35,-164.5 306.35,-164.5 312.35,-170.5 312.35,-176.5 312.35,-176.5 312.35,-188.5 312.35,-188.5 312.35,-194.5 306.35,-200.5 300.35,-200.5"/>
+<text xml:space="preserve" text-anchor="middle" x="185.68" y="-177.25" font-family="Georgia" font-size="15.00">Build prompt with query + context</text>
+</g>
+<!-- query&#45;&gt;augment -->
+<g id="aws-prompting-foundation-models-figure-1-aws-prompting-foundation-models-rag-inference-flow-edge6" class="edge">
+<title>query&#45;&gt;augment</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M245.73,-328.8C245.01,-319.78 243.78,-308.59 241.68,-298.75 236.59,-274.97 234.91,-268.81 224.68,-246.75 218.46,-233.35 210,-219.28 202.55,-207.82"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="204.62,-206.83 199.14,-202.66 200.83,-209.34 204.62,-206.83"/>
+<text xml:space="preserve" text-anchor="middle" x="261.22" y="-260.48" font-family="Georgia" font-size="12.00">question</text>
+</g>
+<!-- retrieve&#45;&gt;augment -->
+<g id="aws-prompting-foundation-models-figure-1-aws-prompting-foundation-models-rag-inference-flow-edge5" class="edge">
+<title>retrieve&#45;&gt;augment</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M130.43,-245.94C140.54,-234.51 153.79,-219.54 164.77,-207.12"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="166.36,-208.77 168.96,-202.39 162.95,-205.75 166.36,-208.77"/>
+<text xml:space="preserve" text-anchor="middle" x="174.3" y="-219.35" font-family="Georgia" font-size="12.00">context</text>
+</g>
+<!-- fm -->
+<g id="aws-prompting-foundation-models-figure-1-aws-prompting-foundation-models-rag-inference-flow-node7" class="node">
+<title>fm</title>
+<path fill="var(--accent,#d7e9ed)" stroke="var(--primary,#315e6a)" stroke-width="2" d="M284.23,-118.25C284.23,-118.25 87.12,-118.25 87.12,-118.25 81.12,-118.25 75.13,-112.25 75.13,-106.25 75.13,-106.25 75.13,-94.25 75.13,-94.25 75.13,-88.25 81.13,-82.25 87.13,-82.25 87.13,-82.25 284.23,-82.25 284.23,-82.25 290.23,-82.25 296.23,-88.25 296.23,-94.25 296.23,-94.25 296.23,-106.25 296.23,-106.25 296.23,-112.25 290.23,-118.25 284.23,-118.25"/>
+<text xml:space="preserve" text-anchor="middle" x="185.68" y="-95" font-family="Georgia" font-size="15.00">Pre&#45;trained foundation model</text>
+</g>
+<!-- augment&#45;&gt;fm -->
+<g id="aws-prompting-foundation-models-figure-1-aws-prompting-foundation-models-rag-inference-flow-edge7" class="edge">
+<title>augment&#45;&gt;fm</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M185.68,-163.69C185.68,-152.88 185.68,-138.91 185.68,-126.93"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="187.95,-127.02 185.68,-120.52 183.4,-127.02 187.95,-127.02"/>
+<text xml:space="preserve" text-anchor="middle" x="226.18" y="-137.1" font-family="Georgia" font-size="12.00">inference input</text>
+</g>
+<!-- answer -->
+<g id="aws-prompting-foundation-models-figure-1-aws-prompting-foundation-models-rag-inference-flow-node8" class="node">
+<title>answer</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M245.23,-36C245.23,-36 126.12,-36 126.12,-36 120.12,-36 114.13,-30 114.13,-24 114.13,-24 114.13,-12 114.13,-12 114.13,-6 120.13,0 126.13,0 126.13,0 245.23,0 245.23,0 251.23,0 257.23,-6 257.23,-12 257.23,-12 257.23,-24 257.23,-24 257.23,-30 251.23,-36 245.23,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="185.68" y="-12.75" font-family="Georgia" font-size="15.00">Generated answer</text>
+</g>
+<!-- fm&#45;&gt;answer -->
+<g id="aws-prompting-foundation-models-figure-1-aws-prompting-foundation-models-rag-inference-flow-edge8" class="edge">
+<title>fm&#45;&gt;answer</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M185.68,-81.44C185.68,-70.56 185.68,-56.47 185.68,-44.43"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="187.95,-44.5 185.68,-38 183.4,-44.5 187.95,-44.5"/>
+<text xml:space="preserve" text-anchor="middle" x="203.68" y="-54.85" font-family="Georgia" font-size="12.00">output</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Retrieval-augmented generation: documents are prepared separately; at inference the query retrieves passages that are added to the prompt. The pre-trained model generates from that context without updating its parameters.</figcaption></figure>
+
+<p>In RAG, an application retrieves passages relevant to a query and adds them to the model input. The model uses those passages during inference; retrieval does not update model weights. Retrieval quality, indexing coverage, permissions, and freshness affect the context the model receives. More retrieval also adds latency and may add irrelevant or conflicting material. RAG can support grounding and citations when the system supplies and checks them, but it does not guarantee accuracy, security, or privacy.</p>
+<div class="table-scroll" role="region" aria-label="What changes, what data path is involved, and when the approach may fit"><table><caption>What changes, what data path is involved, and when the approach may fit</caption><thead><tr><th scope="col">Approach</th><th scope="col">What changes</th><th scope="col">Data path</th><th scope="col">Typical reason to consider it</th></tr></thead><tbody>
+<tr><th scope="row">Prompting / input examples</th><td>Current input only; no parameter update.</td><td>Instructions, context, and optional demonstrations are supplied at inference.</td><td>Clarify task behavior or provide a few task examples quickly.</td></tr>
+<tr><th scope="row">RAG</th><td>Retrieved context in the inference input; no parameter update.</td><td>Documents are prepared/indexed; each query retrieves relevant material and augments the prompt.</td><td>Use changing, domain-specific, or externally maintained knowledge.</td></tr>
+<tr><th scope="row">Fine-tuning</th><td>Model parameters are updated from task examples.</td><td>Curated labeled or input/output examples enter a training process; evaluate the resulting model.</td><td>Improve consistent task behavior or a target style when prompting alone is insufficient.</td></tr>
+<tr><th scope="row">Instruction fine-tuning</th><td>Parameters are updated using instruction-following examples.</td><td>Instruction, input, and desired-output pairs enter training and evaluation.</td><td>Adapt responses to a family of instructed tasks.</td></tr>
+<tr><th scope="row">Continued pretraining</th><td>Parameters are updated by continuing the original pretraining-style objective.</td><td>A suitable additional corpus enters a training process; assess coverage and risks.</td><td>Adapt broader language/domain patterns when that training approach is justified.</td></tr>
+</tbody></table></div>
+
+<p>Training data, retrieval context, and inference prompts must not be conflated. Training changes parameters; RAG selects context at query time; prompting supplies the immediate instruction and input. Each needs appropriate data preparation, evaluation, access controls, and human oversight. Do not claim that any route guarantees accuracy, confidentiality, security, or legal compliance.</p>
+<details class="scenario"><summary>Worked adaptation choice: answer questions from weekly policy updates</summary><p><strong>Given:</strong> an assistant answers questions about policy documents that change weekly. The answers should refer to the current policy text. A pre-trained foundation model is available; the team has no labeled task examples and does not need to teach a new writing style.</p>
+<ol>
+<li><strong>Compare the problem with prompting.</strong> Clear instructions can tell the model to answer from supplied policy context, but a prompt alone does not provide the changing documents. Manually pasting a large policy set into every request is not a dependable freshness plan.</li>
+<li><strong>Compare the problem with parameter updates.</strong> Fine-tuning or instruction fine-tuning requires curated examples and changes model parameters. It does not automatically insert the newest weekly policy. Continued pretraining is a broader corpus adaptation, not a query-time document lookup.</li>
+<li><strong>Choose a retrieval path for the stated need.</strong> Prepare an authorized, versioned document index; for each question, retrieve relevant passages and add them beside the question in the inference prompt. Refresh the index as the authoritative policy changes. This is RAG; the model weights remain unchanged.</li>
+<li><strong>Check the whole path before relying on answers.</strong> Use representative questions with known policy references. Check that the retrieved passages are relevant, current, and permission-appropriate; inspect whether the answer is supported by those passages; then assess latency, cost, and cases requiring human review. A retrieval result or citation is evidence to inspect, not a guarantee.</li>
+</ol>
+<p><strong>Decision:</strong> RAG directly addresses the changing-knowledge requirement. If the requirement instead became consistent behavior across many examples, evaluate instruction fine-tuning as a separate option with suitable training data and model evaluation.</p></details>
+
+<h2 id="section-6">Course-era AWS service comparison</h2>
+<p>The 2025 course presents Amazon Bedrock as a managed way to access and customize foundation models and Amazon SageMaker AI as a broader environment for building, training, and deploying machine-learning solutions. The comparison below is a dated description of how the course frames the services, not a present-day product recommendation or availability statement.</p>
+<div class="table-scroll" role="region" aria-label="2025 course framing: Bedrock and SageMaker AI"><table><caption>2025 course framing: Bedrock and SageMaker AI</caption><thead><tr><th scope="col">Dimension</th><th scope="col">Amazon Bedrock in the course</th><th scope="col">Amazon SageMaker AI in the course</th></tr></thead><tbody>
+<tr><th scope="row">Starting point</th><td>Use foundation models through a managed service and application APIs.</td><td>Broader machine-learning environment with more control over model development and infrastructure.</td></tr>
+<tr><th scope="row">Model choice</th><td>Choose among the course-era model catalog and service options.</td><td>Build, train, or deploy models with a broader workflow and infrastructure choices.</td></tr>
+<tr><th scope="row">Customization</th><td>Course examples include prompting, knowledge bases/RAG, and supported customization.</td><td>Course examples include training and deployment workflows with more implementation responsibility.</td></tr>
+<tr><th scope="row">Tradeoff emphasized</th><td>Faster managed starting point, with service and model constraints to check.</td><td>More flexibility and control, with more setup, expertise, and operational effort.</td></tr>
+</tbody></table></div>
+
+<p>Select a service path from the task, data governance, required control, integration, measured evaluation, and operating budget. Verify present-day service details only when a current implementation decision actually requires them.</p>
+<h3>Prompt-design features in the 2025 course</h3>
+<p>The course presents the <strong>Chat/Text playground</strong> as a place to author and refine prompts in single-prompt or chat mode, compare models and inference settings, and try a system prompt before application integration. <strong>Prompt Management</strong> supports reusable prompt structures with variables, variant comparisons, and saved versions. Its travel example substitutes Hanoi, a cultural focus, and 14 days into a template; the model and inference/tool configuration are tested alongside that prompt.</p>
+<p>The course's <strong>Amazon Bedrock Guardrails</strong> example configures harmful-content filters for prompts and responses and a separate prompt-attack filter. Filter strength and testing help evaluate interventions; they do not guarantee that every harmful or adversarial input is caught. These are descriptions of the 2025 course features, with the same dated-service caveat as the comparison above.</p>
+<h2 id="section-7">Prompt attacks and defensive thinking</h2>
+<p>The course introduces adverse prompt categories as risks to recognize and test conceptually. Do not treat a prompt as an access-control system: instructions alone cannot grant or revoke an application's real capabilities.</p>
+<div class="table-scroll" role="region" aria-label="Adverse prompt categories at the course's conceptual level"><table><caption>Adverse prompt categories at the course's conceptual level</caption><thead><tr><th scope="col">Category</th><th scope="col">Conceptual risk</th><th scope="col">Defensive question</th></tr></thead><tbody>
+<tr><th scope="row">Prompt injection</th><td>Untrusted input attempts to change or override the task instructions.</td><td>Are trusted instructions separated from user or retrieved content, and are outputs checked?</td></tr>
+<tr><th scope="row">Prompt leaking</th><td>A request attempts to expose hidden instructions or training-related information.</td><td>Does the system avoid placing secrets in model-visible prompts and limit data access?</td></tr>
+<tr><th scope="row">Jailbreak</th><td>A request attempts to bypass intended restrictions.</td><td>Are capabilities bounded and behavior tested against representative adversarial cases?</td></tr>
+<tr><th scope="row">Social engineering</th><td>An appeal to authority, urgency, or helpfulness tries to elicit a restricted action.</td><td>Do authorization checks happen outside the model and apply to every sensitive action?</td></tr>
+</tbody></table></div>
+
+<p>The course's scenarios include account-transfer or sensitive account requests, requests for protected training information, harmful-software assistance, and attempts to obtain security-protocol details. Treat them as defensive evaluation prompts only; this guide does not reproduce or execute attack text. Consider secure prompt construction, least-privilege integrations, authentication and authorization outside the model, input/output validation, capability limits, adversarial testing, monitoring, and human escalation. These controls reduce risk but are not guarantees. A course-era service control such as Bedrock Guardrails is an example of a control surface, not a complete security boundary.</p>
+<h2 id="section-8">Common mistakes</h2>
+<ul>
+<li>Treating a role label, negative instruction, or XML-like tag as a hard access-control rule.</li>
+<li>Calling zero-shot, single-shot, or few-shot prompting “training”; examples in the prompt do not update weights.</li>
+<li>Confusing RAG's inference-time retrieval with fine-tuning or continued pretraining, which update parameters.</li>
+<li>Reading top-p as a percentage of vocabulary size instead of cumulative probability mass.</li>
+<li>Assuming temperature or a high likelihood makes an answer factual, safe, or appropriate.</li>
+<li>Comparing models with a metric that does not measure the task, or treating similarity to a reference as proof of truth.</li>
+<li>Treating course-era service descriptions and example parameter settings as current universal API recommendations.</li>
+</ul>
+<h2 id="section-9">Course review</h2>
+<p>This companion is outside the assumed CS4681 exam scope. For course review, be able to identify prompt components and explain how iteration changes a result; distinguish input conditioning, inference-time retrieval, and parameter updates; choose evaluation evidence that matches a task; explain the qualitative role of generation controls; and compare approaches by quality needs, data path, control, latency, cost, and operational effort.</p>
+<p>The hypothetical top-p calculation is optional supplemental practice: sort by probability, accumulate mass until the threshold is first reached, then renormalize the retained candidates. It illustrates one explicit sampling convention, rather than establishing an assessment requirement.</p>
+<h2 id="section-10">Practice questions</h2>
+<p>Recall: A prompt asks for a balanced comparison, specifies teen readers, forbids discussing weight, and requires three labeled sections. Name the four prompt components represented.</p>
+<details class="worked"><summary>Check your answer</summary><p>Task/instructions: produce a balanced comparison. Audience/context: teen readers and the plant-based-diet topic. Constraint: do not discuss weight. Response format: the three labeled sections. A role or tone can be added separately.</p></details>
+
+<p>Recall: A team adds two worked examples to a prompt. Did it fine-tune the model? Why?</p>
+<details class="worked"><summary>Check your answer</summary><p>No. The examples condition the current inference input. Fine-tuning uses training data to update model parameters.</p></details>
+
+<p>Apply: A knowledge assistant needs current policy documents that change weekly. Which approach directly supplies the selected policy passages at query time, and what must still be evaluated?</p>
+<details class="worked"><summary>Check your answer</summary><p>RAG can retrieve and add passages to the inference context without changing model weights. Evaluate retrieval relevance, coverage, freshness, access permissions, conflicts, latency, and whether generated claims are supported by the retrieved text. Retrieval does not guarantee a correct answer.</p></details>
+
+<p>Apply: From the worked T = 1 baseline, top-p = 0.9 retains A, B, and C. What is the retained mass and why is D excluded?</p>
+<details class="worked"><summary>Check your answer</summary><p>The cumulative masses are A = 0.643914, A+B = 0.880797, and A+B+C = 0.967941. The third prefix is the first to reach 0.9, so it is retained. D would extend the prefix after the threshold was already reached.</p></details>
+
+<p>Recall: A translation benchmark reports a higher BLEU score for one candidate. What can that support, and what does it not establish by itself?</p>
+<details class="worked"><summary>Check your answer</summary><p>Under a consistent benchmark and reference setup, it supports stronger n-gram overlap with the reference. It does not by itself prove faithful meaning, fluency, task suitability, or truth; inspect outputs and use task-appropriate human evaluation too.</p></details>
+
+<p>Apply: A retrieved passage contains an instruction telling the model to ignore the user's request. Name the risk category and one system-level defense.</p>
+<details class="worked"><summary>Check your answer</summary><p>This is a prompt-injection risk from untrusted retrieved content. Keep trusted instructions structurally separate, treat retrieved text as data, constrain tool capabilities with external authorization, validate outputs, and test the behavior. Prompt wording alone is not a security guarantee.</p></details>
+
+<p>Apply: A team needs consistent output style across many related tasks after prompt iteration is insufficient. Which adaptation might it evaluate, and what changes in that approach?</p>
+<details class="worked"><summary>Check your answer</summary><p>It might evaluate fine-tuning, including instruction fine-tuning when instruction-following examples fit the task. Training examples update model parameters; that differs from adding examples to an inference prompt. The team must curate training data and evaluate the adapted model and its operational risks.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="aws-ai-foundations.html"><small>Previous</small>AWS Companion: AI and Generative AI Foundations <span aria-hidden="true">↗</span></a><a href="aws-responsible-security.html"><small>Next</small>AWS Companion: Responsible AI, Security, Governance, and Compliance <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

@@ -1,0 +1,728 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Optional AWS course reading on generative-AI application design and a historical 2025 certification map; outside the assumed CS4681 exam route."><title>AWS Companion: Application Design and Certification Map · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html" aria-current="page">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">AWS companion <span>/</span> AWS companion</div><h1>AWS Companion: Application Design and Certification Map</h1><p class="lead">Optional AWS course reading on generative-AI application design and a historical 2025 certification map; outside the assumed CS4681 exam route.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Start with a customer problem and organizational readiness</a><a href="#section-2">Select a model and decide how to improve it</a><a href="#section-3">Follow the application lifecycle</a><a href="#section-4">Deploy, monitor, audit, and respond</a><a href="#section-5">Agents coordinate models, data, and tools</a><a href="#section-6">Choose a service to fit skills, control, and the use case</a><a href="#section-7">Two worked application cases</a><a href="#section-8">Historical 2025 AIF-C01 course map</a><a href="#section-9">Common mistakes</a><a href="#section-10">Exam focus</a><a href="#section-11">Practice questions</a></nav><article><p class="notice">Optional AWS companion reading, outside the assumed CS4681 exam route. Read it after <a href="aws-prompting-foundation-models.html">Prompting and Foundation Models</a> and <a href="aws-responsible-security.html">Responsible AI and Security</a>. The certification section is a dated 2025 course map, not a current exam guide or a record of learner completion.</p>
+
+<h2 id="section-0">Big picture</h2>
+<p>An AI application succeeds only when a model choice fits a real need, organizational capacity, data, acceptable risk, and a way to tell whether the system helps. This course module connects requirements and readiness to foundation-model selection, performance improvement, evaluation, deployment, and ongoing monitoring. Those stages form a feedback loop: evidence from use can lead to a changed model, design, or even the original problem definition.</p>
+<p>The companion also includes agents, two contrasting application cases, and an AWS-service comparison as presented in the 2025 course. A separate module maps AIF-C01 certification domains and preparation resources from that same course edition. It explicitly says the course focuses primarily on domains 2 and 3; neither the course nor this optional reading is complete certification preparation.</p>
+<h2 id="section-1">Start with a customer problem and organizational readiness</h2>
+<p>“Working backwards” means first describing the customer experience and its value, then iterating toward what should be built. The course emphasizes customer centricity and using analytics and cloud computing to address business problems. The customer may be an employee, partner, patient, or another stakeholder. Business and technical teams need a shared description of the problem, constraints, expected outputs, and performance.</p>
+<p>Before selecting a model, define requirements and check whether generative AI fits the problem. Identify responsible-AI risks, privacy and security needs, and regulatory or compliance considerations early. Organizational readiness includes infrastructure and technical capabilities, data availability and quality, budget, skills, and cultural readiness to adopt AI. The same technical design may be feasible for one team and unrealistic for another.</p>
+<details class="worked"><summary>Teaching example: decide whether an HR policy assistant is ready for a pilot</summary><p><strong>Need:</strong> employees spend time finding HR policies and routine answers. <strong>Inputs:</strong> policy documents, handbooks, FAQs, and the employee’s location. <strong>Readiness evidence:</strong> the course scenario has high-quality documents, existing HR systems on AWS with IAM access controls, limited development expertise, and a small operations team.</p>
+<p><strong>Reasoning:</strong> the document corpus and existing identity context make an internal document assistant plausible; limited staff makes a lower-operations entry path relevant. Before a pilot, stakeholders still need to define which questions are in scope, what a useful answer means, who owns updates, and how employees can report a bad answer. The 2025 course scenario selects Amazon Q Business; this is not a universal or current product recommendation.</p>
+<p><strong>Check:</strong> the deployment is not ready merely because documents exist. Confirm data quality, access boundaries, budget, staff capacity, safeguards, and a measurable pilot plan.</p></details>
+
+<h3>Turn goals into success metrics</h3>
+<p>Metrics make the intended value observable. Candidate measures in the course include productivity gain, time saved, customer-satisfaction rating, quality improvement, and cost savings. Select measures that match the problem and agree on their definitions with stakeholders: baseline, population, measurement window, denominator, and acceptable trade-offs. A target is a desired future value, not evidence that the system achieved it.</p>
+<h2 id="section-2">Select a model and decide how to improve it</h2>
+<p>The use case drives foundation-model choice. The course lists model capability, model size and complexity, inference speed, cost, available information about training data, ethical considerations, and implementation considerations. Production choices also depend on throughput, expected request volume, context-window needs, and whether the application creates longer inputs or outputs. Consider upfront license fees as well as per-request/token charges described in the course; cost is tied to the actual workload and course-era pricing model.</p>
+<p>The team should consider that a pre-trained model’s training data may not be fully known or controlled. That uncertainty can raise questions about bias and fairness and about practices needed to mitigate risks. Match model capability to the task: a larger context window may matter for long documents, while a chat task may need a smaller context window. Do not choose “largest” as a proxy for best fit.</p>
+<p>Performance improvement options include inference-parameter changes and prompt engineering, adding external context through retrieval-augmented generation (RAG), or customizing model parameters through fine-tuning or continued pre-training. These are not interchangeable:</p>
+<div class="table-scroll" role="region" aria-label="Ways to improve an application and what changes"><table><caption>Ways to improve an application and what changes</caption><thead><tr><th scope="col">Approach</th><th scope="col">What changes</th><th scope="col">Typical role in the course framing</th></tr></thead><tbody>
+<tr><th scope="row">Prompt engineering and inference parameters</th><td>The request instructions, context arrangement, or generation settings</td><td>Guide the existing model behavior without updating model weights</td></tr>
+<tr><th scope="row">RAG</th><td>External information is retrieved and added to the request context at inference time</td><td>Ground answers in a use-case data source that can be updated separately</td></tr>
+<tr><th scope="row">Fine-tuning</th><td>Model parameters are adapted using training examples</td><td>Customize behavior using domain examples such as labeled historical question-answer pairs</td></tr>
+<tr><th scope="row">Continued pre-training</th><td>Model parameters are further trained on additional data</td><td>Another customization route; the course lists it separately from retrieval</td></tr>
+</tbody></table></div>
+
+<p>RAG is a context/data operation, not a weight update. Fine-tuning and continued pre-training change model parameters using data. The course’s qualitative comparison says RAG can require less upfront effort and cost than fine-tuning but may respond more slowly in-domain; treat that as a course example, not a universal performance law. Retrieval still depends on source quality and access controls. Fine-tuning does not guarantee recall of changing documents.</p>
+<h3>Balance quality, latency, throughput, and operating effort</h3>
+<p>Performance choices affect more than answer quality. In the course framing, well-structured prompts and concise outputs can reduce the work per request; inference parameters can limit output length. Use real-time inference when a person needs an immediate response, and batch inference for bulk requests that can complete asynchronously. The course describes Provisioned Throughput as an option for consistent workloads that need guaranteed throughput, and batch inference as a lower-cost option than standard on-demand pricing. Those comparisons are 2025 course context, depend on workload, and are not current pricing advice.</p>
+<p>Availability needs also depend on the user’s task: a real-time medical-support line has less tolerance for downtime than an application offering gardening tips. A managed cloud service can reduce the amount of infrastructure the team operates, while a more self-managed design can retain greater control. Match availability expectations, desired control, skills, and operating capacity to the use case.</p>
+<details class="worked"><summary>Teaching example: choose RAG, fine-tuning, or both for support answers</summary><p><strong>Given:</strong> an online shop answers questions about order tracking, returns, products, and troubleshooting. Product catalogues and troubleshooting guides change; historical support questions and answers show the desired response style.</p>
+<p><strong>Reason:</strong> retrieve current catalogue and troubleshooting passages for each request so the model receives relevant, changeable information. Separately, fine-tune on labeled historical question-answer pairs if the goal includes adapting response behavior. Retrieval supplies current context; training examples update parameters. Neither operation replaces evaluation.</p>
+<p><strong>Check:</strong> verify retrieved sources and permissions, then evaluate factual answers against current product material and assess style/quality separately. If the documents change, update the knowledge source; do not assume a model-weight update is necessary.</p></details>
+
+<h2 id="section-3">Follow the application lifecycle</h2>
+<p>The diagram redraws the course’s six-stage lifecycle and feedback relationships. It is iterative rather than a one-way release pipeline.</p>
+<figure><div class="diagram-frame" style="--diagram-width:1016.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="The course lifecycle is iterative: evaluation can return to improvement, while monitoring and feedback can trigger refinement, model reselection, or a revised use case." width="1016pt" height="200pt"
+ viewBox="0.00 0.00 1016.00 200.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="aws-implementation-certification-figure-1-aws-implementation-certification-lifecycle-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 189.18)">
+<title>G</title>
+<!-- usecase -->
+<g id="aws-implementation-certification-figure-1-aws-implementation-certification-lifecycle-node1" class="node">
+<title>usecase</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M92.52,-37C92.52,-37 12,-37 12,-37 6,-37 0,-31 0,-25 0,-25 0,-13 0,-13 0,-7 6,-1 12,-1 12,-1 92.52,-1 92.52,-1 98.52,-1 104.52,-7 104.52,-13 104.52,-13 104.52,-25 104.52,-25 104.52,-31 98.52,-37 92.52,-37"/>
+<text xml:space="preserve" text-anchor="middle" x="52.26" y="-14.72" font-family="Georgia" font-size="12.00">1. Define use case</text>
+</g>
+<!-- model -->
+<g id="aws-implementation-certification-figure-1-aws-implementation-certification-lifecycle-node2" class="node">
+<title>model</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M275.54,-74C275.54,-74 221.27,-74 221.27,-74 215.27,-74 209.27,-68 209.27,-62 209.27,-62 209.27,-50 209.27,-50 209.27,-44 215.27,-38 221.27,-38 221.27,-38 275.54,-38 275.54,-38 281.54,-38 287.54,-44 287.54,-50 287.54,-50 287.54,-62 287.54,-62 287.54,-68 281.54,-74 275.54,-74"/>
+<text xml:space="preserve" text-anchor="middle" x="248.4" y="-51.73" font-family="Georgia" font-size="12.00">2. Select FM</text>
+</g>
+<!-- usecase&#45;&gt;model -->
+<g id="aws-implementation-certification-figure-1-aws-implementation-certification-lifecycle-edge1" class="edge">
+<title>usecase&#45;&gt;model</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M104.78,-28.82C134.79,-34.54 172.31,-41.69 201.33,-47.22"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="200.6,-49.4 207.41,-48.38 201.45,-44.93 200.6,-49.4"/>
+<text xml:space="preserve" text-anchor="middle" x="156.89" y="-47.92" font-family="Georgia" font-size="12.00">requirements</text>
+</g>
+<!-- improve -->
+<g id="aws-implementation-certification-figure-1-aws-implementation-certification-lifecycle-node3" class="node">
+<title>improve</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M429.31,-143C429.31,-143 383.29,-143 383.29,-143 377.29,-143 371.29,-137 371.29,-131 371.29,-131 371.29,-119 371.29,-119 371.29,-113 377.29,-107 383.29,-107 383.29,-107 429.31,-107 429.31,-107 435.31,-107 441.31,-113 441.31,-119 441.31,-119 441.31,-131 441.31,-131 441.31,-137 435.31,-143 429.31,-143"/>
+<text xml:space="preserve" text-anchor="middle" x="406.3" y="-120.72" font-family="Georgia" font-size="12.00">3. Improve</text>
+</g>
+<!-- model&#45;&gt;improve -->
+<g id="aws-implementation-certification-figure-1-aws-implementation-certification-lifecycle-edge2" class="edge">
+<title>model&#45;&gt;improve</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M287.94,-73.06C310.98,-83.26 340.26,-96.21 363.81,-106.64"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="362.67,-108.62 369.54,-109.17 364.52,-104.46 362.67,-108.62"/>
+<text xml:space="preserve" text-anchor="middle" x="329.41" y="-105.53" font-family="Georgia" font-size="12.00">candidate</text>
+</g>
+<!-- evaluate -->
+<g id="aws-implementation-certification-figure-1-aws-implementation-certification-lifecycle-node4" class="node">
+<title>evaluate</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M598.08,-174C598.08,-174 551.31,-174 551.31,-174 545.31,-174 539.31,-168 539.31,-162 539.31,-162 539.31,-150 539.31,-150 539.31,-144 545.31,-138 551.31,-138 551.31,-138 598.08,-138 598.08,-138 604.08,-138 610.08,-144 610.08,-150 610.08,-150 610.08,-162 610.08,-162 610.08,-168 604.08,-174 598.08,-174"/>
+<text xml:space="preserve" text-anchor="middle" x="574.69" y="-151.72" font-family="Georgia" font-size="12.00">4. Evaluate</text>
+</g>
+<!-- improve&#45;&gt;evaluate -->
+<g id="aws-implementation-certification-figure-1-aws-implementation-certification-lifecycle-edge3" class="edge">
+<title>improve&#45;&gt;evaluate</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M429.28,-143.5C437.54,-149.32 447.35,-155.01 457.31,-158 481.03,-165.12 508.71,-164.97 531.13,-162.87"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="531.09,-165.16 537.31,-162.21 530.61,-160.64 531.09,-165.16"/>
+<text xml:space="preserve" text-anchor="middle" x="490.31" y="-166.98" font-family="Georgia" font-size="12.00">test</text>
+</g>
+<!-- evaluate&#45;&gt;improve -->
+<g id="aws-implementation-certification-figure-1-aws-implementation-certification-lifecycle-edge4" class="edge">
+<title>evaluate&#45;&gt;improve</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M539.01,-143.06C533.8,-141.42 528.45,-139.92 523.31,-138.75 499.18,-133.26 471.7,-129.87 449.54,-127.84"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="449.82,-125.58 443.14,-127.28 449.42,-130.11 449.82,-125.58"/>
+<text xml:space="preserve" text-anchor="middle" x="490.31" y="-141.6" font-family="Georgia" font-size="12.00">iterate</text>
+</g>
+<!-- deploy -->
+<g id="aws-implementation-certification-figure-1-aws-implementation-certification-lifecycle-node5" class="node">
+<title>deploy</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M766.85,-174C766.85,-174 729.08,-174 729.08,-174 723.08,-174 717.08,-168 717.08,-162 717.08,-162 717.08,-150 717.08,-150 717.08,-144 723.08,-138 729.08,-138 729.08,-138 766.85,-138 766.85,-138 772.85,-138 778.85,-144 778.85,-150 778.85,-150 778.85,-162 778.85,-162 778.85,-168 772.85,-174 766.85,-174"/>
+<text xml:space="preserve" text-anchor="middle" x="747.96" y="-151.72" font-family="Georgia" font-size="12.00">5. Deploy</text>
+</g>
+<!-- evaluate&#45;&gt;deploy -->
+<g id="aws-implementation-certification-figure-1-aws-implementation-certification-lifecycle-edge5" class="edge">
+<title>evaluate&#45;&gt;deploy</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M610.35,-156C638.86,-156 679.2,-156 708.66,-156"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="708.64,-158.28 715.14,-156 708.64,-153.73 708.64,-158.28"/>
+<text xml:space="preserve" text-anchor="middle" x="663.58" y="-158.85" font-family="Georgia" font-size="12.00">meets criteria</text>
+</g>
+<!-- monitor -->
+<g id="aws-implementation-certification-figure-1-aws-implementation-certification-lifecycle-node6" class="node">
+<title>monitor</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M982.87,-98C982.87,-98 864.85,-98 864.85,-98 858.85,-98 852.85,-92 852.85,-86 852.85,-86 852.85,-74 852.85,-74 852.85,-68 858.85,-62 864.85,-62 864.85,-62 982.87,-62 982.87,-62 988.87,-62 994.87,-68 994.87,-74 994.87,-74 994.87,-86 994.87,-86 994.87,-92 988.87,-98 982.87,-98"/>
+<text xml:space="preserve" text-anchor="middle" x="923.86" y="-75.72" font-family="Georgia" font-size="12.00">6. Monitor and feedback</text>
+</g>
+<!-- deploy&#45;&gt;monitor -->
+<g id="aws-implementation-certification-figure-1-aws-implementation-certification-lifecycle-edge6" class="edge">
+<title>deploy&#45;&gt;monitor</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M779.27,-144.5C796.3,-137.89 817.89,-129.28 836.85,-121 850.66,-114.97 865.54,-108.03 878.97,-101.61"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="879.61,-103.82 884.49,-98.95 877.64,-99.72 879.61,-103.82"/>
+<text xml:space="preserve" text-anchor="middle" x="815.85" y="-140.72" font-family="Georgia" font-size="12.00">observe</text>
+</g>
+<!-- monitor&#45;&gt;usecase -->
+<g id="aws-implementation-certification-figure-1-aws-implementation-certification-lifecycle-edge8" class="edge">
+<title>monitor&#45;&gt;usecase</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M899.93,-61.65C868.05,-38.03 807.62,0 748.96,0 247.4,0 247.4,0 247.4,0 201.84,0 150.55,-5.25 112.14,-10.23"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="112.28,-7.91 106.13,-11.02 112.87,-12.42 112.28,-7.91"/>
+<text xml:space="preserve" text-anchor="middle" x="490.31" y="-2.85" font-family="Georgia" font-size="12.00">revisit value</text>
+</g>
+<!-- monitor&#45;&gt;model -->
+<g id="aws-implementation-certification-figure-1-aws-implementation-certification-lifecycle-edge9" class="edge">
+<title>monitor&#45;&gt;model</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M852.52,-65.83C820.99,-60.63 783.25,-56 748.96,-56 405.3,-56 405.3,-56 405.3,-56 368.37,-56 326.53,-56 295.49,-56"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="295.86,-53.73 289.36,-56 295.86,-58.28 295.86,-53.73"/>
+<text xml:space="preserve" text-anchor="middle" x="574.69" y="-58.85" font-family="Georgia" font-size="12.00">reselect</text>
+</g>
+<!-- monitor&#45;&gt;improve -->
+<g id="aws-implementation-certification-figure-1-aws-implementation-certification-lifecycle-edge7" class="edge">
+<title>monitor&#45;&gt;improve</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M852.44,-86.15C743.61,-95.65 537.9,-113.6 449.46,-121.32"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="449.31,-119.05 443.03,-121.88 449.71,-123.58 449.31,-119.05"/>
+<text xml:space="preserve" text-anchor="middle" x="663.58" y="-108.46" font-family="Georgia" font-size="12.00">refine</text>
+</g>
+</g>
+</svg>
+</div><figcaption>The course lifecycle is iterative: evaluation can return to improvement, while monitoring and feedback can trigger refinement, model reselection, or a revised use case.</figcaption></figure>
+
+<ol>
+<li><strong>Define a use case.</strong> State the problem, requirements, customer experience, organizational fit, risks, and success measures.</li>
+<li><strong>Select a foundation model.</strong> Match capabilities, data knowledge, speed, cost, context, ethical concerns, and implementation constraints to the use case.</li>
+<li><strong>Improve performance.</strong> Test prompts and inference parameters, RAG, fine-tuning, continued pre-training, or a combination where justified.</li>
+<li><strong>Evaluate results.</strong> Use relevant metrics and test datasets against objectives. Iterate toward a minimally viable solution that meets release criteria.</li>
+<li><strong>Deploy the application.</strong> Integrate the model, infrastructure, and monitoring into production; plan maintenance, security, access, staff preparation, and change management.</li>
+<li><strong>Monitor, audit, and get feedback.</strong> Observe infrastructure, model quality, compliance, business outcomes, and user feedback. Use findings to refine or revisit earlier decisions.</li>
+</ol>
+
+<h3>Evaluate across methods, datasets, and time</h3>
+<p>Align evaluation criteria to business outcomes and combine quantitative measures with qualitative judgment. Human reviewers can assess relevance, coherence, and appropriateness, but review takes time and can be costly. Benchmarks named in the course include GLUE, SuperGLUE, and SQuAD. Automated measures include perplexity and BLEU. A benchmark or metric only covers the dimensions represented by its task, data, and scoring method; language metrics may miss important quality nuances.</p>
+<p>Use multiple test datasets. The course’s schematic chart shows different trends across datasets A, B, and C as model versions change; it contains no numeric values. A model can improve on one dataset and worsen on another. Data distributions also shift, so evaluation should recur over the lifecycle rather than serve as a one-time gate. Human and automated methods complement one another; neither alone proves application quality.</p>
+<details class="worked"><summary>Teaching example: interpret mixed dataset trends</summary><p><strong>Given:</strong> across later model versions, the schematic trend rises for datasets A and B and falls for dataset C. The graph is qualitative and gives no scales or measurements.</p>
+<p><strong>Reasoning:</strong> the model is not simply “better” in every context. Identify what differs in dataset C, inspect failures, and check whether its distribution or task reflects an important use case. Compare against the business criteria and affected users before deciding whether to deploy.</p>
+<p><strong>Check:</strong> do not calculate a percentage change or claim statistical significance from the schematic. It supports only the need to evaluate more than one dataset and monitor drift.</p></details>
+
+<h2 id="section-4">Deploy, monitor, audit, and respond</h2>
+<p>Deployment includes configuring infrastructure and integrating the model with application components, securing the environment, setting up monitoring, preparing staff, and managing change. Plan compute, storage, networking, traffic, and data volume. Implement scoped access and data protections. The course distinguishes several kinds of evidence:</p>
+<div class="table-scroll" role="region" aria-label="Operational signals, what they show, and possible response"><table><caption>Operational signals, what they show, and possible response</caption><thead><tr><th scope="col">Signal</th><th scope="col">Question it helps answer</th><th scope="col">Example response</th></tr></thead><tbody>
+<tr><th scope="row">Infrastructure: compute, network, storage</th><td>Is the system constrained or using resources unexpectedly?</td><td>Investigate bottlenecks; adjust resource allocation</td></tr>
+<tr><th scope="row">System logs and errors</th><td>Where did an operational failure occur?</td><td>Inspect logs and trace the cause</td></tr>
+<tr><th scope="row">Model performance and latency</th><td>Is quality or response time degrading?</td><td>Evaluate examples, compare versions, consider model or deployment changes</td></tr>
+<tr><th scope="row">Business metrics</th><td>Are users completing the intended task?</td><td>Review engagement, satisfaction, task completion, or time saved</td></tr>
+<tr><th scope="row">Bias, fairness, and compliance indicators</th><td>Are outcomes or processes diverging from defined expectations?</td><td>Investigate with suitable human review and update thresholds or controls</td></tr>
+</tbody></table></div>
+
+<p>Monitoring is signal collection; an alert does not itself diagnose or fix a problem. Responses can include root-cause investigation, additional human review, resource changes, revised deployment strategy, changed monitoring thresholds, or retraining when evidence supports it. For models managed through SageMaker AI, the course describes Model Monitor for data/model drift signals and A/B testing to compare versions before full rollout. Amazon Augmented AI (A2I) is described as a way to route random samples or low-confidence predictions to human review and feed feedback into improvement. These names and capabilities are 2025 course context.</p>
+<p>In the customer-chat example, AWS CloudTrail is used to monitor and audit API calls made to the model. Amazon CloudWatch logs are used to monitor and analyze responses; Bedrock runtime metrics in CloudWatch support performance monitoring. API-call audit records and runtime metrics/logs answer different operational questions; one is not a substitute for the other.</p>
+<details class="worked"><summary>Teaching example: respond to a rise in latency</summary><p><strong>Given:</strong> production latency rises while task completion falls. Those are two separate signals: one technical, one business-related.</p>
+<p><strong>Investigate:</strong> inspect infrastructure use, system logs, model performance, and recent changes. Check whether slower responses coincide with larger context/request volume or an integration issue; do not assume the model alone is responsible.</p>
+<p><strong>Respond and verify:</strong> adjust resources or deployment strategy if evidence supports it, then compare latency and task completion against the baseline. If model behavior also changed, route examples for evaluation or human review. Keep monitoring to confirm the response improved the intended outcome.</p></details>
+
+<h2 id="section-5">Agents coordinate models, data, and tools</h2>
+<p>An AI agent is autonomous or semi-autonomous software designed to perform tasks for a user. Generative-AI agents often combine an LLM with external tools, databases, or APIs. They can process natural-language requests, make decisions, divide tasks into smaller steps, collect information, and take actions. Amazon Bedrock Agents are presented as orchestrating interactions among a foundation model, data sources, software applications, and user conversations; they can call APIs and query data sources.</p>
+<p>The travel example below preserves the course’s six numbered roles. Its diagram labels the calculator connection “Search and retrieval,” while the described calculator task is to calculate totals. This view keeps itinerary retrieval with the trip catalog and treats the calculator as a calculation tool. The conceptual flow leaves authentication, authorization, validation, failure handling, retries, injection defenses, privacy controls, and human approval unspecified.</p>
+<figure class="course-figure"><div class="diagram-frame" style="--diagram-width:825px"><svg role="img" aria-label="Travel request trace: numbered tool selection, catalog search, calculator request and generated response" width="669pt" height="250pt"
+ viewBox="0.00 0.00 669.00 250.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="aws-implementation-certification-figure-2-graph0" class="graph" transform="scale(1 1) rotate(0) translate(11.52 238.22)">
+<title>G</title>
+<g id="aws-implementation-certification-figure-2-clust1" class="cluster">
+<title>cluster_bedrock</title>
+<path fill="none" stroke="var(--diagram-border,#7f9da5)" stroke-width="1.2" d="M229.22,-84.7C229.22,-84.7 625.94,-84.7 625.94,-84.7 631.94,-84.7 637.94,-90.7 637.94,-96.7 637.94,-96.7 637.94,-176.7 637.94,-176.7 637.94,-182.7 631.94,-188.7 625.94,-188.7 625.94,-188.7 229.22,-188.7 229.22,-188.7 223.22,-188.7 217.22,-182.7 217.22,-176.7 217.22,-176.7 217.22,-96.7 217.22,-96.7 217.22,-90.7 223.22,-84.7 229.22,-84.7"/>
+<text xml:space="preserve" text-anchor="middle" x="427.58" y="-170.45" font-family="Georgia" font-size="15.00" fill="#26363a">Amazon Bedrock</text>
+</g>
+<!-- user -->
+<g id="aws-implementation-certification-figure-2-node1" class="node">
+<title>user</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M66.36,-226.7C66.36,-226.7 36.36,-226.7 36.36,-226.7 30.36,-226.7 24.36,-220.7 24.36,-214.7 24.36,-214.7 24.36,-202.7 24.36,-202.7 24.36,-196.7 30.36,-190.7 36.36,-190.7 36.36,-190.7 66.36,-190.7 66.36,-190.7 72.36,-190.7 78.36,-196.7 78.36,-202.7 78.36,-202.7 78.36,-214.7 78.36,-214.7 78.36,-220.7 72.36,-226.7 66.36,-226.7"/>
+<text xml:space="preserve" text-anchor="middle" x="51.36" y="-203.85" font-family="Georgia" font-size="13.00">User</text>
+</g>
+<!-- agent -->
+<g id="aws-implementation-certification-figure-2-node4" class="node">
+<title>agent</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M388.19,-145.18C388.19,-145.18 247.22,-145.18 247.22,-145.18 241.22,-145.18 235.22,-139.18 235.22,-133.18 235.22,-133.18 235.22,-114.22 235.22,-114.22 235.22,-108.22 241.22,-102.22 247.22,-102.22 247.22,-102.22 388.19,-102.22 388.19,-102.22 394.19,-102.22 400.19,-108.22 400.19,-114.22 400.19,-114.22 400.19,-133.18 400.19,-133.18 400.19,-139.18 394.19,-145.18 388.19,-145.18"/>
+<text xml:space="preserve" text-anchor="middle" x="317.71" y="-126.35" font-family="Georgia" font-size="13.00">Bedrock Agent</text>
+<text xml:space="preserve" text-anchor="middle" x="317.71" y="-111.35" font-family="Georgia" font-size="13.00">2 recognize required tools</text>
+</g>
+<!-- user&#45;&gt;agent -->
+<g id="aws-implementation-certification-figure-2-edge2" class="edge">
+<title>user&#45;&gt;agent</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M78.67,-200.24C116.08,-188.21 186.12,-165.69 240.58,-148.18"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="241.14,-150.57 247.06,-146.1 239.64,-145.91 241.14,-150.57"/>
+<text xml:space="preserve" text-anchor="middle" x="164.97" y="-188.95" font-family="Georgia" font-size="11.00">1 request</text>
+</g>
+<!-- catalog -->
+<g id="aws-implementation-certification-figure-2-node2" class="node">
+<title>catalog</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M83.22,-138.18C83.22,-138.18 19.5,-138.18 19.5,-138.18 13.5,-138.18 7.5,-132.18 7.5,-126.18 7.5,-126.18 7.5,-107.22 7.5,-107.22 7.5,-101.22 13.5,-95.22 19.5,-95.22 19.5,-95.22 83.22,-95.22 83.22,-95.22 89.22,-95.22 95.22,-101.22 95.22,-107.22 95.22,-107.22 95.22,-126.18 95.22,-126.18 95.22,-132.18 89.22,-138.18 83.22,-138.18"/>
+<text xml:space="preserve" text-anchor="middle" x="51.36" y="-119.35" font-family="Georgia" font-size="13.00">Trip catalog</text>
+<text xml:space="preserve" text-anchor="middle" x="51.36" y="-104.35" font-family="Georgia" font-size="13.00">database</text>
+</g>
+<!-- catalog&#45;&gt;agent -->
+<g id="aws-implementation-certification-figure-2-edge4" class="edge">
+<title>catalog&#45;&gt;agent</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M95.72,-117.85C131.08,-118.78 182.23,-120.14 226.42,-121.31"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="226.29,-123.76 233.36,-121.49 226.42,-118.86 226.29,-123.76"/>
+<text xml:space="preserve" text-anchor="middle" x="164.97" y="-123.88" font-family="Georgia" font-size="11.00">options and prices</text>
+</g>
+<!-- calculator -->
+<g id="aws-implementation-certification-figure-2-node3" class="node">
+<title>calculator</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M90.72,-55.7C90.72,-55.7 12,-55.7 12,-55.7 6,-55.7 0,-49.7 0,-43.7 0,-43.7 0,-31.7 0,-31.7 0,-25.7 6,-19.7 12,-19.7 12,-19.7 90.72,-19.7 90.72,-19.7 96.72,-19.7 102.72,-25.7 102.72,-31.7 102.72,-31.7 102.72,-43.7 102.72,-43.7 102.72,-49.7 96.72,-55.7 90.72,-55.7"/>
+<text xml:space="preserve" text-anchor="middle" x="51.36" y="-32.85" font-family="Georgia" font-size="13.00">Calculator app</text>
+</g>
+<!-- calculator&#45;&gt;agent -->
+<g id="aws-implementation-certification-figure-2-edge6" class="edge">
+<title>calculator&#45;&gt;agent</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M103.12,-48.29C134.13,-55.3 174.39,-65.37 209.22,-77.2 227,-83.24 245.94,-90.97 262.89,-98.39"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="261.75,-100.57 269.14,-101.16 263.73,-96.09 261.75,-100.57"/>
+<text xml:space="preserve" text-anchor="middle" x="164.97" y="-80.25" font-family="Georgia" font-size="11.00">totals</text>
+</g>
+<!-- agent&#45;&gt;catalog -->
+<g id="aws-implementation-certification-figure-2-edge3" class="edge">
+<title>agent&#45;&gt;catalog</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M234.85,-103.9C226.23,-102.39 217.58,-101.1 209.22,-100.2 170.11,-95.97 159.78,-95.55 120.72,-100.2 115.18,-100.86 109.44,-101.81 103.75,-102.92"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="103.3,-100.51 96.96,-104.35 104.31,-105.31 103.3,-100.51"/>
+<text xml:space="preserve" text-anchor="middle" x="164.97" y="-103.25" font-family="Georgia" font-size="11.00">3 search request</text>
+</g>
+<!-- agent&#45;&gt;calculator -->
+<g id="aws-implementation-certification-figure-2-edge5" class="edge">
+<title>agent&#45;&gt;calculator</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M304.43,-102.08C287.26,-74.28 253.17,-27.34 209.22,-8.2 173,7.57 128.47,-3.37 96.12,-16.17"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="95.53,-13.76 89.99,-18.69 97.39,-18.29 95.53,-13.76"/>
+<text xml:space="preserve" text-anchor="middle" x="164.97" y="-11.25" font-family="Georgia" font-size="11.00">4 calculate totals</text>
+</g>
+<!-- llm -->
+<g id="aws-implementation-certification-figure-2-node5" class="node">
+<title>llm</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M607.94,-144.7C607.94,-144.7 577.94,-144.7 577.94,-144.7 571.94,-144.7 565.94,-138.7 565.94,-132.7 565.94,-132.7 565.94,-120.7 565.94,-120.7 565.94,-114.7 571.94,-108.7 577.94,-108.7 577.94,-108.7 607.94,-108.7 607.94,-108.7 613.94,-108.7 619.94,-114.7 619.94,-120.7 619.94,-120.7 619.94,-132.7 619.94,-132.7 619.94,-138.7 613.94,-144.7 607.94,-144.7"/>
+<text xml:space="preserve" text-anchor="middle" x="592.94" y="-121.85" font-family="Georgia" font-size="13.00">LLM</text>
+</g>
+<!-- agent&#45;&gt;llm -->
+<g id="aws-implementation-certification-figure-2-edge1" class="edge">
+<title>agent&#45;&gt;llm</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M400.68,-124.6C453,-125.17 518.12,-125.89 557.29,-126.32"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="557.17,-128.77 564.2,-126.4 557.23,-123.87 557.17,-128.77"/>
+<text xml:space="preserve" text-anchor="middle" x="483.07" y="-129.25" font-family="Georgia" font-size="11.00">5 request + catalog + totals</text>
+</g>
+<!-- llm&#45;&gt;user -->
+<g id="aws-implementation-certification-figure-2-edge7" class="edge">
+<title>llm&#45;&gt;user</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M565.79,-139.17C560,-141.6 553.84,-143.93 547.94,-145.7 401.5,-189.63 361.38,-190.86 209.22,-205.7 167.29,-209.79 118.76,-210.03 86.92,-209.58"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="87.35,-207.14 80.31,-209.47 87.27,-212.04 87.35,-207.14"/>
+<text xml:space="preserve" text-anchor="middle" x="317.71" y="-207.78" font-family="Georgia" font-size="11.00">6 generated response</text>
+</g>
+</g>
+</svg></div><figcaption>Travel request trace. The Amazon Bedrock boundary contains the agent and LLM; the trip catalog and calculator are outside it. The catalog supplies itinerary options and prices; the calculator computes totals. A diagram label calls the calculator action “Search and retrieval,” while its described task is calculation.</figcaption></figure>
+
+<ol>
+<li><strong>User input:</strong> asks for a priced weekend itinerary for a named destination and style.</li>
+<li><strong>Agent decision:</strong> determines it needs trip options and prices from the catalog and a calculated total before asking the LLM to formulate the response. This is an illustrative decision, not a demonstrated planning algorithm.</li>
+<li><strong>Catalog retrieval:</strong> sends a query to the trip-catalog database; the database returns itinerary options and prices.</li>
+<li><strong>Calculator call:</strong> sends the relevant trip options and prices to a calculator app; the app returns totals.</li>
+<li><strong>Prompt assembly:</strong> combines the original request, catalog results, and calculator results into the context sent to the LLM.</li>
+<li><strong>Model response:</strong> the LLM uses the supplied context to generate an answer that returns to the user.</li>
+</ol>
+
+<p>The agent’s plan is not authorization. In a real design, independently decide which tools are allowed, scope the identity and permissions behind each action, validate inputs and outputs, and define failure handling and human escalation where appropriate. These are supplemental design questions, not properties demonstrated by the course diagram. The course says this approach improves the travel model’s performance but reports no measured baseline or result.</p>
+<details class="worked"><summary>Teaching example: check a travel-agent request trace</summary><p><strong>Input:</strong> “Find a priced weekend itinerary for this destination and style.”</p>
+<p><strong>Trace:</strong> the agent asks the trip catalog for matching options and prices; receives those data; asks the calculator to total each relevant option; receives totals; combines request, catalog data, and totals as LLM context; and returns an LLM-generated response.</p>
+<p><strong>Check:</strong> catalog retrieval supplies itinerary data, while the calculator computes totals. No destination prices, calculated itinerary total, or authorization and error-handling behavior are specified, so none is implied here.</p></details>
+
+<h2 id="section-6">Choose a service to fit skills, control, and the use case</h2>
+<p>The course’s comparison is qualitative. It places Amazon Q at a lower technical-skills/control threshold for internal document use, Amazon Bedrock in a middle position for integrating pre-trained models into applications, and SageMaker AI at the higher-control end for teams that build or customize models and manage more of the ML lifecycle. The chart’s horizontal axis indicates increasing complexity and cost; it gives no numeric scale and is not a universal ranking. Prompt engineering and RAG appear toward the lower-complexity end, model customization farther along, and building a model from scratch at the higher-control and complexity end. For pre-trained models, the course also names SageMaker JumpStart or Bedrock; Amazon Q Business is presented as the no-code option.</p>
+<div class="table-scroll" role="region" aria-label="2025 course service comparison and example fit"><table><caption>2025 course service comparison and example fit</caption><thead><tr><th scope="col">Course framing</th><th scope="col">Why it may fit</th><th scope="col">Example or trade-off described</th></tr></thead><tbody>
+<tr><th scope="row">Amazon Q Business</th><td>Managed entry path for internal documents; course says teams need not select, evaluate, or manage which model is used</td><td>HR policy assistant with document access scoped through existing IAM context; lower technical-skills threshold in the comparison</td></tr>
+<tr><th scope="row">Amazon Bedrock</th><td>Application integration using pre-trained models; software teams can build generative-AI applications without managing their own model lifecycle</td><td>Customer-service chat example; more application flexibility than the low-code internal-document case</td></tr>
+<tr><th scope="row">Amazon SageMaker AI</th><td>Greater model, training, deployment, and lifecycle control for specialized needs and teams with ML skills/resources</td><td>Course example: a specialized prediction model based on specific biomarkers; more control and implementation effort</td></tr>
+</tbody></table></div>
+
+<details class="worked"><summary>Teaching example: choose among the three services for the two course cases</summary><p><strong>HR case:</strong> limited development expertise and operations staff, good policy documents, existing AWS IAM controls, and a quick pilot goal point to Amazon Q Business in the course framing. The access design still needs verification; the service choice does not prove that permissions are correct.</p>
+<p><strong>Customer chat:</strong> an experienced software team wants to add product-support answers, has no in-house models, and accepts careful customer-experience evaluation. The course selects Bedrock, compares models, uses a Knowledge Base, and fine-tunes on labeled historical question-answer pairs.</p>
+<p><strong>Check:</strong> if the need instead requires specialized training and fine-grained control across the lifecycle, the course points toward SageMaker AI. These are decisions from the historical course scenarios; present product capability, cost, and fit require current official verification.</p></details>
+
+<h2 id="section-7">Two worked application cases</h2>
+<h3>HR policy assistant: identity-scoped document answers</h3>
+<p>The course scenario has limited development expertise and operations staff, existing HR systems on AWS with IAM access controls, urgency for a pilot, and high-quality policy documents, handbooks, and FAQs. It selects Amazon Q Business. The team uploads those sources, uses existing IAM implementation to grant location-appropriate subsets, applies global and topic-level controls with guardrails, gathers employee ratings/feedback, and updates the knowledge base when policies change.</p>
+<p>For evaluation, the course proposes randomly selected HR queries and a <strong>95% or higher correct-response target</strong>. It also tracks usefulness/ease feedback, HR ticket-volume and time reductions, and usage/question patterns. The 95% is a target, not an observed result, a universal threshold, or evidence that answers are safe. The example begins with one department, integrates through the intranet/HR portal, trains employees, and monitors use and performance with CloudWatch and CloudTrail; CloudWatch logs are described for monitoring and analyzing responses. Identity-scoped retrieval does not train the model, and an answer can still be wrong or incomplete.</p>
+<details class="worked"><summary>Teaching example: evaluate the HR pilot without overstating the target</summary><p><strong>Plan:</strong> sample HR queries, compare answers with authoritative policy, define what counts as correct, and track employee feedback plus ticket volume/time. The course states a goal of at least 95% correct responses.</p>
+<p><strong>Interpretation:</strong> before drawing a conclusion, record sample size and selection method, policy version, answer rubric, and how partially correct or risky answers are handled. The slide gives no measured sample result.</p>
+<p><strong>Check:</strong> report the target separately from observed pilot outcomes. High accuracy on sampled queries would not prove permission correctness, privacy compliance, fairness, or safety for every employee question.</p></details>
+
+<h3>Customer-service chat: retrieval and fine-tuning together</h3>
+<p>The e-commerce scenario aims to answer tracking, returns, and product-information questions around the clock, while improving accuracy and satisfaction and reducing human-agent workload. The team has software-development experience, no models built in-house, one analytics data scientist, and leadership concern about customer experience. The course chooses Bedrock and compares several LLMs, choosing a smaller/faster model that balances language understanding.</p>
+<p>The team configures a Bedrock Knowledge Base with product catalogues and troubleshooting guides, and separately fine-tunes on labeled historical questions and answers. At inference, retrieval adds relevant product/troubleshooting context; fine-tuning changes model parameters using the labeled examples. Evaluation combines human review and automated accuracy metrics. KPIs include response accuracy, customer satisfaction, and successful query resolution. A <strong>25% improvement over historical KPI values is the target</strong>, not a measured result.</p>
+<p>The rollout starts with a small percentage of traffic and grows gradually, integrates with the existing customer-service platform and website, collects customer ratings/feedback, and monitors operation. CloudTrail audits model API calls; CloudWatch logs help analyze responses and Bedrock runtime metrics support performance monitoring.</p>
+<p>The course’s 2025 pricing slide lists customization training by tokens processed, monthly customized-model storage, standard on-demand input/output-token charges, and Provisioned Throughput charged hourly by model units, with longer commitments described as discounted. It says customized Bedrock models require Provisioned Throughput to run in that course edition. These are historical course statements, not current prices or purchase advice.</p>
+<details class="worked"><summary>Teaching example: separate the customer-chat target from evidence</summary><p><strong>Baseline:</strong> record historical accuracy, satisfaction, and successful-resolution measures using stable definitions and the same eligible population intended for comparison.</p>
+<p><strong>Target:</strong> the course scenario seeks 25% improvement in those indicators versus historical values. It does not provide the starting numbers or a post-launch result, so no achieved score can be calculated.</p>
+<p><strong>Check:</strong> pilot with a small traffic fraction, combine automated accuracy checks and human review, monitor customer feedback and runtime signals, and compare like-for-like observations before expanding. A target is not proof of effectiveness.</p></details>
+
+<h3>Dated course sample question: personalized news</h3>
+<p>The Module 8 sample question describes a media company generating personalized articles from user preferences and browsing history. In the 2025 course example, the selected answer is Amazon Bedrock with a fine-tuned foundation model. The course rationale is that a pre-trained model can be customized for personalized generation, while building a custom language model from scratch is more effort than the scenario requires; the course frames Amazon Q Business around business intelligence/data analysis and Comprehend plus Lambda around text analysis rather than article generation.</p>
+<details class="worked"><summary>Teaching example: reason through the course’s personalized-news scenario</summary><p><strong>Need:</strong> generate personalized articles using user preference and browsing-history information. The important distinction in the sample is content generation with adaptation to the scenario.</p>
+<p><strong>Course answer:</strong> Amazon Bedrock with a fine-tuned foundation model. The stated rationale favors adapting a pre-trained model over building a language model from scratch for this use case.</p>
+<p><strong>Check:</strong> this is the answer and reasoning in a dated 2025 course sample, not a current AWS recommendation, current exam item, or evidence of exam readiness.</p></details>
+
+<h2 id="section-8">Historical 2025 AIF-C01 course map</h2>
+<p>The following domain titles and weights reproduce the Module 9 course table as a <strong>2025 snapshot</strong>. The five weights sum to 100%. The course notes say its content is primarily aligned with domains 2 and 3. That statement does not mean the course or this companion covers every domain task statement, establishes readiness, or describes current registration details.</p>
+<div class="table-scroll" role="region" aria-label="AIF-C01 domain map shown in the 2025 course edition"><table><caption>AIF-C01 domain map shown in the 2025 course edition</caption><thead><tr><th scope="col">Domain</th><th scope="col">Title in course slide</th><th scope="col">Share of scored content in slide</th></tr></thead><tbody>
+<tr><th scope="row">1</th><td>Fundamentals of AI and ML</td><td>20%</td></tr>
+<tr><th scope="row">2</th><td>Fundamentals of Generative AI</td><td>24%</td></tr>
+<tr><th scope="row">3</th><td>Applications of Foundation Models</td><td>28%</td></tr>
+<tr><th scope="row">4</th><td>Guidelines of Responsible AI</td><td>14%</td></tr>
+<tr><th scope="row">5</th><td>Security, Compliance, and Governance for AI Solutions</td><td>14%</td></tr>
+</tbody></table></div>
+
+<p>The course’s general exam slide describes domains and task statements, weighted domains, multiple-choice, multiple-response, ordering, matching, and case-study question styles, pass/fail results, and unanswered questions scored incorrect. Speaker notes give <strong>50 scored plus 15 unscored questions</strong>, no penalty for guessing, and say unscored items are not identified. These are all historical course statements from 2025, not current exam-format guidance. The target-candidate slide similarly describes six months’ exposure to AI/ML on AWS and familiarity with core services, shared responsibility, IAM, AWS global infrastructure, and service pricing. That is the course’s candidate profile, not a binding eligibility rule or a university prerequisite.</p>
+<h3>Resources named in the 2025 course</h3>
+<p>The module lists the AWS Certification overview and the AWS Certified AI Practitioner foundational certification page, with descriptions that link to an exam guide, sample questions, and training. Its free-resource table describes an exam guide, a standard exam-prep course, and a 20-question official practice set; the table notes AWS Skill Builder account requirements for the course and question set. A subscription-resource table describes a 14.5-hour enhanced course and a 4-hour virtual escape room, including videos/exercises, questions, puzzles, and hands-on assessments. Durations, counts, access conditions, names, and availability here are dated 2025 course context. This guide does not direct registration, purchases, account creation, or resource use; verify current details with official AWS material before acting.</p>
+<h2 id="section-9">Common mistakes</h2>
+<ul>
+<li>Starting with a model or service before agreeing on the customer problem, requirements, organizational readiness, and success criteria.</li>
+<li>Treating a target such as 95% HR accuracy or 25% KPI improvement as a measured result.</li>
+<li>Confusing RAG’s request-time context retrieval with fine-tuning or continued pre-training, which update model parameters.</li>
+<li>Choosing from a single benchmark or one test dataset and overlooking changing data distributions.</li>
+<li>Assuming deployment ends the lifecycle, or treating a monitor alert as a diagnosis or an automatic fix.</li>
+<li>Treating CloudTrail API-call auditing as interchangeable with CloudWatch logs and runtime metrics.</li>
+<li>Assuming an agent’s model-generated plan is authorized, validated, or safe to execute.</li>
+<li>Reading qualitative service-positioning axes as a numeric or universal ranking.</li>
+<li>Treating 2025 certification format, domain weights, counts, candidate profile, resource duration, or pricing as current guidance.</li>
+<li>Inferring that this optional companion is required CS4681 content or complete AWS certification preparation.</li>
+</ul>
+<h2 id="section-10">Exam focus</h2>
+<ul>
+<li>Application design proceeds from customer problem and organizational readiness to model choice, improvement, evaluation, deployment, and ongoing monitoring/feedback.</li>
+<li>Define success metrics with stakeholders and keep targets distinct from measured outcomes.</li>
+<li>Model selection considers capability, complexity, speed, cost, training-data information, ethics, implementation, context window, throughput, and request volumes.</li>
+<li>RAG adds retrieved context at inference; fine-tuning and continued pre-training customize parameters.</li>
+<li>Combine human evaluation, automated metrics, benchmarks, and multiple representative datasets; evaluate repeatedly as models and data change.</li>
+<li>Monitor technical, business, responsible-AI, and compliance signals; investigate and choose a response based on evidence.</li>
+<li>In the travel-agent trace, distinguish catalog retrieval from calculator totals and preserve the source’s six numbered roles.</li>
+<li>In the HR scenario, IAM-scoped documents and a 95% accuracy target are design context, not proof of correctness or safe access.</li>
+<li>In the customer-chat scenario, retrieval and fine-tuning are separate mechanisms; 25% improvement is a target.</li>
+<li>Certification details are the 2025 course map. The course says it primarily aligns with domains 2 and 3, not that it ensures complete exam readiness.</li>
+</ul>
+<h2 id="section-11">Practice questions</h2>
+<p class="question">1. What does “working backwards” mean in the course lifecycle?</p>
+<details class="worked"><summary>Check your answer</summary><p>Begin with the intended customer experience and value, then work iteratively toward what to build. The approach includes customer centricity and analytics/cloud as framed by the course.</p></details>
+
+<p class="question">2. Name four readiness checks before committing to a generative-AI implementation.</p>
+<details class="worked"><summary>Check your answer</summary><p>Check technical infrastructure and capabilities, data availability/quality, regulatory and compliance needs, budget and skills, and cultural readiness. Also decide whether generative AI fits the problem and identify privacy, security, and responsible-AI risks.</p></details>
+
+<p class="question">3. Explain the difference between RAG and fine-tuning.</p>
+<details class="worked"><summary>Check your answer</summary><p>RAG retrieves external information and places it in request context at inference time without changing model weights. Fine-tuning uses training examples to adapt model parameters.</p></details>
+
+<p class="question">4. Why should evaluation use more than one test dataset?</p>
+<details class="worked"><summary>Check your answer</summary><p>Performance depends on both model and dataset. Different datasets may show different trends, and real-world data can shift, so one benchmark can hide weaknesses or drift.</p></details>
+
+<p class="question">5. In the travel-agent example, which component retrieves trip options and which calculates totals?</p>
+<details class="worked"><summary>Check your answer</summary><p>The trip-catalog database returns itinerary options and prices. The calculator app computes totals for relevant options. Although the diagram edge says “Search and retrieval,” the calculator’s described task is calculation.</p></details>
+
+<p class="question">6. What do CloudTrail and CloudWatch do in the customer-chat example?</p>
+<details class="worked"><summary>Check your answer</summary><p>CloudTrail monitors and audits API calls made to the model. CloudWatch logs are used to monitor/analyze responses, and Bedrock runtime metrics in CloudWatch support performance monitoring.</p></details>
+
+<p class="question">7. The HR case targets 95% correct responses. What evidence would be needed to claim the pilot achieved that?</p>
+<details class="worked"><summary>Check your answer</summary><p>Observed query results with a defined correctness rubric, sample selection/size, policy version, denominator, and measurement period. The 95% stated in the course is a target, not a reported observation.</p></details>
+
+<p class="question">8. What is the customer-chat 25% figure, and what does it not establish?</p>
+<details class="worked"><summary>Check your answer</summary><p>It is a target improvement over historical accuracy, customer satisfaction, and successful query resolution. The course gives no measured outcome, so it does not establish an achieved 25% gain.</p></details>
+
+<p class="question">9. Give the five AIF-C01 domains and their weights as shown in the 2025 course snapshot.</p>
+<details class="worked"><summary>Check your answer</summary><p>Fundamentals of AI and ML 20%; Fundamentals of Generative AI 24%; Applications of Foundation Models 28%; Guidelines of Responsible AI 14%; Security, Compliance, and Governance for AI Solutions 14%. These are historical 2025 course figures.</p></details>
+
+<p class="question">10. Does the module 9 map establish current exam readiness or full certification preparation?</p>
+<details class="worked"><summary>Check your answer</summary><p>No. It is a dated 2025 course map. The course says its material is primarily aligned to domains 2 and 3 and does not claim complete preparation or learner completion.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="aws-responsible-security.html"><small>Previous</small>AWS Companion: Responsible AI, Security, Governance, and Compliance <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>

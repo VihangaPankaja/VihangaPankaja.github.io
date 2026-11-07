@@ -1,0 +1,488 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Learn how Q-values are updated from sampled transitions, how terminal and stochastic cases change the target, and when convergence claims apply."><title>Q-Learning and Temporal-Difference Updates · Advanced Machine Learning</title><script>(() => {
+  let choice = 'system';
+  try { const saved = localStorage.getItem('aml-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
+  document.documentElement.dataset.themeChoice = choice;
+  document.documentElement.dataset.theme = choice === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+})();
+</script><style>:root{--background:#f6f8f8;--foreground:#26363a;--muted:#617176;--card:#fff;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--radius:12px;--font-sans:Candara,'Segoe UI',sans-serif;--font-mono:Consolas,monospace;color-scheme:light}
+.example-input{display:flex;flex-wrap:wrap;gap:6px 13px;padding:11px 14px;margin:0 0 17px;background:var(--secondary);border-radius:7px;font-size:14px;overflow-wrap:anywhere}.example-input strong{font-size:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.05em}.step-reason{margin-top:17px;padding:4px 0 0 15px;border-left:3px solid #92aeb3}.step-reason p{margin:8px 0!important}.rotation-note{display:flex;gap:13px;align-items:center;background:var(--secondary);border-radius:8px;padding:13px;margin:16px 0}.rotation-note p{font-size:14px!important;margin:4px 0!important}.rotation-note .rotation-glyph{flex:0 0 80px;width:80px;height:55px}.diagram-frame{max-width:100%;overflow:auto}.diagram-frame svg{min-width:var(--diagram-width);max-width:100%;max-height:440px!important}.diagram-hint{font-size:12px;color:var(--primary);text-align:center;margin:6px 0}.color-legend{font-size:13px;color:var(--muted)}
+.table-hint{font-size:12px;color:var(--primary);margin:14px 0 -14px;text-align:right}@media print{}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--background);color:var(--foreground);font:17px/1.65 var(--font-sans)}a{color:var(--primary);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:7px;padding:6px 12px;line-height:1.4}button:hover{background:var(--secondary);border-color:#8daab1}button:disabled{opacity:.35;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #4f7780;outline-offset:3px}.skip{position:absolute;top:-100px;padding:10px;background:white;z-index:5}.skip:focus{top:4px}.topbar{position:sticky;top:0;z-index:4;min-height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 28px;background:#f6f8f8f5;backdrop-filter:blur(8px)}.brand{display:flex;gap:9px;align-items:center;text-decoration:none;color:var(--foreground);font-weight:700;letter-spacing:.03em;white-space:nowrap}.mark{display:inline-grid;place-items:center;background:var(--primary);color:white;font:italic 25px Georgia,serif;width:36px;height:36px;border-radius:6px}.subbrand{font-weight:400;color:var(--muted)}.tools{display:flex;gap:8px}.tools button{font-size:14px}.menu{display:none}.layout{display:grid;grid-template-columns:240px minmax(0,1fr);max-width:1520px;margin:auto}aside{padding:30px 22px;border-right:1px solid var(--border);align-self:start;position:sticky;top:70px;max-height:calc(100dvh - 70px);overflow-y:auto;scrollbar-width:thin}input{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--foreground);font-size:14px}.search-label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}.nav-group{margin:22px 0}.nav-group p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 7px}.nav-group a{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;text-decoration:none;color:var(--foreground);border-radius:5px}.nav-group a:hover{background:var(--secondary)}.nav-group a[aria-current]{background:var(--accent);font-weight:700;color:#244c57}.rail-foot{border-top:1px solid var(--border);padding-top:18px;color:var(--muted);font-size:12px}main{min-width:0;max-width:1120px;padding:46px 64px 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.11em;font-weight:700;color:var(--primary)}.eyebrow span{color:#afbcaf;margin:0 8px}h1,h2{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-weight:500;letter-spacing:-.035em}h1{font-size:clamp(38px,4.2vw,64px);line-height:1.07;max-width:850px;margin:15px 0 19px}h2{font-size:30px;line-height:1.2;margin:46px 0 14px;padding-top:6px}h3{font-size:20px;line-height:1.4;margin:26px 0 12px}h4{font-size:19px;margin:0 0 14px;font-weight:600}.lead{font-size:21px;line-height:1.5;color:var(--muted);max-width:750px;margin-bottom:27px}p{margin:13px 0}strong{font-weight:700}ul,ol{padding-left:24px}li{padding-left:4px;margin:8px 0}.on-page{display:flex;flex-wrap:wrap;gap:6px 17px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;margin-bottom:29px}.on-page a{font-size:12px;color:var(--muted);text-decoration:none}.on-page a:hover{color:var(--primary)}.table-scroll{width:100%;overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:8px;background:var(--card)}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}th{text-align:left;background:var(--secondary);font-size:12px;letter-spacing:.025em;color:var(--foreground)}th,td{vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--border);min-width:95px}tr:last-child td{border-bottom:0}td:first-child{font-weight:600}th:first-child{min-width:130px}.table-scroll.wide table{min-width:1100px}.walk{border:1px solid var(--border);border-radius:var(--radius);padding:23px 26px;margin:25px 0;background:var(--card);overflow:hidden}.walk>h3{margin:0 0 16px;font-size:19px;letter-spacing:-.01em}.walk-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:19px}.walk-controls output{min-width:95px;text-align:center;font-size:13px;font-weight:700;color:var(--primary)}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{font-size:22px;line-height:1;width:40px;padding:7px 0}.walk-controls button[data-action=play]{margin-left:auto}.walk-controls button{font-size:13px}.walk[data-ready] .step{display:none}.walk[data-ready] .step.active{display:block}.step p{font-size:16px;line-height:1.6;margin-bottom:0}.step figure{margin:10px 0 17px}.step:not(:last-child){margin-bottom:28px}.walk[data-ready] .step{margin-bottom:0}figure{margin:22px 0;text-align:center;min-width:0}figure svg{display:block;width:100%;height:auto;max-width:710px;max-height:320px;margin:0 auto;overflow:visible}figcaption{color:var(--muted);font-size:13px;line-height:1.5;margin:13px auto 0;max-width:670px}.array{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:12px 0}.cell{display:flex;flex-direction:column;justify-content:center;min-width:46px;padding:6px 12px;border:1px solid #9aafb3;background:#edf3f4;border-radius:5px;font-size:17px;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.cell small{font:10px/1.6 var(--font-sans);color:var(--muted)}.cell.changed{background:var(--accent);border-color:var(--primary)}details{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:13px 17px;margin:18px 0}summary{cursor:pointer;color:var(--primary);font-size:15px;font-weight:700}details[open] summary{margin-bottom:13px}details p,details li{font-size:16px}.question{font-weight:600;margin-top:20px}.equation{overflow-x:auto;padding:16px 2px;text-align:center}math{font-size:19px}code{font-family:var(--font-mono);font-size:.83em;background:var(--secondary);padding:2px 4px;border-radius:3px}pre{overflow:auto;background:var(--secondary);padding:17px;border-radius:8px}pre code{padding:0}.intro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:29px 0 35px}.feature{padding:21px;border:1px solid var(--border);background:var(--card);border-radius:10px;text-decoration:none;color:var(--foreground);display:flex;flex-direction:column;gap:9px}.feature:hover{border-color:var(--primary)}.feature .number{font:italic 30px Georgia,serif;color:var(--primary)}.feature strong{font-size:18px;line-height:1.3}.feature span:last-child{font-size:14px;line-height:1.5;color:var(--muted)}.pager{display:flex;gap:20px;justify-content:space-between;border-top:1px solid var(--border);padding-top:25px;margin-top:48px}.pager a{flex:1;max-width:47%;font-size:18px;text-decoration:none}.pager small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.pager span{font-size:17px}footer{margin-top:43px;padding:20px 0 5px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;border-top:1px solid var(--border)}[hidden]{display:none!important}
+@media(max-width:1150px){main{padding:38px 34px}.layout{grid-template-columns:218px minmax(0,1fr)}aside{padding:25px 18px}.intro-grid{grid-template-columns:1fr}.feature{display:grid;grid-template-columns:38px 1fr;gap:3px 13px}.feature .number{grid-row:span 2}.feature span:last-child{grid-column:2}}
+@media(max-width:800px){.topbar{padding:12px 18px;min-height:64px}.subbrand{display:none}.layout{display:block}aside{display:none;position:relative;top:0;max-height:none;border-right:0;border-bottom:1px solid var(--border);padding:20px}aside.open{display:block}.menu{display:inline-block}main{padding:30px 22px}h1{font-size:44px}.lead{font-size:19px}.eyebrow{font-size:10px;letter-spacing:.08em}.on-page{gap:6px 14px}h2{font-size:27px;margin-top:37px}body{font-size:17px}.walk{padding:19px 16px}figure svg{max-height:300px}footer span{display:none}}
+@media(max-width:400px){main{padding:26px 16px}.topbar{padding:10px 13px;gap:5px}.tools{gap:5px}.tools button{padding:6px 8px;font-size:11px}.brand{font-size:13px;gap:6px}.mark{width:29px;height:29px;font-size:21px}h1{font-size:39px}.walk{padding:17px 12px}.walk-controls{gap:5px}.walk-controls output{min-width:76px}.walk-controls button{padding:6px 8px}.walk-controls button[data-action=prev],.walk-controls button[data-action=next]{width:33px}.cell{font-size:15px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:white;font-size:11pt}.topbar,aside,.on-page,.pager,.walk-controls,.skip{display:none!important}.layout{display:block}main{max-width:none;padding:0}h1{font-size:30pt}h2{font-size:20pt;break-after:avoid}.walk{break-inside:auto;background:white}.walk[data-ready] .step{display:block!important;break-inside:avoid;margin:20px 0}.step{border-top:1px solid #ccc;padding-top:15px}.table-scroll{overflow:visible}.table-scroll.wide table{min-width:0;font-size:7pt}th,td{min-width:0!important;padding:6px}.intro-grid{display:block}.feature{margin-bottom:10px}figure svg{max-height:220px}details{break-inside:avoid}footer{display:none}a{color:inherit}summary{list-style:none}}
+@media screen and (min-width:1000px){.layout{max-width:1800px;grid-template-columns:220px minmax(0,1fr)}main{max-width:none;padding:42px 40px 25px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;width:100%;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:10px;overflow-wrap:anywhere}.table-scroll th:first-child{min-width:0;width:21%}.table-scroll math{font-size:1em}article>p,article>ul,article>ol{max-width:1100px}.on-page{max-width:1200px}}
+@media screen and (min-width:801px) and (max-width:999px){.layout{grid-template-columns:190px minmax(0,1fr)}main{padding:32px 22px}.table-scroll table,.table-scroll.wide table{table-layout:fixed;min-width:0}.table-scroll th,.table-scroll td{min-width:0;padding:8px;overflow-wrap:anywhere;font-size:13px}.table-scroll math{font-size:12px}.table-scroll th:first-child{min-width:0}}
+
+.diagram-frame{max-height:560px;overflow:auto}.diagram-frame svg{display:block;width:var(--diagram-width);min-width:var(--diagram-width);max-width:none;max-height:none!important;height:auto;margin:0 auto}.diagram-hint{margin-top:8px}@media print{.diagram-frame{max-height:none;overflow:visible}.diagram-frame svg{width:100%;min-width:0;max-width:100%;max-height:400px!important}.diagram-hint{display:none}}
+
+:root{--diagram-fill:#edf3f4;--diagram-border:#7f9da5;--diagram-edge:#547b86;--node-red:#b43e4b;--node-black:#26363a;--diagram-link:#2875a0;--topbar:#f6f8f8f5;--active-text:#244c57;--focus:#4f7780}
+:root[data-theme=dark]{color-scheme:dark;--background:#26363a;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--node-red:#ff929c;--node-black:#d5e2e4;--diagram-link:#9ac9e3;--topbar:#26363af5;--active-text:#b6e0e6;--focus:#96cbd3}
+.topbar{background:var(--topbar)}.nav-group a[aria-current]{color:var(--active-text)}th{color:var(--foreground)}.walk{border-color:var(--border)}.cell{background:var(--diagram-fill);border-color:var(--diagram-border)}.step-reason{border-color:var(--diagram-border)}.skip{background:var(--card)}.eyebrow span{color:var(--muted)}button:hover{border-color:var(--diagram-border)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline-color:var(--focus)}
+select{font:inherit;color:var(--foreground);background:var(--card);border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:14px;max-width:100%}.tools{align-items:center}.theme-label{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.theme-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+@media(max-width:400px){.tools select{font-size:11px;padding:6px 3px}.tools button{padding:6px}.tools{gap:4px}.topbar{padding-left:10px;padding-right:10px}}
+
+.obst-matrix-wrap{margin:16px auto;max-width:410px}.obst-matrix{display:grid;grid-template-columns:30px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:4px;line-height:1.15}.obst-row{display:contents}.obst-axis{display:grid;place-items:center;color:var(--muted);font-size:12px}.obst-entry{border:1px solid var(--border);background:var(--secondary);border-radius:5px;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 1px;gap:4px;font-variant-numeric:tabular-nums;position:relative}.obst-entry b{font-size:16px;font-weight:600}.obst-entry small{font-size:10px;color:var(--muted)}.obst-entry em{font-size:9px;font-style:normal;font-weight:700;color:var(--primary)}.obst-target{border:2px solid var(--primary);background:var(--accent)}.obst-left,.obst-right{outline:2px dashed var(--diagram-link);outline-offset:-3px}.obst-key{font-size:12px!important;color:var(--muted);line-height:1.5!important}.obst-trials{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.obst-trials span{background:var(--secondary);padding:6px 10px;border-radius:5px;font-size:13px}.obst-matrix~.equation{padding:8px 0}
+@media(max-width:400px){.obst-matrix{grid-template-columns:20px repeat(calc(var(--matrix-size) - 1),minmax(0,1fr));gap:3px}.obst-entry{min-height:56px}.obst-entry b{font-size:12px}.obst-entry small{font-size:8px}}
+
+.theme-picker{position:relative;flex-shrink:0}#theme{display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;min-width:108px;padding:7px 10px}#theme svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}#theme .theme-chevron{width:12px;height:12px;color:var(--muted)}#theme[aria-expanded=true]{border-color:var(--primary);background:var(--secondary)}#theme-options{position:absolute;right:0;top:calc(100% + 8px);width:228px;max-width:calc(100vw - 24px);padding:6px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px color-mix(in srgb,var(--foreground) 15%,transparent);z-index:8}#theme-options button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.35;background:transparent}#theme-options small{display:block;margin-top:3px;color:inherit;font-size:12px}#theme-options button:hover,#theme-options button:focus-visible{background:var(--secondary)}#theme-options button[aria-checked=true]{background:var(--accent);color:var(--active-text)}.theme-check{visibility:hidden;color:var(--primary);font-size:17px}#theme-options [aria-checked=true] .theme-check{visibility:visible}
+@media(max-width:400px){.tools #theme{min-width:78px;gap:4px;padding:6px;font-size:11px}#theme svg{width:13px;height:13px}#theme-options button{padding:10px 12px;font-size:14px}}
+:root{--foreground:#26363a;--muted:#617176;--secondary:#eaf0f1;--border:#dce5e6;--primary:#315e6a;--accent:#d7e9ed;--diagram-fill:#e8f1f3;--diagram-border:#7f9da5;--diagram-edge:#547b86;--active-text:#244c57;--focus:#4f7780}:root[data-theme=dark]{--background:#172328;--foreground:#e5eef0;--muted:#a9bbbf;--card:#1d292d;--secondary:#26383d;--border:#405960;--primary:#96cbd3;--accent:#29444a;--diagram-fill:#26383d;--diagram-border:#a1bac0;--diagram-edge:#a6c2c8;--topbar:#172328f5;--active-text:#b6e0e6;--focus:#96cbd3} article{overflow-wrap:break-word} .example-input{line-height:1.55} .step h4{overflow-wrap:anywhere}
+.diagram-frame.is-pannable{border:1px solid var(--diagram-border);border-radius:8px}
+.math-scroll{display:block;max-width:100%;min-width:0;overflow-x:auto;padding:7px;margin:7px 0;border:1px solid var(--border);border-radius:5px}
+.math-scroll>math,.equation>math{display:block;width:max-content;min-width:100%}
+.math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
+.example-input>*{min-width:0;max-width:100%}
+.menu:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+.nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">A</span> AML <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
+  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
+<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Learning, models, optimization…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Advanced machine learning</a></div><div class="nav-group"><p>Foundations and classical learning</p><a class="nav-entry" href="ml-foundations.html">Machine learning foundations and learning paradigms</a><a class="nav-entry" href="model-representations.html">Classifier boundaries and decision-tree representations</a><a class="nav-entry" href="evaluation-generalization.html">Evaluation, generalization and model choice</a><a class="nav-entry" href="supervised-learning-models.html">Supervised Learning: Evaluation, kNN, and Decision Trees</a><a class="nav-entry" href="naive-bayes.html">Naive Bayes Classification (Supplemental Lecture Material)</a><a class="nav-entry" href="support-vector-machines.html">Support vector machines, margins and kernels (supplemental)</a><a class="nav-entry" href="unsupervised-clustering.html">Unsupervised Learning: Clustering and Evaluation</a></div><div class="nav-group"><p>Neural networks and optimization</p><a class="nav-entry" href="neural-computation-perceptron.html">Neural Computation and Perceptron Learning</a><a class="nav-entry" href="mlp-optimization.html">Multilayer Networks, Gradient Descent, and Training Practice</a><a class="nav-entry" href="least-mean-squares.html">Least Mean Squares and the Delta Rule</a><a class="nav-entry" href="backpropagation.html">Backpropagation: Derivation and Layerwise Updates</a></div><div class="nav-group"><p>Representations and transfer</p><a class="nav-entry" href="dimensionality-reduction.html">Dimensionality Reduction, Feature Selection, and MDS</a><a class="nav-entry" href="pca.html">Principal Component Analysis</a><a class="nav-entry" href="fastmap-random-projection.html">FastMap and Random Projection</a><a class="nav-entry" href="transfer-learning.html">Transfer Learning, Multitask Learning, and Fine-Tuning</a><a class="nav-entry" href="domain-adaptation-pretraining.html">Domain Adaptation, Shift, and Negative Transfer</a></div><div class="nav-group"><p>Deep and generative models</p><a class="nav-entry" href="deep-learning-foundations.html">Deep Learning Foundations and Regularization</a><a class="nav-entry" href="cnn-architectures.html">Convolutional Neural Networks</a><a class="nav-entry" href="autoencoders.html">Autoencoders and Learned Representations</a><a class="nav-entry" href="gan-foundations-training.html">GANs: Objective, Training, and Failure Modes</a><a class="nav-entry" href="gan-architectures-extensions.html">GAN Architectures, Conditional Generation, and Extensions</a></div><div class="nav-group"><p>Sequences and forecasting</p><a class="nav-entry" href="sequence-models.html">RNNs, LSTMs, and GRUs</a><a class="nav-entry" href="seq2seq-encoder-decoder.html">Sequence-to-Sequence and Encoder–Decoder Models</a><a class="nav-entry" href="time-series-analysis.html">Time Series Analysis and Forecasting</a></div><div class="nav-group"><p>Explainability and data quality</p><a class="nav-entry" href="xai-explainability.html">Explainable AI: Questions, Methods, and Presentation</a><a class="nav-entry" href="xai-attribution-methods.html">Integrated Gradients, SHAP, and Grad-CAM</a><a class="nav-entry" href="class-imbalance.html">Imbalanced Data: Metrics and Resampling</a><a class="nav-entry" href="data-augmentation.html">Data Augmentation for Images and Text</a></div><div class="nav-group"><p>Language and self-supervision</p><a class="nav-entry" href="machine-translation-classical.html">Machine Translation: Rule-Based and Statistical Methods</a><a class="nav-entry" href="machine-translation-neural.html">Neural Machine Translation, Attention, and Transformers</a><a class="nav-entry" href="machine-translation-decoding-evaluation.html">Translation Decoding, Multilingual Models, and Evaluation</a><a class="nav-entry" href="self-supervised-vision.html">Self-Supervised Learning for Vision</a><a class="nav-entry" href="self-supervised-text.html">Self-Supervised Learning for Text</a></div><div class="nav-group"><p>Reinforcement learning</p><a class="nav-entry" href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a><a class="nav-entry" href="q-learning.html" aria-current="page">Q-Learning and Temporal-Difference Updates</a></div><div class="nav-group"><p>AWS companion</p><a class="nav-entry" href="aws-ai-foundations.html">AWS Companion: AI and Generative AI Foundations</a><a class="nav-entry" href="aws-prompting-foundation-models.html">AWS Companion: Prompt Engineering and Foundation Models</a><a class="nav-entry" href="aws-responsible-security.html">AWS Companion: Responsible AI, Security, Governance, and Compliance</a><a class="nav-entry" href="aws-implementation-certification.html">AWS Companion: Application Design and Certification Map</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">CS4681<br>Advanced Machine Learning</div></aside>
+<main id="main"><div class="eyebrow">Reinforcement learning <span>/</span> Lecture 11</div><h1>Q-Learning and Temporal-Difference Updates</h1><p class="lead">Learn how Q-values are updated from sampled transitions, how terminal and stochastic cases change the target, and when convergence claims apply.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">The target: reward now plus the best estimated future</a><a href="#section-2">Deterministic worlds: replace the sampled entry</a><a href="#section-3">Stochastic worlds: blend old knowledge with one sample</a><a href="#section-4">Terminal transitions: stop the bootstrap</a><a href="#section-5">Supplemental calculation: two episodes, one-step propagation</a><a href="#section-6">Convergence: conditions matter</a><a href="#section-7">Reinforcement-learning algorithm families</a><a href="#section-8">Common mistakes</a><a href="#section-9">Exam focus</a><a href="#section-10">Practice questions</a><a href="#section-11">Study route</a></nav><article><h2 id="section-0">Big picture</h2>
+<p>Q-learning learns the long-run value of taking an action in a state. It does this from experience: take an action, observe its immediate reward and next state, then revise only that state–action estimate. The update looks ahead using the best estimated next action, so delayed reward can spread backward one transition at a time.</p>
+<p>Begin with <a href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a> for state, action, reward, and discounted return. The key distinction here is between a deterministic replacement rule and a stochastic incremental rule.</p>
+<h2 id="section-1">The target: reward now plus the best estimated future</h2>
+<p>At a nonterminal state, the optimal state value is the largest optimal action value among its available actions:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi>V</mi><mo>&#x0002A;</mo></msup><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mo>max</mo><mrow><mi>a</mi><mo>&#x02208;</mo><mi>A</mi><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><mi>Q</mi><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>For a deterministic transition, the action value is its immediate reward plus the discounted optimal value of the resulting state:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>r</mi><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mi>&#x003B3;</mi><msup><mi>V</mi><mo>&#x0002A;</mo></msup><mo stretchy="false">&#x00028;</mo><msup><mi>s</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>This relationship motivates the recursive next-action maximum. Let s be the current state, a the action just taken, r the observed immediate reward, and s′ the observed next state. The learner keeps an estimate <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover accent="true"><mi>Q</mi><mo>&#x0005E;</mo></mover><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo></mrow></math> of the action value. For a nonterminal transition, the one-step target is:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>T</mi><mo>&#x0003D;</mo><mi>r</mi><mo>&#x0002B;</mo><mi>&#x003B3;</mi><msub><mo>max</mo><mrow><msup><mi>a</mi><mi>&#x02032;</mi></msup><mo>&#x02208;</mo><mi>A</mi><mo stretchy="false">&#x00028;</mo><mi>s</mi><mi>&#x02032;</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><mover accent="true"><mi>Q</mi><mo>&#x0005E;</mo></mover><mo stretchy="false">&#x00028;</mo><mi>s</mi><mi>&#x02032;</mi><mo>&#x0002C;</mo><msup><mi>a</mi><mi>&#x02032;</mi></msup><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>The reward is the feedback for this transition. The discount <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B3;</mi></mrow></math> controls how much later value counts; for a continuing discounted task here, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x02264;</mo><mi>&#x003B3;</mi><mo>&#x0003C;</mo><mn>1</mn></mrow></math>. The maximum is over candidate actions available at the observed next state s′, not actions at the old state s.</p>
+<p>The target uses one sampled transition even when the environment is stochastic. Across repeated samples, the expected target reflects the expected reward and next-state outcomes. The next-state maximum is an off-policy choice: it evaluates the best next action even if the behavior policy actually chooses another action to explore.</p>
+<figure><div class="diagram-frame" style="--diagram-width:615.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 16.1.0 (20260904.0139)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg role="img" aria-label="Toy transition graph for the supplemental calculation. Arrows show sampled environment transitions; the max over candidate actions is a separate target operation." width="615pt" height="158pt"
+ viewBox="0.00 0.00 615.00 158.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g id="q-learning-figure-1-q-learning-transition-01-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 146.93)">
+<title>G</title>
+<!-- s0 -->
+<g id="q-learning-figure-1-q-learning-transition-01-node1" class="node">
+<title>s0</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M95.1,-93.26C95.1,-93.26 12,-93.26 12,-93.26 6,-93.26 0,-87.26 0,-81.26 0,-81.26 0,-54.86 0,-54.86 0,-48.86 6,-42.86 12,-42.86 12,-42.86 95.1,-42.86 95.1,-42.86 101.1,-42.86 107.1,-48.86 107.1,-54.86 107.1,-54.86 107.1,-81.26 107.1,-81.26 107.1,-87.26 101.1,-93.26 95.1,-93.26"/>
+<text xml:space="preserve" text-anchor="middle" x="53.55" y="-71.81" font-family="Georgia" font-size="15.00">S0</text>
+<text xml:space="preserve" text-anchor="middle" x="53.55" y="-53.81" font-family="Georgia" font-size="15.00">current state</text>
+</g>
+<!-- s1 -->
+<g id="q-learning-figure-1-q-learning-transition-01-node2" class="node">
+<title>s1</title>
+<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M317.45,-93.26C317.45,-93.26 254.6,-93.26 254.6,-93.26 248.6,-93.26 242.6,-87.26 242.6,-81.26 242.6,-81.26 242.6,-54.86 242.6,-54.86 242.6,-48.86 248.6,-42.86 254.6,-42.86 254.6,-42.86 317.45,-42.86 317.45,-42.86 323.45,-42.86 329.45,-48.86 329.45,-54.86 329.45,-54.86 329.45,-81.26 329.45,-81.26 329.45,-87.26 323.45,-93.26 317.45,-93.26"/>
+<text xml:space="preserve" text-anchor="middle" x="286.02" y="-71.81" font-family="Georgia" font-size="15.00">S1</text>
+<text xml:space="preserve" text-anchor="middle" x="286.02" y="-53.81" font-family="Georgia" font-size="15.00">next state</text>
+</g>
+<!-- s0&#45;&gt;s1 -->
+<g id="q-learning-figure-1-q-learning-transition-01-edge1" class="edge">
+<title>s0&#45;&gt;s1</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M107.43,-68.06C145.64,-68.06 196.95,-68.06 234.59,-68.06"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="234.39,-70.34 240.89,-68.06 234.39,-65.79 234.39,-70.34"/>
+<text xml:space="preserve" text-anchor="middle" x="174.85" y="-70.91" font-family="Georgia" font-size="12.00">advance / reward 0</text>
+</g>
+<!-- s1&#45;&gt;s1 -->
+<g id="q-learning-figure-1-q-learning-transition-01-edge2" class="edge">
+<title>s1&#45;&gt;s1</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M266.28,-93.32C264.13,-105.03 270.71,-115.26 286.02,-115.26 297.75,-115.26 304.36,-109.26 305.84,-101.2"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="308.12,-101.31 305.78,-94.83 303.57,-101.35 308.12,-101.31"/>
+<text xml:space="preserve" text-anchor="middle" x="286.02" y="-118.11" font-family="Georgia" font-size="12.00">loop / reward 0</text>
+</g>
+<!-- t -->
+<g id="q-learning-figure-1-q-learning-transition-01-node3" class="node">
+<title>t</title>
+<ellipse fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" cx="525.51" cy="-68.06" rx="64.06" ry="64.06"/>
+<ellipse fill="none" stroke="var(--diagram-border,#7f9da5)" cx="525.51" cy="-68.06" rx="68.06" ry="68.06"/>
+<text xml:space="preserve" text-anchor="middle" x="525.51" y="-80.81" font-family="Georgia" font-size="15.00">T</text>
+<text xml:space="preserve" text-anchor="middle" x="525.51" y="-62.81" font-family="Georgia" font-size="15.00">terminal</text>
+<text xml:space="preserve" text-anchor="middle" x="525.51" y="-44.81" font-family="Georgia" font-size="15.00">no actions</text>
+</g>
+<!-- s1&#45;&gt;t -->
+<g id="q-learning-figure-1-q-learning-transition-01-edge3" class="edge">
+<title>s1&#45;&gt;t</title>
+<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M329.76,-68.06C362.93,-68.06 409.77,-68.06 449.2,-68.06"/>
+<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="448.96,-70.34 455.46,-68.06 448.96,-65.79 448.96,-70.34"/>
+<text xml:space="preserve" text-anchor="middle" x="393.45" y="-70.91" font-family="Georgia" font-size="12.00">finish / reward 10</text>
+</g>
+</g>
+</svg>
+</div><figcaption>Toy transition graph for the supplemental calculation. Arrows show sampled environment transitions; the max over candidate actions is a separate target operation.</figcaption></figure>
+<h2 id="section-2">Deterministic worlds: replace the sampled entry</h2>
+<p>When a state–action pair always produces the same reward and next state, start each estimate at zero and replace the experienced entry with its target. This is a direct assignment: no learning-rate blend is applied.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mover accent="true"><mi>Q</mi><mo>&#x0005E;</mo></mover><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo><mo>&#x02190;</mo><mi>r</mi><mo>&#x0002B;</mo><mi>&#x003B3;</mi><msub><mo>max</mo><mrow><msup><mi>a</mi><mi>&#x02032;</mi></msup><mo>&#x02208;</mo><mi>A</mi><mo stretchy="false">&#x00028;</mo><mi>s</mi><mi>&#x02032;</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><mover accent="true"><mi>Q</mi><mo>&#x0005E;</mo></mover><mo stretchy="false">&#x00028;</mo><mi>s</mi><mi>&#x02032;</mi><mo>&#x0002C;</mo><msup><mi>a</mi><mi>&#x02032;</mi></msup><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>After updating, the learner continues from s′ and repeats. Entries for state–action pairs not sampled on this step remain unchanged.</p>
+<details class="worked"><summary>Worked example: update s1 after moving right to s2</summary><p><strong>Givens.</strong> The sampled transition is s1 → s2 using right; reward <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B3;</mi><mo>&#x0003D;</mo><mn>0.9</mn></mrow></math>. At s2, the three candidate action values are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>63</mn><mo>&#x0002C;</mo><mn>81</mn><mo>&#x0002C;</mo><mn>100</mn></mrow></math>.</p>
+<ol><li>Compare only the next-state candidates: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>max</mo><mo stretchy="false">&#x0007B;</mo><mn>63</mn><mo>&#x0002C;</mo><mn>81</mn><mo>&#x0002C;</mo><mn>100</mn><mo stretchy="false">&#x0007D;</mo><mo>&#x0003D;</mo><mn>100</mn></mrow></math>.</li><li>Form the target: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo stretchy="false">&#x00028;</mo><mn>100</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>90</mn></mrow></math>.</li><li>Directly assign <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover accent="true"><mi>Q</mi><mo>&#x0005E;</mo></mover><mo stretchy="false">&#x00028;</mo><msub><mi>s</mi><mn>1</mn></msub><mo>&#x0002C;</mo><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">h</mi><mi mathvariant="normal">t</mi></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x02190;</mo><mn>90</mn></mrow></math>. No <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi></mrow></math> is introduced in the deterministic rule.</li><li>Other table entries are untouched by this update.</li></ol>
+<p><strong>Check:</strong> the immediate reward contributes 0; the next-state maximum contributes 90. Replacing an old estimate by 90 follows the deterministic rule.</p>
+<p><strong>Under these assumptions:</strong> zero initialization, deterministic transitions, and nonnegative rewards yield monotone estimates bounded by the true action values. This property does not extend automatically to negative rewards, stochastic blends, or arbitrary initial estimates.</p></details>
+<h2 id="section-3">Stochastic worlds: blend old knowledge with one sample</h2>
+<p>If the same state and action can produce different rewards or next states, a single observation should not erase all earlier experience. In this case, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>V</mi></mrow></math> describe expected values and the update uses an incremental blend. At visit <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi></mrow></math>, the observed sample supplies the target; only the sampled entry changes.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="right"><msub><mover accent="true"><mi>Q</mi><mo>&#x0005E;</mo></mover><mi>n</mi></msub><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo></mtd><mtd columnalign="left"><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><msub><mi>&#x003B1;</mi><mi>n</mi></msub><mo stretchy="false">&#x00029;</mo><msub><mover accent="true"><mi>Q</mi><mo>&#x0005E;</mo></mover><mrow><mi>n</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo></mtd></mtr><mtr><mtd columnalign="right" /><mtd columnalign="left"><mo>&#x0002B;</mo><msub><mi>&#x003B1;</mi><mi>n</mi></msub><mrow><mo stretchy="true" fence="true" form="prefix">[</mo><mi>r</mi><mo>&#x0002B;</mo><mi>&#x003B3;</mi><msub><mo>max</mo><mrow><msup><mi>a</mi><mi>&#x02032;</mi></msup><mo>&#x02208;</mo><mi>A</mi><mo stretchy="false">&#x00028;</mo><mi>s</mi><mi>&#x02032;</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><msub><mover accent="true"><mi>Q</mi><mo>&#x0005E;</mo></mover><mrow><mi>n</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>s</mi><mi>&#x02032;</mi><mo>&#x0002C;</mo><msup><mi>a</mi><mi>&#x02032;</mi></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="true" fence="true" form="postfix">]</mo></mrow></mtd></mtr></mtable></mrow></math></div>
+<p>Equivalently, the update moves the old estimate toward the sampled target by the learning rate <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B1;</mi><mi>n</mi></msub></mrow></math>:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mover accent="true"><mi>Q</mi><mo>&#x0005E;</mo></mover><mi>n</mi></msub><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mover accent="true"><mi>Q</mi><mo>&#x0005E;</mo></mover><mrow><mi>n</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><msub><mi>&#x003B1;</mi><mi>n</mi></msub><mrow><mo stretchy="true" fence="true" form="prefix">[</mo><msub><mi>T</mi><mi>n</mi></msub><mo>&#x02212;</mo><msub><mover accent="true"><mi>Q</mi><mo>&#x0005E;</mo></mover><mrow><mi>n</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="true" fence="true" form="postfix">]</mo></mrow></mrow></math></div>
+<p>Here, the error is target minus old estimate. When <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0003C;</mo><msub><mi>&#x003B1;</mi><mi>n</mi></msub><mo>&#x0003C;</mo><mn>1</mn></mrow></math>, the result lies between the old estimate and this sample’s target. The sample is not the full expectation; repeated experience supplies information about the expected return.</p>
+<details class="worked"><summary>Visit-count convention and first learning rate</summary><p>The visit-based rate is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B1;</mi><mi>n</mi></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>1</mn><mo>&#x0002B;</mo><msub><mo>visits</mo><mi>n</mi></msub><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo></mrow></mfrac></mrow></math>; the visit count may include or exclude the current sample, so state the convention.</p>
+<div class="table-scroll" role="region" aria-label="Learning-rate visit-count conventions"><table><caption>How the visit-count index changes the first rate</caption><thead><tr><th scope="col">Convention</th><th scope="col">Count on first update</th><th scope="col">First α</th></tr></thead><tbody><tr><th scope="row">Previous visits, before current sample</th><td>0</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn></mrow></math></td></tr><tr><th scope="row">Visits including current sample</th><td>1</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x0002F;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002F;</mo><mn>2</mn></mrow></math></td></tr></tbody></table></div>
+<p>For any stated calculation, declare the convention and increment the count consistently. The formula alone does not settle the first rate.</p></details>
+<h2 id="section-4">Terminal transitions: stop the bootstrap</h2>
+<p>For a true terminal transition, there is no future decision after s′. Its continuation value is zero, so use the reward alone as the target. A terminal state has no candidate actions for the maximum. This is different from a nonterminal state that happens to have zero-valued actions.</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>T</mi><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007B;</mo><mtable><mtr><mtd columnalign="left"><mi>r</mi><mo>&#x0002C;</mo></mtd><mtd columnalign="left"><mi>d</mi><mo>&#x0003D;</mo><mn>1</mn></mtd></mtr><mtr><mtd columnalign="left"><mi>r</mi><mo>&#x0002B;</mo><mi>&#x003B3;</mi><msub><mo>max</mo><mrow><msup><mi>a</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo>&#x02208;</mo><mi>A</mi><mo stretchy="false">&#x00028;</mo><msup><mi>s</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow></msub><mover accent="true"><mi>Q</mi><mo>&#x0005E;</mo></mover><mo stretchy="false">&#x00028;</mo><msup><mi>s</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo>&#x0002C;</mo><msup><mi>a</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo></mtd><mtd columnalign="left"><mi>d</mi><mo>&#x0003D;</mo><mn>0</mn></mtd></mtr></mtable></mrow></mrow></math></div>
+<p>When <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math>, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mo>&#x0003D;</mo><mi>r</mi></mrow></math>. Do not multiply a terminal reward by <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B3;</mi></mrow></math> or add a nonexistent next-action value. When <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, use the ordinary one-step target. State explicitly whether the observed transition ended the episode.</p>
+<h2 id="section-5">Supplemental calculation: two episodes, one-step propagation</h2>
+<p>The next four-step viewer starts every listed entry at zero and follows the specified behavior actions. It separates the action actually sampled from the target's maximizing comparison.</p>
+<section class="walk" tabindex="0" aria-label="Two episodes: watch reward move backward"><h3>Two episodes: watch reward move backward</h3><div class="example-input"><strong style="flex-basis:100%">Supplemental calculation.</strong><span style="flex-basis:100%">Initial table: every listed Q entry is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn></mrow></math></span><span style="flex-basis:100%">Discount factor: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B3;</mi><mo>&#x0003D;</mo><mn>0.9</mn></mrow></math></span><span style="flex-basis:100%">Learning rate: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi><mo>&#x0003D;</mo><mn>0.5</mn></mrow></math></span><span style="flex-basis:100%">Actions: S0 has advance; S1 has finish and loop; T is terminal and has no actions. Each episode samples advance then finish. The behavior action is stated separately from the target maximum.</span></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Episode 1 — advance from S0</h4><p>The sampled behavior action is <strong>advance</strong>: S0 → S1, reward <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn></mrow></math>. At S1, candidate next actions are finish and loop; both current Q estimates are <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn></mrow></math>.</p>
+<p>Target: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo>max</mo><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math>. Old <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mn>0</mn></msub><mo>&#x0002C;</mo><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">e</mi></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math>; error = target − old = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x02212;</mo><mn>0</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math>; with <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi><mo>&#x0003D;</mo><mn>0.5</mn></mrow></math>, new value = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.5</mn><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math>.</p>
+<p>Only <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mn>0</mn></msub><mo>&#x0002C;</mo><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">e</mi></mrow><mo stretchy="false">&#x00029;</mo></mrow></math> is sampled and eligible to change; it remains <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn></mrow></math>. Other entries stay <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mn>1</mn></msub><mo>&#x0002C;</mo><mrow><mi mathvariant="normal">f</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mn>1</mn></msub><mo>&#x0002C;</mo><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">p</mi></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math>.</p></section><section class="step"><h4>2. Episode 1 — finish at S1</h4><p>The sampled behavior action is <strong>finish</strong>: S1 → terminal T, reward <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>10</mn></mrow></math>. T has no actions, so there are no next-state candidates and no bootstrap.</p>
+<p>Target = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>10</mn></mrow></math>. Old <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mn>1</mn></msub><mo>&#x0002C;</mo><mrow><mi mathvariant="normal">f</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math>; error = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>10</mn><mo>&#x02212;</mo><mn>0</mn><mo>&#x0003D;</mo><mn>10</mn></mrow></math>; new value = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.5</mn><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>5</mn></mrow></math>.</p>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mn>1</mn></msub><mo>&#x0002C;</mo><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">p</mi></mrow><mo stretchy="false">&#x00029;</mo></mrow></math> remains <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mn>0</mn></msub><mo>&#x0002C;</mo><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">e</mi></mrow><mo stretchy="false">&#x00029;</mo></mrow></math> remains <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn></mrow></math>. End of episode 1: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>5</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo></mrow></math> for (advance, finish, loop).</p></section><section class="step"><h4>3. Episode 2 — advance using the old next-state values</h4><p>The sampled behavior action is again <strong>advance</strong>: S0 → S1, reward <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn></mrow></math>. Before this update, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mn>1</mn></msub><mo>&#x0002C;</mo><mrow><mi mathvariant="normal">f</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>5</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mn>1</mn></msub><mo>&#x0002C;</mo><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">p</mi></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math>. The behavior action taken after arriving at S1 is finish, but the target maximization does not depend on that choice: it compares every available next action.</p>
+<p>Target = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo>max</mo><mo stretchy="false">&#x00028;</mo><mn>5</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>4.5</mn></mrow></math>. Old <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mn>0</mn></msub><mo>&#x0002C;</mo><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">e</mi></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math>; error = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>4.5</mn><mo>&#x02212;</mo><mn>0</mn><mo>&#x0003D;</mo><mn>4.5</mn></mrow></math>; new value = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.5</mn><mo stretchy="false">&#x00028;</mo><mn>4.5</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2.25</mn></mrow></math>.</p>
+<p>Only <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mn>0</mn></msub><mo>&#x0002C;</mo><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">e</mi></mrow><mo stretchy="false">&#x00029;</mo></mrow></math> changes. <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mn>1</mn></msub><mo>&#x0002C;</mo><mrow><mi mathvariant="normal">f</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>5</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mn>1</mn></msub><mo>&#x0002C;</mo><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">p</mi></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math> are unchanged in this transition.</p></section><section class="step"><h4>4. Episode 2 — finish at S1 and check the greedy actions</h4><p>The sampled behavior action is <strong>finish</strong>: S1 → terminal T, reward <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>10</mn></mrow></math>. Since T is terminal, its candidate-action set is empty and the target is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>10</mn></mrow></math>, with no <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B3;</mi></mrow></math> multiplier and no bootstrap.</p>
+<p>Old <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mn>1</mn></msub><mo>&#x0002C;</mo><mrow><mi mathvariant="normal">f</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>5</mn></mrow></math>; error = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>10</mn><mo>&#x02212;</mo><mn>5</mn><mo>&#x0003D;</mo><mn>5</mn></mrow></math>; new value = <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>5</mn><mo>&#x0002B;</mo><mn>0.5</mn><mo stretchy="false">&#x00028;</mo><mn>5</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>7.5</mn></mrow></math>. <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mn>1</mn></msub><mo>&#x0002C;</mo><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">p</mi></mrow><mo stretchy="false">&#x00029;</mo></mrow></math> stays <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn></mrow></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>Q</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mn>0</mn></msub><mo>&#x0002C;</mo><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">d</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">e</mi></mrow><mo stretchy="false">&#x00029;</mo></mrow></math> stays <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2.25</mn></mrow></math>.</p>
+<p>Final greedy check: at S1, finish wins because <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>7.5</mn><mo>&#x0003E;</mo><mn>0</mn></mrow></math>; at S0, advance is the only action and has value <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2.25</mn></mrow></math>. Stop here: these two illustrative episodes show one-step propagation, not convergence.</p></section></section>
+<p>The compact ledger below shows the end of each episode. The loop entry remains zero because it is never sampled; the finish entry changes on each terminal transition; advance changes only after the second episode can use the improved estimate at S1.</p>
+<div class="table-scroll" role="region" aria-label="Q-value entries after each illustrative episode"><table><caption>Q-table after each illustrative episode</caption><thead><tr><th scope="col">Checkpoint</th><th scope="col">S0 · advance</th><th scope="col">S1 · finish</th><th scope="col">S1 · loop</th></tr></thead><tbody><tr><th scope="row">Initial</th><td>0</td><td>0</td><td>0</td></tr><tr><th scope="row">After episode 1</th><td>0</td><td>5</td><td>0</td></tr><tr><th scope="row">After episode 2</th><td>2.25</td><td>7.5</td><td>0</td></tr></tbody></table></div>
+<p><strong>Independent check.</strong> Episode 2 target: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.9</mn><mo>max</mo><mo stretchy="false">&#x00028;</mo><mn>5</mn><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>4.5</mn></mrow></math>; half-step from old value 0: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x0002B;</mo><mn>0.5</mn><mo stretchy="false">&#x00028;</mo><mn>4.5</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2.25</mn></mrow></math>. Final terminal update: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>5</mn><mo>&#x0002B;</mo><mn>0.5</mn><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo>&#x02212;</mo><mn>5</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>7.5</mn></mrow></math>. T has no actions, so reward 10 is neither discounted nor bootstrapped.</p>
+<h2 id="section-6">Convergence: conditions matter</h2>
+<p>Convergence is conditional, not a promise for every implementation or learning-rate schedule. The classical 1992 theorem is for a finite, discrete Markov domain with bounded rewards and discounted dynamics, where <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0</mn><mo>&#x02264;</mo><mi>&#x003B3;</mi><mo>&#x0003C;</mo><mn>1</mn></mrow></math>. Every state–action pair must be sampled infinitely often. For the visits to each pair, a sufficient learning-rate condition is:</p>
+<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mn>0</mn><mo>&#x0003C;</mo><msub><mi>&#x003B1;</mi><mrow><msub><mi>n</mi><mi>i</mi></msub><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><mo>&#x0003C;</mo><mn>1</mn><mo>&#x0002C;</mo><mspace width="2em" /><munderover><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mo>&#x0221E;</mo></mrow></munderover><msub><mi>&#x003B1;</mi><mrow><msub><mi>n</mi><mi>i</mi></msub><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><mo>&#x0003D;</mo><mo>&#x0221E;</mo><mo>&#x0002C;</mo><mspace width="2em" /><munderover><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mo>&#x0221E;</mo></mrow></munderover><msubsup><mi>&#x003B1;</mi><mrow><msub><mi>n</mi><mi>i</mi></msub><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo></mrow><mn>2</mn></msubsup><mo>&#x0003C;</mo><mo>&#x0221E;</mo></mrow></math></div>
+<p>Here, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>n</mi><mi>i</mi></msub><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo></mrow></math> is the time of the ith visit to that pair. These conditions let learning keep correcting estimates while reducing the noise of individual samples. Function approximation and arbitrary schedules are not covered by that tabular guarantee. <a href="https://www.gatsby.ucl.ac.uk/~dayan/papers/wd92.html">1992 Q-learning theorem and sufficient conditions</a>.</p>
+<p>The visit-based rate <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B1;</mi><mi>n</mi></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>1</mn><mo>&#x0002B;</mo><msub><mo>visits</mo><mi>n</mi></msub><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo>&#x0002C;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo></mrow></mfrac></mrow></math> needs an explicit count convention. A particular implementation must still meet the theorem’s visitation and step-size conditions; this rate does not by itself guarantee convergence.</p>
+<h2 id="section-7">Reinforcement-learning algorithm families</h2>
+<p>Three algorithm families differ in the information they need and when they update.</p>
+<div class="table-scroll" role="region" aria-label="Reinforcement-learning algorithm family comparison"><table><caption>Comparing reinforcement-learning algorithm families</caption>
+<thead><tr><th scope="col">Family</th><th scope="col">Environment model</th><th scope="col">Learning signal and timing</th><th scope="col">Distinguishing point</th></tr></thead>
+<tbody><tr><th scope="row">Dynamic programming</th><td>Requires a complete, accurate model</td><td>Uses Bellman equations/relationships</td><td>Strong mathematical foundation</td></tr>
+<tr><th scope="row">Monte Carlo</th><td>No model required</td><td>Learns from complete episodes or experiences</td><td>Waits for episode outcomes</td></tr>
+<tr><th scope="row">Temporal difference</th><td>No model required</td><td>Incremental updates from experience; Q-learning is an example</td><td>Fully incremental; more complex to analyze</td></tr></tbody></table></div>
+
+<p>Q-learning is one temporal-difference method. The families share the reinforcement-learning goal, but differ in model use and the timing of their learning signal.</p>
+<h2 id="section-8">Common mistakes</h2>
+<ul>
+<li><strong>Using direct assignment in a stochastic world:</strong> replacement discards earlier samples; the incremental blend retains a weighted old estimate.</li>
+<li><strong>Calling reward the whole target:</strong> reward is immediate feedback; a nonterminal target also includes discounted next-state value.</li>
+<li><strong>Maximizing at the wrong state:</strong> compare the candidate values at the observed next state, not the old state.</li>
+<li><strong>Confusing behavior with target:</strong> behavior chooses the sampled action and can explore; the Q-learning target uses the best candidate value regardless of which next action behavior takes.</li>
+<li><strong>Bootstrapping beyond an episode end:</strong> terminal transitions have the reward-only target and T has no actions.</li>
+<li><strong>Assuming any visit schedule converges:</strong> convergence needs coverage and appropriate step sizes; arbitrary schedules or function approximation do not inherit the tabular theorem automatically.</li>
+<li><strong>Assuming an unvisited action starts optimistically:</strong> these examples initialize listed entries at zero. With zero initialization, an unvisited action can exceed a visited action whose estimate is negative; zero is not evidence of a positive prior reward.</li>
+</ul>
+<h2 id="section-9">Exam focus</h2>
+<ul>
+<li>Deterministic rule: directly replace the sampled Q entry by reward plus discounted next-state maximum.</li>
+<li>Stochastic rule: move the old estimate toward a sampled target using α; only the sampled state–action entry changes.</li>
+<li>Target components: observed reward, discount gamma, and the maximum over next-state candidate actions.</li>
+<li>Behavior may explore; target maximization is greedy and off-policy.</li>
+<li>Terminal target: reward only, with no bootstrap.</li>
+<li>Visit-rate convention: state whether the count is before or includes the current visit.</li>
+<li>Convergence: finite tabular setting, bounded rewards, repeated coverage, discounted dynamics, suitable per-pair rates; not arbitrary schedules or function approximation.</li>
+<li>Families: dynamic programming (model + Bellman), Monte Carlo (complete episodes), temporal difference (incremental; includes Q-learning).</li>
+</ul>
+<h2 id="section-10">Practice questions</h2>
+<p class="question">1. A deterministic transition has reward 3, discount 0.8, and next-state Q values 2 and 7. What does the direct-assignment rule write to the sampled entry?</p>
+<details class="worked"><summary>Check your answer</summary><p>The next-state maximum is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>7</mn></mrow></math>, so the target is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>3</mn><mo>&#x0002B;</mo><mn>0.8</mn><mo stretchy="false">&#x00028;</mo><mn>7</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>8.6</mn></mrow></math>. Directly assign <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>8.6</mn></mrow></math> to the sampled Q(s,a); do not add a learning rate to this deterministic rule.</p></details>
+<p class="question">2. In the stochastic blend, the old estimate is 4, the learning rate is 0.25, and the sampled target is 8. What is the new estimate?</p>
+<details class="worked"><summary>Check your answer</summary><p>Error=<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>8</mn><mo>&#x02212;</mo><mn>4</mn><mo>&#x0003D;</mo><mn>4</mn></mrow></math>. New estimate=<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>4</mn><mo>&#x0002B;</mo><mn>0.25</mn><mo stretchy="false">&#x00028;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>5</mn></mrow></math>, equivalently <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>0.75</mn><mo stretchy="false">&#x00028;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mn>0.25</mn><mo stretchy="false">&#x00028;</mo><mn>8</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>5</mn></mrow></math>. Only the sampled entry changes.</p></details>
+<p class="question">3. Behavior chooses a non-greedy next action with Q=2, while another available next action has Q=9. Which value enters the Q-learning target?</p>
+<details class="worked"><summary>Check your answer</summary><p>The target uses <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>max</mo><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002C;</mo><mn>9</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>9</mn></mrow></math>, regardless of the behavior choice. Behavior determines which action is sampled; the target maximization evaluates the best next action.</p></details>
+<p class="question">4. A sampled transition gives reward 6 and ends the episode. What is its target?</p>
+<details class="worked"><summary>Check your answer</summary><p>Target=<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>6</mn></mrow></math>. The transition is terminal, so there is no next action to maximize over, no bootstrap, and no extra discount on the terminal reward.</p></details>
+<p class="question">5. If the visit count is the number of completed visits before the current sample, what rate does the displayed formula give on the first visit? What if the current visit is already included?</p>
+<details class="worked"><summary>Check your answer</summary><p>Before-current convention: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>visits</mo><mo>&#x0003D;</mo><mn>0</mn><mi>&#x027F9;</mi><mi>&#x003B1;</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math>. Including-current convention: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>visits</mo><mo>&#x0003D;</mo><mn>1</mn><mi>&#x027F9;</mi><mi>&#x003B1;</mi><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002F;</mo><mn>2</mn></mrow></math>. State the convention because the formula does not specify it.</p></details>
+<p class="question">6. Match each family: complete model and Bellman relations; complete episode returns; or incremental transition updates without a model.</p>
+<details class="worked"><summary>Check your answer</summary><p>Dynamic programming uses the complete model and Bellman relations. Monte Carlo learns from complete episodes. Temporal-difference methods update incrementally from experience without requiring a model; Q-learning is one example.</p></details>
+<h2 id="section-11">Study route</h2>
+<p>Begin with <a href="reinforcement-learning-foundations.html">Reinforcement Learning: MDPs, Values, and Exploration</a> for MDPs, return, value, policy, and exploration. This topic then develops action-value targets and incremental temporal-difference updates.</p></article><nav class="pager" aria-label="Study sequence"><a href="reinforcement-learning-foundations.html"><small>Previous</small>Reinforcement Learning: MDPs, Values, and Exploration <span aria-hidden="true">↗</span></a><a href="aws-ai-foundations.html"><small>Next</small>AWS Companion: AI and Generative AI Foundations <span aria-hidden="true">↗</span></a></nav><footer>Advanced Machine Learning · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+  'use strict';
+  let cleanups = [];
+  const initializeMain = root => {
+  const mathHints = new WeakMap();
+  const repairMath = () => {
+    root.querySelectorAll('math,.walk code').forEach(expression => {
+      if (expression.closest('.equation,.math-scroll,.table-scroll,pre')) return;
+      const scope = expression.closest('p,li,summary,figcaption,h2,h3,h4') || expression.closest('.example-input,.step');
+      if (!scope) return;
+      const style = getComputedStyle(scope);
+      const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
+      if (available <= 0 || !box.width) return;
+      if (expression.scrollWidth <= box.width + 1 && box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+          && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
+      const region = document.createElement('span');
+      region.className = 'math-scroll';
+      expression.before(region); region.append(expression);
+    });
+    root.querySelectorAll('.equation,.math-scroll').forEach(region => {
+      if (!region.getClientRects().length) return;
+      const pannable = region.scrollWidth > region.clientWidth + 1;
+      let hint = mathHints.get(region);
+      if (!hint && pannable) {
+        hint = document.createElement('span'); hint.className = 'math-hint';
+        hint.textContent = 'Scroll within the formula to read the complete expression.';
+        region.after(hint); mathHints.set(region, hint);
+      }
+      if (hint) hint.hidden = !pannable;
+      if (pannable) {
+        region.tabIndex = 0; region.setAttribute('role','region');
+        region.setAttribute('aria-label','Mathematical expression, scroll horizontally');
+      }
+    });
+  };
+  const panFocusedRegion = event => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+    const region = event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame');
+    if (!region || event.target !== region || region.scrollWidth <= region.clientWidth + 1) return;
+    event.preventDefault();
+    region.scrollLeft += event.key === 'ArrowRight' ? 40 : -40;
+  };
+  root.addEventListener('keydown', panFocusedRegion);
+  cleanups.push(() => root.removeEventListener('keydown', panFocusedRegion));
+  root.querySelectorAll('table').forEach(table => {
+    let region = table.parentElement;
+    if (!region.classList.contains('table-scroll')) {
+      region = document.createElement('div'); region.className = 'table-scroll';
+      table.before(region); region.append(table);
+    }
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    if (!region.getAttribute('aria-label')?.trim() && !region.getAttribute('aria-labelledby')?.trim()) {
+      region.setAttribute('aria-label', 'Scrollable comparison table');
+    }
+    const hint = document.createElement('p');
+    hint.className = 'table-hint'; hint.textContent = 'Scroll sideways to see all columns →';
+    region.before(hint);
+    const updateHint = () => { hint.hidden = table.scrollWidth <= region.clientWidth + 1; };
+    const observer = new ResizeObserver(updateHint); observer.observe(region); cleanups.push(() => observer.disconnect()); updateHint();
+  });
+  root.querySelectorAll('.diagram-frame').forEach(frame => {
+    frame.tabIndex = 0;
+    const caption = frame.closest('figure')?.querySelector('figcaption')?.textContent.trim();
+    frame.setAttribute('role','region');
+    frame.setAttribute('aria-label', caption || frame.querySelector('svg')?.getAttribute('aria-label') || 'Technical diagram');
+    const hint = document.createElement('p'); hint.className = 'diagram-hint';
+    hint.textContent = 'Scroll within the diagram to inspect all labels.'; frame.after(hint);
+    const update = () => {
+      const pannable = frame.scrollWidth > frame.clientWidth + 1 || frame.scrollHeight > frame.clientHeight + 1;
+      hint.hidden = !pannable;
+      frame.classList.toggle('is-pannable', pannable);
+    };
+    const observer = new ResizeObserver(update); observer.observe(frame); cleanups.push(() => observer.disconnect()); update();
+  });
+  root.querySelectorAll('.walk').forEach(walk => {
+    const steps = [...walk.querySelectorAll(':scope > .step')];
+    let current = 0, timer = null;
+    const prev = walk.querySelector('[data-action=prev]');
+    const next = walk.querySelector('[data-action=next]');
+    const play = walk.querySelector('[data-action=play]');
+    const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
+      prev.disabled = current === 0; next.disabled = current === steps.length - 1;
+      repairMath();
+      if (next.disabled) stop();
+    };
+    walk.dataset.ready = 'true'; show(0);
+    prev.addEventListener('click', () => { stop(); show(current - 1); });
+    next.addEventListener('click', () => { stop(); show(current + 1); });
+    walk.querySelector('[data-action=reset]').addEventListener('click', () => { stop(); show(0); });
+    play.addEventListener('click', () => {
+      if (timer) { stop(); return; }
+      if (current === steps.length - 1) show(0);
+      play.textContent = 'Pause'; play.setAttribute('aria-pressed','true');
+      timer = setInterval(() => show(current + 1), 1700);
+    });
+    walk.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.target.closest('.math-scroll,.equation,.table-scroll,.diagram-frame')) return;
+      event.preventDefault(); stop(); show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+    cleanups.push(stop);
+  });
+  const mathObserver = new ResizeObserver(repairMath); mathObserver.observe(root);
+  root.addEventListener('toggle', repairMath, true);
+  cleanups.push(() => { mathObserver.disconnect(); root.removeEventListener('toggle', repairMath, true); });
+  repairMath();
+  };
+  initializeMain(document.querySelector('main') || document);
+  const menu = document.querySelector('.menu'), sidebar = document.querySelector('#sidebar');
+  menu?.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open));
+    if (open) document.querySelector('#topic-filter').focus();
+  });
+  const filter = document.querySelector('#topic-filter');
+  const aliases = {supervised:'labels targets classification regression',unsupervised:'clustering dimensionality reduction',gradient:'descent optimization learning rate',perceptron:'linear classifier decision boundary',pca:'principal components eigenvectors variance',fastmap:'distance embedding projection',gan:'generator discriminator adversarial',sequence:'rnn lstm gru translation',attention:'transformer self attention',reinforcement:'agent reward policy value'};
+  filter?.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase(); let total = 0;
+    document.querySelectorAll('.nav-group').forEach(group => {
+      let count = 0;
+      group.querySelectorAll('.nav-entry').forEach(link => {
+        const title = link.textContent.toLowerCase();
+        const extra = Object.entries(aliases).filter(([key]) => title.includes(key)).map(([,value]) => value).join(' ');
+        const match = (title + ' ' + extra).includes(query); link.hidden = !match;
+        if (match) { count++; total++; }
+      }); group.hidden = count === 0;
+    }); document.querySelector('#no-topics').hidden = total > 0;
+  });
+  const expand = document.querySelector('#examples');
+  if (expand) expand.hidden = document.querySelectorAll('details').length === 0;
+  expand?.addEventListener('click', () => {
+    const details = [...document.querySelectorAll('details')];
+    const open = details.some(item => !item.open);
+    details.forEach(item => { item.open = open; });
+    expand.textContent = open ? 'Collapse examples' : 'Expand examples';
+  });
+  const theme = document.querySelector('#theme');
+  const themeOptions = document.querySelector('#theme-options');
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  let themeChoice = document.documentElement.dataset.themeChoice || 'system';
+  const applyTheme = choice => {
+    themeChoice = choice;
+    document.documentElement.dataset.themeChoice = choice;
+    document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+    const label = choice[0].toUpperCase() + choice.slice(1);
+    const current = document.querySelector('#theme-current');
+    if (current) current.textContent = label;
+    theme?.setAttribute('aria-label', 'Color theme: ' + label);
+    themeOptions?.querySelectorAll('[data-theme-value]').forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.themeValue === choice));
+    });
+  };
+  if (theme && themeOptions) {
+    const options = [...themeOptions.querySelectorAll('[data-theme-value]')];
+    let savedReadingY = window.scrollY;
+    const rememberReadingPosition = () => { savedReadingY = window.scrollY; };
+    const restoreReadingPosition = () => requestAnimationFrame(() => window.scrollTo({top:savedReadingY, behavior:'instant'}));
+    const closeTheme = focus => {
+      themeOptions.hidden = true; theme.setAttribute('aria-expanded', 'false');
+      if (focus) theme.focus({preventScroll:true});
+    };
+    const openTheme = () => {
+      themeOptions.hidden = false; theme.setAttribute('aria-expanded', 'true');
+      options.find(option => option.dataset.themeValue === themeChoice)?.focus({preventScroll:true});
+    };
+    // Native focus on a sticky header control scrolls Chrome's document toward it.
+    theme.parentElement.addEventListener('mousedown', event => {
+      if (event.button !== 0) return;
+      rememberReadingPosition();
+      const button = event.target.closest('button');
+      if (button) { event.preventDefault(); button.focus({preventScroll:true}); restoreReadingPosition(); }
+    });
+    theme.addEventListener('click', () => themeOptions.hidden ? openTheme() : closeTheme(true));
+    theme.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openTheme(); }
+    });
+    options.forEach(option => option.addEventListener('click', () => {
+      rememberReadingPosition();
+      applyTheme(option.dataset.themeValue);
+      try { localStorage.setItem('aml-theme', themeChoice); } catch {}
+      closeTheme(true);
+      restoreReadingPosition();
+    }));
+    themeOptions.addEventListener('keydown', event => {
+      const index = options.indexOf(document.activeElement);
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % options.length;
+      if (event.key === 'ArrowUp') next = (index + options.length - 1) % options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = options.length - 1;
+      if (next !== undefined) { event.preventDefault(); options[next].focus({preventScroll:true}); }
+      if (event.key === 'Escape') { event.preventDefault(); closeTheme(true); }
+      if (event.key === 'Tab') closeTheme(true);
+    });
+    document.addEventListener('click', event => {
+      if (!theme.parentElement.contains(event.target)) closeTheme(false);
+    });
+    applyTheme(themeChoice);
+    system.addEventListener('change', () => {
+      if (themeChoice === 'system') applyTheme('system');
+    });
+  }
+  const pages = window.AML_PAGES;
+  const baseSlug = () => decodeURIComponent(location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+  const currentSlug = () => new URLSearchParams(location.hash.slice(1)).get('topic') || baseSlug();
+  const sectionFromHash = hash => new URLSearchParams(hash.slice(1)).get('section') || (hash.startsWith('#topic=') ? '' : hash.slice(1));
+  let displayed = baseSlug();
+  const navigate = (url, push, requestedSlug) => {
+    const slug = requestedSlug || decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    const page = pages?.[slug];
+    if (!page) return false;
+    const railScroll = sidebar?.scrollTop || 0;
+    cleanups.forEach(cleanup => cleanup()); cleanups = [];
+    const main = document.querySelector('main');
+    main.innerHTML = page.content;
+    document.title = page.title;
+    document.querySelector('meta[name=description]')?.setAttribute('content', page.description);
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      if (link.getAttribute('href') === slug + '.html') link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    initializeMain(main);
+    if (expand) { expand.textContent = 'Expand examples'; expand.hidden = main.querySelectorAll('details').length === 0; }
+    const section = sectionFromHash(url.hash);
+    if (push) {
+      if (location.protocol === 'file:') {
+        const route = new URLSearchParams({topic:slug});
+        if (section) route.set('section',section);
+        history.pushState({slug}, '', '#' + route.toString());
+      } else history.pushState({slug}, '', url.href);
+    }
+    displayed = slug;
+    if (sidebar) sidebar.scrollTop = railScroll;
+    if (menu && getComputedStyle(menu).display !== 'none') {
+      sidebar?.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+      menu.focus({preventScroll:true});
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+    if (section) {
+      const target = document.getElementById(decodeURIComponent(section));
+      target?.scrollIntoView({behavior:'instant'});
+    }
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    if (location.protocol === 'file:' && link.getAttribute('href').startsWith('#')) {
+      const section = link.getAttribute('href').slice(1);
+      const route = new URLSearchParams({topic:displayed,section});
+      event.preventDefault(); history.pushState({slug:displayed}, '', '#' + route.toString());
+      document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (url.protocol !== location.protocol || url.host !== location.host || url.pathname.slice(0,url.pathname.lastIndexOf('/')) !== location.pathname.slice(0,location.pathname.lastIndexOf('/'))) return;
+    if (!url.pathname.endsWith('.html')) return;
+    const slug = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.html$/, '');
+    if (!pages?.[slug]) return;
+    event.preventDefault(); navigate(url, true);
+  });
+  window.addEventListener('popstate', () => {
+    if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+    else {
+      const section = sectionFromHash(location.hash);
+      if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+      else window.scrollTo({top:0,behavior:'instant'});
+    }
+  });
+  if (currentSlug() !== displayed) navigate(new URL(location.href), false, currentSlug());
+  else {
+    const section = sectionFromHash(location.hash);
+    if (section) document.getElementById(decodeURIComponent(section))?.scrollIntoView({behavior:'instant'});
+  }
+})();
+</script></body></html>
