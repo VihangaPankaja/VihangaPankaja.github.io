@@ -1,4 +1,5 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="A guided route from binary propositions and proof patterns to crisp IF/ELSE relations and inference."><title>Classical logic and crisp rule relations · Neural networks and fuzzy logic</title><script>(() => {
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="An implication is false only when its premise is true and its conclusion is false. Use that row to check the rule." name="description"/><title>Classical logic and crisp rule relations · Neural networks and fuzzy logic</title><script>(() => {
   let choice = 'system';
   try { const saved = localStorage.getItem('nn-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
   document.documentElement.dataset.themeChoice = choice;
@@ -36,232 +37,216 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 .math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
 
 .nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-</style></head><body>
+</style><link href="reading.css" rel="stylesheet"/></head><body>
 <a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> NNFL <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
-  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
-  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
-    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
-    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
-    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
-  </div>
+<button aria-controls="theme-options" aria-expanded="false" aria-haspopup="menu" aria-label="Color theme: System" id="theme" type="button"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"></path><circle cx="12" cy="12" r="4"></circle></svg><span id="theme-current">System</span><svg aria-hidden="true" class="theme-chevron" viewbox="0 0 16 16"><path d="m4 6 4 4 4-4"></path></svg></button>
+<div aria-label="Color theme" hidden="" id="theme-options" role="menu">
+<button aria-checked="true" data-theme-value="system" role="menuitemradio" tabindex="-1" type="button"><span>System<small>Follow your device</small></span><span aria-hidden="true" class="theme-check">✓</span></button>
+<button aria-checked="false" data-theme-value="light" role="menuitemradio" tabindex="-1" type="button"><span>Light<small>Light pages and diagrams</small></span><span aria-hidden="true" class="theme-check">✓</span></button>
+<button aria-checked="false" data-theme-value="dark" role="menuitemradio" tabindex="-1" type="button"><span>Dark<small>Dark pages and diagrams</small></span><span aria-hidden="true" class="theme-check">✓</span></button>
 </div>
-<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
-<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Neuron, learning, fuzzy sets…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Neural networks and fuzzy logic</a></div><div class="nav-group"><p>Neural networks</p><a class="nav-entry" href="foundations.html">Neurons, activations and network foundations</a><a class="nav-entry" href="perceptron.html">Threshold logic and perceptron learning</a><a class="nav-entry" href="adaptive-linear.html">ADALINE and MADALINE learning</a><a class="nav-entry" href="lms.html">Widrow-Hoff derivation and LMS calculations</a><a class="nav-entry" href="backpropagation.html">Multilayer networks and backpropagation</a><a class="nav-entry" href="training-variants.html">Backpropagation variations and deeper networks</a><a class="nav-entry" href="pnn.html">Probabilistic neural networks</a></div><div class="nav-group"><p>Fuzzy foundations</p><a class="nav-entry" href="fuzzy-sets.html">Crisp and fuzzy sets</a><a class="nav-entry" href="fuzzy-relations.html">Relations and matrix composition</a><a class="nav-entry" href="membership.html">Membership, fuzzification and defuzzification</a></div><div class="nav-group"><p>Fuzzy reasoning</p><a class="nav-entry" href="classical-logic.html" aria-current="page">Classical logic and crisp rule relations</a><a class="nav-entry" href="logic-language.html">Fuzzy propositions, linguistic variables and implications</a><a class="nav-entry" href="fuzzy-systems.html">Mamdani, Sugeno, Tsukamoto and ANFIS</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">MA4144<br>Neural Networks and Fuzzy Logic</div></aside>
-<main id="main"><div class="eyebrow">Fuzzy reasoning <span>/</span> Fuzzy lesson 4</div><h1>Classical logic and crisp rule relations</h1><p class="lead">A guided route from binary propositions and proof patterns to crisp IF/ELSE relations and inference.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Propositions and truth sets</a><a href="#section-2">Connectives and their truth tables</a><a href="#section-3">Conditional, converse, inverse, and contrapositive</a><a href="#section-4">Tautologies, contradictions, and equivalence</a><a href="#section-5">Modus ponens and modus tollens</a><a href="#section-6">Proof by contradiction</a><a href="#section-7">Crisp rule relations on two universes</a><a href="#section-8">Crisp inference by relational composition</a><a href="#section-9">Common mistakes</a><a href="#section-10">Exam focus</a><a href="#section-11">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
-<p>Classical logic gives each proposition a binary truth value: true or false. Once a proposition is viewed as the set of cases where it is true, logical operations become familiar set operations. The same idea extends to rules connecting different domains: a rule becomes a relation on a Cartesian product, and a new input set can be composed with that relation to infer possible outputs.</p>
-
+</div>
+<button aria-controls="sidebar" aria-expanded="false" class="menu" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input autocomplete="off" id="topic-filter" placeholder="Neuron, learning, fuzzy sets…" type="search"/><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Neural networks and fuzzy logic</a></div><div class="nav-group"><p>Neural networks</p><a class="nav-entry" href="foundations.html">Neurons, activations and network foundations</a><a class="nav-entry" href="perceptron.html">Threshold logic and perceptron learning</a><a class="nav-entry" href="adaptive-linear.html">ADALINE and MADALINE learning</a><a class="nav-entry" href="lms.html">Widrow-Hoff derivation and LMS calculations</a><a class="nav-entry" href="backpropagation.html">Multilayer networks and backpropagation</a><a class="nav-entry" href="training-variants.html">Backpropagation variations and deeper networks</a><a class="nav-entry" href="pnn.html">Probabilistic neural networks</a></div><div class="nav-group"><p>Fuzzy foundations</p><a class="nav-entry" href="fuzzy-sets.html">Crisp and fuzzy sets</a><a class="nav-entry" href="fuzzy-relations.html">Relations and matrix composition</a><a class="nav-entry" href="membership.html">Membership, fuzzification and defuzzification</a></div><div class="nav-group"><p>Fuzzy reasoning</p><a aria-current="page" class="nav-entry" href="classical-logic.html">Classical logic and crisp rule relations</a><a class="nav-entry" href="logic-language.html">Fuzzy propositions, linguistic variables and implications</a><a class="nav-entry" href="fuzzy-systems.html">Mamdani, Sugeno, Tsukamoto and ANFIS</a></div></nav><p hidden="" id="no-topics">No matching topics.</p><div class="rail-foot">MA4144<br/>Neural Networks and Fuzzy Logic</div></aside>
+<main id="main"><div class="eyebrow">Fuzzy reasoning <span>/</span> Fuzzy lesson 4</div><h1>Classical logic and crisp rule relations</h1><p class="lead">An implication is false only when its premise is true and its conclusion is false. Use that row to check the rule.</p><details class="contents"><summary>Jump to a section · 12 sections</summary><nav aria-label="On this page" class="on-page"><a href="#section-0">Look for the counterexample</a><a href="#section-1">Propositions and truth sets</a><a href="#section-2">Connectives and their truth tables</a><a href="#section-3">Conditional, converse, inverse, and contrapositive</a><a href="#section-4">Tautologies, contradictions, and equivalence</a><a href="#section-5">Modus ponens and modus tollens</a><a href="#section-6">Proof by contradiction</a><a href="#section-7">Crisp rule relations on two universes</a><a href="#section-8">Crisp inference by relational composition</a><a href="#section-9">Common mistakes</a><a href="#section-10">Exam focus</a><a href="#section-11">Practice questions</a></nav></details><article><h2 id="section-0">Look for the counterexample</h2>
+<ul class="takeaways"><li><strong>P ⇒ Q:</strong> the only failing row is P=1, Q=0. A false premise makes the conditional true.</li><li><strong>Equivalent:</strong> P ⇒ Q and ¬Q ⇒ ¬P. Reversing the arrow alone does not preserve the claim.</li><li><strong>Two universes:</strong> a rule about x and y becomes a relation on X × Y, with separate input and output axes.</li></ul>
 <h2 id="section-1">Propositions and truth sets</h2>
-<p>A proposition is a declarative statement that has one definite truth value for each instance in its universe of discourse. We use 1 for true and 0 for false. Its truth set contains the instances that make it true; its falsity set is the exact complement within the universe.</p>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>T</mi><mi>:</mi><mi>U</mi><mo>&#x02192;</mo><mo stretchy="false">&#x0007B;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x0007D;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>u</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn><mtext>&#x000A0;means&#x000A0;true&#x000A0;and&#x000A0;</mtext><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>u</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn><mtext>&#x000A0;means&#x000A0;false</mtext></mrow></math></div>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x0007B;</mo><mi>u</mi><mo>&#x02208;</mo><mi>U</mi><mi>:</mi><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>u</mi><mo stretchy="false">&#x00029;</mo><mtext>&#x000A0;is&#x000A0;true</mtext><mo stretchy="false">&#x0007D;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>F</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mover><mrow><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mi>U</mi><mi>&#x029F5;</mi><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
-<p>The two sets partition U: every instance is in exactly one of them. In the lecture’s boundary convention, the whole universe is true and the empty set is false. Two propositions are <strong>mutually exclusive</strong> when their truth sets do not overlap. For membership propositions P: x ∈ A and Q: x ∈ B, this means a true P forces Q false, and a true Q forces P false.</p>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0222A;</mo><mi>F</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>U</mi><mo>&#x0002C;</mo><mspace width="2em" /><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x02229;</mo><mi>F</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02205;</mo></mrow></math></div>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>U</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002C;</mo><mspace width="2em" /><mi>T</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02205;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math></div>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x02229;</mo><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>Q</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02205;</mo><mspace width="1em" /><mi>&#x027FA;</mi><mspace width="1em" /><mi>P</mi><mo>&#x021D2;</mo><mover><mrow><mi>Q</mi></mrow><mo accent="true">&#x02015;</mo></mover><mtext>&#x000A0;and&#x000A0;</mtext><mi>Q</mi><mo>&#x021D2;</mo><mover><mrow><mi>P</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow></math></div>
-
+<p>A proposition has one definite truth value for each instance in its universe: 1 for true, 0 for false. Its truth set contains the true instances; its complement contains the false ones.</p>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>T</mi><mi>:</mi><mi>U</mi><mo>→</mo><mo stretchy="false">{</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false">}</mo><mo>,</mo><mspace width="2em"></mspace><mi>T</mi><mo stretchy="false">(</mo><mi>u</mi><mo stretchy="false">)</mo><mo>=</mo><mn>1</mn><mtext> means true and </mtext><mi>T</mi><mo stretchy="false">(</mo><mi>u</mi><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn><mtext> means false</mtext></mrow></math></div>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>T</mi><mo stretchy="false">(</mo><mi>P</mi><mo stretchy="false">)</mo><mo>=</mo><mo stretchy="false">{</mo><mi>u</mi><mo>∈</mo><mi>U</mi><mi>:</mi><mi>P</mi><mo stretchy="false">(</mo><mi>u</mi><mo stretchy="false">)</mo><mtext> is true</mtext><mo stretchy="false">}</mo><mo>,</mo><mspace width="2em"></mspace><mi>F</mi><mo stretchy="false">(</mo><mi>P</mi><mo stretchy="false">)</mo><mo>=</mo><mover><mrow><mi>T</mi><mo stretchy="false">(</mo><mi>P</mi><mo stretchy="false">)</mo></mrow><mo accent="true">―</mo></mover><mo>=</mo><mi>U</mi><mi>⧵</mi><mi>T</mi><mo stretchy="false">(</mo><mi>P</mi><mo stretchy="false">)</mo></mrow></math></div>
+<p>The two sets partition U: every instance is in exactly one of them. In the lecture’s boundary convention, the whole universe is true and the empty set is false. Two propositions are <strong>mutually exclusive</strong> when their truth sets do not overlap.</p><p>For membership propositions P: x ∈ A and Q: x ∈ B, this means a true P forces Q false, and a true Q forces P false.</p>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>T</mi><mo stretchy="false">(</mo><mi>P</mi><mo stretchy="false">)</mo><mo>∪</mo><mi>F</mi><mo stretchy="false">(</mo><mi>P</mi><mo stretchy="false">)</mo><mo>=</mo><mi>U</mi><mo>,</mo><mspace width="2em"></mspace><mi>T</mi><mo stretchy="false">(</mo><mi>P</mi><mo stretchy="false">)</mo><mo>∩</mo><mi>F</mi><mo stretchy="false">(</mo><mi>P</mi><mo stretchy="false">)</mo><mo>=</mo><mo>∅</mo></mrow></math></div>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>T</mi><mo stretchy="false">(</mo><mi>U</mi><mo stretchy="false">)</mo><mo>=</mo><mn>1</mn><mo>,</mo><mspace width="2em"></mspace><mi>T</mi><mo stretchy="false">(</mo><mo>∅</mo><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow></math></div>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>T</mi><mo stretchy="false">(</mo><mi>P</mi><mo stretchy="false">)</mo><mo>∩</mo><mi>T</mi><mo stretchy="false">(</mo><mi>Q</mi><mo stretchy="false">)</mo><mo>=</mo><mo>∅</mo><mspace width="1em"></mspace><mi>⟺</mi><mspace width="1em"></mspace><mi>P</mi><mo>⇒</mo><mover><mrow><mi>Q</mi></mrow><mo accent="true">―</mo></mover><mtext> and </mtext><mi>Q</mi><mo>⇒</mo><mover><mrow><mi>P</mi></mrow><mo accent="true">―</mo></mover></mrow></math></div>
 <h2 id="section-2">Connectives and their truth tables</h2>
-<p>For propositions P and Q on the same universe, negation reverses truth, inclusive OR is true when at least one proposition is true, and AND is true only when both are true. In set language, these correspond to complement, union, and intersection. Inclusive OR includes the case where both propositions are true.</p>
+<p>NOT complements the truth set. AND intersects two truth sets. Inclusive OR takes their union and includes the case where both propositions are true.</p>
 <figure><table><thead><tr><th scope="col">P</th><th scope="col">Q</th><th scope="col">¬P</th><th scope="col">¬Q</th></tr></thead><tbody><tr><th scope="row">T</th><td>T</td><td>F</td><td>F</td></tr><tr><th scope="row">T</th><td>F</td><td>F</td><td>T</td></tr><tr><th scope="row">F</th><td>T</td><td>T</td><td>F</td></tr><tr><th scope="row">F</th><td>F</td><td>T</td><td>T</td></tr></tbody></table><figcaption>Negation reverses each proposition’s truth value.</figcaption></figure>
 <figure><table><thead><tr><th scope="col">P</th><th scope="col">Q</th><th scope="col">P ∨ Q</th><th scope="col">P ∧ Q</th></tr></thead><tbody><tr><th scope="row">T</th><td>T</td><td>T</td><td>T</td></tr><tr><th scope="row">T</th><td>F</td><td>T</td><td>F</td></tr><tr><th scope="row">F</th><td>T</td><td>T</td><td>F</td></tr><tr><th scope="row">F</th><td>F</td><td>F</td><td>F</td></tr></tbody></table><figcaption>Inclusive OR and AND for all four possible input pairs.</figcaption></figure>
-<p><strong>Implication</strong> P ⇒ Q reads “if P, then Q.” P is the antecedent (hypothesis); Q is the consequent (conclusion). It is false only when P is true and Q is false. If P is false, the implication is true regardless of Q: the condition did not occur, so it did not break the rule. This is called <strong>vacuous truth</strong>.</p>
+<p>P ⇒ Q fails only at P=1,Q=0. P is the antecedent; Q is the consequent. When P is false, the condition has not occurred and the rule has no counterexample. This is vacuous truth.</p>
 <figure><table><thead><tr><th scope="col">P</th><th scope="col">Q</th><th scope="col">P ⇒ Q</th><th scope="col">P ⇔ Q</th></tr></thead><tbody><tr><th scope="row">T</th><td>T</td><td>T</td><td>T</td></tr><tr><th scope="row">T</th><td>F</td><td>F</td><td>F</td></tr><tr><th scope="row">F</th><td>T</td><td>T</td><td>F</td></tr><tr><th scope="row">F</th><td>F</td><td>T</td><td>T</td></tr></tbody></table><figcaption>The only false implication row is P = T, Q = F; equivalence is true when the values match.</figcaption></figure>
 <p><strong>Equivalence</strong> P ⇔ Q means “P if and only if Q.” It holds when both propositions have the same truth value, or equivalently when P ⇒ Q and Q ⇒ P. For set-membership propositions, implication fails on A ∖ B and is true on its complement.</p>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo>&#x021D2;</mo><mi>Q</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>T</mi><mo stretchy="false">&#x00028;</mo><mover><mrow><mi>P</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x02228;</mo><mi>Q</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>max</mo><mo stretchy="false">&#x0007B;</mo><mn>1</mn><mo>&#x02212;</mo><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>Q</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x0007D;</mo></mrow></math></div>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>P</mi><mo>&#x021D2;</mo><mi>Q</mi><mspace width="0.278em" /><mo>&#x02261;</mo><mspace width="0.278em" /><mover><mrow><mi>A</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0222A;</mo><mi>B</mi><mo>&#x0002C;</mo><mspace width="2em" /><mtext>false&#x000A0;exactly&#x000A0;on&#x000A0;</mtext><mi>A</mi><mi>&#x029F5;</mi><mi>B</mi></mrow></math></div>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>T</mi><mo stretchy="false">(</mo><mi>P</mi><mo>⇒</mo><mi>Q</mi><mo stretchy="false">)</mo><mo>=</mo><mi>T</mi><mo stretchy="false">(</mo><mover><mrow><mi>P</mi></mrow><mo accent="true">―</mo></mover><mo>∨</mo><mi>Q</mi><mo stretchy="false">)</mo><mo>=</mo><mo>max</mo><mo stretchy="false">{</mo><mn>1</mn><mo>−</mo><mi>T</mi><mo stretchy="false">(</mo><mi>P</mi><mo stretchy="false">)</mo><mo>,</mo><mi>T</mi><mo stretchy="false">(</mo><mi>Q</mi><mo stretchy="false">)</mo><mo stretchy="false">}</mo></mrow></math></div>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>P</mi><mo>⇒</mo><mi>Q</mi><mspace width="0.278em"></mspace><mo>≡</mo><mspace width="0.278em"></mspace><mover><mrow><mi>A</mi></mrow><mo accent="true">―</mo></mover><mo>∪</mo><mi>B</mi><mo>,</mo><mspace width="2em"></mspace><mtext>false exactly on </mtext><mi>A</mi><mi>⧵</mi><mi>B</mi></mrow></math></div>
 <p>Exclusive OR (XOR) means exactly one proposition is true. The lecture’s travel example is “by plane or boat,” but not both; its earlier menu example is “soup or salad” when choosing both is excluded. XNOR is the negation of XOR, so it agrees with logical equivalence.</p>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>P</mi><mo>&#x02295;</mo><mi>Q</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo>&#x02227;</mo><mover><mi>Q</mi><mo accent="true">&#x02015;</mo></mover><mo stretchy="false">&#x00029;</mo><mo>&#x02228;</mo><mo stretchy="false">&#x00028;</mo><mover><mi>P</mi><mo accent="true">&#x02015;</mo></mover><mo>&#x02227;</mo><mi>Q</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>P</mi><mo>&#x02299;</mo><mi>Q</mi><mo>&#x0003D;</mo><mover><mrow><mi>P</mi><mo>&#x02295;</mo><mi>Q</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow></math></div>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>P</mi><mo>⊕</mo><mi>Q</mi><mo>=</mo><mo stretchy="false">(</mo><mi>P</mi><mo>∧</mo><mover><mi>Q</mi><mo accent="true">―</mo></mover><mo stretchy="false">)</mo><mo>∨</mo><mo stretchy="false">(</mo><mover><mi>P</mi><mo accent="true">―</mo></mover><mo>∧</mo><mi>Q</mi><mo stretchy="false">)</mo><mo>,</mo><mspace width="2em"></mspace><mi>P</mi><mo>⊙</mo><mi>Q</mi><mo>=</mo><mover><mrow><mi>P</mi><mo>⊕</mo><mi>Q</mi></mrow><mo accent="true">―</mo></mover></mrow></math></div>
 <figure><table><thead><tr><th scope="col">P</th><th scope="col">Q</th><th scope="col">P ⊕ Q (XOR)</th><th scope="col">P ⊙ Q (XNOR)</th></tr></thead><tbody><tr><th scope="row">T</th><td>T</td><td>F</td><td>T</td></tr><tr><th scope="row">T</th><td>F</td><td>T</td><td>F</td></tr><tr><th scope="row">F</th><td>T</td><td>T</td><td>F</td></tr><tr><th scope="row">F</th><td>F</td><td>F</td><td>T</td></tr></tbody></table><figcaption>XOR is true for different values; XNOR is true for matching values.</figcaption></figure>
-
-<h2 id="section-3">Conditional, converse, inverse, and contrapositive</h2>
-<p>Starting from the conditional P ⇒ Q, reversing the direction gives the converse. Negating both parts gives the inverse; reversing and negating gives the contrapositive. The conditional is equivalent to its contrapositive, while the converse is equivalent to the inverse. The converse does not generally follow from the original conditional.</p>
+<h2 id="section-3">Conditional, converse, inverse, and contrapositive</h2><div class="comparison-wrap"><table class="comparison" data-stack=""><caption>Reversing the arrow alone is not a valid equivalence.</caption><thead><tr><th scope="col">Form</th><th scope="col">Expression</th><th scope="col">Equivalent to</th></tr></thead><tbody><tr><th scope="row">Conditional</th><td data-label="Expression">P ⇒ Q</td><td data-label="Equivalent to">Contrapositive</td></tr><tr><th scope="row">Converse</th><td data-label="Expression">Q ⇒ P</td><td data-label="Equivalent to">Inverse</td></tr><tr><th scope="row">Inverse</th><td data-label="Expression">¬P ⇒ ¬Q</td><td data-label="Equivalent to">Converse</td></tr><tr><th scope="row">Contrapositive</th><td data-label="Expression">¬Q ⇒ ¬P</td><td data-label="Equivalent to">Conditional</td></tr></tbody></table></div>
+<p>Compare the four forms by what happens to the arrow and the negations:</p>
 <figure><table><thead><tr><th scope="col">Form</th><th scope="col">Statement</th><th scope="col">Relationship to P ⇒ Q</th></tr></thead><tbody><tr><th scope="row">Conditional</th><td>P ⇒ Q</td><td>Original statement</td></tr><tr><th scope="row">Converse</th><td>Q ⇒ P</td><td>Not generally equivalent</td></tr><tr><th scope="row">Inverse</th><td>¬P ⇒ ¬Q</td><td>Equivalent to the converse</td></tr><tr><th scope="row">Contrapositive</th><td>¬Q ⇒ ¬P</td><td>Equivalent to the conditional</td></tr></tbody></table><figcaption>Keep the negation bars on both terms of the inverse and contrapositive.</figcaption></figure>
-<p><strong>Teaching example:</strong> “If a number is divisible by 4, then it is even” has the contrapositive “if a number is not even, then it is not divisible by 4.” The converse “if a number is even, then it is divisible by 4” is false: 6 is even but is not divisible by 4. This illustrates why reversing a conditional alone is not a valid equivalence.</p>
-
+<p>“Divisible by 4 ⇒ even” is true. Its contrapositive, “not even ⇒ not divisible by 4,” is also true. Its converse fails: 6 is even but is not divisible by 4.</p>
 <h2 id="section-4">Tautologies, contradictions, and equivalence</h2>
 <p>A <strong>tautology</strong> is true under every assignment of truth values. A <strong>contradiction</strong> is false under every assignment. The complement laws show one of each: every instance is either in A or outside A, and no instance can be both.</p>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mover><mi>A</mi><mo accent="true">&#x02015;</mo></mover><mo>&#x0222A;</mo><mi>A</mi><mo>&#x0003D;</mo><mi>U</mi><mspace width="1em" /><mtext>(tautology)</mtext><mo>&#x0002C;</mo><mspace width="2em" /><mi>A</mi><mo>&#x02229;</mo><mover><mi>A</mi><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mo>&#x02205;</mo><mspace width="1em" /><mtext>(contradiction)</mtext></mrow></math></div>
-<p>Two propositions are logically equivalent when their truth sets are identical. The lecture’s integer example compares “x is even” with “x² is even.” If x = 2k, then x² = 4k² = 2(2k²), so x² is even. Conversely, if x is odd, x = 2k + 1 and x² = 4k² + 4k + 1 = 2(2k² + 2k) + 1, which is odd. Thus x² is even exactly when x is even; the propositions have the same truth set over the integers.</p>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>P</mi><mi>:</mi><mtext>&#x000A0;</mtext><mi>x</mi><mo>&#x02208;</mo><mi>&#x02124;</mi><mtext>&#x000A0;is&#x000A0;even</mtext><mo>&#x0002C;</mo><mspace width="2em" /><mi>Q</mi><mi>:</mi><mtext>&#x000A0;</mtext><msup><mi>x</mi><mn>2</mn></msup><mtext>&#x000A0;is&#x000A0;even</mtext><mo>&#x0002C;</mo><mspace width="2em" /><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>Q</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mover><mi>A</mi><mo accent="true">―</mo></mover><mo>∪</mo><mi>A</mi><mo>=</mo><mi>U</mi><mspace width="1em"></mspace><mtext>(tautology)</mtext><mo>,</mo><mspace width="2em"></mspace><mi>A</mi><mo>∩</mo><mover><mi>A</mi><mo accent="true">―</mo></mover><mo>=</mo><mo>∅</mo><mspace width="1em"></mspace><mtext>(contradiction)</mtext></mrow></math></div>
+<p>Two propositions are logically equivalent when their truth sets are identical. The lecture’s integer example compares “x is even” with “x² is even.” If x = 2k, then x² = 4k² = 2(2k²), so x² is even.</p><p>Conversely, if x is odd, x = 2k + 1 and x² = 4k² + 4k + 1 = 2(2k² + 2k) + 1, which is odd. Thus x² is even exactly when x is even; the propositions have the same truth set over the integers.</p>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>P</mi><mi>:</mi><mtext> </mtext><mi>x</mi><mo>∈</mo><mi>ℤ</mi><mtext> is even</mtext><mo>,</mo><mspace width="2em"></mspace><mi>Q</mi><mi>:</mi><mtext> </mtext><msup><mi>x</mi><mn>2</mn></msup><mtext> is even</mtext><mo>,</mo><mspace width="2em"></mspace><mi>T</mi><mo stretchy="false">(</mo><mi>P</mi><mo stretchy="false">)</mo><mo>=</mo><mi>T</mi><mo stretchy="false">(</mo><mi>Q</mi><mo stretchy="false">)</mo></mrow></math></div>
 <p>The <strong>duality principle</strong> from the lecture says that a valid identity involving only AND, OR, and the constants 0 and 1 has a valid dual after swapping AND with OR and 0 with 1 (and complementing set symbols where that notation is used).</p>
-
 <h2 id="section-5">Modus ponens and modus tollens</h2>
-<p>Modus ponens applies a rule when its antecedent is known to be true: from P and P ⇒ Q, conclude Q. Modus tollens reasons from a false consequent: from ¬Q and P ⇒ Q, conclude ¬P. Each is a tautological inference pattern, not a guess about cause and effect.</p>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo>&#x02227;</mo><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo>&#x021D2;</mo><mi>Q</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x021D2;</mo><mi>Q</mi><mspace width="1em" /><mtext>(modus&#x000A0;ponens)</mtext></mrow></math></div>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="false">&#x00028;</mo><mover><mi>Q</mi><mo accent="true">&#x02015;</mo></mover><mo>&#x02227;</mo><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo>&#x021D2;</mo><mi>Q</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x021D2;</mo><mover><mi>P</mi><mo accent="true">&#x02015;</mo></mover><mspace width="1em" /><mtext>(modus&#x000A0;tollens)</mtext></mrow></math></div>
-<details class="worked"><summary>Teaching example: modus ponens</summary><p><strong>Rule:</strong> If the access card is valid (P), then the door unlocks (Q).<br />
-<strong>Given:</strong> The card is valid (P).<br />
-<strong>Apply modus ponens:</strong> P and P ⇒ Q are both true, so conclude Q: the door unlocks.<br />
+<p>Two valid inference patterns use the same conditional:</p><ul><li>Modus ponens: P and P⇒Q give Q.</li><li>Modus tollens: ¬Q and P⇒Q give ¬P.</li></ul>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo stretchy="false">(</mo><mi>P</mi><mo>∧</mo><mo stretchy="false">(</mo><mi>P</mi><mo>⇒</mo><mi>Q</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>⇒</mo><mi>Q</mi><mspace width="1em"></mspace><mtext>(modus ponens)</mtext></mrow></math></div>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo stretchy="false">(</mo><mover><mi>Q</mi><mo accent="true">―</mo></mover><mo>∧</mo><mo stretchy="false">(</mo><mi>P</mi><mo>⇒</mo><mi>Q</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>⇒</mo><mover><mi>P</mi><mo accent="true">―</mo></mover><mspace width="1em"></mspace><mtext>(modus tollens)</mtext></mrow></math></div>
+<details class="worked"><summary>Teaching example: modus ponens</summary><p><strong>Rule:</strong> If the access card is valid (P), then the door unlocks (Q).<br/>
+<strong>Given:</strong> The card is valid (P).<br/>
+<strong>Apply modus ponens:</strong> P and P ⇒ Q are both true, so conclude Q: the door unlocks.<br/>
 <strong>Check:</strong> This uses the rule in its forward direction; it does not infer that the card is valid merely because the door unlocked.</p></details>
-
-<details class="worked"><summary>Teaching example: modus tollens</summary><p><strong>Rule:</strong> If the alarm is enabled (P), then its indicator is lit (Q).<br />
-<strong>Given:</strong> The indicator is not lit (¬Q).<br />
-<strong>Apply modus tollens:</strong> A true P would require Q, but Q is false, so conclude ¬P: the alarm is not enabled.<br />
-<strong>Check:</strong> The inference uses the negated consequent. “The indicator is lit, therefore the alarm is enabled” would be the converse and is not licensed by this rule.</p></details>
-
+<details class="worked"><summary>Teaching example: modus tollens</summary><p><strong>Rule:</strong> If the alarm is enabled (P), then its indicator is lit (Q).<br/>
+<strong>Given:</strong> The indicator is not lit (¬Q).<br/>
+<strong>Apply modus tollens:</strong> A true P would require Q, but Q is false, so conclude ¬P: the alarm is not enabled.<br/>
+<strong>Check:</strong> The inference uses the negated consequent.</p><p>“The indicator is lit, therefore the alarm is enabled” would be the converse and is not licensed by this rule.</p></details>
 <p>The lecture verifies modus tollens with all four A,B assignments. First calculate the rule and ¬B, then combine them into the premise. That premise is true only when both ¬B and A ⇒ B hold; in that row, ¬A is true. Therefore the final implication is true in every row.</p>
 <figure><table><thead><tr><th scope="col">A</th><th scope="col">B</th><th scope="col">¬B</th><th scope="col">A ⇒ B</th></tr></thead><tbody><tr><th scope="row">0</th><td>0</td><td>1</td><td>1</td></tr><tr><th scope="row">0</th><td>1</td><td>0</td><td>1</td></tr><tr><th scope="row">1</th><td>0</td><td>1</td><td>0</td></tr><tr><th scope="row">1</th><td>1</td><td>0</td><td>1</td></tr></tbody></table><figcaption>Intermediate values in source row order 00, 01, 10, 11.</figcaption></figure>
 <figure><table><thead><tr><th scope="col">AB row</th><th scope="col">¬B ∧ (A ⇒ B)</th><th scope="col">¬A</th><th scope="col">(¬B ∧ (A ⇒ B)) ⇒ ¬A</th></tr></thead><tbody><tr><th scope="row">00</th><td>1</td><td>1</td><td>1</td></tr><tr><th scope="row">01</th><td>0</td><td>1</td><td>1</td></tr><tr><th scope="row">10</th><td>0</td><td>0</td><td>1</td></tr><tr><th scope="row">11</th><td>0</td><td>0</td><td>1</td></tr></tbody></table><figcaption>The full premise and conclusion check: the last column is true in every row.</figcaption></figure>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="false">&#x00028;</mo><mover><mi>B</mi><mo accent="true">&#x02015;</mo></mover><mo>&#x02227;</mo><mo stretchy="false">&#x00028;</mo><mi>A</mi><mo>&#x021D2;</mo><mi>B</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x021D2;</mo><mover><mi>A</mi><mo accent="true">&#x02015;</mo></mover><mtext>&#x000A0;is&#x000A0;true&#x000A0;for&#x000A0;all&#x000A0;four&#x000A0;rows</mtext></mrow></math></div>
-
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo stretchy="false">(</mo><mover><mi>B</mi><mo accent="true">―</mo></mover><mo>∧</mo><mo stretchy="false">(</mo><mi>A</mi><mo>⇒</mo><mi>B</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>⇒</mo><mover><mi>A</mi><mo accent="true">―</mo></mover><mtext> is true for all four rows</mtext></mrow></math></div>
 <h2 id="section-6">Proof by contradiction</h2>
-<p>To verify an argument with hypotheses P₁,…,Pₙ and conclusion Q, the lecture first asks whether (P₁ ∧ … ∧ Pₙ) ⇒ Q is a tautology. A direct truth-table check can be organized as: formulate the full claim, decompose it into atomic propositions, translate it into connectives, then evaluate whether the implication is always true. For an indirect proof, assume all hypotheses and also ¬Q. If those assumptions lead to an impossibility, the counterexample cannot exist and the implication is valid.</p>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="false">&#x00028;</mo><mo stretchy="false">&#x00028;</mo><msub><mi>P</mi><mn>1</mn></msub><mo>&#x02227;</mo><mo>&#x022EF;</mo><mo>&#x02227;</mo><msub><mi>P</mi><mi>n</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x021D2;</mo><mi>Q</mi><mo stretchy="false">&#x00029;</mo><mtext>&#x000A0;is&#x000A0;valid</mtext><mspace width="1em" /><mi>&#x027FA;</mi><mspace width="1em" /><msub><mi>P</mi><mn>1</mn></msub><mo>&#x02227;</mo><mo>&#x022EF;</mo><mo>&#x02227;</mo><msub><mi>P</mi><mi>n</mi></msub><mo>&#x02227;</mo><mover><mi>Q</mi><mo accent="true">&#x02015;</mo></mover><mtext>&#x000A0;is&#x000A0;impossible</mtext></mrow></math></div>
-<details class="worked"><summary>Teaching example: rule out the counterexample step by step</summary><section class="walk" tabindex="0" aria-label="Teaching example: prove an implication by contradiction"><h3>Teaching example: prove an implication by contradiction</h3><div class="example-input"><p><strong>Claim to prove:</strong> If an integer n is even, then n² is even.<br />
-<strong>Definitions:</strong> n is even when n = 2k for some integer k; an even number is not odd.<br />
-<strong>Contradiction method:</strong> assume the hypothesis and the negation of the conclusion together.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. State the implication</h4><p>Let P mean “n is even” and Q mean “n² is even.” The target is P ⇒ Q. The lecture’s test is to check whether the implication is always true.</p></section><section class="step"><h4>2. Assume a counterexample</h4><p>Assume P and ¬Q: n is even but n² is odd. By the definition of even, write n = 2k for some integer k. This is the only assumption added for the indirect proof.</p></section><section class="step"><h4>3. Substitute and simplify</h4><p>Substitute n = 2k into the square: n² = (2k)² = 4k² = 2(2k²). Since 2k² is an integer, n² has the form 2m and is even. This contradicts the assumption that n² is odd.</p></section><section class="step"><h4>4. Conclude and check</h4><p>The assumptions P ∧ ¬Q cannot both hold, so the counterexample is impossible and P ⇒ Q is true. <strong>Independent check:</strong> every even n has square 4k², which is divisible by 2. The contradiction proof agrees with the direct divisibility check.</p></section></section></details>
-
+<p>To test a deduction, ask whether (P₁∧⋯∧Pₙ)⇒Q is always true. A truth table checks every assignment.</p><p>For contradiction, assume all premises and ¬Q. If they force an impossibility, no counterexample exists and the deduction is valid.</p>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo stretchy="false">(</mo><mo stretchy="false">(</mo><msub><mi>P</mi><mn>1</mn></msub><mo>∧</mo><mo>⋯</mo><mo>∧</mo><msub><mi>P</mi><mi>n</mi></msub><mo stretchy="false">)</mo><mo>⇒</mo><mi>Q</mi><mo stretchy="false">)</mo><mtext> is valid</mtext><mspace width="1em"></mspace><mi>⟺</mi><mspace width="1em"></mspace><msub><mi>P</mi><mn>1</mn></msub><mo>∧</mo><mo>⋯</mo><mo>∧</mo><msub><mi>P</mi><mi>n</mi></msub><mo>∧</mo><mover><mi>Q</mi><mo accent="true">―</mo></mover><mtext> is impossible</mtext></mrow></math></div>
+<details class="worked"><summary>Teaching example: rule out the counterexample step by step</summary><section aria-label="Teaching example: prove an implication by contradiction" class="worked-calculation"><h3>Teaching example: prove an implication by contradiction</h3><div class="example-input"><p><strong>Claim to prove:</strong> If an integer n is even, then n² is even.<br/>
+<strong>Definitions:</strong> n is even when n = 2k for some integer k; an even number is not odd.<br/>
+<strong>Contradiction method:</strong> assume the hypothesis and the negation of the conclusion together.</p></div><section class="calculation-part"><h4>1. State the implication</h4><p>Let P mean “n is even” and Q mean “n² is even.” The target is P ⇒ Q. The lecture’s test is to check whether the implication is always true.</p></section><section class="calculation-part"><h4>2. Assume a counterexample</h4><p>Assume P and ¬Q: n is even but n² is odd. By the definition of even, write n = 2k for some integer k. This is the only assumption added for the indirect proof.</p></section><section class="calculation-part"><h4>3. Substitute and simplify</h4><p>Substitute n = 2k into the square: n² = (2k)² = 4k² = 2(2k²). Since 2k² is an integer, n² has the form 2m and is even. This contradicts the assumption that n² is odd.</p></section><section class="calculation-part"><h4>4. Conclude and check</h4><p>The assumptions P ∧ ¬Q cannot both hold, so the counterexample is impossible and P ⇒ Q is true. <strong>Independent check:</strong> every even n has square 4k², which is divisible by 2. The contradiction proof agrees with the direct divisibility check.</p></section></section></details>
 <h2 id="section-7">Crisp rule relations on two universes</h2>
-<p>A proposition about membership in A and a consequent about membership in B may refer to different universes. The rule then relates an x from X to a y from Y, so its truth region is a subset of the product X × Y. For IF A THEN B, pairs in A must land in B; when x lies outside A, the conditional is vacuously true for every y. That second region is the complement branch Ā × Y.</p>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>R</mi><mrow><mtext>if</mtext></mrow></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mi>A</mi><mo>&#x000D7;</mo><mi>B</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0222A;</mo><mo stretchy="false">&#x00028;</mo><mover><mi>A</mi><mo accent="true">&#x02015;</mo></mover><mo>&#x000D7;</mo><mi>Y</mi><mo stretchy="false">&#x00029;</mo><mo>&#x02286;</mo><mi>X</mi><mo>&#x000D7;</mo><mi>Y</mi></mrow></math></div>
-<figure><div class="diagram-frame" style="--diagram-width:433.6px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
- "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<p>When the premise concerns x∈X and the conclusion concerns y∈Y, keep both coordinates. The rule is a relation on X×Y; it is not a pointwise union on one universe.</p>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>R</mi><mrow><mtext>if</mtext></mrow></msub><mo>=</mo><mo stretchy="false">(</mo><mi>A</mi><mo>×</mo><mi>B</mi><mo stretchy="false">)</mo><mo>∪</mo><mo stretchy="false">(</mo><mover><mi>A</mi><mo accent="true">―</mo></mover><mo>×</mo><mi>Y</mi><mo stretchy="false">)</mo><mo>⊆</mo><mi>X</mi><mo>×</mo><mi>Y</mi></mrow></math></div>
+<figure><div class="diagram-frame" style="--diagram-width:433.6px"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: G Pages: 1 -->
-<svg role="img" aria-label="The ordinary implication relation includes A × B and the vacuously true region Ā × Y." width="434pt" height="292pt"
- viewBox="0.00 0.00 433.60 291.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
-<g id="classical-logic-figure-1-classical-logic-product-if-then-01-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 280.8)">
+<svg aria-label="The ordinary implication relation includes A × B and the vacuously true region Ā × Y." height="292pt" role="img" viewbox="0.00 0.00 433.60 291.60" width="434pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g class="graph" id="classical-logic-figure-1-classical-logic-product-if-then-01-graph0" transform="scale(1 1) rotate(0) translate(10.8 280.8)">
 <title>G</title>
 <!-- rule -->
-<g id="classical-logic-figure-1-classical-logic-product-if-then-01-node1" class="node">
+<g class="node" id="classical-logic-figure-1-classical-logic-product-if-then-01-node1">
 <title>rule</title>
-<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M265,-270C265,-270 137,-270 137,-270 131,-270 125,-264 125,-258 125,-258 125,-234 125,-234 125,-228 131,-222 137,-222 137,-222 265,-222 265,-222 271,-222 277,-228 277,-234 277,-234 277,-258 277,-258 277,-264 271,-270 265,-270"/>
-<text text-anchor="middle" x="201" y="-251" font-family="Georgia" font-size="15.00">IF A THEN B</text>
-<text text-anchor="middle" x="201" y="-234" font-family="Georgia" font-size="15.00">relation on X × Y</text>
+<path d="M265,-270C265,-270 137,-270 137,-270 131,-270 125,-264 125,-258 125,-258 125,-234 125,-234 125,-228 131,-222 137,-222 137,-222 265,-222 265,-222 271,-222 277,-228 277,-234 277,-234 277,-258 277,-258 277,-264 271,-270 265,-270" fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="201" y="-251">IF A THEN B</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="201" y="-234">relation on X × Y</text>
 </g>
 <!-- test -->
-<g id="classical-logic-figure-1-classical-logic-product-if-then-01-node2" class="node">
+<g class="node" id="classical-logic-figure-1-classical-logic-product-if-then-01-node2">
 <title>test</title>
-<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M189.56,-185.39C189.56,-185.39 60.44,-144.61 60.44,-144.61 54.72,-142.81 54.72,-139.19 60.44,-137.39 60.44,-137.39 189.56,-96.61 189.56,-96.61 195.28,-94.81 206.72,-94.81 212.44,-96.61 212.44,-96.61 341.56,-137.39 341.56,-137.39 347.28,-139.19 347.28,-142.81 341.56,-144.61 341.56,-144.61 212.44,-185.39 212.44,-185.39 206.72,-187.19 195.28,-187.19 189.56,-185.39"/>
-<text text-anchor="middle" x="201" y="-146" font-family="Georgia" font-size="15.00">Which X branch?</text>
-<text text-anchor="middle" x="201" y="-129" font-family="Georgia" font-size="15.00">x ∈ A or x ∈ Ā</text>
+<path d="M189.56,-185.39C189.56,-185.39 60.44,-144.61 60.44,-144.61 54.72,-142.81 54.72,-139.19 60.44,-137.39 60.44,-137.39 189.56,-96.61 189.56,-96.61 195.28,-94.81 206.72,-94.81 212.44,-96.61 212.44,-96.61 341.56,-137.39 341.56,-137.39 347.28,-139.19 347.28,-142.81 341.56,-144.61 341.56,-144.61 212.44,-185.39 212.44,-185.39 206.72,-187.19 195.28,-187.19 189.56,-185.39" fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="201" y="-146">Which X branch?</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="201" y="-129">x ∈ A or x ∈ Ā</text>
 </g>
 <!-- rule&#45;&gt;test -->
-<g id="classical-logic-figure-1-classical-logic-product-if-then-01-edge1" class="edge">
-<title>rule&#45;&gt;test</title>
-<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M201,-221.88C201,-214.06 201,-204.96 201,-195.76"/>
-<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="203.28,-195.57 201,-189.07 198.73,-195.57 203.28,-195.57"/>
+<g class="edge" id="classical-logic-figure-1-classical-logic-product-if-then-01-edge1">
+<title>rule-&gt;test</title>
+<path d="M201,-221.88C201,-214.06 201,-204.96 201,-195.76" fill="none" stroke="var(--diagram-edge,#766c9b)"></path>
+<polygon fill="var(--diagram-edge,#766c9b)" points="203.28,-195.57 201,-189.07 198.73,-195.57 203.28,-195.57" stroke="var(--diagram-edge,#766c9b)"></polygon>
 </g>
 <!-- then -->
-<g id="classical-logic-figure-1-classical-logic-product-if-then-01-node3" class="node">
+<g class="node" id="classical-logic-figure-1-classical-logic-product-if-then-01-node3">
 <title>then</title>
-<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2" d="M174,-48C174,-48 12,-48 12,-48 6,-48 0,-42 0,-36 0,-36 0,-12 0,-12 0,-6 6,0 12,0 12,0 174,0 174,0 180,0 186,-6 186,-12 186,-12 186,-36 186,-36 186,-42 180,-48 174,-48"/>
-<text text-anchor="middle" x="93" y="-29" font-family="Georgia" font-size="15.00">A × B</text>
-<text text-anchor="middle" x="93" y="-12" font-family="Georgia" font-size="15.00">if x ∈ A, require y ∈ B</text>
+<path d="M174,-48C174,-48 12,-48 12,-48 6,-48 0,-42 0,-36 0,-36 0,-12 0,-12 0,-6 6,0 12,0 12,0 174,0 174,0 180,0 186,-6 186,-12 186,-12 186,-36 186,-36 186,-42 180,-48 174,-48" fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="93" y="-29">A × B</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="93" y="-12">if x ∈ A, require y ∈ B</text>
 </g>
 <!-- test&#45;&gt;then -->
-<g id="classical-logic-figure-1-classical-logic-product-if-then-01-edge2" class="edge">
-<title>test&#45;&gt;then</title>
-<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M166.83,-103.61C151.5,-87.3 133.71,-68.34 119.43,-53.14"/>
-<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="120.83,-51.31 114.73,-48.13 117.52,-54.43 120.83,-51.31"/>
-<text text-anchor="middle" x="157.5" y="-67.4" font-family="Georgia" font-size="12.00">x ∈ A</text>
+<g class="edge" id="classical-logic-figure-1-classical-logic-product-if-then-01-edge2">
+<title>test-&gt;then</title>
+<path d="M166.83,-103.61C151.5,-87.3 133.71,-68.34 119.43,-53.14" fill="none" stroke="var(--diagram-edge,#766c9b)"></path>
+<polygon fill="var(--diagram-edge,#766c9b)" points="120.83,-51.31 114.73,-48.13 117.52,-54.43 120.83,-51.31" stroke="var(--diagram-edge,#766c9b)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="157.5" y="-67.4">x ∈ A</text>
 </g>
 <!-- otherwise -->
-<g id="classical-logic-figure-1-classical-logic-product-if-then-01-node4" class="node">
+<g class="node" id="classical-logic-figure-1-classical-logic-product-if-then-01-node4">
 <title>otherwise</title>
-<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2" d="M400,-48C400,-48 220,-48 220,-48 214,-48 208,-42 208,-36 208,-36 208,-12 208,-12 208,-6 214,0 220,0 220,0 400,0 400,0 406,0 412,-6 412,-12 412,-12 412,-36 412,-36 412,-42 406,-48 400,-48"/>
-<text text-anchor="middle" x="310" y="-29" font-family="Georgia" font-size="15.00">Ā × Y</text>
-<text text-anchor="middle" x="310" y="-12" font-family="Georgia" font-size="15.00">if x ∈ Ā, any y is allowed</text>
+<path d="M400,-48C400,-48 220,-48 220,-48 214,-48 208,-42 208,-36 208,-36 208,-12 208,-12 208,-6 214,0 220,0 220,0 400,0 400,0 406,0 412,-6 412,-12 412,-12 412,-36 412,-36 412,-42 406,-48 400,-48" fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="310" y="-29">Ā × Y</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="310" y="-12">if x ∈ Ā, any y is allowed</text>
 </g>
 <!-- test&#45;&gt;otherwise -->
-<g id="classical-logic-figure-1-classical-logic-product-if-then-01-edge3" class="edge">
-<title>test&#45;&gt;otherwise</title>
-<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M235.49,-103.61C250.95,-87.3 268.92,-68.34 283.33,-53.14"/>
-<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="285.25,-54.42 288.07,-48.13 281.95,-51.29 285.25,-54.42"/>
-<text text-anchor="middle" x="287.5" y="-67.4" font-family="Georgia" font-size="12.00">x ∈ Ā</text>
+<g class="edge" id="classical-logic-figure-1-classical-logic-product-if-then-01-edge3">
+<title>test-&gt;otherwise</title>
+<path d="M235.49,-103.61C250.95,-87.3 268.92,-68.34 283.33,-53.14" fill="none" stroke="var(--diagram-edge,#766c9b)"></path>
+<polygon fill="var(--diagram-edge,#766c9b)" points="285.25,-54.42 288.07,-48.13 281.95,-51.29 285.25,-54.42" stroke="var(--diagram-edge,#766c9b)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="287.5" y="-67.4">x ∈ Ā</text>
 </g>
 </g>
 </svg>
 </div><figcaption>The ordinary implication relation includes A × B and the vacuously true region Ā × Y.</figcaption></figure>
-<p>An ELSE rule sends the outside-A branch to C rather than leaving y unrestricted. The bars are essential: the branch condition and its product region are both the complement of A. The lecture’s rule-form line writes P in both implications, while its branch description and product-space formula use the complement for ELSE. Read the intended branches as P ⇒ Q and ¬P ⇒ S; otherwise both consequences would fire from the same condition. If B and C are disjoint, the two consequent regions are visibly separate, as in the lecture’s product-space sketch.</p>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>R</mi><mrow><mtext>if/else</mtext></mrow></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mi>A</mi><mo>&#x000D7;</mo><mi>B</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0222A;</mo><mo stretchy="false">&#x00028;</mo><mover><mi>A</mi><mo accent="true">&#x02015;</mo></mover><mo>&#x000D7;</mo><mi>C</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
-<figure><div class="diagram-frame" style="--diagram-width:349.6px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
- "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<p>An ELSE rule sends the outside-A branch to C rather than leaving y unrestricted. The bars are essential: the branch condition and its product region are both the complement of A.</p><p>The lecture’s rule-form line writes P in both implications, while its branch description and product-space formula use the complement for ELSE. Read the intended branches as P ⇒ Q and ¬P ⇒ S; otherwise both consequences would fire from the same condition.</p><p>If B and C are disjoint, the two consequent regions are visibly separate, as in the lecture’s product-space sketch.</p>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>R</mi><mrow><mtext>if/else</mtext></mrow></msub><mo>=</mo><mo stretchy="false">(</mo><mi>A</mi><mo>×</mo><mi>B</mi><mo stretchy="false">)</mo><mo>∪</mo><mo stretchy="false">(</mo><mover><mi>A</mi><mo accent="true">―</mo></mover><mo>×</mo><mi>C</mi><mo stretchy="false">)</mo></mrow></math></div>
+<figure><div class="diagram-frame" style="--diagram-width:349.6px"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: G Pages: 1 -->
-<svg role="img" aria-label="The ELSE rule partitions the X rows: A uses B, while its exact complement Ā uses C." width="350pt" height="373pt"
- viewBox="0.00 0.00 349.60 372.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
-<g id="classical-logic-figure-2-classical-logic-product-if-else-01-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 361.8)">
+<svg aria-label="The ELSE rule partitions the X rows: A uses B, while its exact complement Ā uses C." height="373pt" role="img" viewbox="0.00 0.00 349.60 372.60" width="350pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g class="graph" id="classical-logic-figure-2-classical-logic-product-if-else-01-graph0" transform="scale(1 1) rotate(0) translate(10.8 361.8)">
 <title>G</title>
 <!-- rule -->
-<g id="classical-logic-figure-2-classical-logic-product-if-else-01-node1" class="node">
+<g class="node" id="classical-logic-figure-2-classical-logic-product-if-else-01-node1">
 <title>rule</title>
-<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M212.5,-351C212.5,-351 114.5,-351 114.5,-351 108.5,-351 102.5,-345 102.5,-339 102.5,-339 102.5,-315 102.5,-315 102.5,-309 108.5,-303 114.5,-303 114.5,-303 212.5,-303 212.5,-303 218.5,-303 224.5,-309 224.5,-315 224.5,-315 224.5,-339 224.5,-339 224.5,-345 218.5,-351 212.5,-351"/>
-<text text-anchor="middle" x="163.5" y="-332" font-family="Georgia" font-size="15.00">IF A THEN B</text>
-<text text-anchor="middle" x="163.5" y="-315" font-family="Georgia" font-size="15.00">ELSE C</text>
+<path d="M212.5,-351C212.5,-351 114.5,-351 114.5,-351 108.5,-351 102.5,-345 102.5,-339 102.5,-339 102.5,-315 102.5,-315 102.5,-309 108.5,-303 114.5,-303 114.5,-303 212.5,-303 212.5,-303 218.5,-303 224.5,-309 224.5,-315 224.5,-315 224.5,-339 224.5,-339 224.5,-345 218.5,-351 212.5,-351" fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="163.5" y="-332">IF A THEN B</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="163.5" y="-315">ELSE C</text>
 </g>
 <!-- test -->
-<g id="classical-logic-figure-2-classical-logic-product-if-else-01-node2" class="node">
+<g class="node" id="classical-logic-figure-2-classical-logic-product-if-else-01-node2">
 <title>test</title>
-<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M152.06,-266.39C152.06,-266.39 22.94,-225.61 22.94,-225.61 17.22,-223.81 17.22,-220.19 22.94,-218.39 22.94,-218.39 152.06,-177.61 152.06,-177.61 157.78,-175.81 169.22,-175.81 174.94,-177.61 174.94,-177.61 304.06,-218.39 304.06,-218.39 309.78,-220.19 309.78,-223.81 304.06,-225.61 304.06,-225.61 174.94,-266.39 174.94,-266.39 169.22,-268.19 157.78,-268.19 152.06,-266.39"/>
-<text text-anchor="middle" x="163.5" y="-227" font-family="Georgia" font-size="15.00">Which X branch?</text>
-<text text-anchor="middle" x="163.5" y="-210" font-family="Georgia" font-size="15.00">x ∈ A or x ∈ Ā</text>
+<path d="M152.06,-266.39C152.06,-266.39 22.94,-225.61 22.94,-225.61 17.22,-223.81 17.22,-220.19 22.94,-218.39 22.94,-218.39 152.06,-177.61 152.06,-177.61 157.78,-175.81 169.22,-175.81 174.94,-177.61 174.94,-177.61 304.06,-218.39 304.06,-218.39 309.78,-220.19 309.78,-223.81 304.06,-225.61 304.06,-225.61 174.94,-266.39 174.94,-266.39 169.22,-268.19 157.78,-268.19 152.06,-266.39" fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="163.5" y="-227">Which X branch?</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="163.5" y="-210">x ∈ A or x ∈ Ā</text>
 </g>
 <!-- rule&#45;&gt;test -->
-<g id="classical-logic-figure-2-classical-logic-product-if-else-01-edge1" class="edge">
-<title>rule&#45;&gt;test</title>
-<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M163.5,-302.88C163.5,-295.06 163.5,-285.96 163.5,-276.76"/>
-<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="165.78,-276.57 163.5,-270.07 161.23,-276.57 165.78,-276.57"/>
+<g class="edge" id="classical-logic-figure-2-classical-logic-product-if-else-01-edge1">
+<title>rule-&gt;test</title>
+<path d="M163.5,-302.88C163.5,-295.06 163.5,-285.96 163.5,-276.76" fill="none" stroke="var(--diagram-edge,#766c9b)"></path>
+<polygon fill="var(--diagram-edge,#766c9b)" points="165.78,-276.57 163.5,-270.07 161.23,-276.57 165.78,-276.57" stroke="var(--diagram-edge,#766c9b)"></polygon>
 </g>
 <!-- then -->
-<g id="classical-logic-figure-2-classical-logic-product-if-else-01-node3" class="node">
+<g class="node" id="classical-logic-figure-2-classical-logic-product-if-else-01-node3">
 <title>then</title>
-<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2" d="M141,-129C141,-129 12,-129 12,-129 6,-129 0,-123 0,-117 0,-117 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 141,-81 141,-81 147,-81 153,-87 153,-93 153,-93 153,-117 153,-117 153,-123 147,-129 141,-129"/>
-<text text-anchor="middle" x="76.5" y="-110" font-family="Georgia" font-size="15.00">A × B</text>
-<text text-anchor="middle" x="76.5" y="-93" font-family="Georgia" font-size="15.00">if x ∈ A, choose B</text>
+<path d="M141,-129C141,-129 12,-129 12,-129 6,-129 0,-123 0,-117 0,-117 0,-93 0,-93 0,-87 6,-81 12,-81 12,-81 141,-81 141,-81 147,-81 153,-87 153,-93 153,-93 153,-117 153,-117 153,-123 147,-129 141,-129" fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="76.5" y="-110">A × B</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="76.5" y="-93">if x ∈ A, choose B</text>
 </g>
 <!-- test&#45;&gt;then -->
-<g id="classical-logic-figure-2-classical-logic-product-if-else-01-edge2" class="edge">
-<title>test&#45;&gt;then</title>
-<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M134.77,-183.03C122.78,-167.18 109.09,-149.08 98,-134.42"/>
-<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="99.77,-132.99 94.03,-129.18 96.14,-135.73 99.77,-132.99"/>
-<text text-anchor="middle" x="132" y="-148.4" font-family="Georgia" font-size="12.00">x ∈ A</text>
+<g class="edge" id="classical-logic-figure-2-classical-logic-product-if-else-01-edge2">
+<title>test-&gt;then</title>
+<path d="M134.77,-183.03C122.78,-167.18 109.09,-149.08 98,-134.42" fill="none" stroke="var(--diagram-edge,#766c9b)"></path>
+<polygon fill="var(--diagram-edge,#766c9b)" points="99.77,-132.99 94.03,-129.18 96.14,-135.73 99.77,-132.99" stroke="var(--diagram-edge,#766c9b)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="132" y="-148.4">x ∈ A</text>
 </g>
 <!-- otherwise -->
-<g id="classical-logic-figure-2-classical-logic-product-if-else-01-node4" class="node">
+<g class="node" id="classical-logic-figure-2-classical-logic-product-if-else-01-node4">
 <title>otherwise</title>
-<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2" d="M316,-129C316,-129 187,-129 187,-129 181,-129 175,-123 175,-117 175,-117 175,-93 175,-93 175,-87 181,-81 187,-81 187,-81 316,-81 316,-81 322,-81 328,-87 328,-93 328,-93 328,-117 328,-117 328,-123 322,-129 316,-129"/>
-<text text-anchor="middle" x="251.5" y="-110" font-family="Georgia" font-size="15.00">Ā × C</text>
-<text text-anchor="middle" x="251.5" y="-93" font-family="Georgia" font-size="15.00">if x ∈ Ā, choose C</text>
+<path d="M316,-129C316,-129 187,-129 187,-129 181,-129 175,-123 175,-117 175,-117 175,-93 175,-93 175,-87 181,-81 187,-81 187,-81 316,-81 316,-81 322,-81 328,-87 328,-93 328,-93 328,-117 328,-117 328,-123 322,-129 316,-129" fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="251.5" y="-110">Ā × C</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="251.5" y="-93">if x ∈ Ā, choose C</text>
 </g>
 <!-- test&#45;&gt;otherwise -->
-<g id="classical-logic-figure-2-classical-logic-product-if-else-01-edge3" class="edge">
-<title>test&#45;&gt;otherwise</title>
-<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M192.56,-183.03C204.69,-167.18 218.53,-149.08 229.76,-134.42"/>
-<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="231.62,-135.72 233.76,-129.18 228.01,-132.96 231.62,-135.72"/>
-<text text-anchor="middle" x="237" y="-148.4" font-family="Georgia" font-size="12.00">x ∈ Ā</text>
+<g class="edge" id="classical-logic-figure-2-classical-logic-product-if-else-01-edge3">
+<title>test-&gt;otherwise</title>
+<path d="M192.56,-183.03C204.69,-167.18 218.53,-149.08 229.76,-134.42" fill="none" stroke="var(--diagram-edge,#766c9b)"></path>
+<polygon fill="var(--diagram-edge,#766c9b)" points="231.62,-135.72 233.76,-129.18 228.01,-132.96 231.62,-135.72" stroke="var(--diagram-edge,#766c9b)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="237" y="-148.4">x ∈ Ā</text>
 </g>
 <!-- result -->
-<g id="classical-logic-figure-2-classical-logic-product-if-else-01-node5" class="node">
+<g class="node" id="classical-logic-figure-2-classical-logic-product-if-else-01-node5">
 <title>result</title>
-<path fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2" d="M245.5,-48C245.5,-48 81.5,-48 81.5,-48 75.5,-48 69.5,-42 69.5,-36 69.5,-36 69.5,-12 69.5,-12 69.5,-6 75.5,0 81.5,0 81.5,0 245.5,0 245.5,0 251.5,0 257.5,-6 257.5,-12 257.5,-12 257.5,-36 257.5,-36 257.5,-42 251.5,-48 245.5,-48"/>
-<text text-anchor="middle" x="163.5" y="-29" font-family="Georgia" font-size="15.00">R = (A × B) ∪ (Ā × C)</text>
-<text text-anchor="middle" x="163.5" y="-12" font-family="Georgia" font-size="15.00">subset of X × Y</text>
+<path d="M245.5,-48C245.5,-48 81.5,-48 81.5,-48 75.5,-48 69.5,-42 69.5,-36 69.5,-36 69.5,-12 69.5,-12 69.5,-6 75.5,0 81.5,0 81.5,0 245.5,0 245.5,0 251.5,0 257.5,-6 257.5,-12 257.5,-12 257.5,-36 257.5,-36 257.5,-42 251.5,-48 245.5,-48" fill="var(--accent,#e7e1f7)" stroke="var(--primary,#6251a5)" stroke-width="2"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="163.5" y="-29">R = (A × B) ∪ (Ā × C)</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="163.5" y="-12">subset of X × Y</text>
 </g>
 <!-- then&#45;&gt;result -->
-<g id="classical-logic-figure-2-classical-logic-product-if-else-01-edge4" class="edge">
-<title>then&#45;&gt;result</title>
-<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M102.13,-80.72C111.87,-71.89 123.05,-61.73 133.17,-52.54"/>
-<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="134.77,-54.16 138.05,-48.11 131.71,-50.79 134.77,-54.16"/>
+<g class="edge" id="classical-logic-figure-2-classical-logic-product-if-else-01-edge4">
+<title>then-&gt;result</title>
+<path d="M102.13,-80.72C111.87,-71.89 123.05,-61.73 133.17,-52.54" fill="none" stroke="var(--diagram-edge,#766c9b)"></path>
+<polygon fill="var(--diagram-edge,#766c9b)" points="134.77,-54.16 138.05,-48.11 131.71,-50.79 134.77,-54.16" stroke="var(--diagram-edge,#766c9b)"></polygon>
 </g>
 <!-- otherwise&#45;&gt;result -->
-<g id="classical-logic-figure-2-classical-logic-product-if-else-01-edge5" class="edge">
-<title>otherwise&#45;&gt;result</title>
-<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M225.57,-80.72C215.73,-71.89 204.42,-61.73 194.17,-52.54"/>
-<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="195.6,-50.76 189.24,-48.11 192.56,-54.14 195.6,-50.76"/>
+<g class="edge" id="classical-logic-figure-2-classical-logic-product-if-else-01-edge5">
+<title>otherwise-&gt;result</title>
+<path d="M225.57,-80.72C215.73,-71.89 204.42,-61.73 194.17,-52.54" fill="none" stroke="var(--diagram-edge,#766c9b)"></path>
+<polygon fill="var(--diagram-edge,#766c9b)" points="195.6,-50.76 189.24,-48.11 192.56,-54.14 195.6,-50.76" stroke="var(--diagram-edge,#766c9b)"></polygon>
 </g>
 </g>
 </svg>
 </div><figcaption>The ELSE rule partitions the X rows: A uses B, while its exact complement Ā uses C.</figcaption></figure>
-<p>These relations capture different geometries. Plain implication excludes only the counterexample region A × (Y ∖ B); the rest of X × Y is allowed. IF/ELSE assigns the A rows to B and the Ā rows to C, so its relation is the union of two branch regions. It is not (A × B) ∪ (A × C).</p>
-
+<p>These relations capture different geometries. Plain implication excludes only the counterexample region A × (Y ∖ B); the rest of X × Y is allowed.</p><p>IF/ELSE assigns the A rows to B and the Ā rows to C, so its relation is the union of two branch regions. It is not (A × B) ∪ (A × C).</p>
 <h2 id="section-8">Crisp inference by relational composition</h2>
-<p>Given a new antecedent A′, compose its characteristic row with the rule relation. For every output y, take min across the input and relation memberships for each x, then max across x. With crisp 0/1 values, min is AND and max is OR. The result B′ is a set on Y, not X. This is the Boolean form of the lecture’s max–min composition.</p>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x003C7;</mi><mrow><mi>B</mi><mi>&#x02032;</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mo>max</mo><mrow><mi>x</mi><mo>&#x02208;</mo><mi>X</mi></mrow></msub><mo>min</mo><mo stretchy="false">&#x0007B;</mo><msub><mi>&#x003C7;</mi><mrow><mi>A</mi><mi>&#x02032;</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><msub><mi>&#x003C7;</mi><mi>R</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo>&#x0002C;</mo><mi>y</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x0007D;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>B</mi><mi>&#x02032;</mi><mo>&#x0003D;</mo><mi>A</mi><mi>&#x02032;</mi><mo>&#x02218;</mo><mi>R</mi></mrow></math></div>
-<details class="worked"><summary>Teaching example: calculate both crisp ELSE outputs</summary><section class="walk" tabindex="0" aria-label="Teaching example: crisp IF/ELSE inference by composition"><h3>Teaching example: crisp IF/ELSE inference by composition</h3><div class="example-input"><p><strong>Universes:</strong> X = {x₁, x₂, x₃}; Y = {y₁, y₂}. <strong>Antecedent set:</strong> A = {x₁, x₂}, so Ā = {x₃}. <strong>Consequents:</strong> B = {y₂}, C = {y₁}. Rule: IF A THEN B ELSE C, so R = (A × B) ∪ (Ā × C). For crisp grades, max is OR and min is AND.</p><figure><table><thead><tr><th scope="col">x in X</th><th scope="col">χA′(x)</th></tr></thead><tbody><tr><th scope="row">x₁</th><td>0</td></tr><tr><th scope="row">x₂</th><td>1</td></tr><tr><th scope="row">x₃</th><td>1</td></tr></tbody></table><figcaption>Input antecedent A′ = {x₂, x₃}.</figcaption></figure><figure><table><thead><tr><th scope="col">x in X</th><th scope="col">y₁</th><th scope="col">y₂</th></tr></thead><tbody><tr><th scope="row">x₁</th><td>0</td><td>1</td></tr><tr><th scope="row">x₂</th><td>0</td><td>1</td></tr><tr><th scope="row">x₃</th><td>1</td><td>0</td></tr></tbody></table><figcaption>R for IF A THEN B ELSE C; rows are X, columns are Y.</figcaption></figure><p>Compute χB′(y) = max<sub>x∈X</sub> min(χA′(x), χR(x,y)) in output order y₁, y₂. The output is a subset of Y.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Calculate χB′(y₁)</h4><p><strong>Current output:</strong> χB′(y₁). Use the input grades and the y₁ column of R. For each x, AND the input and relation values with min, then OR the paths with max.</p>
+<p>Given a new antecedent A′, compose its characteristic row with the rule relation. For every output y, take min across the input and relation memberships for each x, then max across x. With crisp 0/1 values, min is AND and max is OR.</p><p>The result B′ is a set on Y, not X. This is the Boolean form of the lecture’s max–min composition.</p>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>χ</mi><mrow><mi>B</mi><mi>′</mi></mrow></msub><mo stretchy="false">(</mo><mi>y</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mo>max</mo><mrow><mi>x</mi><mo>∈</mo><mi>X</mi></mrow></msub><mo>min</mo><mo stretchy="false">{</mo><msub><mi>χ</mi><mrow><mi>A</mi><mi>′</mi></mrow></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>,</mo><msub><mi>χ</mi><mi>R</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="false">)</mo><mo stretchy="false">}</mo><mo>,</mo><mspace width="2em"></mspace><mi>B</mi><mi>′</mi><mo>=</mo><mi>A</mi><mi>′</mi><mo>∘</mo><mi>R</mi></mrow></math></div>
+<details class="worked"><summary>Teaching example: calculate both crisp ELSE outputs</summary><section aria-label="Teaching example: crisp IF/ELSE inference by composition" class="worked-calculation"><h3>Teaching example: crisp IF/ELSE inference by composition</h3><div class="example-input"><p><strong>Universes:</strong> X = {x₁, x₂, x₃}; Y = {y₁, y₂}. <strong>Antecedent set:</strong> A = {x₁, x₂}, so Ā = {x₃}. <strong>Consequents:</strong> B = {y₂}, C = {y₁}. Rule: IF A THEN B ELSE C, so R = (A × B) ∪ (Ā × C). For crisp grades, max is OR and min is AND.</p><figure><table><thead><tr><th scope="col">x in X</th><th scope="col">χA′(x)</th></tr></thead><tbody><tr><th scope="row">x₁</th><td>0</td></tr><tr><th scope="row">x₂</th><td>1</td></tr><tr><th scope="row">x₃</th><td>1</td></tr></tbody></table><figcaption>Input antecedent A′ = {x₂, x₃}.</figcaption></figure><figure><table><thead><tr><th scope="col">x in X</th><th scope="col">y₁</th><th scope="col">y₂</th></tr></thead><tbody><tr><th scope="row">x₁</th><td>0</td><td>1</td></tr><tr><th scope="row">x₂</th><td>0</td><td>1</td></tr><tr><th scope="row">x₃</th><td>1</td><td>0</td></tr></tbody></table><figcaption>R for IF A THEN B ELSE C; rows are X, columns are Y.</figcaption></figure><p>Compute χB′(y) = max<sub>x∈X</sub> min(χA′(x), χR(x,y)) in output order y₁, y₂. The output is a subset of Y.</p></div><section class="calculation-part"><h4>1. Calculate χB′(y₁)</h4><p><strong>Current output:</strong> χB′(y₁). Use the input grades and the y₁ column of R. For each x, AND the input and relation values with min, then OR the paths with max.</p>
 <p><strong>Path calculations:</strong></p>
 <table>
 <thead>
@@ -294,7 +279,7 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 </tbody>
 </table>
 <p><strong>Substitute:</strong> max(0, 0, 1) = <strong>1</strong>. This is the value for the current y; now process the other output column.</p>
-<p><strong>Output so far in Y order [y₁, y₂]:</strong> [1, ·].</p></section><section class="step"><h4>2. Calculate χB′(y₂)</h4><p><strong>Current output:</strong> χB′(y₂). Use the input grades and the y₂ column of R. For each x, AND the input and relation values with min, then OR the paths with max.</p>
+<p><strong>Output so far in Y order [y₁, y₂]:</strong> [1, ·].</p></section><section class="calculation-part"><h4>2. Calculate χB′(y₂)</h4><p><strong>Current output:</strong> χB′(y₂). Use the input grades and the y₂ column of R. For each x, AND the input and relation values with min, then OR the paths with max.</p>
 <p><strong>Path calculations:</strong></p>
 <table>
 <thead>
@@ -329,9 +314,7 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 <p><strong>Substitute:</strong> max(0, 1, 0) = <strong>1</strong>. This is the value for the current y; now process the other output column.</p>
 <p><strong>Output so far in Y order [y₁, y₂]:</strong> [1, 1].</p>
 <p><strong>Final result:</strong> B′ = {y₁, y₂}. <strong>Independent check:</strong> x₂ is in A and supports y₂; x₃ is outside A and supports y₁ through the ELSE branch. Thus both outputs appear, exactly matching B ∪ C for this mixed input.</p></section></section></details>
-
 <p>When A′ is wholly inside A, only the B branch is active. When A′ is wholly inside Ā, only C is produced. When A′ intersects both A and Ā, the relation can return B ∪ C. The walkthrough uses the mixed case so each branch contributes one output.</p>
-
 <h2 id="section-9">Common mistakes</h2>
 <ul>
 <li>Inclusive OR allows both propositions to be true; XOR does not.</li>
@@ -341,7 +324,6 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 <li>Use the universe-relative complement Ā in the implication relation. The ordinary rule includes Ā × Y; the ELSE rule uses Ā × C.</li>
 <li>For relation inference, keep rows indexed by X and outputs indexed by Y. Compute every output column by ANDing each path and ORing the paths.</li>
 </ul>
-
 <h2 id="section-10">Exam focus</h2>
 <ul>
 <li>Define truth and falsity sets and show that they partition U.</li>
@@ -351,7 +333,6 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 <li>Recognize tautologies, contradictions, modus ponens, modus tollens, and the counterexample test for proof by contradiction.</li>
 <li>For crisp rules across X and Y, write the correct product regions and compute B′ one output at a time.</li>
 </ul>
-
 <h2 id="section-11">Practice questions</h2>
 <p class="question">1. If P is false and Q is true, what is P ⇒ Q, and why?</p>
 <details class="worked"><summary>Check your answer</summary><p>It is true. An implication is violated only when P is true and Q is false; a false antecedent makes it vacuously true.</p></details>
@@ -367,11 +348,11 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 <details class="worked"><summary>Check your answer</summary><p>Ā × C. The antecedent complement selects the ELSE case, and the consequent is restricted to C.</p></details>
 <p class="question">7. In Boolean relation composition, how do you compute one output membership χB′(y)?</p>
 <details class="worked"><summary>Check your answer</summary><p>For each x, compute min(χA′(x), χR(x,y)); then take the maximum over all x. With 0/1 values this is OR over the ANDed paths.</p></details>
-
-<p>Continue to <a href="fuzzy-relations.html">relations and matrix composition</a> for graded relational calculations, and to <a href="logic-language.html">fuzzy propositions, linguistic variables, and implications</a> for the graded rule semantics that build on these crisp foundations.</p></article><nav class="pager" aria-label="Study sequence"><a href="membership.html"><small>Previous</small>Membership, fuzzification and defuzzification <span aria-hidden="true">↗</span></a><a href="logic-language.html"><small>Next</small>Fuzzy propositions, linguistic variables and implications <span aria-hidden="true">↗</span></a></nav><footer>Neural Networks and Fuzzy Logic · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+<p>Continue to <a href="fuzzy-relations.html">relations and matrix composition</a> for graded relational calculations, and to <a href="logic-language.html">fuzzy propositions, linguistic variables, and implications</a> for the graded rule semantics that build on these crisp foundations.</p><p class="source-note">Lecture reference: Fuzzy Logic / Lessons 4,5,6,7 Logic and Fuzzy Systems.pdf, section 4. Source discrepancies and added teaching examples are identified beside the relevant calculation.</p></article><nav aria-label="Study sequence" class="pager"><a href="membership.html"><small>Previous</small>Membership, fuzzification and defuzzification <span aria-hidden="true">↗</span></a><a href="logic-language.html"><small>Next</small>Fuzzy propositions, linguistic variables and implications <span aria-hidden="true">↗</span></a></nav><footer>Neural Networks and Fuzzy Logic · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script src="explorers.js"></script><script>(() => {
   'use strict';
   let cleanups = [];
   const initializeMain = root => {
+  initializeExplorers(root);
   const mathHints = new WeakMap();
   const repairMath = () => {
     root.querySelectorAll('math,.walk code').forEach(expression => {
@@ -382,7 +363,7 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
       const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
       const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
       if (available <= 0 || !box.width) return;
-      if (box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+      if (Math.max(box.width, expression.scrollWidth) <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
           && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
       const region = document.createElement('span');
       region.className = 'math-scroll';
@@ -449,12 +430,24 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
     const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
     const show = index => {
       current = Math.max(0, Math.min(steps.length - 1, index));
-      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', walk.dataset.view === 'all' || i === current ? 'false' : 'true'); });
       walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
       prev.disabled = current === 0; next.disabled = current === steps.length - 1;
       repairMath();
       if (next.disabled) stop();
     };
+    const all = document.createElement('button');
+    all.type = 'button'; all.dataset.action = 'all'; all.textContent = 'Show all steps';
+    all.setAttribute('aria-pressed', 'false');
+    walk.querySelector('.walk-controls').append(all);
+    const setView = expanded => {
+      walk.dataset.view = expanded ? 'all' : 'single';
+      all.textContent = expanded ? 'One step at a time' : 'Show all steps';
+      all.setAttribute('aria-pressed', String(expanded));
+      steps.forEach((step, i) => step.setAttribute('aria-hidden', expanded || walk.dataset.view === 'all' || i === current ? 'false' : 'true'));
+      repairMath();
+    };
+    all.addEventListener('click', () => { stop(); setView(walk.dataset.view !== 'all'); });
     walk.dataset.ready = 'true'; show(0);
     prev.addEventListener('click', () => { stop(); show(current - 1); });
     next.addEventListener('click', () => { stop(); show(current + 1); });

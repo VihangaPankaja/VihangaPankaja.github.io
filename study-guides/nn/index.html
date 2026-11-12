@@ -1,4 +1,5 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="A guided route through neural network learning methods and fuzzy reasoning."><title>Neural networks and fuzzy logic · Neural networks and fuzzy logic</title><script>(() => {
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="Readable notes and worked calculations for MA4144 Neural Networks and Fuzzy Logic." name="description"/><title>Neural networks and fuzzy logic · Neural networks and fuzzy logic</title><script>(() => {
   let choice = 'system';
   try { const saved = localStorage.getItem('nn-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
   document.documentElement.dataset.themeChoice = choice;
@@ -36,49 +37,22 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 .math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
 
 .nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-</style></head><body>
+</style><link href="reading.css" rel="stylesheet"/></head><body>
 <a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> NNFL <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
-  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
-  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
-    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
-    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
-    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
-  </div>
+<button aria-controls="theme-options" aria-expanded="false" aria-haspopup="menu" aria-label="Color theme: System" id="theme" type="button"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"></path><circle cx="12" cy="12" r="4"></circle></svg><span id="theme-current">System</span><svg aria-hidden="true" class="theme-chevron" viewbox="0 0 16 16"><path d="m4 6 4 4 4-4"></path></svg></button>
+<div aria-label="Color theme" hidden="" id="theme-options" role="menu">
+<button aria-checked="true" data-theme-value="system" role="menuitemradio" tabindex="-1" type="button"><span>System<small>Follow your device</small></span><span aria-hidden="true" class="theme-check">✓</span></button>
+<button aria-checked="false" data-theme-value="light" role="menuitemradio" tabindex="-1" type="button"><span>Light<small>Light pages and diagrams</small></span><span aria-hidden="true" class="theme-check">✓</span></button>
+<button aria-checked="false" data-theme-value="dark" role="menuitemradio" tabindex="-1" type="button"><span>Dark<small>Dark pages and diagrams</small></span><span aria-hidden="true" class="theme-check">✓</span></button>
 </div>
-<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
-<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Neuron, learning, fuzzy sets…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html" aria-current="page">Neural networks and fuzzy logic</a></div><div class="nav-group"><p>Neural networks</p><a class="nav-entry" href="foundations.html">Neurons, activations and network foundations</a><a class="nav-entry" href="perceptron.html">Threshold logic and perceptron learning</a><a class="nav-entry" href="adaptive-linear.html">ADALINE and MADALINE learning</a><a class="nav-entry" href="lms.html">Widrow-Hoff derivation and LMS calculations</a><a class="nav-entry" href="backpropagation.html">Multilayer networks and backpropagation</a><a class="nav-entry" href="training-variants.html">Backpropagation variations and deeper networks</a><a class="nav-entry" href="pnn.html">Probabilistic neural networks</a></div><div class="nav-group"><p>Fuzzy foundations</p><a class="nav-entry" href="fuzzy-sets.html">Crisp and fuzzy sets</a><a class="nav-entry" href="fuzzy-relations.html">Relations and matrix composition</a><a class="nav-entry" href="membership.html">Membership, fuzzification and defuzzification</a></div><div class="nav-group"><p>Fuzzy reasoning</p><a class="nav-entry" href="classical-logic.html">Classical logic and crisp rule relations</a><a class="nav-entry" href="logic-language.html">Fuzzy propositions, linguistic variables and implications</a><a class="nav-entry" href="fuzzy-systems.html">Mamdani, Sugeno, Tsukamoto and ANFIS</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">MA4144<br>Neural Networks and Fuzzy Logic</div></aside>
-<main id="main"><p class="collection-back"><a href="../">← All study guides</a></p><div class="eyebrow">Start here <span>/</span> MA4144 · Study route</div><h1>Neural networks and fuzzy logic</h1><p class="lead">A guided route through neural network learning methods and fuzzy reasoning.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Study route</a><a href="#section-2">How to use the guide</a></nav><article><h2 id="section-0">Big picture</h2>
-<p>Neural networks learn numerical mappings from examples. Fuzzy logic represents graded descriptions and combines explicit rules to infer outputs. Follow the two study streams in order, using the worked problems to connect each definition to a calculation.</p>
-<h2 id="section-1">Study route</h2>
-<h3>Neural networks</h3>
-<ul>
-<li><a href="foundations.html">Neurons, activations and network foundations</a> · Lesson 1</li>
-<li><a href="perceptron.html">Threshold logic and perceptron learning</a> · Lesson 2</li>
-<li><a href="adaptive-linear.html">ADALINE and MADALINE learning</a> · Lesson 3</li>
-<li><a href="lms.html">Widrow-Hoff derivation and LMS calculations</a> · Widrow-Hoff reading</li>
-<li><a href="backpropagation.html">Multilayer networks and backpropagation</a> · Lesson 4</li>
-<li><a href="training-variants.html">Backpropagation variations and deeper networks</a> · Lesson 4 continuation</li>
-<li><a href="pnn.html">Probabilistic neural networks</a> · Lesson 5</li>
-</ul>
-<h3>Fuzzy foundations</h3>
-<ul>
-<li><a href="fuzzy-sets.html">Crisp and fuzzy sets</a> · Fuzzy lessons 1-3</li>
-<li><a href="fuzzy-relations.html">Relations and matrix composition</a> · Fuzzy lessons 1-3</li>
-<li><a href="membership.html">Membership, fuzzification and defuzzification</a> · Fuzzy lessons 1-3</li>
-</ul>
-<h3>Fuzzy reasoning</h3>
-<ul>
-<li><a href="classical-logic.html">Classical logic and crisp rule relations</a> · Fuzzy lesson 4</li>
-<li><a href="logic-language.html">Fuzzy propositions, linguistic variables and implications</a> · Fuzzy lessons 5-6</li>
-<li><a href="fuzzy-systems.html">Mamdani, Sugeno, Tsukamoto and ANFIS</a> · Fuzzy lesson 7</li>
-</ul>
-<h2 id="section-2">How to use the guide</h2>
-<p>Read the explanation first, then open a worked example. Use Previous and Next, Play/Pause, Reset or the arrow keys to follow the calculation. Check the final answer against the stated assumptions before trying the practice questions.</p>
-<p>The ADALINE and LMS pages use different loss normalizations; keep each page’s update convention with its learning rate. In fuzzy problems, identify the universe, membership functions and operators before calculating. These choices determine the result.</p>
-<p>The guide works offline. Use the sidebar to move between topics and the System, Light and Dark menu to choose a reading theme.</p></article><nav class="pager" aria-label="Study sequence"><a href="foundations.html"><small>Next</small>Neurons, activations and network foundations <span aria-hidden="true">↗</span></a></nav><footer>Neural Networks and Fuzzy Logic · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+</div>
+<button aria-controls="sidebar" aria-expanded="false" class="menu" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input autocomplete="off" id="topic-filter" placeholder="Neuron, learning, fuzzy sets…" type="search"/><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a aria-current="page" class="nav-entry" href="index.html">Neural networks and fuzzy logic</a></div><div class="nav-group"><p>Neural networks</p><a class="nav-entry" href="foundations.html">Neurons, activations and network foundations</a><a class="nav-entry" href="perceptron.html">Threshold logic and perceptron learning</a><a class="nav-entry" href="adaptive-linear.html">ADALINE and MADALINE learning</a><a class="nav-entry" href="lms.html">Widrow-Hoff derivation and LMS calculations</a><a class="nav-entry" href="backpropagation.html">Multilayer networks and backpropagation</a><a class="nav-entry" href="training-variants.html">Backpropagation variations and deeper networks</a><a class="nav-entry" href="pnn.html">Probabilistic neural networks</a></div><div class="nav-group"><p>Fuzzy foundations</p><a class="nav-entry" href="fuzzy-sets.html">Crisp and fuzzy sets</a><a class="nav-entry" href="fuzzy-relations.html">Relations and matrix composition</a><a class="nav-entry" href="membership.html">Membership, fuzzification and defuzzification</a></div><div class="nav-group"><p>Fuzzy reasoning</p><a class="nav-entry" href="classical-logic.html">Classical logic and crisp rule relations</a><a class="nav-entry" href="logic-language.html">Fuzzy propositions, linguistic variables and implications</a><a class="nav-entry" href="fuzzy-systems.html">Mamdani, Sugeno, Tsukamoto and ANFIS</a></div></nav><p hidden="" id="no-topics">No matching topics.</p><div class="rail-foot">MA4144<br/>Neural Networks and Fuzzy Logic</div></aside>
+<main id="main"><p class="collection-back"><a href="../">← All study guides</a></p><div class="eyebrow">Start here <span>/</span> MA4144 · Study route</div><h1>Neural networks and fuzzy logic</h1><p class="lead">Choose a question, understand the model, then work the calculation.</p><nav aria-label="On this page" class="on-page"><a href="#section-0">Two approaches</a><a href="#section-1">Find a question</a><a href="#section-2">How to study</a></nav><article><h2 id="section-0">Two ways to map inputs to outputs</h2><div class="route-choice"><section><h3>Neural networks learn parameters</h3><p>Examples change weights so the network’s outputs fit a task.</p><a href="foundations.html">Start with one neuron →</a></section><section><h3>Fuzzy systems evaluate graded rules</h3><p>Membership functions give grades; rules combine them into an output.</p><a href="fuzzy-sets.html">Start with membership →</a></section></div><h2 id="section-1">Find the question you need to answer</h2><h3>Neural networks</h3><ol class="reading-route"><li><a href="foundations.html">What does one neuron actually calculate?</a><span>Inputs, weights, bias, activations and architecture.</span></li><li><a href="perceptron.html">How does a classifier learn a boundary?</a><span>Fixed logic gates, binary updates and the full bipolar AND trace.</span></li><li><a href="adaptive-linear.html">Why learn before thresholding?</a><span>ADALINE error and MADALINE hidden-unit choices.</span></li><li><a href="lms.html">Where does the LMS update come from?</a><span>Loss, gradient, correlation matrix and the factor of two.</span></li><li><a href="backpropagation.html">How do hidden weights get an error signal?</a><span>Forward values, chain-rule deltas and simultaneous updates.</span></li><li><a href="training-variants.html">What changes with momentum or batch learning?</a><span>Update history, adaptive rates, activation gains and extra depth.</span></li><li><a href="pnn.html">Can a network classify by storing examples?</a><span>Gaussian kernels, class densities and the bandwidth trade-off.</span></li></ol><h3>Fuzzy foundations</h3><ol class="reading-route"><li><a href="fuzzy-sets.html">What does a membership grade mean?</a><span>Crisp versus fuzzy sets; max, min and complement.</span></li><li><a href="fuzzy-relations.html">How do grades combine through a relation?</a><span>Rows, columns, route strengths and max–min composition.</span></li><li><a href="membership.html">How do we go between numbers and fuzzy sets?</a><span>Membership shapes, fuzzification, cuts and scalar defuzzification.</span></li></ol><h3>Fuzzy reasoning</h3><ol class="reading-route"><li><a href="classical-logic.html">When is an implication false?</a><span>Truth tables, valid inferences and crisp rule relations.</span></li><li><a href="logic-language.html">How do words become fuzzy rules?</a><span>Separate universes, implication meanings and linguistic hedges.</span></li><li><a href="fuzzy-systems.html">Which inference system am I calculating?</a><span>Mamdani, TSK, Tsukamoto and the ANFIS learning split.</span></li></ol><h2 id="section-2">Use the notes in three passes</h2><ul><li>Read the key idea and diagram first. Say what the model takes in and returns.</li><li>Work one numerical example. Keep the loss, operators and zero-boundary convention beside your arithmetic.</li><li>Try the practice questions before opening their answers.</li></ul><p>Training traces have Previous, Next and Show all steps. Other examples keep the calculation together. Use the theme menu for light or dark reading. The guide also works offline.</p></article><nav aria-label="Study sequence" class="pager"><a href="foundations.html"><small>Next</small>Neurons, activations and network foundations <span aria-hidden="true">↗</span></a></nav><footer>Neural Networks and Fuzzy Logic · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script src="explorers.js"></script><script>(() => {
   'use strict';
   let cleanups = [];
   const initializeMain = root => {
+  initializeExplorers(root);
   const mathHints = new WeakMap();
   const repairMath = () => {
     root.querySelectorAll('math,.walk code').forEach(expression => {
@@ -89,7 +63,7 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
       const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
       const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
       if (available <= 0 || !box.width) return;
-      if (box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+      if (Math.max(box.width, expression.scrollWidth) <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
           && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
       const region = document.createElement('span');
       region.className = 'math-scroll';
@@ -156,12 +130,24 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
     const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
     const show = index => {
       current = Math.max(0, Math.min(steps.length - 1, index));
-      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', walk.dataset.view === 'all' || i === current ? 'false' : 'true'); });
       walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
       prev.disabled = current === 0; next.disabled = current === steps.length - 1;
       repairMath();
       if (next.disabled) stop();
     };
+    const all = document.createElement('button');
+    all.type = 'button'; all.dataset.action = 'all'; all.textContent = 'Show all steps';
+    all.setAttribute('aria-pressed', 'false');
+    walk.querySelector('.walk-controls').append(all);
+    const setView = expanded => {
+      walk.dataset.view = expanded ? 'all' : 'single';
+      all.textContent = expanded ? 'One step at a time' : 'Show all steps';
+      all.setAttribute('aria-pressed', String(expanded));
+      steps.forEach((step, i) => step.setAttribute('aria-hidden', expanded || walk.dataset.view === 'all' || i === current ? 'false' : 'true'));
+      repairMath();
+    };
+    all.addEventListener('click', () => { stop(); setView(walk.dataset.view !== 'all'); });
     walk.dataset.ready = 'true'; show(0);
     prev.addEventListener('click', () => { stop(); show(current - 1); });
     next.addEventListener('click', () => { stop(); show(current + 1); });
