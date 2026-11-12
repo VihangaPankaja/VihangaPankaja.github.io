@@ -132,9 +132,14 @@ class RevisionChecks(unittest.TestCase):
             self.assertGreaterEqual(self.page.locator("article details").count(), 3)
         self.page.go_back()
         self.assertIn("Neural networks", self.page.locator("h1").inner_text())
+        self.page.goto((ROOT / "fuzzy-sets.html").as_uri())
+        previous = self.page.locator('.pager a').first
+        self.assertEqual(previous.get_attribute('href'), 'neural-revision.html')
+        self.assertNotIn('Probabilistic', previous.inner_text())
 
     def test_published_numerical_corrections(self):
         self.page.goto((ROOT / "training-variants.html").as_uri())
+        self.assertEqual(self.page.get_by_text('This local factor explains', exact=False).count(), 0)
         self.assertEqual(self.page.locator('[data-check="momentum-counterfactual"]').count(), 1)
         weight = bias = 0.0
         changes = []
@@ -152,6 +157,7 @@ class RevisionChecks(unittest.TestCase):
 
     def test_fuzzy_mom_and_implication_semantics(self):
         self.page.goto((ROOT / "membership.html").as_uri())
+        self.assertEqual(self.page.get_by_text('Do not report MOM as unique', exact=False).count(), 0)
         self.assertEqual(self.page.locator('[data-check="mom-result"]').count(), 1)
         # The isolated maximizer at 6 has zero measure; continuous MOM is the plateau mean.
         self.assertEqual(float(self.page.locator('[data-check="mom-result"]').get_attribute('data-number')), (2 + 4) / 2)
