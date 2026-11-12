@@ -1,4 +1,5 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="A memory-based classifier that turns stored examples into Gaussian class-density estimates."><title>Probabilistic neural networks · Neural networks and fuzzy logic</title><script>(() => {
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="A PNN stores examples, turns distance into Gaussian responses, and averages those responses within each class." name="description"/><title>Probabilistic neural networks · Neural networks and fuzzy logic</title><script>(() => {
   let choice = 'system';
   try { const saved = localStorage.getItem('nn-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
   document.documentElement.dataset.themeChoice = choice;
@@ -36,159 +37,152 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 .math-hint{display:block;font-size:12px;color:var(--primary);margin:3px 0 10px}
 
 .nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-</style></head><body>
+</style><link href="reading.css" rel="stylesheet"/></head><body>
 <a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark">N</span> NNFL <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
-  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
-  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
-    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
-    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
-    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
-  </div>
+<button aria-controls="theme-options" aria-expanded="false" aria-haspopup="menu" aria-label="Color theme: System" id="theme" type="button"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"></path><circle cx="12" cy="12" r="4"></circle></svg><span id="theme-current">System</span><svg aria-hidden="true" class="theme-chevron" viewbox="0 0 16 16"><path d="m4 6 4 4 4-4"></path></svg></button>
+<div aria-label="Color theme" hidden="" id="theme-options" role="menu">
+<button aria-checked="true" data-theme-value="system" role="menuitemradio" tabindex="-1" type="button"><span>System<small>Follow your device</small></span><span aria-hidden="true" class="theme-check">✓</span></button>
+<button aria-checked="false" data-theme-value="light" role="menuitemradio" tabindex="-1" type="button"><span>Light<small>Light pages and diagrams</small></span><span aria-hidden="true" class="theme-check">✓</span></button>
+<button aria-checked="false" data-theme-value="dark" role="menuitemradio" tabindex="-1" type="button"><span>Dark<small>Dark pages and diagrams</small></span><span aria-hidden="true" class="theme-check">✓</span></button>
 </div>
-<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
-<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="Neuron, learning, fuzzy sets…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Neural networks and fuzzy logic</a></div><div class="nav-group"><p>Neural networks</p><a class="nav-entry" href="foundations.html">Neurons, activations and network foundations</a><a class="nav-entry" href="perceptron.html">Threshold logic and perceptron learning</a><a class="nav-entry" href="adaptive-linear.html">ADALINE and MADALINE learning</a><a class="nav-entry" href="lms.html">Widrow-Hoff derivation and LMS calculations</a><a class="nav-entry" href="backpropagation.html">Multilayer networks and backpropagation</a><a class="nav-entry" href="training-variants.html">Backpropagation variations and deeper networks</a><a class="nav-entry" href="pnn.html" aria-current="page">Probabilistic neural networks</a></div><div class="nav-group"><p>Fuzzy foundations</p><a class="nav-entry" href="fuzzy-sets.html">Crisp and fuzzy sets</a><a class="nav-entry" href="fuzzy-relations.html">Relations and matrix composition</a><a class="nav-entry" href="membership.html">Membership, fuzzification and defuzzification</a></div><div class="nav-group"><p>Fuzzy reasoning</p><a class="nav-entry" href="classical-logic.html">Classical logic and crisp rule relations</a><a class="nav-entry" href="logic-language.html">Fuzzy propositions, linguistic variables and implications</a><a class="nav-entry" href="fuzzy-systems.html">Mamdani, Sugeno, Tsukamoto and ANFIS</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">MA4144<br>Neural Networks and Fuzzy Logic</div></aside>
-<main id="main"><div class="eyebrow">Neural networks <span>/</span> Lesson 5</div><h1>Probabilistic neural networks</h1><p class="lead">A memory-based classifier that turns stored examples into Gaussian class-density estimates.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">Four layers, one stored example per pattern unit</a><a href="#section-2">From exemplar distance to class density</a><a href="#section-3">Decision: density, prior, and misclassification cost</a><a href="#section-4">Teaching example: classify a one-dimensional query</a><a href="#section-5">Bandwidth and practical trade-offs</a><a href="#section-6">Common mistakes</a><a href="#section-7">Exam focus</a><a href="#section-8">Practice</a><a href="#section-9">Primary reference for the two-class loss convention</a></nav><article><h2 id="section-0">Big picture</h2>
-<p>A probabilistic neural network (PNN) is a feedforward classifier that estimates a probability density for each class from labeled examples. It uses nonparametric density estimation: each stored example contributes a local Gaussian bump, and the class layer averages those contributions. Classification compares the resulting class scores. This is the kernel-density idea implemented as a four-layer network.</p>
-
+</div>
+<button aria-controls="sidebar" aria-expanded="false" class="menu" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input autocomplete="off" id="topic-filter" placeholder="Neuron, learning, fuzzy sets…" type="search"/><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Neural networks and fuzzy logic</a></div><div class="nav-group"><p>Neural networks</p><a class="nav-entry" href="foundations.html">Neurons, activations and network foundations</a><a class="nav-entry" href="perceptron.html">Threshold logic and perceptron learning</a><a class="nav-entry" href="adaptive-linear.html">ADALINE and MADALINE learning</a><a class="nav-entry" href="lms.html">Widrow-Hoff derivation and LMS calculations</a><a class="nav-entry" href="backpropagation.html">Multilayer networks and backpropagation</a><a class="nav-entry" href="training-variants.html">Backpropagation variations and deeper networks</a><a aria-current="page" class="nav-entry" href="pnn.html">Probabilistic neural networks</a></div><div class="nav-group"><p>Fuzzy foundations</p><a class="nav-entry" href="fuzzy-sets.html">Crisp and fuzzy sets</a><a class="nav-entry" href="fuzzy-relations.html">Relations and matrix composition</a><a class="nav-entry" href="membership.html">Membership, fuzzification and defuzzification</a></div><div class="nav-group"><p>Fuzzy reasoning</p><a class="nav-entry" href="classical-logic.html">Classical logic and crisp rule relations</a><a class="nav-entry" href="logic-language.html">Fuzzy propositions, linguistic variables and implications</a><a class="nav-entry" href="fuzzy-systems.html">Mamdani, Sugeno, Tsukamoto and ANFIS</a></div></nav><p hidden="" id="no-topics">No matching topics.</p><div class="rail-foot">MA4144<br/>Neural Networks and Fuzzy Logic</div></aside>
+<main id="main"><div class="eyebrow">Neural networks <span>/</span> Lesson 5</div><h1>Probabilistic neural networks</h1><p class="lead">A PNN stores examples, turns distance into Gaussian responses, and averages those responses within each class.</p><details class="contents"><summary>Jump to a section · 10 sections</summary><nav aria-label="On this page" class="on-page"><a href="#section-0">Nearby stored examples support a class</a><a href="#section-1">Four layers, one stored example per pattern unit</a><a href="#section-2">From exemplar distance to class density</a><a href="#section-3">Decision: density, prior, and misclassification cost</a><a href="#section-4">Teaching example: classify a one-dimensional query</a><a href="#section-5">Bandwidth and practical trade-offs</a><a href="#section-6">Common mistakes</a><a href="#section-7">Exam focus</a><a href="#section-8">Practice</a><a href="#section-9">Primary reference for the two-class loss convention</a></nav></details><article><h2 id="section-0">Nearby stored examples support a class</h2>
+<ul class="takeaways"><li><strong>One sample, one pattern unit:</strong> training stores examples rather than running gradient-update epochs.</li><li><strong>One score per class:</strong> average its kernel responses using its own sample count.</li><li><strong>Bandwidth σ:</strong> small values make narrow bumps; large values smooth them. Priors and costs belong to the decision rule.</li></ul>
 <h2 id="section-1">Four layers, one stored example per pattern unit</h2>
-<p>The architecture makes the computation visible: the input is compared with every stored exemplar; each pattern unit sends its Gaussian response to the summation unit for that exemplar’s class; the output layer compares the class scores. If a new labeled example arrives, training adds a pattern unit, stores its feature vector, and connects it to the matching class. There is no sequence of weight corrections, epochs, or bias updates.</p>
-<figure><div class="diagram-frame" style="--diagram-width:818.6px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
- "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<p>Each stored example has a pattern unit connected to its own class summation unit. Add a new labeled example by storing its vector and adding that connection. There are no gradient epochs or bias updates.</p>
+<figure><div class="diagram-frame" style="--diagram-width:818.6px"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
 <!-- Generated by graphviz version 2.43.0 (0)
  -->
 <!-- Title: G Pages: 1 -->
-<svg role="img" aria-label="Four-layer PNN: each pattern unit stores a labeled exemplar, and only contributes to its class summation unit. The number of pattern units grows with the training set." width="819pt" height="210pt"
- viewBox="0.00 0.00 818.60 209.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
-<g id="pnn-figure-1-pnn-four-layer-architecture-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 198.8)">
+<svg aria-label="Four-layer PNN: each pattern unit stores a labeled exemplar, and only contributes to its class summation unit. The number of pattern units grows with the training set." height="210pt" role="img" viewbox="0.00 0.00 818.60 209.60" width="819pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g class="graph" id="pnn-figure-1-pnn-four-layer-architecture-graph0" transform="scale(1 1) rotate(0) translate(10.8 198.8)">
 <title>G</title>
 <!-- input -->
-<g id="pnn-figure-1-pnn-four-layer-architecture-node1" class="node">
+<g class="node" id="pnn-figure-1-pnn-four-layer-architecture-node1">
 <title>input</title>
-<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M131,-118C131,-118 12,-118 12,-118 6,-118 0,-112 0,-106 0,-106 0,-82 0,-82 0,-76 6,-70 12,-70 12,-70 131,-70 131,-70 137,-70 143,-76 143,-82 143,-82 143,-106 143,-106 143,-112 137,-118 131,-118"/>
-<text text-anchor="middle" x="71.5" y="-99" font-family="Georgia" font-size="15.00">Input layer</text>
-<text text-anchor="middle" x="71.5" y="-82" font-family="Georgia" font-size="15.00">feature vector x</text>
+<path d="M131,-118C131,-118 12,-118 12,-118 6,-118 0,-112 0,-106 0,-106 0,-82 0,-82 0,-76 6,-70 12,-70 12,-70 131,-70 131,-70 137,-70 143,-76 143,-82 143,-82 143,-106 143,-106 143,-112 137,-118 131,-118" fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="71.5" y="-99">Input layer</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="71.5" y="-82">feature vector x</text>
 </g>
 <!-- p_a1 -->
-<g id="pnn-figure-1-pnn-four-layer-architecture-node2" class="node">
+<g class="node" id="pnn-figure-1-pnn-four-layer-architecture-node2">
 <title>p_a1</title>
-<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M278,-188C278,-188 188,-188 188,-188 182,-188 176,-182 176,-176 176,-176 176,-152 176,-152 176,-146 182,-140 188,-140 188,-140 278,-140 278,-140 284,-140 290,-146 290,-152 290,-152 290,-176 290,-176 290,-182 284,-188 278,-188"/>
-<text text-anchor="middle" x="233" y="-169" font-family="Georgia" font-size="15.00">Pattern unit</text>
-<text text-anchor="middle" x="233" y="-152" font-family="Georgia" font-size="15.00">stores x_A1</text>
+<path d="M278,-188C278,-188 188,-188 188,-188 182,-188 176,-182 176,-176 176,-176 176,-152 176,-152 176,-146 182,-140 188,-140 188,-140 278,-140 278,-140 284,-140 290,-146 290,-152 290,-152 290,-176 290,-176 290,-182 284,-188 278,-188" fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="233" y="-169">Pattern unit</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="233" y="-152">stores x_A1</text>
 </g>
 <!-- input&#45;&gt;p_a1 -->
-<g id="pnn-figure-1-pnn-four-layer-architecture-edge1" class="edge">
-<title>input&#45;&gt;p_a1</title>
-<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M127.39,-118.09C141.5,-124.28 156.77,-130.98 171.17,-137.3"/>
-<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="170.41,-139.46 177.28,-139.98 172.24,-135.29 170.41,-139.46"/>
+<g class="edge" id="pnn-figure-1-pnn-four-layer-architecture-edge1">
+<title>input-&gt;p_a1</title>
+<path d="M127.39,-118.09C141.5,-124.28 156.77,-130.98 171.17,-137.3" fill="none" stroke="var(--diagram-edge,#766c9b)"></path>
+<polygon fill="var(--diagram-edge,#766c9b)" points="170.41,-139.46 177.28,-139.98 172.24,-135.29 170.41,-139.46" stroke="var(--diagram-edge,#766c9b)"></polygon>
 </g>
 <!-- p_a2 -->
-<g id="pnn-figure-1-pnn-four-layer-architecture-node3" class="node">
+<g class="node" id="pnn-figure-1-pnn-four-layer-architecture-node3">
 <title>p_a2</title>
-<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M278,-118C278,-118 188,-118 188,-118 182,-118 176,-112 176,-106 176,-106 176,-82 176,-82 176,-76 182,-70 188,-70 188,-70 278,-70 278,-70 284,-70 290,-76 290,-82 290,-82 290,-106 290,-106 290,-112 284,-118 278,-118"/>
-<text text-anchor="middle" x="233" y="-99" font-family="Georgia" font-size="15.00">Pattern unit</text>
-<text text-anchor="middle" x="233" y="-82" font-family="Georgia" font-size="15.00">stores x_A2</text>
+<path d="M278,-118C278,-118 188,-118 188,-118 182,-118 176,-112 176,-106 176,-106 176,-82 176,-82 176,-76 182,-70 188,-70 188,-70 278,-70 278,-70 284,-70 290,-76 290,-82 290,-82 290,-106 290,-106 290,-112 284,-118 278,-118" fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="233" y="-99">Pattern unit</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="233" y="-82">stores x_A2</text>
 </g>
 <!-- input&#45;&gt;p_a2 -->
-<g id="pnn-figure-1-pnn-four-layer-architecture-edge2" class="edge">
-<title>input&#45;&gt;p_a2</title>
-<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M143.39,-94C151.84,-94 160.42,-94 168.76,-94"/>
-<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="169.19,-96.28 175.69,-94 169.19,-91.73 169.19,-96.28"/>
+<g class="edge" id="pnn-figure-1-pnn-four-layer-architecture-edge2">
+<title>input-&gt;p_a2</title>
+<path d="M143.39,-94C151.84,-94 160.42,-94 168.76,-94" fill="none" stroke="var(--diagram-edge,#766c9b)"></path>
+<polygon fill="var(--diagram-edge,#766c9b)" points="169.19,-96.28 175.69,-94 169.19,-91.73 169.19,-96.28" stroke="var(--diagram-edge,#766c9b)"></polygon>
 </g>
 <!-- p_b1 -->
-<g id="pnn-figure-1-pnn-four-layer-architecture-node4" class="node">
+<g class="node" id="pnn-figure-1-pnn-four-layer-architecture-node4">
 <title>p_b1</title>
-<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M278,-48C278,-48 188,-48 188,-48 182,-48 176,-42 176,-36 176,-36 176,-12 176,-12 176,-6 182,0 188,0 188,0 278,0 278,0 284,0 290,-6 290,-12 290,-12 290,-36 290,-36 290,-42 284,-48 278,-48"/>
-<text text-anchor="middle" x="233" y="-29" font-family="Georgia" font-size="15.00">Pattern unit</text>
-<text text-anchor="middle" x="233" y="-12" font-family="Georgia" font-size="15.00">stores x_B1</text>
+<path d="M278,-48C278,-48 188,-48 188,-48 182,-48 176,-42 176,-36 176,-36 176,-12 176,-12 176,-6 182,0 188,0 188,0 278,0 278,0 284,0 290,-6 290,-12 290,-12 290,-36 290,-36 290,-42 284,-48 278,-48" fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="233" y="-29">Pattern unit</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="233" y="-12">stores x_B1</text>
 </g>
 <!-- input&#45;&gt;p_b1 -->
-<g id="pnn-figure-1-pnn-four-layer-architecture-edge3" class="edge">
-<title>input&#45;&gt;p_b1</title>
-<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M127.39,-69.91C141.5,-63.72 156.77,-57.02 171.17,-50.7"/>
-<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="172.24,-52.71 177.28,-48.02 170.41,-48.54 172.24,-52.71"/>
+<g class="edge" id="pnn-figure-1-pnn-four-layer-architecture-edge3">
+<title>input-&gt;p_b1</title>
+<path d="M127.39,-69.91C141.5,-63.72 156.77,-57.02 171.17,-50.7" fill="none" stroke="var(--diagram-edge,#766c9b)"></path>
+<polygon fill="var(--diagram-edge,#766c9b)" points="172.24,-52.71 177.28,-48.02 170.41,-48.54 172.24,-52.71" stroke="var(--diagram-edge,#766c9b)"></polygon>
 </g>
 <!-- sum_a -->
-<g id="pnn-figure-1-pnn-four-layer-architecture-node5" class="node">
+<g class="node" id="pnn-figure-1-pnn-four-layer-architecture-node5">
 <title>sum_a</title>
-<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M568,-118C568,-118 448,-118 448,-118 442,-118 436,-112 436,-106 436,-106 436,-82 436,-82 436,-76 442,-70 448,-70 448,-70 568,-70 568,-70 574,-70 580,-76 580,-82 580,-82 580,-106 580,-106 580,-112 574,-118 568,-118"/>
-<text text-anchor="middle" x="508" y="-99" font-family="Georgia" font-size="15.00">Summation unit</text>
-<text text-anchor="middle" x="508" y="-82" font-family="Georgia" font-size="15.00">class A density</text>
+<path d="M568,-118C568,-118 448,-118 448,-118 442,-118 436,-112 436,-106 436,-106 436,-82 436,-82 436,-76 442,-70 448,-70 448,-70 568,-70 568,-70 574,-70 580,-76 580,-82 580,-82 580,-106 580,-106 580,-112 574,-118 568,-118" fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="508" y="-99">Summation unit</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="508" y="-82">class A density</text>
 </g>
 <!-- p_a1&#45;&gt;sum_a -->
-<g id="pnn-figure-1-pnn-four-layer-architecture-edge4" class="edge">
-<title>p_a1&#45;&gt;sum_a</title>
-<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M290.23,-149.58C330.48,-139.26 385.16,-125.24 429.53,-113.86"/>
-<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="430.27,-116.02 436,-112.21 429.14,-111.62 430.27,-116.02"/>
-<text text-anchor="middle" x="363" y="-148.4" font-family="Georgia" font-size="12.00">Gaussian response</text>
+<g class="edge" id="pnn-figure-1-pnn-four-layer-architecture-edge4">
+<title>p_a1-&gt;sum_a</title>
+<path d="M290.23,-149.58C330.48,-139.26 385.16,-125.24 429.53,-113.86" fill="none" stroke="var(--diagram-edge,#766c9b)"></path>
+<polygon fill="var(--diagram-edge,#766c9b)" points="430.27,-116.02 436,-112.21 429.14,-111.62 430.27,-116.02" stroke="var(--diagram-edge,#766c9b)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="363" y="-148.4">Gaussian response</text>
 </g>
 <!-- p_a2&#45;&gt;sum_a -->
-<g id="pnn-figure-1-pnn-four-layer-architecture-edge5" class="edge">
-<title>p_a2&#45;&gt;sum_a</title>
-<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M290.23,-94C330.39,-94 384.93,-94 429.25,-94"/>
-<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="429.5,-96.28 436,-94 429.5,-91.73 429.5,-96.28"/>
-<text text-anchor="middle" x="363" y="-97.4" font-family="Georgia" font-size="12.00">Gaussian response</text>
+<g class="edge" id="pnn-figure-1-pnn-four-layer-architecture-edge5">
+<title>p_a2-&gt;sum_a</title>
+<path d="M290.23,-94C330.39,-94 384.93,-94 429.25,-94" fill="none" stroke="var(--diagram-edge,#766c9b)"></path>
+<polygon fill="var(--diagram-edge,#766c9b)" points="429.5,-96.28 436,-94 429.5,-91.73 429.5,-96.28" stroke="var(--diagram-edge,#766c9b)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="363" y="-97.4">Gaussian response</text>
 </g>
 <!-- sum_b -->
-<g id="pnn-figure-1-pnn-four-layer-architecture-node6" class="node">
+<g class="node" id="pnn-figure-1-pnn-four-layer-architecture-node6">
 <title>sum_b</title>
-<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M568,-48C568,-48 448,-48 448,-48 442,-48 436,-42 436,-36 436,-36 436,-12 436,-12 436,-6 442,0 448,0 448,0 568,0 568,0 574,0 580,-6 580,-12 580,-12 580,-36 580,-36 580,-42 574,-48 568,-48"/>
-<text text-anchor="middle" x="508" y="-29" font-family="Georgia" font-size="15.00">Summation unit</text>
-<text text-anchor="middle" x="508" y="-12" font-family="Georgia" font-size="15.00">class B density</text>
+<path d="M568,-48C568,-48 448,-48 448,-48 442,-48 436,-42 436,-36 436,-36 436,-12 436,-12 436,-6 442,0 448,0 448,0 568,0 568,0 574,0 580,-6 580,-12 580,-12 580,-36 580,-36 580,-42 574,-48 568,-48" fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="508" y="-29">Summation unit</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="508" y="-12">class B density</text>
 </g>
 <!-- p_b1&#45;&gt;sum_b -->
-<g id="pnn-figure-1-pnn-four-layer-architecture-edge6" class="edge">
-<title>p_b1&#45;&gt;sum_b</title>
-<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M290.23,-24C330.39,-24 384.93,-24 429.25,-24"/>
-<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="429.5,-26.28 436,-24 429.5,-21.73 429.5,-26.28"/>
-<text text-anchor="middle" x="363" y="-27.4" font-family="Georgia" font-size="12.00">Gaussian response</text>
+<g class="edge" id="pnn-figure-1-pnn-four-layer-architecture-edge6">
+<title>p_b1-&gt;sum_b</title>
+<path d="M290.23,-24C330.39,-24 384.93,-24 429.25,-24" fill="none" stroke="var(--diagram-edge,#766c9b)"></path>
+<polygon fill="var(--diagram-edge,#766c9b)" points="429.5,-26.28 436,-24 429.5,-21.73 429.5,-26.28" stroke="var(--diagram-edge,#766c9b)"></polygon>
+<text font-family="Georgia" font-size="12.00" text-anchor="middle" x="363" y="-27.4">Gaussian response</text>
 </g>
 <!-- decision -->
-<g id="pnn-figure-1-pnn-four-layer-architecture-node7" class="node">
+<g class="node" id="pnn-figure-1-pnn-four-layer-architecture-node7">
 <title>decision</title>
-<path fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)" d="M785,-82C785,-82 625,-82 625,-82 619,-82 613,-76 613,-70 613,-70 613,-46 613,-46 613,-40 619,-34 625,-34 625,-34 785,-34 785,-34 791,-34 797,-40 797,-46 797,-46 797,-70 797,-70 797,-76 791,-82 785,-82"/>
-<text text-anchor="middle" x="705" y="-63" font-family="Georgia" font-size="15.00">Output / decision</text>
-<text text-anchor="middle" x="705" y="-46" font-family="Georgia" font-size="15.00">compare class scores</text>
+<path d="M785,-82C785,-82 625,-82 625,-82 619,-82 613,-76 613,-70 613,-70 613,-46 613,-46 613,-40 619,-34 625,-34 625,-34 785,-34 785,-34 791,-34 797,-40 797,-46 797,-46 797,-70 797,-70 797,-76 791,-82 785,-82" fill="var(--diagram-fill,#f1eff8)" stroke="var(--diagram-border,#948cb2)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="705" y="-63">Output / decision</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="705" y="-46">compare class scores</text>
 </g>
 <!-- sum_a&#45;&gt;decision -->
-<g id="pnn-figure-1-pnn-four-layer-architecture-edge7" class="edge">
-<title>sum_a&#45;&gt;decision</title>
-<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M580.23,-80.85C588.64,-79.3 597.33,-77.69 606.03,-76.09"/>
-<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="606.69,-78.28 612.67,-74.86 605.87,-73.8 606.69,-78.28"/>
+<g class="edge" id="pnn-figure-1-pnn-four-layer-architecture-edge7">
+<title>sum_a-&gt;decision</title>
+<path d="M580.23,-80.85C588.64,-79.3 597.33,-77.69 606.03,-76.09" fill="none" stroke="var(--diagram-edge,#766c9b)"></path>
+<polygon fill="var(--diagram-edge,#766c9b)" points="606.69,-78.28 612.67,-74.86 605.87,-73.8 606.69,-78.28" stroke="var(--diagram-edge,#766c9b)"></polygon>
 </g>
 <!-- sum_b&#45;&gt;decision -->
-<g id="pnn-figure-1-pnn-four-layer-architecture-edge8" class="edge">
-<title>sum_b&#45;&gt;decision</title>
-<path fill="none" stroke="var(--diagram-edge,#766c9b)" d="M580.23,-36.42C588.64,-37.89 597.33,-39.4 606.03,-40.92"/>
-<polygon fill="var(--diagram-edge,#766c9b)" stroke="var(--diagram-edge,#766c9b)" points="605.88,-43.2 612.67,-42.08 606.66,-38.72 605.88,-43.2"/>
+<g class="edge" id="pnn-figure-1-pnn-four-layer-architecture-edge8">
+<title>sum_b-&gt;decision</title>
+<path d="M580.23,-36.42C588.64,-37.89 597.33,-39.4 606.03,-40.92" fill="none" stroke="var(--diagram-edge,#766c9b)"></path>
+<polygon fill="var(--diagram-edge,#766c9b)" points="605.88,-43.2 612.67,-42.08 606.66,-38.72 605.88,-43.2" stroke="var(--diagram-edge,#766c9b)"></polygon>
 </g>
 </g>
 </svg>
 </div><figcaption>Four-layer PNN: each pattern unit stores a labeled exemplar, and only contributes to its class summation unit. The number of pattern units grows with the training set.</figcaption></figure>
 <h2 id="section-2">From exemplar distance to class density</h2>
-<p>Let <code>x</code> be the input feature vector and <code><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub></mrow></math></code> the j-th stored example from class C<sub>k</sub>. The pattern unit evaluates an isotropic Gaussian kernel. Here d is the number of features, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi></mrow></math> is the shared smoothing bandwidth, and the squared Euclidean distance measures how far the query is from that exemplar.</p>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x003D5;</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mo stretchy="false">&#x00028;</mo><mn>2</mn><mi>&#x003C0;</mi><msup><mo stretchy="false">&#x00029;</mo><mrow><mi>d</mi><mo>&#x0002F;</mo><mn>2</mn></mrow></msup><msup><mi>&#x003C3;</mi><mi>d</mi></msup></mrow></mfrac><mi>exp</mi><mspace width="negativethinmathspace" /><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mo>&#x02212;</mo><mfrac><mrow><mo>&#x02016;</mo><mi>x</mi><mo>&#x02212;</mo><msub><mi>x</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><msup><mo>&#x02016;</mo><mn>2</mn></msup></mrow><mrow><mn>2</mn><msup><mi>&#x003C3;</mi><mn>2</mn></msup></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow></mrow></math></div>
-<p>Nearby examples produce larger responses; distant examples produce smaller ones. The summation unit averages all responses belonging to its class, using that class’s own sample count <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>N</mi><mi>k</mi></msub></mrow></math>.</p>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mover accent="true"><mi>f</mi><mo>&#x0005E;</mo></mover><mi>k</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><msub><mi>N</mi><mi>k</mi></msub></mrow></mfrac><munderover><mo>&#x02211;</mo><mrow><mi>j</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><msub><mi>N</mi><mi>k</mi></msub></mrow></munderover><msub><mi>&#x003D5;</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
-<p>Because this is an average, a class does not receive a larger density merely because it has more stored exemplars. A prior probability is a separate factor applied during the decision.</p>
-
+<p>The Gaussian kernel compares query x with stored example x<sub>kj</sub>. Here d is feature count and σ is the shared bandwidth. Squared Euclidean distance controls how much the exemplar contributes.</p>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>ϕ</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mo stretchy="false">(</mo><mn>2</mn><mi>π</mi><msup><mo stretchy="false">)</mo><mrow><mi>d</mi><mo>/</mo><mn>2</mn></mrow></msup><msup><mi>σ</mi><mi>d</mi></msup></mrow></mfrac><mi>exp</mi><mspace width="negativethinmathspace"></mspace><mrow><mo fence="true" form="prefix" stretchy="true">(</mo><mo>−</mo><mfrac><mrow><mo>‖</mo><mi>x</mi><mo>−</mo><msub><mi>x</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><msup><mo>‖</mo><mn>2</mn></msup></mrow><mrow><mn>2</mn><msup><mi>σ</mi><mn>2</mn></msup></mrow></mfrac><mo fence="true" form="postfix" stretchy="true">)</mo></mrow></mrow></math></div>
+<p>Nearby examples produce larger responses; distant examples produce smaller ones. The summation unit averages all responses belonging to its class, using that class’s own sample count <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>N</mi><mi>k</mi></msub></mrow></math>.</p>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mover accent="true"><mi>f</mi><mo>^</mo></mover><mi>k</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><mn>1</mn></mrow><mrow><msub><mi>N</mi><mi>k</mi></msub></mrow></mfrac><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mrow><msub><mi>N</mi><mi>k</mi></msub></mrow></munderover><msub><mi>ϕ</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></math></div>
+<p>Divide by the class’s own Nₖ. More stored examples do not automatically give a larger density. A class prior is a separate factor.</p>
 <h2 id="section-3">Decision: density, prior, and misclassification cost</h2>
 <p>With equal priors and equal misclassification costs, choose the class with the largest estimated density:</p>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mover accent="true"><mi>y</mi><mo>&#x0005E;</mo></mover><mo>&#x0003D;</mo><mo /><msub><mrow><mi>a</mi><mi>r</mi><mi>g</mi><mspace width="0.167em" /><mi>m</mi><mi>a</mi><mi>x</mi></mrow><mrow><mi>k</mi></mrow></msub><msub><mover accent="true"><mi>f</mi><mo>&#x0005E;</mo></mover><mi>k</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
-<p>For two classes, the lecture gives the comparison below. The cost convention matters: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mi>A</mi></msub></mrow></math> is the loss for deciding B when the true class is A (a missed A); <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mi>B</mi></msub></mrow></math> is the loss for deciding A when the true class is B (a false A). Correct decisions have zero loss.</p>
-<div class="equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtext>choose&#x000A0;A&#x000A0;if&#x000A0;</mtext><msub><mi>h</mi><mi>A</mi></msub><msub><mi>C</mi><mi>A</mi></msub><msub><mover accent="true"><mi>f</mi><mo>&#x0005E;</mo></mover><mi>A</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003E;</mo><msub><mi>h</mi><mi>B</mi></msub><msub><mi>C</mi><mi>B</mi></msub><msub><mover accent="true"><mi>f</mi><mo>&#x0005E;</mo></mover><mi>B</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
-<p>This form follows from comparing the two possible conditional risks. The risk of deciding A is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mi>B</mi></msub></mrow></math><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>B</mi><mo>&#x02223;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math>, while the risk of deciding B is <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mi>A</mi></msub></mrow></math><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>A</mi><mo>&#x02223;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math>. Substituting Bayes’ rule and canceling the shared evidence term gives the displayed inequality. Thus, under this explicit crossed misclassification-cost convention, the lecture’s rule is valid. For a general multiclass loss matrix, choose the action with the smallest conditional expected loss; do not treat one scalar loss per class as a universal rule.</p>
-
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mover accent="true"><mi>y</mi><mo>^</mo></mover><mo>=</mo><mo></mo><msub><mrow><mi>a</mi><mi>r</mi><mi>g</mi><mspace width="0.167em"></mspace><mi>m</mi><mi>a</mi><mi>x</mi></mrow><mrow><mi>k</mi></mrow></msub><msub><mover accent="true"><mi>f</mi><mo>^</mo></mover><mi>k</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></math></div>
+<p>For two classes, define the crossed costs before using the source’s rule:</p><ul><li>C<sub>A</sub>: decide B when the true class is A.</li><li>C<sub>B</sub>: decide A when the true class is B.</li><li>Correct decisions have zero loss.</li></ul>
+<div class="equation"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mtext>choose A if </mtext><msub><mi>h</mi><mi>A</mi></msub><msub><mi>C</mi><mi>A</mi></msub><msub><mover accent="true"><mi>f</mi><mo>^</mo></mover><mi>A</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>&gt;</mo><msub><mi>h</mi><mi>B</mi></msub><msub><mi>C</mi><mi>B</mi></msub><msub><mover accent="true"><mi>f</mi><mo>^</mo></mover><mi>B</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></math></div>
+<p>The risk of deciding A is C<sub>B</sub>P(B|x); deciding B risks C<sub>A</sub>P(A|x). Bayes’ rule gives the comparison below after canceling the shared evidence. For a general multiclass loss matrix, minimize conditional expected loss.</p>
 <h2 id="section-4">Teaching example: classify a one-dimensional query</h2>
 <p>The worked values below illustrate the source’s kernel, class-specific averaging, and equal-prior/equal-cost decision.</p>
-
-<details class="worked"><summary>Step-by-step distances, kernels, averages, and decision</summary><section class="walk" tabindex="0" aria-label="PNN classification: distances to class decision"><h3>PNN classification: distances to class decision</h3><div class="example-input"><p><strong>Teaching example inputs</strong></p>
+<details class="worked"><summary>Step-by-step distances, kernels, averages, and decision</summary><section aria-label="PNN classification: distances to class decision" class="worked-calculation"><h3>PNN classification: distances to class decision</h3><div class="example-input"><p><strong>Teaching example inputs</strong></p>
 <ul>
-<li>Query: x = 1; dimension: d = 1; bandwidth: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi></mrow></math> = 1.</li>
+<li>Query: x = 1; dimension: d = 1; bandwidth: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>σ</mi></mrow></math> = 1.</li>
 <li>Class A stores exemplars 0 and 2; class B stores exemplar 4.</li>
 <li>Equal priors and equal misclassification costs; common Gaussian normalizer: 1/√(2π) ≈ 0.3989423.</li>
 <li>For each exemplar, compute its squared distance, then its kernel response. Average responses within each class.</li>
-</ul></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>1. Start from the labeled exemplars</h4><p>The pattern layer has two A units and one B unit: A:{0, 2}; B:{4}. These stored values stay fixed during classification. The query is x = 1.</p></section><section class="step"><h4>2. Compute squared distances</h4><p>Use (x − <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub></mrow></math>)². For A: (1 − 0)² = 1 and (1 − 2)² = 1. For B: (1 − 4)² = 9. Both A exemplars are closer to the query.</p></section><section class="step"><h4>3. Evaluate the Gaussian pattern responses</h4><p>Substitute each squared distance into the kernel with <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi></mrow></math> = 1:</p>
+</ul></div><section class="calculation-part"><h4>1. Start from the labeled exemplars</h4><p>The pattern layer has two A units and one B unit: A:{0, 2}; B:{4}. These stored values stay fixed during classification. The query is x = 1.</p></section><section class="calculation-part"><h4>2. Compute squared distances</h4><p>Use (x − <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>x</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub></mrow></math>)². For A: (1 − 0)² = 1 and (1 − 2)² = 1. For B: (1 − 4)² = 9. Both A exemplars are closer to the query.</p></section><section class="calculation-part"><h4>3. Evaluate the Gaussian pattern responses</h4><p>Substitute each squared distance into the kernel with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>σ</mi></mrow></math> = 1:</p>
 <table>
 <thead>
 <tr>
@@ -215,54 +209,51 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 </tr>
 </tbody>
 </table>
-<p>The farther B exemplar has a much smaller response because the Gaussian decays with squared distance.</p></section><section class="step"><h4>4. Average responses inside each class</h4><p>Divide by the number of stored examples in that class:</p>
+<p>The farther B exemplar has a much smaller response because the Gaussian decays with squared distance.</p></section><section class="calculation-part"><h4>4. Average responses inside each class</h4><p>Divide by the number of stored examples in that class:</p>
 <ul>
 <li>A: (0.2419707 + 0.2419707) / 2 = <strong>0.2419707</strong>.</li>
 <li>B: 0.00443185 / 1 = <strong>0.00443185</strong>.</li>
 </ul>
-<p>The divisor is class-specific: N<sub>A</sub> = 2 and N<sub>B</sub> = 1. This is a class average, not a raw total.</p></section><section class="step"><h4>5. Decide and independently check</h4><p>Equal priors and costs mean compare the densities directly. Since 0.2419707 &gt; 0.00443185, predict <strong>class A</strong>.</p>
+<p>The divisor is class-specific: N<sub>A</sub> = 2 and N<sub>B</sub> = 1. This is a class average, not a raw total.</p></section><section class="calculation-part"><h4>5. Decide and independently check</h4><p>Equal priors and costs mean compare the densities directly. Since 0.2419707 &gt; 0.00443185, predict <strong>class A</strong>.</p>
 <p>Independent check: the query is one unit from both A exemplars and three units from B’s exemplar, so with the same Gaussian bandwidth and equal class weighting, A’s mean response must be larger. The computed decision agrees.</p></section></section></details>
-
-<h2 id="section-5">Bandwidth and practical trade-offs</h2>
-<p>The bandwidth <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi></mrow></math> controls the width of every Gaussian bump. A small <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi></mrow></math> makes each example’s influence narrow, so the estimate follows individual samples closely and can overfit. A large <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi></mrow></math> spreads influence farther, smoothing the estimate and potentially obscuring class structure. With enough data and a suitable smoothing choice, the density estimate can approach the true class density; this is an asymptotic property, not a guarantee for every finite data set.</p>
-<p>Training is fast because adding a sample mainly stores it and wires a pattern unit. The same design means memory grows with the training set, and a prediction evaluates stored examples, so inference work grows with the number of samples (and feature dimension for each distance). Gaussian responses also decrease for far-away exemplars, limiting their individual influence.</p>
-
+<h2 id="section-5">Bandwidth and practical trade-offs</h2><figure class="concept-visual"><h3>Change σ and watch one stored example’s influence</h3><div data-explorer="kernel"><label for="kernel-sigma">Bandwidth σ <input data-input="sigma" id="kernel-sigma" max="2" min="0.25" step="0.25" type="range" value="1"/><output data-value="sigma">1</output></label><svg aria-label="Relative Gaussian response around one exemplar at zero" role="img" viewbox="0 0 660 245"><path class="axis" d="M50 200H610 M330 200V25"></path><text x="45" y="225">−3</text><text x="322" y="225">0</text><text x="598" y="225">3</text><text x="60" y="22">Relative response</text><path class="curve" d="" data-curve="kernel"></path></svg><output class="visual-result" data-result="kernel"></output></div><figcaption>Teaching view of exp(−d²/2σ²), normalized to peak 1. The density formula below also includes the Gaussian normalization factor; class scores average all exemplars.</figcaption></figure>
+<p>Small σ makes narrow, sample-specific bumps and can overfit. Large σ smooths the density but can blur class structure. Approaching the true density requires enough data and a suitable smoothing choice; it is not a finite-data guarantee.</p>
+<p>The storage trade-off is direct:</p><ul><li>Adding a sample is fast.</li><li>Memory grows with the number of stored examples.</li><li>Prediction compares against stored examples, so work grows with sample count and feature dimension.</li><li>Distant examples have small Gaussian responses.</li></ul>
 <h2 id="section-6">Common mistakes</h2>
 <ul>
-<li><strong>Summing instead of averaging:</strong> divide each class total by its own <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>N</mi><mi>k</mi></msub></mrow></math>.</li>
-<li><strong>Calling a density a posterior:</strong> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mover accent="true"><mi>f</mi><mo>&#x0005E;</mo></mover><mi>k</mi></msub><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math> estimates the class-conditional density. Priors are separate; posterior probabilities require normalization across classes.</li>
+<li><strong>Summing instead of averaging:</strong> divide each class total by its own <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>N</mi><mi>k</mi></msub></mrow></math>.</li>
+<li><strong>Calling a density a posterior:</strong> <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mover accent="true"><mi>f</mi><mo>^</mo></mover><mi>k</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></math> estimates the class-conditional density. Priors are separate; posterior probabilities require normalization across classes.</li>
 <li><strong>Using distance without the kernel:</strong> the pattern response includes both the Gaussian exponential and its normalizing factor.</li>
-<li><strong>Reversing the cost meanings:</strong> in the two-class inequality, <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mi>A</mi></msub></mrow></math> penalizes missing a true A, while <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mi>B</mi></msub></mrow></math> penalizes falsely deciding A for a true B.</li>
+<li><strong>Reversing the cost meanings:</strong> in the two-class inequality, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>C</mi><mi>A</mi></msub></mrow></math> penalizes missing a true A, while <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>C</mi><mi>B</mi></msub></mrow></math> penalizes falsely deciding A for a true B.</li>
 <li><strong>Describing PNN training as iterative optimization:</strong> the method stores each labeled example; the lecture’s procedure has no epochs or gradient updates.</li>
-<li><strong>Ignoring <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi></mrow></math>:</strong> very narrow kernels can overfit; very broad kernels can oversmooth.</li>
+<li><strong>Ignoring <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>σ</mi></mrow></math>:</strong> very narrow kernels can overfit; very broad kernels can oversmooth.</li>
 </ul>
-
 <h2 id="section-7">Exam focus</h2>
 <ul>
 <li>Name the layers in order: input, pattern, summation, output/decision.</li>
 <li>For a pattern unit, compute squared Euclidean distance and substitute it into the Gaussian kernel.</li>
-<li>Average the pattern responses within each class using its own <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>N</mi><mi>k</mi></msub></mrow></math>.</li>
+<li>Average the pattern responses within each class using its own <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>N</mi><mi>k</mi></msub></mrow></math>.</li>
 <li>With equal priors and costs, select the maximum-density class.</li>
 <li>For the two-class cost rule, state which error each class cost penalizes before applying the inequality.</li>
 <li>Explain the trade-off: quick sample insertion and density interpretation, with storage/inference costs and bandwidth sensitivity.</li>
 </ul>
-
 <h2 id="section-8">Practice</h2>
-<p class="question">If a query is equally distant from every stored exemplar and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi></mrow></math> is shared, what determines the pattern-response ranking?</p>
+<p class="question">If a query is equally distant from every stored exemplar and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>σ</mi></mrow></math> is shared, what determines the pattern-response ranking?</p>
 <details class="worked"><summary>Check your answer</summary><p>All pattern units have the same Gaussian response because the kernel depends on the same squared distance, dimension, and bandwidth. Class averages will therefore tie unless class-specific priors or costs change the decision.</p></details>
 <p class="question">Class A has 3 stored examples and class B has 6. What denominator is used for each class density estimate?</p>
-<details class="worked"><summary>Check your answer</summary><p>Use 3 for A and 6 for B: each estimated density is the average of that class’s pattern responses, divided by its own <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>N</mi><mi>k</mi></msub></mrow></math>.</p></details>
+<details class="worked"><summary>Check your answer</summary><p>Use 3 for A and 6 for B: each estimated density is the average of that class’s pattern responses, divided by its own <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>N</mi><mi>k</mi></msub></mrow></math>.</p></details>
 <p class="question">A PNN receives one newly labeled training example. What changes?</p>
 <details class="worked"><summary>Check your answer</summary><p>Add one pattern unit that stores the new feature vector and connect it to its class summation unit. No epoch or gradient update is required.</p></details>
-<p class="question">In the two-class rule, what does <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mi>B</mi></msub></mrow></math> mean under the stated convention?</p>
-<details class="worked"><summary>Check your answer</summary><p>It is the loss for deciding A when the true class is B: a false-A decision. <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mi>A</mi></msub></mrow></math> is the loss for deciding B when the true class is A.</p></details>
-<p class="question">What happens when <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C3;</mi></mrow></math> is made much larger?</p>
+<p class="question">In the two-class rule, what does <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>C</mi><mi>B</mi></msub></mrow></math> mean under the stated convention?</p>
+<details class="worked"><summary>Check your answer</summary><p>It is the loss for deciding A when the true class is B: a false-A decision. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>C</mi><mi>A</mi></msub></mrow></math> is the loss for deciding B when the true class is A.</p></details>
+<p class="question">What happens when <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>σ</mi></mrow></math> is made much larger?</p>
 <details class="worked"><summary>Check your answer</summary><p>Each Gaussian bump becomes broader. The estimated density becomes smoother, but may blur class structure (oversmoothing).</p></details>
 <h2 id="section-9">Primary reference for the two-class loss convention</h2>
-<p>Specht’s original PNN paper defines the two-category Bayes decision rule using priors, class densities, and the losses associated with each possible misclassification, with zero loss for correct decisions: <a href="https://people.engr.tamu.edu/rgutier/web_courses/cpsc636_s10/specht1990pnn.pdf">D. F. Specht, “Probabilistic Neural Networks” (1990), p. 110, equation (1)</a>.</p></article><nav class="pager" aria-label="Study sequence"><a href="training-variants.html"><small>Previous</small>Backpropagation variations and deeper networks <span aria-hidden="true">↗</span></a><a href="fuzzy-sets.html"><small>Next</small>Crisp and fuzzy sets <span aria-hidden="true">↗</span></a></nav><footer>Neural Networks and Fuzzy Logic · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+<p>Specht’s original PNN paper defines the two-category Bayes decision rule using priors, class densities, and the losses associated with each possible misclassification, with zero loss for correct decisions: <a href="https://people.engr.tamu.edu/rgutier/web_courses/cpsc636_s10/specht1990pnn.pdf">D. F. Specht, “Probabilistic Neural Networks” (1990), p. 110, equation (1)</a>.</p><p class="source-note">Lecture reference: Neural Network / Lesson 5.pdf. Source discrepancies and added teaching examples are identified beside the relevant calculation.</p></article><nav aria-label="Study sequence" class="pager"><a href="training-variants.html"><small>Previous</small>Backpropagation variations and deeper networks <span aria-hidden="true">↗</span></a><a href="fuzzy-sets.html"><small>Next</small>Crisp and fuzzy sets <span aria-hidden="true">↗</span></a></nav><footer>Neural Networks and Fuzzy Logic · Study guide <span>Understand the model. Follow each update.</span></footer></main></div><script src="pages-data.js"></script><script src="explorers.js"></script><script>(() => {
   'use strict';
   let cleanups = [];
   const initializeMain = root => {
+  initializeExplorers(root);
   const mathHints = new WeakMap();
   const repairMath = () => {
     root.querySelectorAll('math,.walk code').forEach(expression => {
@@ -273,7 +264,7 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
       const available = scope.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
       const box = expression.getBoundingClientRect(), bounds = scope.getBoundingClientRect();
       if (available <= 0 || !box.width) return;
-      if (box.width <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
+      if (Math.max(box.width, expression.scrollWidth) <= available && box.right <= bounds.right - parseFloat(style.paddingRight) + 1
           && box.left >= bounds.left + parseFloat(style.paddingLeft) - 1) return;
       const region = document.createElement('span');
       region.className = 'math-scroll';
@@ -340,12 +331,24 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
     const stop = () => { clearInterval(timer); timer = null; play.textContent = 'Play'; play.setAttribute('aria-pressed','false'); };
     const show = index => {
       current = Math.max(0, Math.min(steps.length - 1, index));
-      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
+      steps.forEach((step, i) => { step.classList.toggle('active', i === current); step.setAttribute('aria-hidden', walk.dataset.view === 'all' || i === current ? 'false' : 'true'); });
       walk.querySelector('output').textContent = `Step ${current + 1} of ${steps.length}`;
       prev.disabled = current === 0; next.disabled = current === steps.length - 1;
       repairMath();
       if (next.disabled) stop();
     };
+    const all = document.createElement('button');
+    all.type = 'button'; all.dataset.action = 'all'; all.textContent = 'Show all steps';
+    all.setAttribute('aria-pressed', 'false');
+    walk.querySelector('.walk-controls').append(all);
+    const setView = expanded => {
+      walk.dataset.view = expanded ? 'all' : 'single';
+      all.textContent = expanded ? 'One step at a time' : 'Show all steps';
+      all.setAttribute('aria-pressed', String(expanded));
+      steps.forEach((step, i) => step.setAttribute('aria-hidden', expanded || walk.dataset.view === 'all' || i === current ? 'false' : 'true'));
+      repairMath();
+    };
+    all.addEventListener('click', () => { stop(); setView(walk.dataset.view !== 'all'); });
     walk.dataset.ready = 'true'; show(0);
     prev.addEventListener('click', () => { stop(); show(current - 1); });
     next.addEventListener('click', () => { stop(); show(current + 1); });

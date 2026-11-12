@@ -4,97 +4,97 @@
     "title": "Neural networks and fuzzy logic",
     "group": "Start here",
     "lecture": "MA4144 · Study route",
-    "lead": "A guided route through neural network learning methods and fuzzy reasoning."
+    "lead": "Choose a question, understand the model, then work the calculation."
   },
   {
     "slug": "foundations",
     "title": "Neurons, activations and network foundations",
     "group": "Neural networks",
     "lecture": "Lesson 1",
-    "lead": "See how weighted signals, bias, activation, architecture, and learning fit together before working through the course’s training procedures."
+    "lead": "A neuron is a weighted sum followed by an activation. Learning changes its weights and bias."
   },
   {
     "slug": "perceptron",
     "title": "Threshold logic and perceptron learning",
     "group": "Neural networks",
     "lecture": "Lesson 2",
-    "lead": "How fixed thresholds implement logic, and how a perceptron learns a linear decision boundary."
+    "lead": "A perceptron learns a straight decision boundary. Check the label and zero-threshold convention before updating."
   },
   {
     "slug": "adaptive-linear",
     "title": "ADALINE and MADALINE learning",
     "group": "Neural networks",
     "lecture": "Lesson 3",
-    "lead": "How ADALINE learns from linear error and how early MADALINE rules choose hidden-unit updates."
+    "lead": "ADALINE learns from its linear response. MADALINE must also decide which hidden units to change."
   },
   {
     "slug": "lms",
     "title": "Widrow-Hoff derivation and LMS calculations",
     "group": "Neural networks",
     "lecture": "Widrow-Hoff reading",
-    "lead": "Derive the no-half Widrow–Hoff objective, connect its quadratic geometry to LMS, and work the source vectors through two complete epochs."
+    "lead": "Derive the LMS update, keep the factor of two straight, and follow one complete numerical training trace."
   },
   {
     "slug": "backpropagation",
     "title": "Multilayer networks and backpropagation",
     "group": "Neural networks",
     "lecture": "Lesson 4",
-    "lead": "Follow an MLP from a forward prediction through chain-rule deltas to simultaneous weight updates, with the lecture’s examples and a checked two-epoch teaching trace."
+    "lead": "Send activations forward, send error signals backward, then update all parameters from the same old state."
   },
   {
     "slug": "training-variants",
     "title": "Backpropagation variations and deeper networks",
     "group": "Neural networks",
     "lecture": "Lesson 4 continuation",
-    "lead": "Compare update history, batch corrections, adaptive rates, activation gains, and a full two-hidden-layer backpropagation pass."
+    "lead": "Compare momentum, batch learning, adaptive rates and gain changes by what each one actually changes."
   },
   {
     "slug": "pnn",
     "title": "Probabilistic neural networks",
     "group": "Neural networks",
     "lecture": "Lesson 5",
-    "lead": "A memory-based classifier that turns stored examples into Gaussian class-density estimates."
+    "lead": "A PNN stores examples, turns distance into Gaussian responses, and averages those responses within each class."
   },
   {
     "slug": "fuzzy-sets",
     "title": "Crisp and fuzzy sets",
     "group": "Fuzzy foundations",
     "lecture": "Fuzzy lessons 1-3",
-    "lead": "A source-faithful introduction to crisp and fuzzy membership, notation, and the standard set operations."
+    "lead": "Membership is a degree of fit. With the standard operators, union takes max, intersection takes min, and complement takes 1−μ."
   },
   {
     "slug": "fuzzy-relations",
     "title": "Relations and matrix composition",
     "group": "Fuzzy foundations",
     "lecture": "Fuzzy lessons 1-3",
-    "lead": "A calculation-first guide to ordered-pair relations, matrix composition, tolerance closure, and relation strengths."
+    "lead": "A relation matrix gives grades to ordered pairs. Composition compares routes through a shared middle universe."
   },
   {
     "slug": "membership",
     "title": "Membership, fuzzification and defuzzification",
     "group": "Fuzzy foundations",
     "lecture": "Fuzzy lessons 1-3",
-    "lead": "Read membership-function shapes, fuzzify crisp inputs, form weak cuts, and compare six scalar defuzzification methods with complete calculations."
+    "lead": "Fuzzification gives grades. A cut gives a crisp set. Scalar defuzzification gives one number."
   },
   {
     "slug": "classical-logic",
     "title": "Classical logic and crisp rule relations",
     "group": "Fuzzy reasoning",
     "lecture": "Fuzzy lesson 4",
-    "lead": "A guided route from binary propositions and proof patterns to crisp IF/ELSE relations and inference."
+    "lead": "An implication is false only when its premise is true and its conclusion is false. Use that row to check the rule."
   },
   {
     "slug": "logic-language",
     "title": "Fuzzy propositions, linguistic variables and implications",
     "group": "Fuzzy reasoning",
     "lecture": "Fuzzy lessons 5–6",
-    "lead": "How graded propositions, implication relations, linguistic variables and hedges connect fuzzy words to rule reasoning."
+    "lead": "Translate words into grades, keep the universes separate, and name the implication operator before calculating."
   },
   {
     "slug": "fuzzy-systems",
     "title": "Mamdani, Sugeno, Tsukamoto and ANFIS",
     "group": "Fuzzy reasoning",
     "lecture": "Fuzzy lesson 7",
-    "lead": "Trace canonical rule evaluation, compare Mamdani, TSK, and Tsukamoto inference, and see how ANFIS layers connect TSK with hybrid learning."
+    "lead": "Mamdani, Sugeno and Tsukamoto share fuzzy rule firing. Their consequent types determine how the final number is calculated."
   }
 ]
