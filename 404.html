@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="description" content="This page isn't here. You can still find Vihanga's study guides.">
+  <title>404 · Vihanga Pankaja</title>
+  <style>
+    :root { color-scheme: light dark; --paper: #f4f1e9; --ink: #252c28; --muted: #666c64; --line: #cccfc3; --accent: #365d47; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0 clamp(24px, 7vw, 110px); background: var(--paper); color: var(--ink); font: 18px/1.6 Candara, 'Segoe UI', sans-serif; }
+    header, footer { max-width: 1280px; margin: auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 25px 0; font-size: 13px; }
+    header { border-bottom: 1px solid var(--line); }
+    .name { font-weight: 700; letter-spacing: .03em; }
+    .address, footer { color: var(--muted); }
+    main { max-width: 1280px; min-height: 76svh; margin: auto; display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: clamp(24px, 5vw, 90px); padding: 70px 0; }
+    .number { position: relative; font: normal clamp(130px, 23vw, 340px)/1 Georgia, serif; letter-spacing: -.09em; color: var(--accent); user-select: none; }
+    .number::after { content: ''; position: absolute; left: 4%; right: 0; top: 53%; height: 1px; background: var(--line); transform: rotate(-16deg); }
+    .label { color: var(--muted); text-transform: uppercase; letter-spacing: .17em; font-size: 11px; }
+    h1 { font: normal clamp(38px, 4.5vw, 68px)/1.08 Georgia, serif; letter-spacing: -.045em; margin: 22px 0; max-width: 9em; }
+    p { max-width: 28em; color: var(--muted); }
+    .links { display: flex; flex-wrap: wrap; align-items: center; gap: 20px 26px; margin-top: 34px; }
+    a { color: var(--accent); text-underline-offset: 5px; }
+    .primary { display: inline-flex; align-items: center; gap: 25px; padding: 12px 18px; border: 1px solid var(--accent); border-radius: 3px; text-decoration: none; font-size: 15px; }
+    .primary:hover { background: var(--accent); color: var(--paper); }
+    .secondary { font-size: 14px; }
+    a:focus-visible { outline: 3px solid var(--accent); outline-offset: 6px; }
+    footer { border-top: 1px solid var(--line); font-size: 12px; }
+    @media (max-width: 680px) { main { grid-template-columns: 1fr; gap: 30px; padding: 44px 0 60px; min-height: auto; } .number { font-size: clamp(140px, 43vw, 240px); max-width: 340px; } h1 { max-width: 12em; margin-top: 14px; } .address { font-size: 11px; } }
+    @media (prefers-color-scheme: dark) { :root { --paper: #191f1c; --ink: #edece3; --muted: #afb7ad; --line: #414c43; --accent: #b0c6a4; } }
+  </style>
+</head>
+<body>
+  <header><span class="name">Vihanga Pankaja</span><span class="address">vihangapankaja.github.io</span></header>
+  <main>
+    <div class="number" aria-hidden="true">404</div>
+    <section aria-labelledby="title">
+      <span class="label">404 / Page not found</span>
+      <h1 id="title">Nothing at this address.</h1>
+      <p>The page may have moved, or the link may be out of date. The study guides are still here.</p>
+      <nav class="links" aria-label="Where to go next">
+        <a class="primary" href="/study-guides/">Browse study guides <span aria-hidden="true">↗</span></a>
+        <a class="secondary" href="https://github.com/VihangaPankaja">GitHub profile</a>
+      </nav>
+    </section>
+  </main>
+  <footer><span>A small corner of the internet.</span><span>Vihanga Pankaja</span></footer>
+</body>
+</html>
