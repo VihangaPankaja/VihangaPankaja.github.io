@@ -56,6 +56,13 @@
     "lead": "A PNN stores examples, turns distance into Gaussian responses, and averages those responses within each class."
   },
   {
+    "slug": "neural-revision",
+    "title": "Neural networks · Short note",
+    "group": "Neural networks",
+    "lecture": "After Lesson 5",
+    "lead": "The essentials to recall before a neural-network calculation."
+  },
+  {
     "slug": "fuzzy-sets",
     "title": "Crisp and fuzzy sets",
     "group": "Fuzzy foundations",
@@ -96,5 +103,12 @@
     "group": "Fuzzy reasoning",
     "lecture": "Fuzzy lesson 7",
     "lead": "Mamdani, Sugeno and Tsukamoto share fuzzy rule firing. Their consequent types determine how the final number is calculated."
+  },
+  {
+    "slug": "fuzzy-revision",
+    "title": "Fuzzy logic · Short note",
+    "group": "Fuzzy reasoning",
+    "lecture": "After Lesson 7",
+    "lead": "The essentials to recall before a fuzzy-logic calculation."
   }
 ]
