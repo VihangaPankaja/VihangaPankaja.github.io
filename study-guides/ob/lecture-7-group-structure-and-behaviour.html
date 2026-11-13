@@ -1,4 +1,5 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="How group development, roles, norms, status, effort, cohesion, and diversity shape workplace behaviour and performance."><title>Group Structure and Behaviour · OB and Management</title><script>(() => {
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="Connect roles, norms, status and cohesion to effort and performance." name="description"/><title>Group Structure and Behaviour · OB and Management</title><script>(() => {
   let choice = 'system';
   try { const saved = localStorage.getItem('ob-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
   document.documentElement.dataset.themeChoice = choice;
@@ -36,135 +37,129 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 .menu:focus{outline:3px solid var(--focus);outline-offset:3px}
 
 .nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-</style></head><body>
-<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">OB</span> OB <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
-  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
-  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
-    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
-    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
-    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
-  </div>
+</style><link href="reading.css" rel="stylesheet"/></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span aria-hidden="true" class="mark">OB</span> OB <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+<button aria-controls="theme-options" aria-expanded="false" aria-haspopup="menu" aria-label="Color theme: System" id="theme" type="button"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"></path><circle cx="12" cy="12" r="4"></circle></svg><span id="theme-current">System</span><svg aria-hidden="true" class="theme-chevron" viewbox="0 0 16 16"><path d="m4 6 4 4 4-4"></path></svg></button>
+<div aria-label="Color theme" hidden="" id="theme-options" role="menu">
+<button aria-checked="true" data-theme-value="system" role="menuitemradio" tabindex="-1" type="button"><span>System<small>Follow your device</small></span><span aria-hidden="true" class="theme-check">✓</span></button>
+<button aria-checked="false" data-theme-value="light" role="menuitemradio" tabindex="-1" type="button"><span>Light<small>Light pages and diagrams</small></span><span aria-hidden="true" class="theme-check">✓</span></button>
+<button aria-checked="false" data-theme-value="dark" role="menuitemradio" tabindex="-1" type="button"><span>Dark<small>Dark pages and diagrams</small></span><span aria-hidden="true" class="theme-check">✓</span></button>
 </div>
-<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
-<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="People, teams, leadership…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Organizational Behavior and Management</a></div><div class="nav-group"><p>Foundations</p><a class="nav-entry" data-search="" href="lecture-1-organizational-behaviour-foundations.html">Organizational Behaviour Foundations</a></div><div class="nav-group"><p>Individual behaviour</p><a class="nav-entry" data-search="" href="lecture-2-work-attitudes-and-job-satisfaction.html">Work Attitudes and Job Satisfaction</a><a class="nav-entry" data-search="" href="lecture-3-personality-at-work.html">Personality at Work</a><a class="nav-entry" data-search="" href="lecture-3-values-culture-and-person-environment-fit.html">Values, Culture, and Person-Environment Fit</a><a class="nav-entry" data-search="" href="lecture-4-emotions-and-moods.html">Emotions and Moods</a><a class="nav-entry" data-search="" href="lecture-5-managing-emotions-at-work.html">Managing Emotions at Work</a><a class="nav-entry" data-search="" href="lecture-6-perception-and-individual-decision-making.html">Perception and Individual Decision Making</a></div><div class="nav-group"><p>Group behaviour</p><a class="nav-entry" data-search="" href="lecture-7-group-structure-and-behaviour.html" aria-current="page">Group Structure and Behaviour</a><a class="nav-entry" data-search="" href="lecture-7-group-decision-making.html">Group Decision-Making</a><a class="nav-entry" data-search="" href="lecture-8-work-teams-and-effectiveness.html">Work Teams and Effectiveness</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">MN4063<br>Organizational Behavior and Management</div></aside>
-<main id="main"><div class="eyebrow">Group behaviour <span>/</span> Lecture 7A</div><h1>Group Structure and Behaviour</h1><p class="lead">How group development, roles, norms, status, effort, cohesion, and diversity shape workplace behaviour and performance.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">What counts as a group?</a><a href="#section-2">How groups develop</a><a href="#section-3">Roles, norms, and sanctions</a><a href="#section-4">Deviant workplace behaviour</a><a href="#section-5">Status, voice, and group size</a><a href="#section-6">Effort, cohesion, and performance</a><a href="#section-7">Diversity and faultlines</a><a href="#section-8">Common mistakes</a><a href="#section-9">Exam focus</a><a href="#section-10">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
-<p>Groups shape how people coordinate, interpret expectations, share influence, and apply effort. Structure is not just a chart of positions: roles, norms, status, size, cohesion, and member differences all affect what the group can accomplish. These features can support performance or make it harder, depending on the task and on how members interact.</p>
+</div>
+<button aria-controls="sidebar" aria-expanded="false" class="menu" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input autocomplete="off" id="topic-filter" placeholder="People, teams, leadership…" type="search"/><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" data-search="Clear explanations, workplace cases and short notes for MN4063. Read a topic, try its questions, then revisit the essentials." href="index.html">Organizational Behavior and Management</a></div><div class="nav-group"><p>Foundations</p><a class="nav-entry" data-search="Understand behaviour at three levels, then ask which conditions make an explanation fit." href="lecture-1-organizational-behaviour-foundations.html">Organizational Behaviour Foundations</a></div><div class="nav-group"><p>Individual behaviour</p><a class="nav-entry" data-search="Distinguish beliefs, feelings and intentions, then use EVLN to classify responses to dissatisfaction." href="lecture-2-work-attitudes-and-job-satisfaction.html">Work Attitudes and Job Satisfaction</a><a class="nav-entry" data-search="Compare personality frameworks and see why workplace rules and cues change what traits predict." href="lecture-3-personality-at-work.html">Personality at Work</a><a class="nav-entry" data-search="Separate values, job fit and organizational fit without turning national culture into an individual label." href="lecture-3-values-culture-and-person-environment-fit.html">Values, Culture, and Person-Environment Fit</a><a class="nav-entry" data-search="Distinguish emotions from moods, then connect emotional labour and daily events to work outcomes." href="lecture-4-emotions-and-moods.html">Emotions and Moods</a><a class="nav-entry" data-search="Recognize emotions, ask what support is wanted, and choose a response that fits the person and the task." href="lecture-5-managing-emotions-at-work.html">Managing Emotions at Work</a><a class="nav-entry" data-search="See how attention, attribution and decision shortcuts shape the conclusions people reach." href="lecture-6-perception-and-individual-decision-making.html">Perception and Individual Decision Making</a><a class="nav-entry revision-link" data-search="revision recap summary short note" href="individual-revision.html">Short note: individuals at work</a></div><div class="nav-group"><p>Group behaviour</p><a aria-current="page" class="nav-entry" data-search="Connect roles, norms, status and cohesion to effort and performance." href="lecture-7-group-structure-and-behaviour.html">Group Structure and Behaviour</a><a class="nav-entry" data-search="Compare groupthink, groupshift and three ways to organize a group decision." href="lecture-7-group-decision-making.html">Group Decision-Making</a><a class="nav-entry" data-search="Decide when a team helps, then examine its context, composition and process." href="lecture-8-work-teams-and-effectiveness.html">Work Teams and Effectiveness</a><a class="nav-entry revision-link" data-search="revision recap summary short note" href="groups-revision.html">Short note: groups and teams</a></div></nav><p hidden="" id="no-topics">No matching topics.</p><div class="rail-foot">MN4063<br/>Organizational Behavior and Management</div></aside>
+<main id="main"><div class="eyebrow">Group behaviour <span>/</span> Lecture 7A</div><h1>Group Structure and Behaviour</h1><p class="lead">Connect roles, norms, status and cohesion to effort and performance.</p><details class="contents"><summary>On this page · 10 sections</summary><nav aria-label="On this page" class="on-page"><a href="#section-0">Shared expectations shape group behaviour</a><a href="#section-1">What counts as a group?</a><a href="#section-2">How groups develop</a><a href="#section-3">Roles, norms, and sanctions</a><a href="#section-4">Deviant workplace behaviour</a><a href="#section-5">Status, voice, and group size</a><a href="#section-6">Effort, cohesion, and performance</a><a href="#section-7">Diversity and faultlines</a><a href="#section-8">Common mistakes</a><a href="#section-10">Practice questions</a></nav></details><article><h2 id="section-0">Shared expectations shape group behaviour</h2>
+<ul class="takeaways"><li>A role concerns expected conduct; a norm is a shared standard; status is a socially assigned rank.</li><li>Make contributions identifiable to reduce social loafing.</li><li>Cohesion strengthens shared performance norms. A close group can reinforce low output.</li></ul>
 <p>Two development models help explain different patterns. Tuckman’s stages describe a possible path for groups working together; punctuated equilibrium describes temporary groups working toward a deadline. The remaining ideas explain how group expectations and relationships affect everyday behaviour and results.</p>
 <h2 id="section-1">What counts as a group?</h2>
-<p>A group is two or more people who interact, depend on one another, and come together to achieve particular objectives. Groups may be <strong>formal</strong> or <strong>informal</strong>. A formal group is defined by the organization: assigned work, established tasks, and behaviour directed toward organizational goals. An informal group is not created by the organization’s formal structure. It develops through social contact, yet its interactions can still affect work behaviour and performance.</p>
+<p>A group is two or more people who interact, depend on one another, and come together to achieve particular objectives. Groups may be <strong>formal</strong> or <strong>informal</strong>. A formal group is defined by the organization: assigned work, established tasks, and behaviour directed toward organizational goals. An informal group is not created by the organization’s formal structure.</p><p>It develops through social contact, yet its interactions can still affect work behaviour and performance.</p>
 <details class="worked"><summary>Teaching example: a formal project group and an informal lunch group</summary><p>A manager assigns employees from finance, operations, and sales to deliver a forecast. The assigned task and responsibilities make this a formal group. Those employees also meet for lunch because they enjoy one another’s company. That social group is informal. The informal connection may help them communicate at work, but its existence does not replace the formal group’s task or authority.</p></details>
-
 <h2 id="section-2">How groups develop</h2>
 <h3>Tuckman’s five stages</h3>
 <p>The lecture’s sequence is <strong>Forming → Storming → Norming → Performing → Adjourning</strong>.</p>
 <figure><div class="diagram-frame" style="--diagram-width:690.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
 <!-- Generated by graphviz version 16.1.0 (20260904.0139)
  -->
 <!-- Title: G Pages: 1 -->
-<svg role="img" aria-label="Tuckman’s five-stage sequence. The stages describe a useful pattern, not a guaranteed or irreversible path." width="690pt" height="58pt"
- viewBox="0.00 0.00 690.00 58.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
-<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 46.8)">
+<svg aria-label="Tuckman’s five-stage sequence. The stages describe a useful pattern, not a guaranteed or irreversible path." height="58pt" role="img" viewbox="0.00 0.00 690.00 58.00" width="690pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g class="graph" id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-graph0" transform="scale(1 1) rotate(0) translate(10.8 46.8)">
 <title>G</title>
 <!-- forming -->
-<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-node1" class="node">
+<g class="node" id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-node1">
 <title>forming</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M86.1,-36C86.1,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 86.1,0 86.1,0 92.1,0 98.1,-6 98.1,-12 98.1,-12 98.1,-24 98.1,-24 98.1,-30 92.1,-36 86.1,-36"/>
-<text xml:space="preserve" text-anchor="middle" x="49.05" y="-12.75" font-family="Georgia" font-size="15.00">1 · Forming</text>
+<path d="M86.1,-36C86.1,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 86.1,0 86.1,0 92.1,0 98.1,-6 98.1,-12 98.1,-12 98.1,-24 98.1,-24 98.1,-30 92.1,-36 86.1,-36" fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="49.05" xml:space="preserve" y="-12.75">1 · Forming</text>
 </g>
 <!-- storming -->
-<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-node2" class="node">
+<g class="node" id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-node2">
 <title>storming</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M222.2,-36C222.2,-36 142.1,-36 142.1,-36 136.1,-36 130.1,-30 130.1,-24 130.1,-24 130.1,-12 130.1,-12 130.1,-6 136.1,0 142.1,0 142.1,0 222.2,0 222.2,0 228.2,0 234.2,-6 234.2,-12 234.2,-12 234.2,-24 234.2,-24 234.2,-30 228.2,-36 222.2,-36"/>
-<text xml:space="preserve" text-anchor="middle" x="182.15" y="-12.75" font-family="Georgia" font-size="15.00">2 · Storming</text>
+<path d="M222.2,-36C222.2,-36 142.1,-36 142.1,-36 136.1,-36 130.1,-30 130.1,-24 130.1,-24 130.1,-12 130.1,-12 130.1,-6 136.1,0 142.1,0 142.1,0 222.2,0 222.2,0 228.2,0 234.2,-6 234.2,-12 234.2,-12 234.2,-24 234.2,-24 234.2,-30 228.2,-36 222.2,-36" fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="182.15" xml:space="preserve" y="-12.75">2 · Storming</text>
 </g>
 <!-- forming&#45;&gt;storming -->
-<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-edge1" class="edge">
-<title>forming&#45;&gt;storming</title>
-<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M98.49,-18C106.15,-18 114.15,-18 122.02,-18"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="121.81,-20.28 128.31,-18 121.81,-15.73 121.81,-20.28"/>
+<g class="edge" id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-edge1">
+<title>forming-&gt;storming</title>
+<path d="M98.49,-18C106.15,-18 114.15,-18 122.02,-18" fill="none" stroke="var(--diagram-edge,#547b86)"></path>
+<polygon fill="var(--diagram-edge,#547b86)" points="121.81,-20.28 128.31,-18 121.81,-15.73 121.81,-20.28" stroke="var(--diagram-edge,#547b86)"></polygon>
 </g>
 <!-- norming -->
-<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-node3" class="node">
+<g class="node" id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-node3">
 <title>norming</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M356.05,-36C356.05,-36 278.2,-36 278.2,-36 272.2,-36 266.2,-30 266.2,-24 266.2,-24 266.2,-12 266.2,-12 266.2,-6 272.2,0 278.2,0 278.2,0 356.05,0 356.05,0 362.05,0 368.05,-6 368.05,-12 368.05,-12 368.05,-24 368.05,-24 368.05,-30 362.05,-36 356.05,-36"/>
-<text xml:space="preserve" text-anchor="middle" x="317.12" y="-12.75" font-family="Georgia" font-size="15.00">3 · Norming</text>
+<path d="M356.05,-36C356.05,-36 278.2,-36 278.2,-36 272.2,-36 266.2,-30 266.2,-24 266.2,-24 266.2,-12 266.2,-12 266.2,-6 272.2,0 278.2,0 278.2,0 356.05,0 356.05,0 362.05,0 368.05,-6 368.05,-12 368.05,-12 368.05,-24 368.05,-24 368.05,-30 362.05,-36 356.05,-36" fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="317.12" xml:space="preserve" y="-12.75">3 · Norming</text>
 </g>
 <!-- storming&#45;&gt;norming -->
-<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-edge2" class="edge">
-<title>storming&#45;&gt;norming</title>
-<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M234.56,-18C242.24,-18 250.19,-18 257.99,-18"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="257.71,-20.28 264.21,-18 257.71,-15.73 257.71,-20.28"/>
+<g class="edge" id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-edge2">
+<title>storming-&gt;norming</title>
+<path d="M234.56,-18C242.24,-18 250.19,-18 257.99,-18" fill="none" stroke="var(--diagram-edge,#547b86)"></path>
+<polygon fill="var(--diagram-edge,#547b86)" points="257.71,-20.28 264.21,-18 257.71,-15.73 257.71,-20.28" stroke="var(--diagram-edge,#547b86)"></polygon>
 </g>
 <!-- performing -->
-<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-node4" class="node">
+<g class="node" id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-node4">
 <title>performing</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M506.4,-36C506.4,-36 412.05,-36 412.05,-36 406.05,-36 400.05,-30 400.05,-24 400.05,-24 400.05,-12 400.05,-12 400.05,-6 406.05,0 412.05,0 412.05,0 506.4,0 506.4,0 512.4,0 518.4,-6 518.4,-12 518.4,-12 518.4,-24 518.4,-24 518.4,-30 512.4,-36 506.4,-36"/>
-<text xml:space="preserve" text-anchor="middle" x="459.23" y="-12.75" font-family="Georgia" font-size="15.00">4 · Performing</text>
+<path d="M506.4,-36C506.4,-36 412.05,-36 412.05,-36 406.05,-36 400.05,-30 400.05,-24 400.05,-24 400.05,-12 400.05,-12 400.05,-6 406.05,0 412.05,0 412.05,0 506.4,0 506.4,0 512.4,0 518.4,-6 518.4,-12 518.4,-12 518.4,-24 518.4,-24 518.4,-30 512.4,-36 506.4,-36" fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="459.23" xml:space="preserve" y="-12.75">4 · Performing</text>
 </g>
 <!-- norming&#45;&gt;performing -->
-<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-edge3" class="edge">
-<title>norming&#45;&gt;performing</title>
-<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M368.31,-18C375.96,-18 383.96,-18 391.9,-18"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="391.79,-20.28 398.29,-18 391.79,-15.73 391.79,-20.28"/>
+<g class="edge" id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-edge3">
+<title>norming-&gt;performing</title>
+<path d="M368.31,-18C375.96,-18 383.96,-18 391.9,-18" fill="none" stroke="var(--diagram-edge,#547b86)"></path>
+<polygon fill="var(--diagram-edge,#547b86)" points="391.79,-20.28 398.29,-18 391.79,-15.73 391.79,-20.28" stroke="var(--diagram-edge,#547b86)"></polygon>
 </g>
 <!-- adjourning -->
-<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-node5" class="node">
+<g class="node" id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-node5">
 <title>adjourning</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M656,-36C656,-36 562.4,-36 562.4,-36 556.4,-36 550.4,-30 550.4,-24 550.4,-24 550.4,-12 550.4,-12 550.4,-6 556.4,0 562.4,0 562.4,0 656,0 656,0 662,0 668,-6 668,-12 668,-12 668,-24 668,-24 668,-30 662,-36 656,-36"/>
-<text xml:space="preserve" text-anchor="middle" x="609.2" y="-12.75" font-family="Georgia" font-size="15.00">5 · Adjourning</text>
+<path d="M656,-36C656,-36 562.4,-36 562.4,-36 556.4,-36 550.4,-30 550.4,-24 550.4,-24 550.4,-12 550.4,-12 550.4,-6 556.4,0 562.4,0 562.4,0 656,0 656,0 662,0 668,-6 668,-12 668,-12 668,-24 668,-24 668,-30 662,-36 656,-36" fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="609.2" xml:space="preserve" y="-12.75">5 · Adjourning</text>
 </g>
 <!-- performing&#45;&gt;adjourning -->
-<g id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-edge4" class="edge">
-<title>performing&#45;&gt;adjourning</title>
-<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M518.71,-18C526.46,-18 534.46,-18 542.33,-18"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="542.13,-20.28 548.63,-18 542.13,-15.73 542.13,-20.28"/>
+<g class="edge" id="lecture-7-group-structure-and-behaviour-figure-1-lecture-7-group-structure-and-behaviour-tuckman-five-stages-edge4">
+<title>performing-&gt;adjourning</title>
+<path d="M518.71,-18C526.46,-18 534.46,-18 542.33,-18" fill="none" stroke="var(--diagram-edge,#547b86)"></path>
+<polygon fill="var(--diagram-edge,#547b86)" points="542.13,-20.28 548.63,-18 542.13,-15.73 542.13,-20.28" stroke="var(--diagram-edge,#547b86)"></polygon>
 </g>
 </g>
 </svg>
 </div><figcaption>Tuckman’s five-stage sequence. The stages describe a useful pattern, not a guaranteed or irreversible path.</figcaption></figure>
-
-<p>In <strong>forming</strong>, members are often polite and reserved. They clarify purpose, goals, and tasks and may look to a leader for direction. <strong>Storming</strong> brings visible differences in views, power, and preferred direction; communication can become strained. In <strong>norming</strong>, members work through conflict, establish shared expectations, clarify roles, and build trust. During <strong>performing</strong>, coordination and efficiency improve, members use one another’s strengths, and work and decisions can become more self-managed. <strong>Adjourning</strong> occurs when the group’s work ends: members recognize contributions, reflect on the result, and prepare to move to other work.</p>
+<ol class="development-stages"><li><strong>Forming:</strong> clarify purpose and tasks; members may rely on a leader.</li><li><strong>Storming:</strong> differences about direction and power become visible.</li><li><strong>Norming:</strong> work through conflict and establish expectations, roles and trust.</li><li><strong>Performing:</strong> coordinate work and use members’ strengths.</li><li><strong>Adjourning:</strong> recognize contributions, reflect and move on.</li></ol>
 <p>The lecture slide labels Adjourning “Stage 4,” even though the same deck labels Performing “Stage 4.” Here it is correctly presented as <strong>Stage 5</strong>: the five-stage sequence added adjourning after the original four stages in Tuckman and Jensen’s review. <a href="https://doi.org/10.1177/105960117700200404">Primary reference: Tuckman &amp; Jensen (1977)</a>.</p>
-<p>The model is a guide, not a promise that every group moves neatly forward. Groups progress at different rates; some remain in storming. Storming and performing can coexist, and a group can return to an earlier difficulty. A clear purpose and strategy, and a positive social focus, may help a group reach productive work sooner. Moving to a later stage alone does not prove the group is effective.</p>
-<details class="worked"><summary>Teaching example: diagnosing a project team’s stage without treating it as a score</summary><p>A newly assembled project team is polite, asks who owns each task, and waits for the lead to settle basic questions. These clues fit forming. Two weeks later, members openly challenge the schedule and compete over priorities: that is consistent with storming. If they agree on handoffs and resolve disagreements constructively, norming is emerging. A later return to conflict after a new member joins is possible; it does not mean the earlier progress was false.</p></details>
-
+<p>The model is a guide, not a promise that every group moves neatly forward. Groups progress at different rates; some remain in storming. Storming and performing can coexist, and a group can return to an earlier difficulty. A clear purpose and strategy, and a positive social focus, may help a group reach productive work sooner.</p><p>Moving to a later stage alone does not prove the group is effective.</p>
+<details class="worked"><summary>Teaching example: diagnosing a project team’s stage without treating it as a score</summary><p>A newly assembled project team is polite, asks who owns each task, and waits for the lead to settle basic questions. These clues fit forming. Two weeks later, members openly challenge the schedule and compete over priorities: that is consistent with storming. If they agree on handoffs and resolve disagreements constructively, norming is emerging.</p><p>A later return to conflict after a new member joins is possible; it does not mean the earlier progress was false.</p></details>
 <h3>Temporary groups and punctuated equilibrium</h3>
-<p>Temporary groups with deadlines may follow a different pattern. In the lecture’s semester-presentation example, the first meeting sets a direction. A period of inertia or slow progress follows. At the exact midpoint of the allotted time, a transition prompts major change. A second period of inertia follows, then activity accelerates at the last meeting as the deadline approaches. The model emphasizes long periods of relative stability interrupted by a brief change triggered mainly by awareness of time and deadlines.</p>
-<figure><div class="diagram-frame" style="--diagram-width:760px"><svg xmlns="http://www.w3.org/2000/svg" width="760" height="350" viewBox="0 0 760 350" role="img" aria-label="Performance over time in a temporary deadline group">
-  <defs><marker id="lecture-7-group-structure-and-behaviour-figure-2-axis-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="var(--foreground,#34304a)"/></marker></defs>
-  <g fill="var(--foreground,#34304a)" font-family="Georgia,serif" font-size="17">
-    <path d="M90 270 V32 M90 270 H725" fill="none" stroke="var(--foreground,#34304a)" stroke-width="2" marker-end="url(#lecture-7-group-structure-and-behaviour-figure-2-axis-arrow)"/>
-    <text x="48" y="44" text-anchor="middle">High</text><text x="48" y="266" text-anchor="middle">Low</text>
-    <text x="24" y="160" text-anchor="middle" transform="rotate(-90 24 160)">Performance</text>
-    <path d="M130 270 V280 M410 270 V280 M690 270 V280" stroke="var(--foreground,#34304a)" stroke-width="2"/>
-    <path d="M410 264 V77" stroke="var(--muted,#526570)" stroke-width="1.5" stroke-dasharray="5 5"/>
-    <path d="M130 220 H410 V110 H630 V90 H690" fill="none" stroke="var(--primary,#315e6a)" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M130 211 V229 M690 81 V99" stroke="var(--primary,#315e6a)" stroke-width="3"/>
-    <text x="260" y="248" text-anchor="middle">Phase 1 · Inertia</text>
-    <text x="520" y="142" text-anchor="middle">Phase 2 · Inertia</text>
-    <text x="392" y="174" text-anchor="end">Midpoint transition</text>
-    <text x="658" y="43" text-anchor="middle">Final accelerated activity</text>
-    <text x="698" y="75" text-anchor="end">Completion</text>
-    <text x="130" y="301" text-anchor="middle">A</text>
-    <text x="130" y="323" text-anchor="middle" font-size="15">First meeting</text>
-    <text x="410" y="301" text-anchor="middle">(A + B)/2</text>
-    <text x="410" y="323" text-anchor="middle" font-size="15">Exactly halfway</text>
-    <text x="690" y="301" text-anchor="middle">B</text>
-    <text x="690" y="323" text-anchor="middle" font-size="15">Deadline</text>
-    <text x="410" y="346" text-anchor="middle">Time</text>
-  </g>
+<p>Temporary groups with deadlines may follow a different pattern. In the lecture’s semester-presentation example, the first meeting sets a direction. A period of inertia or slow progress follows. At the exact midpoint of the allotted time, a transition prompts major change. A second period of inertia follows, then activity accelerates at the last meeting as the deadline approaches.</p><p>The model emphasizes long periods of relative stability interrupted by a brief change triggered mainly by awareness of time and deadlines.</p>
+<figure><div class="diagram-frame" style="--diagram-width:760px"><svg aria-label="Performance over time in a temporary deadline group" height="350" role="img" viewbox="0 0 760 350" width="760" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="lecture-7-group-structure-and-behaviour-figure-2-axis-arrow" markerheight="8" markerwidth="8" orient="auto" refx="7" refy="4"><path d="M0 0 L8 4 L0 8 Z" fill="var(--foreground,#34304a)"></path></marker></defs>
+<g fill="var(--foreground,#34304a)" font-family="Georgia,serif" font-size="17">
+<path d="M90 270 V32 M90 270 H725" fill="none" marker-end="url(#lecture-7-group-structure-and-behaviour-figure-2-axis-arrow)" stroke="var(--foreground,#34304a)" stroke-width="2"></path>
+<text text-anchor="middle" x="48" y="44">High</text><text text-anchor="middle" x="48" y="266">Low</text>
+<text text-anchor="middle" transform="rotate(-90 24 160)" x="24" y="160">Performance</text>
+<path d="M130 270 V280 M410 270 V280 M690 270 V280" stroke="var(--foreground,#34304a)" stroke-width="2"></path>
+<path d="M410 264 V77" stroke="var(--muted,#526570)" stroke-dasharray="5 5" stroke-width="1.5"></path>
+<path d="M130 220 H410 V110 H630 V90 H690" fill="none" stroke="var(--primary,#315e6a)" stroke-linejoin="round" stroke-width="4"></path>
+<path d="M130 211 V229 M690 81 V99" stroke="var(--primary,#315e6a)" stroke-width="3"></path>
+<text text-anchor="middle" x="260" y="248">Phase 1 · Inertia</text>
+<text text-anchor="middle" x="520" y="142">Phase 2 · Inertia</text>
+<text text-anchor="end" x="392" y="174">Midpoint transition</text>
+<text text-anchor="middle" x="658" y="43">Final accelerated activity</text>
+<text text-anchor="end" x="698" y="75">Completion</text>
+<text text-anchor="middle" x="130" y="301">A</text>
+<text font-size="15" text-anchor="middle" x="130" y="323">First meeting</text>
+<text text-anchor="middle" x="410" y="301">(A + B)/2</text>
+<text font-size="15" text-anchor="middle" x="410" y="323">Exactly halfway</text>
+<text text-anchor="middle" x="690" y="301">B</text>
+<text font-size="15" text-anchor="middle" x="690" y="323">Deadline</text>
+<text text-anchor="middle" x="410" y="346">Time</text>
+</g>
 </svg>
- </div><figcaption>Schematic performance over time: low Phase 1, a transition exactly halfway through the allotted time, higher Phase 2, and final activity before completion. The vertical scale is qualitative.</figcaption></figure>
-
-<details class="worked"><summary>Teaching example: a semester presentation at its midpoint</summary><p>A group agrees on a topic at its first meeting, then makes little visible progress during the first half of the semester. At the midpoint, members recognize that half the available time is gone, divide the remaining work, and change their plan. Some slow progress may follow while those new arrangements settle. The last meeting is intensely active as members combine the presentation before the deadline. The midpoint transition is a feature of the deadline model; it is not a sixth Tuckman stage.</p></details>
-
+</div><figcaption>Schematic performance over time: low Phase 1, a transition exactly halfway through the allotted time, higher Phase 2, and final activity before completion. The vertical scale is qualitative.</figcaption></figure>
+<details class="worked"><summary>Teaching example: a semester presentation at its midpoint</summary><p>A group agrees on a topic at its first meeting, then makes little visible progress during the first half of the semester. At the midpoint, members recognize that half the available time is gone, divide the remaining work, and change their plan. Some slow progress may follow while those new arrangements settle.</p><p>The last meeting is intensely active as members combine the presentation before the deadline. The midpoint transition is a feature of the deadline model; it is not a sixth Tuckman stage.</p></details>
 <h2 id="section-3">Roles, norms, and sanctions</h2>
 <h3>Roles: position and expectations</h3>
-<p>A <strong>role</strong> is the set of behaviour patterns expected of someone in a position within a social unit. People hold several roles at work and outside it. <strong>Role perception</strong> is how a person understands the tasks, goals, and problems attached to a role. <strong>Role expectations</strong> are what the group or society expects that person to do. A <strong>role conflict</strong> occurs when simultaneous expectations are incompatible, or when responsibilities overlap with another worker or group. Greater role conflict is associated with greater work-related stress.</p>
+<p>A <strong>role</strong> is the set of behaviour patterns expected of someone in a position within a social unit. People hold several roles at work and outside it. <strong>Role perception</strong> is how a person understands the tasks, goals, and problems attached to a role. <strong>Role expectations</strong> are what the group or society expects that person to do.</p><p>A <strong>role conflict</strong> occurs when simultaneous expectations are incompatible, or when responsibilities overlap with another worker or group. Greater role conflict is associated with greater work-related stress.</p>
 <details class="worked"><summary>Teaching example: overlapping responsibility creates role conflict</summary><p>A project coordinator is told by one manager to release a report immediately and by another to withhold it until confidential figures are checked. The problem is not simply a large workload: the two role expectations are incompatible. Clarifying decision authority and the release procedure addresses the conflict more directly than asking the coordinator to work faster.</p></details>
-
 <h3>Group norms and their domains</h3>
 <p><strong>Norms</strong> are shared standards about what members ought or ought not to do in particular situations. They are different from formal rules, policies, and laws, which are enforced through an organization’s legitimate hierarchy. Norms emerge more naturally and often influence behaviour with little external control. They can cover nearly any aspect of group behaviour.</p>
 <table>
@@ -202,12 +197,10 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 </tbody>
 </table>
 <details class="worked"><summary>Teaching example: identify the norm and the formal rule</summary><p>A department has a written safety policy requiring eye protection in the workshop. That is a formal rule. Team members also tend to wait until the shift lead finishes before raising a concern. That turn-taking expectation is a communication norm. A group may have both at once; the norm is not a substitute for the written safety requirement.</p></details>
-
-<p><strong>Social sanctions</strong> are group responses that reinforce norms. Positive sanctions reward conformity, for example through praise, recognition, increased status, or access to group benefits. Negative sanctions express disapproval, such as ostracism, criticism, or loss of trust and support. Sanctions can promote conformity, reinforce a group’s sense of cohesion, and help members maintain order. But conformity by itself does not show that a norm is fair, useful, or consistent with formal policy.</p>
+<p><strong>Social sanctions</strong> are group responses that reinforce norms. Positive sanctions reward conformity, for example through praise, recognition, increased status, or access to group benefits. Negative sanctions express disapproval, such as ostracism, criticism, or loss of trust and support. Sanctions can promote conformity, reinforce a group’s sense of cohesion, and help members maintain order.</p><p>But conformity by itself does not show that a norm is fair, useful, or consistent with formal policy.</p>
 <details class="worked"><summary>Teaching example: a sanction reinforces a harmful norm</summary><p>If coworkers praise members who stay silent about a recurring safety problem and exclude a member who raises it, praise and exclusion are positive and negative sanctions, respectively. They reinforce the group’s norm of silence, but the norm can still be harmful and conflict with formal safety expectations.</p></details>
-
 <h2 id="section-4">Deviant workplace behaviour</h2>
-<p>Deviant workplace behaviour—also called antisocial behaviour or workplace incivility in the lecture—is voluntary behaviour that violates significant organizational norms and threatens the well-being of the organization or its members. The lecture sorts examples along <strong>two separate dimensions</strong>: who or what is targeted, and how serious the act is. Its image-only diagram on slide 34 places interpersonal behaviour on the vertical axis and minor-to-serious behaviour on the horizontal axis.</p>
+<p>Deviant workplace behaviour—also called antisocial behaviour or workplace incivility in the lecture—is voluntary behaviour that violates significant organizational norms and threatens the well-being of the organization or its members. The lecture sorts examples along <strong>two separate dimensions</strong>: who or what is targeted, and how serious the act is.</p><p>Its image-only diagram on slide 34 places interpersonal behaviour on the vertical axis and minor-to-serious behaviour on the horizontal axis.</p>
 <table>
 <thead>
 <tr>
@@ -231,22 +224,19 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 </table>
 <p>The lecture’s examples also include leaving early, intentionally working slowly, and wasting resources (production); misusing equipment and stealing from the organization (property); blaming coworkers (political); and stealing from coworkers (personal aggression). Do not sort an act by its label alone: classify its target and seriousness. The slide’s four categories summarize common patterns; a specific example may need context to judge severity.</p>
 <p>Causes described in the lecture include perceived unfairness in pay, promotion, or workload; job dissatisfaction; an unsupportive or disrespectful culture; stress or burnout; ineffective leadership; peer norms; opportunity and rationalization; and individual differences such as low conscientiousness or high impulsivity. These are possible contributors, not a diagnostic checklist. One behaviour alone does not identify its cause or establish a trait.</p>
-<p>The lecture proposes a possible group-level chain: shirking, undermining, or noncooperation can contribute to negative group moods; those moods can impair coordination and lower group performance. Prevention therefore includes respectful and inclusive culture, clear policies and expectations, open communication and feedback, employee involvement, constructive conflict-resolution processes, support systems such as counselling or employee assistance, recognition and training, monitoring the work environment, and leaders modelling appropriate conduct.</p>
-<details class="worked"><summary>Teaching example: classify and respond to two different acts</summary><p>A team member repeatedly arrives late and withholds effort. The lecture places lateness and withholding effort in production deviance: the target is organizational work, and the examples are on the minor side of the source’s seriousness axis. A supervisor discovers deliberate equipment sabotage: that is property deviance, directed at organizational property and on the serious side. For either case, first establish what happened and apply clear policy consistently; do not assume the same cause or response fits both people.</p></details>
-
+<p>The lecture proposes a possible group-level chain: shirking, undermining, or noncooperation can contribute to negative group moods; those moods can impair coordination and lower group performance.</p><p>Prevention therefore includes respectful and inclusive culture, clear policies and expectations, open communication and feedback, employee involvement, constructive conflict-resolution processes, support systems such as counselling or employee assistance, recognition and training, monitoring the work environment, and leaders modelling appropriate conduct.</p>
+<details class="worked"><summary>Teaching example: classify and respond to two different acts</summary><p>A team member repeatedly arrives late and withholds effort. The lecture places lateness and withholding effort in production deviance: the target is organizational work, and the examples are on the minor side of the source’s seriousness axis. A supervisor discovers deliberate equipment sabotage: that is property deviance, directed at organizational property and on the serious side.</p><p>For either case, first establish what happened and apply clear policy consistently; do not assume the same cause or response fits both people.</p></details>
 <h2 id="section-5">Status, voice, and group size</h2>
-<p><strong>Status</strong> is a socially defined position or rank assigned to a group or member by others. A perceived mismatch between the status a person believes they have and the status others give them can motivate behaviour. The lecture identifies three sources: <strong>power</strong> over people or resources; <strong>contribution</strong> that is critical to group goals; and <strong>personal characteristics</strong> valued by that group. What a group values varies by context; examples in the lecture are illustrations of local valuation, not universal traits or predictions about individuals.</p>
-<p>Status interacts with norms. Higher-status members may receive more freedom to depart from norms and may resist conformity, especially when they are valued but do not depend on group social rewards. Adding high-status members may improve performance only up to a point; they may also introduce counterproductive norms. Status also affects who speaks: high-status members tend to speak, criticize, command, and interrupt more, while lower-status members may participate less. When quieter members have relevant expertise, failing to hear them can reduce creativity and performance.</p>
-<details class="worked"><summary>Teaching example: a lower-status expert is not heard</summary><p>In a planning meeting, a junior technician notices that the proposed schedule conflicts with a maintenance window. Senior members talk over the warning. The group should distinguish speaking time and rank from the quality of the information: invite the technician to explain the constraint and check the schedule before deciding. The scenario illustrates how status can shape voice; it does not imply that lower-status members are always correct.</p></details>
-
+<p><strong>Status</strong> is a socially defined position or rank assigned to a group or member by others. A perceived mismatch between the status a person believes they have and the status others give them can motivate behaviour. The lecture identifies three sources: <strong>power</strong> over people or resources; <strong>contribution</strong> that is critical to group goals; and <strong>personal characteristics</strong> valued by that group.</p><p>What a group values varies by context; examples in the lecture are illustrations of local valuation, not universal traits or predictions about individuals.</p>
+<p>Status interacts with norms. Higher-status members may receive more freedom to depart from norms and may resist conformity, especially when they are valued but do not depend on group social rewards. Adding high-status members may improve performance only up to a point; they may also introduce counterproductive norms.</p><p>Status also affects who speaks: high-status members tend to speak, criticize, command, and interrupt more, while lower-status members may participate less. When quieter members have relevant expertise, failing to hear them can reduce creativity and performance.</p>
+<details class="worked"><summary>Teaching example: a lower-status expert is not heard</summary><p>In a planning meeting, a junior technician notices that the proposed schedule conflicts with a maintenance window. Senior members talk over the warning. The group should distinguish speaking time and rank from the quality of the information: invite the technician to explain the constraint and check the schedule before deciding.</p><p>The scenario illustrates how status can shape voice; it does not imply that lower-status members are always correct.</p></details>
 <p>Group size depends on the task. The lecture suggests that a dozen or more members can be useful when the aim is to gather diverse input or facts. A smaller group of about seven may be better when members must produce something concrete within a deadline. These are task-dependent lecture guidelines, not universal cutoffs.</p>
 <h2 id="section-6">Effort, cohesion, and performance</h2>
 <h3>Social loafing</h3>
-<p><strong>Social loafing</strong>, or free riding, is the tendency to exert less effort in a group than when working alone. When responsibility is shared, a person may feel less accountable for the overall result. The lecture lists diffusion of responsibility, reduced accountability, unidentifiable contributions, low perceived task importance, the presence of free riders, larger group size, and negative group culture or low cohesion as possible contributors.</p>
+<p><strong>Social loafing</strong>, or free riding, is the tendency to exert less effort in a group than when working alone. When responsibility is shared, a person may feel less accountable for the overall result.</p><p>The lecture lists diffusion of responsibility, reduced accountability, unidentifiable contributions, low perceived task importance, the presence of free riders, larger group size, and negative group culture or low cohesion as possible contributors.</p>
 <p>The lecture qualifies the pattern by culture: the studies it reports found social loafing more consistently in individualist US and Canadian settings, while the Chinese and Israeli comparison groups showed no propensity to engage in social loafing and performed better in a group than alone. Treat this as a reported group-level finding, not a rule for predicting any individual or country.</p>
 <p>The suggested remedies are to set shared group goals; use intergroup competition focused on shared outcomes; use peer evaluation; select members who are motivated and prefer group work; and, where possible, base part of group rewards on each member’s identifiable contribution. These approaches make purpose, effort, and contribution more visible.</p>
-<details class="worked"><summary>Teaching example: select a remedy that addresses the cause</summary><p>A large team’s report is late, and members cannot tell who owns which section. Because contributions are hard to identify and responsibility is diffuse, assigning named sections with peer review and a shared deadline directly improves visibility and accountability. Adding a reward without clarifying contributions may not address the problem. If low task importance is the issue, the manager should also explain how the report will be used.</p></details>
-
+<details class="worked"><summary>Teaching example: select a remedy that addresses the cause</summary><p>A large team’s report is late, and members cannot tell who owns which section. Because contributions are hard to identify and responsibility is diffuse, assigning named sections with peer review and a shared deadline directly improves visibility and accountability. Adding a reward without clarifying contributions may not address the problem.</p><p>If low task importance is the issue, the manager should also explain how the report will be used.</p></details>
 <h3>Cohesion depends on performance norms</h3>
 <p><strong>Cohesion</strong> (also called cohesiveness or social cohesion) is the strength of the bonds linking members and their sense of unity. Cohesion affects productivity through the group’s performance-related norms. It does not guarantee high output by itself: a cohesive group reinforces the standards it shares.</p>
 <table>
@@ -272,10 +262,9 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 </table>
 <p>The lecture lists ways to encourage cohesion: make the group smaller, agree on group goals, spend more time together, raise group status and the perceived difficulty of membership, stimulate competition with other groups, give rewards to the group, and physically isolate it. These are possible levers, not unconditional recommendations; choose them only when they support the group’s task and healthy norms.</p>
 <details class="worked"><summary>Teaching example: cohesion amplifies the norm a group already has</summary><p>Two teams feel equally close to one another. Team A has strong norms for quality and cooperation, so its high cohesion supports coordinated, high productivity. Team B treats low output as acceptable; its cohesion can reinforce that low standard, leaving productivity low. To improve Team B, changing the performance norm matters as well as strengthening bonds.</p></details>
-
-<h2 id="section-7">Diversity and faultlines</h2>
-<p>Group diversity means including members with varied backgrounds and perspectives, including differences such as age, gender, ethnicity, socioeconomic position, and culture. Variety can add creativity, insight, and problem-solving capacity, while also creating challenges for group dynamics. The lecture says diverse groups may experience more conflict early in their time together, with lower morale and greater dropout, and may perform better over time if initial conflict is managed. This is a qualification about group processes, not an individual prediction based on demographic identity.</p>
-<p>A <strong>group faultline</strong> is a hypothetical dividing line that can form when member attributes align and divide a group into subgroups. Slides 68–69 call the topic “Faultiness,” but slide 68’s definition itself says “group faultline”; the correct term is <strong>faultline</strong>. The concept was developed as “faultlines” in Lau and Murnighan’s primary article on how member characteristics align into potential subgroups (<a href="https://doi.org/10.5465/amr.1998.533229">Lau &amp; Murnighan, 1998</a>).</p>
+<section aria-label="Why closeness alone is not enough" class="activity" data-activity="cohesion"><h3>Why closeness alone is not enough</h3><label>Performance norms<select data-input="norms"><option value="high">High</option><option value="low">Low</option></select></label><label>Group cohesion<select data-input="cohesion"><option value="high">High</option><option value="low">Low</option></select></label><table class="matrix"><caption>Performance norms × Cohesion</caption><thead><tr><th scope="col">Performance norms</th><th scope="col">High</th><th scope="col">Low</th></tr></thead><tbody><tr><th scope="row">High</th><td data-cell="high-high">High productivity</td><td data-cell="high-low">Productivity rises, but less</td></tr><tr><th scope="row">Low</th><td data-cell="low-high">Low productivity</td><td data-cell="low-low">Low-to-moderate productivity</td></tr></tbody></table><output aria-live="polite" data-result=""></output><p class="activity-note">Change the norms while keeping cohesion high. Read how the predicted direction changes.</p><noscript><p>Enable JavaScript to change the inputs. The course model is explained above.</p></noscript></section><h2 id="section-7">Diversity and faultlines</h2>
+<p>Group diversity means including members with varied backgrounds and perspectives, including differences such as age, gender, ethnicity, socioeconomic position, and culture. Variety can add creativity, insight, and problem-solving capacity, while also creating challenges for group dynamics.</p><p>The lecture says diverse groups may experience more conflict early in their time together, with lower morale and greater dropout, and may perform better over time if initial conflict is managed. This is a qualification about group processes, not an individual prediction based on demographic identity.</p>
+<p>A <strong>group faultline</strong> is a hypothetical dividing line that can form when member attributes align and divide a group into subgroups. Slides 68–69 call the topic “Faultiness,” but slide 68’s examples use “group faultline”; the correct term is <strong>faultline</strong>.</p><p>The concept was developed as “faultlines” in Lau and Murnighan’s primary article on how member characteristics align into potential subgroups (<a href="https://doi.org/10.5465/amr.1998.533229">Lau &amp; Murnighan, 1998</a>).</p>
 <table>
 <thead>
 <tr>
@@ -297,9 +286,8 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 </tr>
 </tbody>
 </table>
-<p>These are hypothetical examples of <strong>attribute alignment</strong>, not claims about the abilities, preferences, or behaviour of people in any demographic category. Faultline effects arise from subgroup division and interaction. The lecture associates splits with competition that takes time from core work, slower learning, riskier decisions, lower creativity, greater conflict, and less trust between subgroups. Overall group satisfaction may be lower even while subgroup satisfaction is high.</p>
-<details class="worked"><summary>Teaching example: reduce a subgroup split by changing the work structure</summary><p>A four-person team notices that two members always consult one another while the other two are left out of decisions. Rather than infer why from anyone’s identity, the manager can rotate mixed pairs, make information visible to the full team, and give the group a shared task requiring cross-pair coordination. The aim is to reduce separation and improve trust; it does not assume that mixing people automatically removes every disagreement.</p></details>
-
+<p>These are hypothetical examples of <strong>attribute alignment</strong>, not claims about the abilities, preferences, or behaviour of people in any demographic category. Faultline effects arise from subgroup division and interaction. The lecture associates splits with competition that takes time from core work, slower learning, riskier decisions, lower creativity, greater conflict, and less trust between subgroups.</p><p>Overall group satisfaction may be lower even while subgroup satisfaction is high.</p>
+<details class="worked"><summary>Teaching example: reduce a subgroup split by changing the work structure</summary><p>A four-person team notices that two members always consult one another while the other two are left out of decisions. Rather than infer why from anyone’s identity, the manager can rotate mixed pairs, make information visible to the full team, and give the group a shared task requiring cross-pair coordination.</p><p>The aim is to reduce separation and improve trust; it does not assume that mixing people automatically removes every disagreement.</p></details>
 <h2 id="section-8">Common mistakes</h2>
 <ul>
 <li>Treating Tuckman’s stages as mandatory, perfectly sequential, or as a score of group effectiveness. Groups can stall, overlap stages, or regress.</li>
@@ -313,63 +301,46 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 <li>Assuming cohesion alone raises output, or that diversity automatically guarantees either conflict or success.</li>
 <li>Reading the source’s demographic faultline illustration as a prediction about an individual. It demonstrates aligned attributes and hypothetical subgroup structure.</li>
 </ul>
-<h2 id="section-9">Exam focus</h2>
-<ul>
-<li>Define a group and distinguish formal from informal groups.</li>
-<li>Recall and explain the five Tuckman stages, with <strong>Adjourning as Stage 5</strong>, and state why the model is not a guaranteed path.</li>
-<li>Describe the punctuated-equilibrium timing: first meeting, phase-one inertia, midpoint transition, second inertia phase, accelerated final meeting, deadline.</li>
-<li>Distinguish role, role perception, role expectations, role conflict, norms, formal rules, and social sanctions.</li>
-<li>Classify workplace deviance by its two dimensions: interpersonal versus organizational target, and minor versus serious.</li>
-<li>Name status’s three sources; explain how status affects conformity and voice.</li>
-<li>Match group size to task; define social loafing, its causes, cultural qualification, and remedies.</li>
-<li>Reproduce all four cohesion × performance-norm outcomes; cohesion reinforces the group’s norms.</li>
-<li>Explain diversity’s early/longer-term qualification and define a faultline through aligned attributes.</li>
-</ul>
-<h2 id="section-10">Practice questions</h2>
+<span class="section-anchor" id="section-9"></span><h2 id="section-10">Practice questions</h2>
 <ol>
 <li>A newly assigned group is polite, seeks clarity, and relies on its leader. Which Tuckman stage best fits, and what would be a useful caution?</li>
 </ol>
 <p class="question">Check your answer</p>
 <details class="worked"><summary>Check your answer</summary><p><strong>Forming.</strong> The clues are polite interaction, uncertainty about purpose, and reliance on the leader. It is a provisional description, not proof the group will follow a fixed sequence.</p></details>
-
 <ol>
 <li>A short-lived committee changes its plan exactly halfway to a deadline after a slow start. Which model explains this pattern?</li>
 </ol>
 <p class="question">Check your answer</p>
 <details class="worked"><summary>Check your answer</summary><p><strong>Punctuated equilibrium.</strong> It describes a midpoint transition in a temporary deadline group, followed by another period of inertia and accelerated activity near the final meeting.</p></details>
-
 <ol>
 <li>Classify lateness and deliberate sabotage using the lecture’s deviance axes.</li>
 </ol>
 <p class="question">Check your answer</p>
 <details class="worked"><summary>Check your answer</summary><p>Lateness is an example of <strong>minor, organizationally directed production deviance</strong>. Sabotage is <strong>serious, organizationally directed property deviance</strong>.</p></details>
-
 <ol>
 <li>A group has strong cohesion but weak performance norms. What productivity relationship should you expect?</li>
 </ol>
 <p class="question">Check your answer</p>
 <details class="worked"><summary>Check your answer</summary><p><strong>Low productivity.</strong> Cohesion reinforces the norms the group holds; high cohesion does not guarantee high output.</p></details>
-
 <ol>
 <li>Why might a lower-status member’s silence harm a group even when the meeting appears orderly?</li>
 </ol>
 <p class="question">Check your answer</p>
 <details class="worked"><summary>Check your answer</summary><p>The member may hold relevant expertise or insight. If status suppresses participation, the group can lose information and reduce its creativity or performance.</p></details>
-
 <ol>
 <li>What makes the lecture’s first faultline example strong, and what should not be inferred from it?</li>
 </ol>
 <p class="question">Check your answer</p>
 <details class="worked"><summary>Check your answer</summary><p>Several attributes align into two internally similar subgroups, creating a stronger hypothetical dividing line. Do not infer abilities or behaviour from age, gender, or ethnicity; the example illustrates alignment only.</p></details>
-
 <ol>
 <li>Name two ways to reduce social loafing and connect each to a cause.</li>
 </ol>
 <p class="question">Check your answer</p>
-<details class="worked"><summary>Check your answer</summary><p>For example, peer evaluation and identifiable contribution-based rewards address reduced accountability and unidentifiable effort. Shared group goals can address weak common purpose. Select remedies that match the actual cause.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="lecture-6-perception-and-individual-decision-making.html"><small>Previous</small>Perception and Individual Decision Making <span aria-hidden="true">↗</span></a><a href="lecture-7-group-decision-making.html"><small>Next</small>Group Decision-Making <span aria-hidden="true">↗</span></a></nav><footer>Organizational Behavior and Management · Study guide <span>Understand work. Connect people, teams, and organizations.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+<details class="worked"><summary>Check your answer</summary><p>For example, peer evaluation and identifiable contribution-based rewards address reduced accountability and unidentifiable effort. Shared group goals can address weak common purpose. Select remedies that match the actual cause.</p></details></article><nav aria-label="Study sequence" class="pager"><a href="individual-revision.html"><small>Previous</small>Short note: individuals at work <span aria-hidden="true">↗</span></a><a href="lecture-7-group-decision-making.html"><small>Next</small>Group Decision-Making <span aria-hidden="true">↗</span></a></nav><footer>Organizational Behavior and Management · Study guide <span>Understand work. Connect people, teams, and organizations.</span></footer></main></div><script src="pages-data.js"></script><script src="activities.js"></script><script>(() => {
   'use strict';
   let cleanups = [];
   const initializeMain = root => {
+  initializeActivities(root);
   const mathHints = new WeakMap();
   const repairMath = () => {
     root.querySelectorAll('math,.walk code').forEach(expression => {

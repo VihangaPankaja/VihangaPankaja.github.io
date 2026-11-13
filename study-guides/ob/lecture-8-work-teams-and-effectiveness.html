@@ -1,4 +1,5 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Understand when teamwork fits, how teams are designed, and what the lecture model considers when discussing effectiveness."><title>Work Teams and Effectiveness · OB and Management</title><script>(() => {
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="Decide when a team helps, then examine its context, composition and process." name="description"/><title>Work Teams and Effectiveness · OB and Management</title><script>(() => {
   let choice = 'system';
   try { const saved = localStorage.getItem('ob-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
   document.documentElement.dataset.themeChoice = choice;
@@ -36,24 +37,24 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 .menu:focus{outline:3px solid var(--focus);outline-offset:3px}
 
 .nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-</style></head><body>
-<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">OB</span> OB <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
-  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
-  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
-    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
-    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
-    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
-  </div>
+</style><link href="reading.css" rel="stylesheet"/></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span aria-hidden="true" class="mark">OB</span> OB <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+<button aria-controls="theme-options" aria-expanded="false" aria-haspopup="menu" aria-label="Color theme: System" id="theme" type="button"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"></path><circle cx="12" cy="12" r="4"></circle></svg><span id="theme-current">System</span><svg aria-hidden="true" class="theme-chevron" viewbox="0 0 16 16"><path d="m4 6 4 4 4-4"></path></svg></button>
+<div aria-label="Color theme" hidden="" id="theme-options" role="menu">
+<button aria-checked="true" data-theme-value="system" role="menuitemradio" tabindex="-1" type="button"><span>System<small>Follow your device</small></span><span aria-hidden="true" class="theme-check">✓</span></button>
+<button aria-checked="false" data-theme-value="light" role="menuitemradio" tabindex="-1" type="button"><span>Light<small>Light pages and diagrams</small></span><span aria-hidden="true" class="theme-check">✓</span></button>
+<button aria-checked="false" data-theme-value="dark" role="menuitemradio" tabindex="-1" type="button"><span>Dark<small>Dark pages and diagrams</small></span><span aria-hidden="true" class="theme-check">✓</span></button>
 </div>
-<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
-<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="People, teams, leadership…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Organizational Behavior and Management</a></div><div class="nav-group"><p>Foundations</p><a class="nav-entry" data-search="" href="lecture-1-organizational-behaviour-foundations.html">Organizational Behaviour Foundations</a></div><div class="nav-group"><p>Individual behaviour</p><a class="nav-entry" data-search="" href="lecture-2-work-attitudes-and-job-satisfaction.html">Work Attitudes and Job Satisfaction</a><a class="nav-entry" data-search="" href="lecture-3-personality-at-work.html">Personality at Work</a><a class="nav-entry" data-search="" href="lecture-3-values-culture-and-person-environment-fit.html">Values, Culture, and Person-Environment Fit</a><a class="nav-entry" data-search="" href="lecture-4-emotions-and-moods.html">Emotions and Moods</a><a class="nav-entry" data-search="" href="lecture-5-managing-emotions-at-work.html">Managing Emotions at Work</a><a class="nav-entry" data-search="" href="lecture-6-perception-and-individual-decision-making.html">Perception and Individual Decision Making</a></div><div class="nav-group"><p>Group behaviour</p><a class="nav-entry" data-search="" href="lecture-7-group-structure-and-behaviour.html">Group Structure and Behaviour</a><a class="nav-entry" data-search="" href="lecture-7-group-decision-making.html">Group Decision-Making</a><a class="nav-entry" data-search="" href="lecture-8-work-teams-and-effectiveness.html" aria-current="page">Work Teams and Effectiveness</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">MN4063<br>Organizational Behavior and Management</div></aside>
-<main id="main"><div class="eyebrow">Group behaviour <span>/</span> Lecture 8</div><h1>Work Teams and Effectiveness</h1><p class="lead">Understand when teamwork fits, how teams are designed, and what the lecture model considers when discussing effectiveness.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">What makes a team different from a work group?</a><a href="#section-2">Common forms of work teams</a><a href="#section-3">The team-effectiveness model</a><a href="#section-4">Developing team players</a><a href="#section-5">Decide whether work belongs in a team</a><a href="#section-6">A practitioner framework: New Rules for Teamwork</a><a href="#section-7">Common mistakes</a><a href="#section-8">Exam focus</a><a href="#section-9">Practice questions</a></nav><article><h2 id="section-0">Big picture</h2>
-<p>Work teams are useful when people must combine interdependent contributions toward a shared purpose. Simply putting people together does not create positive synergy or guarantee effectiveness. The work, team design, resources, member mix and interaction processes all matter. The lecture offers a model for thinking about those conditions and three tests for deciding whether work belongs in a team.</p>
+</div>
+<button aria-controls="sidebar" aria-expanded="false" class="menu" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input autocomplete="off" id="topic-filter" placeholder="People, teams, leadership…" type="search"/><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" data-search="Clear explanations, workplace cases and short notes for MN4063. Read a topic, try its questions, then revisit the essentials." href="index.html">Organizational Behavior and Management</a></div><div class="nav-group"><p>Foundations</p><a class="nav-entry" data-search="Understand behaviour at three levels, then ask which conditions make an explanation fit." href="lecture-1-organizational-behaviour-foundations.html">Organizational Behaviour Foundations</a></div><div class="nav-group"><p>Individual behaviour</p><a class="nav-entry" data-search="Distinguish beliefs, feelings and intentions, then use EVLN to classify responses to dissatisfaction." href="lecture-2-work-attitudes-and-job-satisfaction.html">Work Attitudes and Job Satisfaction</a><a class="nav-entry" data-search="Compare personality frameworks and see why workplace rules and cues change what traits predict." href="lecture-3-personality-at-work.html">Personality at Work</a><a class="nav-entry" data-search="Separate values, job fit and organizational fit without turning national culture into an individual label." href="lecture-3-values-culture-and-person-environment-fit.html">Values, Culture, and Person-Environment Fit</a><a class="nav-entry" data-search="Distinguish emotions from moods, then connect emotional labour and daily events to work outcomes." href="lecture-4-emotions-and-moods.html">Emotions and Moods</a><a class="nav-entry" data-search="Recognize emotions, ask what support is wanted, and choose a response that fits the person and the task." href="lecture-5-managing-emotions-at-work.html">Managing Emotions at Work</a><a class="nav-entry" data-search="See how attention, attribution and decision shortcuts shape the conclusions people reach." href="lecture-6-perception-and-individual-decision-making.html">Perception and Individual Decision Making</a><a class="nav-entry revision-link" data-search="revision recap summary short note" href="individual-revision.html">Short note: individuals at work</a></div><div class="nav-group"><p>Group behaviour</p><a class="nav-entry" data-search="Connect roles, norms, status and cohesion to effort and performance." href="lecture-7-group-structure-and-behaviour.html">Group Structure and Behaviour</a><a class="nav-entry" data-search="Compare groupthink, groupshift and three ways to organize a group decision." href="lecture-7-group-decision-making.html">Group Decision-Making</a><a aria-current="page" class="nav-entry" data-search="Decide when a team helps, then examine its context, composition and process." href="lecture-8-work-teams-and-effectiveness.html">Work Teams and Effectiveness</a><a class="nav-entry revision-link" data-search="revision recap summary short note" href="groups-revision.html">Short note: groups and teams</a></div></nav><p hidden="" id="no-topics">No matching topics.</p><div class="rail-foot">MN4063<br/>Organizational Behavior and Management</div></aside>
+<main id="main"><div class="eyebrow">Group behaviour <span>/</span> Lecture 8</div><h1>Work Teams and Effectiveness</h1><p class="lead">Decide when a team helps, then examine its context, composition and process.</p><details class="contents"><summary>On this page · 9 sections</summary><nav aria-label="On this page" class="on-page"><a href="#section-0">Choose teamwork for interdependent work</a><a href="#section-1">What makes a team different from a work group?</a><a href="#section-2">Common forms of work teams</a><a href="#section-3">The team-effectiveness model</a><a href="#section-4">Developing team players</a><a href="#section-5">Decide whether work belongs in a team</a><a href="#section-6">A practitioner framework: New Rules for Teamwork</a><a href="#section-7">Common mistakes</a><a href="#section-9">Practice questions</a></nav></details><article><h2 id="section-0">Choose teamwork for interdependent work</h2>
+<ul class="takeaways"><li>A work team combines interdependent effort toward a shared purpose and collective performance.</li><li>Test whether several people can do better, share a purpose and depend on one another.</li><li>Context, Composition and Process organize the lecture model. The assigned article adds a separate practice of routines, measurement and adjustment.</li></ul>
 <p>The assigned practitioner article adds a separate operating approach: establish routines, measure how work and outcomes are going, then adapt the system. Its recommendations and company examples complement the lecture, but they are not part of the lecture’s team-effectiveness model.</p>
 <h2 id="section-1">What makes a team different from a work group?</h2>
-<p>A <strong>team</strong> is a group whose members work interdependently toward a shared goal or mission. A <strong>work team</strong> coordinates member effort so the collective performance can exceed the sum of individual inputs; this is called <strong>positive synergy</strong>. A work team is a purposeful subset of work groups. A group may still generate ideas, pool resources or coordinate logistics, but it need not depend on shared responsibility for collective performance.</p>
+<p>A <strong>team</strong> is a group whose members work interdependently toward a shared goal or mission. A <strong>work team</strong> coordinates member effort so the collective performance can exceed the sum of individual inputs; this is called <strong>positive synergy</strong>. A work team is a purposeful subset of work groups.</p><p>A group may still generate ideas, pool resources or coordinate logistics, but it need not depend on shared responsibility for collective performance.</p>
 <p>The lecture’s “Strong Sense of Teamwork” image uses four interlocking pieces: <strong>Goal</strong> (everyone works toward the same goal), <strong>Harmony</strong> (trust, respect and enjoyment of working together), <strong>Roles</strong> (clarity about tasks and responsibilities), and <strong>Support</strong> (helping teammates and putting team success before one’s own). These ideas describe features of teamwork; the source does not present them as a guarantee of results.</p>
-<div role="region" aria-label="Work group and work team comparison" tabindex="0">
+<div aria-label="Work group and work team comparison" role="region" tabindex="0">
 <table>
 <caption>Lecture comparison of work groups and work teams</caption>
 <thead><tr><th scope="col">Dimension</th><th scope="col">Work groups</th><th scope="col">Work teams</th></tr></thead>
@@ -64,225 +65,211 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 <tr><th scope="row">Skills</th><td>Random and varied</td><td>Complementary</td></tr>
 </tbody></table>
 </div>
-
-<p>The lecture’s second comparison adds typical structural differences. Groups are shown with a designated, strong leader, individual accountability, an organizationally set purpose and performance goals, individual work products, meetings organized around delegation, and work within organizational boundaries. Teams are shown with shared leadership roles, individual and mutual accountability, a specific team vision or purpose, team-set performance goals, collective work products, mutual feedback, open discussion and active problem-solving, and work not inhibited by organizational boundaries. These are source contrasts, not rules that every group lacks collaboration or every team shares leadership equally.</p>
-<details class="worked"><summary>Teaching example: when a group becomes a team</summary><p>Several analysts meet monthly to share sales updates, but each owns a separate report and is evaluated individually. They coordinate information as a work group. If they instead depend on one another to produce a single forecast, agree shared goals, coordinate complementary analyses and accept mutual responsibility for the combined result, their work has the interdependence and collective-performance orientation of a team. Calling the meeting a “team meeting” alone would not make the difference.</p></details>
-
+<p>The second source comparison contrasts designated leadership and individual work products in groups with shared leadership, mutual accountability and collective work products in teams. Teams also use joint goals, feedback and active problem-solving. These are lecture contrasts, not claims that every group lacks collaboration.</p>
+<details class="worked"><summary>Teaching example: when a group becomes a team</summary><p>Several analysts meet monthly to share sales updates, but each owns a separate report and is evaluated individually. They coordinate information as a work group.</p><p>If they instead depend on one another to produce a single forecast, agree shared goals, coordinate complementary analyses and accept mutual responsibility for the combined result, their work has the interdependence and collective-performance orientation of a team. Calling the meeting a “team meeting” alone would not make the difference.</p></details>
 <h2 id="section-2">Common forms of work teams</h2>
 <p>Team types describe how work is organized. Some dimensions can overlap: for example, a cross-functional team may also be virtual.</p>
-<table>
+<table class="comparison" data-stack="">
 <thead>
 <tr>
-<th>Type</th>
-<th>How it works</th>
-<th>Useful distinction or challenge</th>
+<th scope="col">Type</th>
+<th scope="col">How it works</th>
+<th scope="col">Useful distinction or challenge</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Problem-solving</td>
-<td>Often 5–10 people from one department meet regularly about a specific problem; a facilitator may guide discussion.</td>
-<td>The group develops and considers solutions; the format alone does not mean it has authority to implement every one.</td>
+<th scope="row">Problem-solving</th>
+<td data-label="How it works">Often 5–10 people from one department meet regularly about a specific problem; a facilitator may guide discussion.</td>
+<td data-label="Useful distinction or challenge">The group develops and considers solutions; the format alone does not mean it has authority to implement every one.</td>
 </tr>
 <tr>
-<td>Self-managed</td>
-<td>Members organize and manage their work without traditional hierarchical supervision.</td>
-<td>Fully self-managed forms may select members and evaluate one another; former supervisor positions may become less important or disappear.</td>
+<th scope="row">Self-managed</th>
+<td data-label="How it works">Members organize and manage their work without traditional hierarchical supervision.</td>
+<td data-label="Useful distinction or challenge">Fully self-managed forms may select members and evaluate one another; former supervisor positions may become less important or disappear.</td>
 </tr>
 <tr>
-<td>Cross-functional</td>
-<td>People at a similar hierarchical level from different work areas exchange information, create ideas, solve problems and coordinate projects.</td>
-<td>Coordination is demanding and early development can take longer as members learn to work across diverse expertise. Face-to-face collaboration is a strength highlighted in the lecture.</td>
+<th scope="row">Cross-functional</th>
+<td data-label="How it works">People at a similar hierarchical level from different work areas exchange information, create ideas, solve problems and coordinate projects.</td>
+<td data-label="Useful distinction or challenge">Coordination is demanding and early development can take longer as members learn to work across diverse expertise. Face-to-face collaboration is a strength highlighted in the lecture.</td>
 </tr>
 <tr>
-<td>Virtual</td>
-<td>Members collaborate electronically while geographically dispersed rather than sharing one location.</td>
-<td>Trust, progress visibility and publicizing results matter. Isolation, weaker social rapport and dispersed information can create challenges.</td>
+<th scope="row">Virtual</th>
+<td data-label="How it works">Members collaborate electronically while geographically dispersed rather than sharing one location.</td>
+<td data-label="Useful distinction or challenge">Trust, progress visibility and publicizing results matter. Isolation, weaker social rapport and dispersed information can create challenges.</td>
 </tr>
 <tr>
-<td>Multiteam system</td>
-<td>Two or more interdependent teams coordinate toward a higher shared goal: a “team of teams.”</td>
-<td>It links teams’ contributions across boundaries; it is not just one cross-functional team.</td>
+<th scope="row">Multiteam system</th>
+<td data-label="How it works">Two or more interdependent teams coordinate toward a higher shared goal: a “team of teams.”</td>
+<td data-label="Useful distinction or challenge">It links teams’ contributions across boundaries; it is not just one cross-functional team.</td>
 </tr>
 </tbody>
 </table>
 <details class="worked"><summary>Teaching example: cross-functional team or multiteam system?</summary><p>A product launch group that brings together marketing, design and engineering employees is cross-functional: individuals from multiple functions work together. If separate product, logistics and customer-support teams remain distinct but depend on coordinated handoffs to deliver the launch, the larger arrangement is a multiteam system. A boundary spanner coordinates with other subteams and can reduce the number of direct cross-team contacts each member must manage.</p></details>
-
-<p>Virtual-team findings require careful wording. The lecture reports a review of 94 studies involving more than 5,000 groups: virtual teams were better at sharing <strong>unique information</strong> (information held by individual members rather than the whole group), yet shared <strong>less information overall</strong>. It also reports that low online communication was associated with higher information sharing, while near-total online communication hindered it. These are reported research patterns, not a rule that less communication is always better. The lecture’s management suggestions are to establish trust, monitor progress so the team does not become invisible, and publicize its work and results.</p>
-<details class="worked"><summary>Teaching example: separate unique information from total sharing</summary><p>A remote project team includes a safety specialist whose concern is known only to them. The team surfaces that unique fact during its review, yet members exchange fewer updates and assumptions overall than a co-located group. Both observations can be true: finding a distinctive piece of information is different from sharing a larger volume of information. Managers should check whether essential information is being surfaced and coordinated rather than treating message count as the outcome.</p></details>
-
+<p>For virtual teams, the lecture recommends establishing trust, monitoring progress and making work visible. Sharing unique information and sharing more information overall are different outcomes.</p><details><summary>Virtual-team research reported in the slides</summary><p>A review of 94 studies and more than 5,000 groups found better sharing of uniquely held information in virtual teams, but less information sharing overall. The lecture also reports differences by online communication level. These patterns do not mean that less communication is always better.</p></details>
+<details class="worked"><summary>Teaching example: separate unique information from total sharing</summary><p>A remote project team includes a safety specialist whose concern is known only to them. The team surfaces that unique fact during its review, yet members exchange fewer updates and assumptions overall than a co-located group. Both observations can be true: finding a distinctive piece of information is different from sharing a larger volume of information.</p><p>Managers should check whether essential information is being surfaced and coordinated rather than treating message count as the outcome.</p></details>
 <h2 id="section-3">The team-effectiveness model</h2>
 <p>The lecture combines three views of effectiveness: objective productivity measures, managers’ ratings of team performance, and aggregated member satisfaction. A fully effective team meets key stakeholder standards, has internal processes that can sustain future collaboration, and provides an experience that meets members’ personal needs.</p>
 <p>The model is a guide, not a rigid formula. Teams differ in form and structure, and work should be assigned to teams only when teamwork is preferable to individual work. The model groups considerations into <strong>Context</strong>, <strong>Composition</strong> and <strong>Process</strong>. The source diagram connects each whole category to team effectiveness; it does not draw arrows from individual items or establish guaranteed causal effects.</p>
 <figure><div class="diagram-frame" style="--diagram-width:560.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
 <!-- Generated by graphviz version 16.1.0 (20260904.0139)
  -->
 <!-- Title: G Pages: 1 -->
-<svg role="img" aria-label="Lecture model: Context, Composition and Process are grouped inputs that converge on Team effectiveness. The diagram does not assign item-level causal arrows." width="560pt" height="450pt"
- viewBox="0.00 0.00 560.00 450.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
-<g id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 439.2)">
+<svg aria-label="Lecture model: Context, Composition and Process are grouped inputs that converge on Team effectiveness. The diagram does not assign item-level causal arrows." height="450pt" role="img" viewbox="0.00 0.00 560.00 450.00" width="560pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g class="graph" id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-graph0" transform="scale(1 1) rotate(0) translate(10.8 439.2)">
 <title>G</title>
 <!-- context -->
-<g id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-node1" class="node">
+<g class="node" id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-node1">
 <title>context</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M306.6,-428.4C306.6,-428.4 12,-428.4 12,-428.4 6,-428.4 0,-422.4 0,-416.4 0,-416.4 0,-336 0,-336 0,-330 6,-324 12,-324 12,-324 306.6,-324 306.6,-324 312.6,-324 318.6,-330 318.6,-336 318.6,-336 318.6,-416.4 318.6,-416.4 318.6,-422.4 312.6,-428.4 306.6,-428.4"/>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-406.95" font-family="Georgia" font-size="15.00">CONTEXT</text>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-388.95" font-family="Georgia" font-size="15.00">Adequate resources</text>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-370.95" font-family="Georgia" font-size="15.00">Leadership and structure</text>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-352.95" font-family="Georgia" font-size="15.00">Climate of trust</text>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-334.95" font-family="Georgia" font-size="15.00">Performance evaluation and reward systems</text>
+<path d="M306.6,-428.4C306.6,-428.4 12,-428.4 12,-428.4 6,-428.4 0,-422.4 0,-416.4 0,-416.4 0,-336 0,-336 0,-330 6,-324 12,-324 12,-324 306.6,-324 306.6,-324 312.6,-324 318.6,-330 318.6,-336 318.6,-336 318.6,-416.4 318.6,-416.4 318.6,-422.4 312.6,-428.4 306.6,-428.4" fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-406.95">CONTEXT</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-388.95">Adequate resources</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-370.95">Leadership and structure</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-352.95">Climate of trust</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-334.95">Performance evaluation and reward systems</text>
 </g>
 <!-- outcome -->
-<g id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-node4" class="node">
+<g class="node" id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-node4">
 <title>outcome</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M525.95,-241.2C525.95,-241.2 362.6,-241.2 362.6,-241.2 356.6,-241.2 350.6,-235.2 350.6,-229.2 350.6,-229.2 350.6,-217.2 350.6,-217.2 350.6,-211.2 356.6,-205.2 362.6,-205.2 362.6,-205.2 525.95,-205.2 525.95,-205.2 531.95,-205.2 537.95,-211.2 537.95,-217.2 537.95,-217.2 537.95,-229.2 537.95,-229.2 537.95,-235.2 531.95,-241.2 525.95,-241.2"/>
-<text xml:space="preserve" text-anchor="middle" x="444.28" y="-217.95" font-family="Georgia" font-size="15.00">TEAM EFFECTIVENESS</text>
+<path d="M525.95,-241.2C525.95,-241.2 362.6,-241.2 362.6,-241.2 356.6,-241.2 350.6,-235.2 350.6,-229.2 350.6,-229.2 350.6,-217.2 350.6,-217.2 350.6,-211.2 356.6,-205.2 362.6,-205.2 362.6,-205.2 525.95,-205.2 525.95,-205.2 531.95,-205.2 537.95,-211.2 537.95,-217.2 537.95,-217.2 537.95,-229.2 537.95,-229.2 537.95,-235.2 531.95,-241.2 525.95,-241.2" fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="444.28" xml:space="preserve" y="-217.95">TEAM EFFECTIVENESS</text>
 </g>
 <!-- context&#45;&gt;outcome -->
-<g id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-edge1" class="edge">
-<title>context&#45;&gt;outcome</title>
-<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M298.53,-323.58C305.39,-320.22 312.12,-316.76 318.6,-313.2 353.98,-293.78 391.06,-265.91 415.48,-246.34"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="416.61,-248.36 420.23,-242.5 413.75,-244.82 416.61,-248.36"/>
+<g class="edge" id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-edge1">
+<title>context-&gt;outcome</title>
+<path d="M298.53,-323.58C305.39,-320.22 312.12,-316.76 318.6,-313.2 353.98,-293.78 391.06,-265.91 415.48,-246.34" fill="none" stroke="var(--diagram-edge,#547b86)"></path>
+<polygon fill="var(--diagram-edge,#547b86)" points="416.61,-248.36 420.23,-242.5 413.75,-244.82 416.61,-248.36" stroke="var(--diagram-edge,#547b86)"></polygon>
 </g>
 <!-- composition -->
-<g id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-node2" class="node">
+<g class="node" id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-node2">
 <title>composition</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M227.85,-302.4C227.85,-302.4 90.75,-302.4 90.75,-302.4 84.75,-302.4 78.75,-296.4 78.75,-290.4 78.75,-290.4 78.75,-156 78.75,-156 78.75,-150 84.75,-144 90.75,-144 90.75,-144 227.85,-144 227.85,-144 233.85,-144 239.85,-150 239.85,-156 239.85,-156 239.85,-290.4 239.85,-290.4 239.85,-296.4 233.85,-302.4 227.85,-302.4"/>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-280.95" font-family="Georgia" font-size="15.00">COMPOSITION</text>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-262.95" font-family="Georgia" font-size="15.00">Abilities of members</text>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-244.95" font-family="Georgia" font-size="15.00">Personality</text>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-226.95" font-family="Georgia" font-size="15.00">Allocating roles</text>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-208.95" font-family="Georgia" font-size="15.00">Diversity</text>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-190.95" font-family="Georgia" font-size="15.00">Size of teams</text>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-172.95" font-family="Georgia" font-size="15.00">Member flexibility</text>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-154.95" font-family="Georgia" font-size="15.00">Member preferences</text>
+<path d="M227.85,-302.4C227.85,-302.4 90.75,-302.4 90.75,-302.4 84.75,-302.4 78.75,-296.4 78.75,-290.4 78.75,-290.4 78.75,-156 78.75,-156 78.75,-150 84.75,-144 90.75,-144 90.75,-144 227.85,-144 227.85,-144 233.85,-144 239.85,-150 239.85,-156 239.85,-156 239.85,-290.4 239.85,-290.4 239.85,-296.4 233.85,-302.4 227.85,-302.4" fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-280.95">COMPOSITION</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-262.95">Abilities of members</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-244.95">Personality</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-226.95">Allocating roles</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-208.95">Diversity</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-190.95">Size of teams</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-172.95">Member flexibility</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-154.95">Member preferences</text>
 </g>
 <!-- composition&#45;&gt;outcome -->
-<g id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-edge2" class="edge">
-<title>composition&#45;&gt;outcome</title>
-<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M240.25,-223.2C271.95,-223.2 308.77,-223.2 342.28,-223.2"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="342.25,-225.48 348.75,-223.2 342.25,-220.93 342.25,-225.48"/>
+<g class="edge" id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-edge2">
+<title>composition-&gt;outcome</title>
+<path d="M240.25,-223.2C271.95,-223.2 308.77,-223.2 342.28,-223.2" fill="none" stroke="var(--diagram-edge,#547b86)"></path>
+<polygon fill="var(--diagram-edge,#547b86)" points="342.25,-225.48 348.75,-223.2 342.25,-220.93 342.25,-225.48" stroke="var(--diagram-edge,#547b86)"></polygon>
 </g>
 <!-- process -->
-<g id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-node3" class="node">
+<g class="node" id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-node3">
 <title>process</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M218.1,-122.4C218.1,-122.4 100.5,-122.4 100.5,-122.4 94.5,-122.4 88.5,-116.4 88.5,-110.4 88.5,-110.4 88.5,-12 88.5,-12 88.5,-6 94.5,0 100.5,0 100.5,0 218.1,0 218.1,0 224.1,0 230.1,-6 230.1,-12 230.1,-12 230.1,-110.4 230.1,-110.4 230.1,-116.4 224.1,-122.4 218.1,-122.4"/>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-100.95" font-family="Georgia" font-size="15.00">PROCESS</text>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-82.95" font-family="Georgia" font-size="15.00">Common purpose</text>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-64.95" font-family="Georgia" font-size="15.00">Specific goals</text>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-46.95" font-family="Georgia" font-size="15.00">Team efficacy</text>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-28.95" font-family="Georgia" font-size="15.00">Conflict levels</text>
-<text xml:space="preserve" text-anchor="middle" x="159.3" y="-10.95" font-family="Georgia" font-size="15.00">Social loafing</text>
+<path d="M218.1,-122.4C218.1,-122.4 100.5,-122.4 100.5,-122.4 94.5,-122.4 88.5,-116.4 88.5,-110.4 88.5,-110.4 88.5,-12 88.5,-12 88.5,-6 94.5,0 100.5,0 100.5,0 218.1,0 218.1,0 224.1,0 230.1,-6 230.1,-12 230.1,-12 230.1,-110.4 230.1,-110.4 230.1,-116.4 224.1,-122.4 218.1,-122.4" fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-100.95">PROCESS</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-82.95">Common purpose</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-64.95">Specific goals</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-46.95">Team efficacy</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-28.95">Conflict levels</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="159.3" xml:space="preserve" y="-10.95">Social loafing</text>
 </g>
 <!-- process&#45;&gt;outcome -->
-<g id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-edge3" class="edge">
-<title>process&#45;&gt;outcome</title>
-<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M230.36,-89.49C258.42,-101.74 290.66,-116.98 318.6,-133.2 353.14,-153.26 389.9,-180.61 414.48,-199.89"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="413.07,-201.67 419.58,-203.91 415.89,-198.1 413.07,-201.67"/>
+<g class="edge" id="lecture-8-work-teams-and-effectiveness-figure-1-lecture-8-work-teams-and-effectiveness-effectiveness-model-edge3">
+<title>process-&gt;outcome</title>
+<path d="M230.36,-89.49C258.42,-101.74 290.66,-116.98 318.6,-133.2 353.14,-153.26 389.9,-180.61 414.48,-199.89" fill="none" stroke="var(--diagram-edge,#547b86)"></path>
+<polygon fill="var(--diagram-edge,#547b86)" points="413.07,-201.67 419.58,-203.91 415.89,-198.1 413.07,-201.67" stroke="var(--diagram-edge,#547b86)"></polygon>
 </g>
 </g>
 </svg>
 </div><figcaption>Lecture model: Context, Composition and Process are grouped inputs that converge on Team effectiveness. The diagram does not assign item-level causal arrows.</figcaption></figure>
-
 <h3>Context: conditions around the team</h3>
 <p><strong>Adequate resources</strong> include timely information, equipment, staffing, encouragement and administrative support. Scarcity can hinder performance because teams rely on the wider organization. <strong>Leadership and structure</strong> should clarify roles and workload while integrating skills. Leadership can be managerial or shared; the lecture notes that shared leadership and delegation may outperform a traditional single-leader structure in some settings, especially multiteam systems.</p>
 <p>A <strong>climate of trust</strong> supports cooperation and reduces the need for constant monitoring. Members can be more willing to be vulnerable, take interpersonal risks and accept a leader’s decisions. <strong>Performance evaluation and reward systems</strong> should recognize both individual contribution and team outcomes. Individual incentives alone can hinder team development; changing the reward system by itself does not instantly create trust.</p>
-<details class="worked"><summary>Teaching example: diagnose a context problem before blaming members</summary><p>A team misses handoffs because it lacks timely access to inventory data and no one knows who can approve a substitute. The first diagnosis is contextual: information and decision structure are missing. Adding a motivational speech or a team bonus does not supply the data or clarify authority. A better response is to provide the information and agree on the approval path, while still tracking individual and shared responsibilities.</p></details>
-
+<details class="worked"><summary>Teaching example: diagnose a context problem before blaming members</summary><p>A team misses handoffs because it lacks timely access to inventory data and no one knows who can approve a substitute. The first diagnosis is contextual: information and decision structure are missing. Adding a motivational speech or a team bonus does not supply the data or clarify authority.</p><p>A better response is to provide the information and agree on the approval path, while still tracking individual and shared responsibilities.</p></details>
 <h3>Composition: who is on the team and how work is covered</h3>
-<p>Team performance depends on members’ knowledge, skills and abilities and how well these fit changing conditions; it is not a simple sum of individual ability. At the team level, higher average <strong>conscientiousness</strong> and <strong>openness to experience</strong> are linked with better performance in the lecture. Some degree of <strong>agreeableness</strong> matters too: one or more highly disagreeable members can hurt the team, with emotional contagion offered as a related explanation. These are associations and qualifications, not personality-based predictions about a particular person.</p>
+<p>Team performance depends on members’ knowledge, skills and abilities and how well these fit changing conditions; it is not a simple sum of individual ability. At the team level, higher average <strong>conscientiousness</strong> and <strong>openness to experience</strong> are linked with better performance in the lecture.</p><p>Some degree of <strong>agreeableness</strong> matters too: one or more highly disagreeable members can hurt the team, with emotional contagion offered as a related explanation. These are associations and qualifications, not personality-based predictions about a particular person.</p>
 <p><strong>Role allocation</strong> should ensure that needed roles are covered. The lecture recommends putting able, experienced and conscientious members in central roles. <strong>Diversity</strong> can broaden knowledge and support creativity and innovation when members respect and communicate with one another; communication difficulties and conflict can instead make membership less attractive and contribute to turnover.</p>
-<p>Keep a team as small as the task permits. The lecture gives <strong>five to nine</strong> as a general effective range, while emphasizing that the fewest people sufficient for the work is preferable. Too many members can reduce cohesion and accountability, increase social loafing, and raise communication and coordination costs, especially under time pressure. <strong>Member flexibility</strong> helps the team respond when work changes. <strong>Member preference</strong> also matters: forcing people into group work may harm morale and satisfaction.</p>
-<details class="worked"><summary>Teaching example: choose a team size and role mix for a changing task</summary><p>A service redesign needs customer insight, process knowledge and someone who can test a new workflow. Start with the smallest group that covers these roles and can coordinate the handoffs. If the service changes frequently, members who can adapt across tasks add flexibility. A larger group may add perspectives, but it also creates more coordination and accountability needs. The five-to-nine range is a guide from the lecture, not a universal target.</p></details>
-
+<p>Keep a team as small as the task permits. The lecture gives <strong>five to nine</strong> as a general effective range, while emphasizing that the fewest people sufficient for the work is preferable. Too many members can reduce cohesion and accountability, increase social loafing, and raise communication and coordination costs, especially under time pressure.</p><p><strong>Member flexibility</strong> helps the team respond when work changes. <strong>Member preference</strong> also matters: forcing people into group work may harm morale and satisfaction.</p>
+<details class="worked"><summary>Teaching example: choose a team size and role mix for a changing task</summary><p>A service redesign needs customer insight, process knowledge and someone who can test a new workflow. Start with the smallest group that covers these roles and can coordinate the handoffs. If the service changes frequently, members who can adapt across tasks add flexibility. A larger group may add perspectives, but it also creates more coordination and accountability needs.</p><p>The five-to-nine range is a guide from the lecture, not a universal target.</p></details>
 <h3>Process: how members work together</h3>
 <p>A <strong>common purpose</strong> gives members a shared mission and strategy. Effective teams agree on it, then use <strong>reflexivity</strong>: they review how the plan is working and adjust when conditions change. They translate purpose into <strong>specific goals</strong> that are measurable and realistic, helping members coordinate and judge progress.</p>
-<p><strong>Team efficacy</strong> is members’ shared belief that the team can succeed; this belief can motivate effort, and training may improve it. When members share knowledge of one another’s capabilities, they can more effectively seek one another’s opinions, strengthening the link between members’ self-efficacy and individual creativity. Do not confuse efficacy with a <strong>mental model</strong>, which is the shared understanding of the work and environment. If team members have inaccurate or divergent mental models, they may disagree about methods, especially under acute stress.</p>
-<p><strong>Conflict</strong> depends on its kind and level. Relationship conflict involves tension, incompatibility or animosity and is almost always dysfunctional. Task conflict concerns the work or ideas. For non-routine work, moderate task conflict early can prompt discussion and critical assessment; very low or very high task conflict can hurt performance. Effective teams address issues explicitly, while ineffective discussions focus on personalities or how comments were said. <strong>Social loafing</strong> is reduced effort when responsibility is shared; individual and joint accountability can help counter it.</p>
-<details class="worked"><summary>Teaching example: task disagreement, relationship conflict and a shared mental model</summary><p>A team must choose a hospital handoff process. One member argues for a shorter form because staff have little time; another argues that it omits a safety check. That is task conflict and can help if they compare evidence and clarify the shared understanding of what a safe handoff requires. If the discussion shifts to personal insults or claims about someone’s motives, it becomes relationship conflict. The team can restore focus by restating the purpose, checking the workflow assumptions together and assigning clear accountability for the agreed process.</p></details>
-
+<p><strong>Team efficacy</strong> is members’ shared belief that the team can succeed; this belief can motivate effort, and training may improve it. When members share knowledge of one another’s capabilities, they can more effectively seek one another’s opinions, strengthening the link between members’ self-efficacy and individual creativity.</p><p>Do not confuse efficacy with a <strong>mental model</strong>, which is the shared understanding of the work and environment. If team members have inaccurate or divergent mental models, they may disagree about methods, especially under acute stress.</p>
+<p><strong>Conflict</strong> depends on its kind and level. Relationship conflict involves tension, incompatibility or animosity and is almost always dysfunctional. Task conflict concerns the work or ideas. For non-routine work, moderate task conflict early can prompt discussion and critical assessment; very low or very high task conflict can hurt performance.</p><p>Effective teams address issues explicitly, while ineffective discussions focus on personalities or how comments were said. <strong>Social loafing</strong> is reduced effort when responsibility is shared; individual and joint accountability can help counter it.</p>
+<details class="worked"><summary>Teaching example: task disagreement, relationship conflict and a shared mental model</summary><p>A team must choose a hospital handoff process. One member argues for a shorter form because staff have little time; another argues that it omits a safety check. That is task conflict and can help if they compare evidence and clarify the shared understanding of what a safe handoff requires.</p><p>If the discussion shifts to personal insults or claims about someone’s motives, it becomes relationship conflict. The team can restore focus by restating the purpose, checking the workflow assumptions together and assigning clear accountability for the agreed process.</p></details>
 <h2 id="section-4">Developing team players</h2>
 <p>The lecture notes that teams may fit more readily in countries that score higher on collectivism, but this broad cultural comparison cannot determine whether an individual will be a good teammate. Select members for the role and technical requirements, alongside qualities that can support cross-cultural communication: openness to new experiences, comfort with ambiguity, empathy, social orientation and self-monitoring.</p>
-<p>Training can let employees experience the benefits of teamwork and build skills through workshops in problem-solving, communication, negotiation, conflict management and coaching. Reward systems should support cooperative contributions such as sharing information, training colleagues, helping resolve conflict and mastering needed skills. Balance recognition of individual contribution with team outcomes. A switch from competitive to cooperative rewards does not immediately ensure information sharing or undo rushed decisions and distrust.</p>
-<details class="worked"><summary>Teaching example: align selection, training and rewards</summary><p>A new cross-functional team needs technical coverage and frequent negotiation across departments. Select people who meet the technical requirements and can work through ambiguity; train the group in problem-solving and conflict management; and recognize both reliable individual contributions and help that improves the combined result. If members still withhold information after the reward change, investigate trust, roles and norms rather than assuming the incentive alone solved the problem.</p></details>
-
+<p>Training can let employees experience the benefits of teamwork and build skills through workshops in problem-solving, communication, negotiation, conflict management and coaching. Reward systems should support cooperative contributions such as sharing information, training colleagues, helping resolve conflict and mastering needed skills. Balance recognition of individual contribution with team outcomes.</p><p>A switch from competitive to cooperative rewards does not immediately ensure information sharing or undo rushed decisions and distrust.</p>
+<details class="worked"><summary>Teaching example: align selection, training and rewards</summary><p>A new cross-functional team needs technical coverage and frequent negotiation across departments. Select people who meet the technical requirements and can work through ambiguity; train the group in problem-solving and conflict management; and recognize both reliable individual contributions and help that improves the combined result.</p><p>If members still withhold information after the reward change, investigate trust, roles and norms rather than assuming the incentive alone solved the problem.</p></details>
 <h2 id="section-5">Decide whether work belongs in a team</h2>
-<p>The lecture gives three tests: <strong>Can several people do the work better?</strong> Complex work may benefit from varied perspectives, while simple tasks may be better left to individuals. <strong>Does the work create a common purpose beyond the aggregate of individual goals?</strong> <strong>Are members interdependent</strong>, so the whole depends on each contribution and each member’s success depends on others? Use all three questions before choosing a team.</p>
-<section class="walk" tabindex="0" aria-label="Should this work be done by a team?"><h3>Should this work be done by a team?</h3><div class="example-input"><p>Use all three lecture questions. A “yes” to only one does not establish that teamwork is the best arrangement.</p></div><div class="walk-controls"><button type="button" data-action="prev" aria-label="Previous step">←</button><output aria-live="polite"></output><button type="button" data-action="next" aria-label="Next step">→</button><button type="button" data-action="play" aria-pressed="false">Play</button><button type="button" data-action="reset">Reset</button></div><section class="step"><h4>Test 1 · Better together?</h4><p>Ask whether multiple people can do this work better than one person, for example because it is complex or needs different perspectives. If it is simple and independent, one person may be the better fit.</p></section><section class="step"><h4>Test 2 · Shared purpose?</h4><p>Ask whether the work creates a common purpose that is greater than the sum of members’ separate goals. A shared label or meeting does not by itself create that purpose.</p></section><section class="step"><h4>Test 3 · Interdependent?</h4><p>Ask whether the whole depends on each member’s contribution and whether members’ success depends on one another. If each person can finish independently and combine outputs at the end, interdependence may be weak.</p></section><section class="step"><h4>Decision · Vehicle-service example</h4><p>A dealership links customer service, mechanics, parts specialists, and sales staff around meeting a customer’s service needs. Different perspectives can improve the response; the common purpose is customer service; and the linked handoffs make members interdependent. A team is therefore plausible. The tests are a decision aid, not a promise that every team will perform well.</p></section></section>
-
-<h2 id="section-6">A practitioner framework: New Rules for Teamwork</h2>
+<p>The lecture gives three tests: <strong>Can several people do the work better?</strong> Complex work may benefit from varied perspectives, while simple tasks may be better left to individuals. <strong>Does the work create a common purpose beyond the aggregate of individual goals?</strong> <strong>Are members interdependent</strong>, so the whole depends on each contribution and each member’s success depends on others?</p><p>Use all three questions before choosing a team.</p>
+<section aria-label="Should this work be done by a team?" class="worked-calculation"><h3>Should this work be done by a team?</h3><div class="example-input"><p>Use all three lecture questions. A “yes” to only one does not establish that teamwork is the best arrangement.</p></div><section class="calculation-part"><h4>Test 1 · Better together?</h4><p>Ask whether multiple people can do this work better than one person, for example because it is complex or needs different perspectives. If it is simple and independent, one person may be the better fit.</p></section><section class="calculation-part"><h4>Test 2 · Shared purpose?</h4><p>Ask whether the work creates a common purpose that is greater than the sum of members’ separate goals. A shared label or meeting does not by itself create that purpose.</p></section><section class="calculation-part"><h4>Test 3 · Interdependent?</h4><p>Ask whether the whole depends on each member’s contribution and whether members’ success depends on one another. If each person can finish independently and combine outputs at the end, interdependence may be weak.</p></section><section class="calculation-part"><h4>Decision · Vehicle-service example</h4><p>A dealership links customer service, mechanics, parts specialists, and sales staff around meeting a customer’s service needs. Different perspectives can improve the response; the common purpose is customer service; and the linked handoffs make members interdependent. A team is therefore plausible. The tests are a decision aid, not a promise that every team will perform well.</p></section></section>
+<section aria-label="Does this work call for a team?" class="activity" data-activity="team-check"><h3>Does this work call for a team?</h3><label>Could several people do this better?<select data-input="better"><option value="yes">Yes</option><option value="no">No</option></select></label><label>Is there a shared purpose beyond individual goals?<select data-input="purpose"><option value="yes">Yes</option><option value="no">No</option></select></label><label>Does success depend on members’ contributions to one another?<select data-input="interdependence"><option value="yes">Yes</option><option value="no">No</option></select></label><output aria-live="polite" data-result=""></output><p class="activity-note">Apply the three lecture questions. This is a discussion aid, not a score or prediction of success.</p><noscript><p>Enable JavaScript to change the inputs. The course model is explained above.</p></noscript></section><h2 id="section-6">A practitioner framework: New Rules for Teamwork</h2>
 <p>The article by Angus Dawson and Katy George presents a practitioner approach, not another version of the lecture model. It proposes three connected practices: build an operating system for teamwork, actively measure practices and outcomes, and use feedback to improve the system.</p>
 <figure><div class="diagram-frame" style="--diagram-width:874.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
 <!-- Generated by graphviz version 16.1.0 (20260904.0139)
  -->
 <!-- Title: G Pages: 1 -->
-<svg role="img" aria-label="Article authors’ proposed operating logic: routines make work visible, measures inform learning, and adaptations update routines; this is a practitioner framework, not a causal model from the lecture." width="874pt" height="102pt"
- viewBox="0.00 0.00 874.00 102.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
-<g id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 91.2)">
+<svg aria-label="Article authors’ proposed operating logic: routines make work visible, measures inform learning, and adaptations update routines; this is a practitioner framework, not a causal model from the lecture." height="102pt" role="img" viewbox="0.00 0.00 874.00 102.00" width="874pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g class="graph" id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-graph0" transform="scale(1 1) rotate(0) translate(10.8 91.2)">
 <title>G</title>
 <!-- system -->
-<g id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-node1" class="node">
+<g class="node" id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-node1">
 <title>system</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M239.1,-50.4C239.1,-50.4 12,-50.4 12,-50.4 6,-50.4 0,-44.4 0,-38.4 0,-38.4 0,-12 0,-12 0,-6 6,0 12,0 12,0 239.1,0 239.1,0 245.1,0 251.1,-6 251.1,-12 251.1,-12 251.1,-38.4 251.1,-38.4 251.1,-44.4 245.1,-50.4 239.1,-50.4"/>
-<text xml:space="preserve" text-anchor="middle" x="125.55" y="-28.95" font-family="Georgia" font-size="15.00">1 · Operating system</text>
-<text xml:space="preserve" text-anchor="middle" x="125.55" y="-10.95" font-family="Georgia" font-size="15.00">Routines, roles, norms, handovers</text>
+<path d="M239.1,-50.4C239.1,-50.4 12,-50.4 12,-50.4 6,-50.4 0,-44.4 0,-38.4 0,-38.4 0,-12 0,-12 0,-6 6,0 12,0 12,0 239.1,0 239.1,0 245.1,0 251.1,-6 251.1,-12 251.1,-12 251.1,-38.4 251.1,-38.4 251.1,-44.4 245.1,-50.4 239.1,-50.4" fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="125.55" xml:space="preserve" y="-28.95">1 · Operating system</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="125.55" xml:space="preserve" y="-10.95">Routines, roles, norms, handovers</text>
 </g>
 <!-- measure -->
-<g id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-node2" class="node">
+<g class="node" id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-node2">
 <title>measure</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M593.45,-80.4C593.45,-80.4 295.1,-80.4 295.1,-80.4 289.1,-80.4 283.1,-74.4 283.1,-68.4 283.1,-68.4 283.1,-42 283.1,-42 283.1,-36 289.1,-30 295.1,-30 295.1,-30 593.45,-30 593.45,-30 599.45,-30 605.45,-36 605.45,-42 605.45,-42 605.45,-68.4 605.45,-68.4 605.45,-74.4 599.45,-80.4 593.45,-80.4"/>
-<text xml:space="preserve" text-anchor="middle" x="444.27" y="-58.95" font-family="Georgia" font-size="15.00">2 · Measurement</text>
-<text xml:space="preserve" text-anchor="middle" x="444.27" y="-40.95" font-family="Georgia" font-size="15.00">Compare practices, experience and outcomes</text>
+<path d="M593.45,-80.4C593.45,-80.4 295.1,-80.4 295.1,-80.4 289.1,-80.4 283.1,-74.4 283.1,-68.4 283.1,-68.4 283.1,-42 283.1,-42 283.1,-36 289.1,-30 295.1,-30 295.1,-30 593.45,-30 593.45,-30 599.45,-30 605.45,-36 605.45,-42 605.45,-42 605.45,-68.4 605.45,-68.4 605.45,-74.4 599.45,-80.4 593.45,-80.4" fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="444.27" xml:space="preserve" y="-58.95">2 · Measurement</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="444.27" xml:space="preserve" y="-40.95">Compare practices, experience and outcomes</text>
 </g>
 <!-- system&#45;&gt;measure -->
-<g id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-edge1" class="edge">
-<title>system&#45;&gt;measure</title>
-<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M251.27,-37.01C259.06,-37.75 266.97,-38.5 274.9,-39.25"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="274.66,-41.51 281.34,-39.86 275.09,-36.98 274.66,-41.51"/>
+<g class="edge" id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-edge1">
+<title>system-&gt;measure</title>
+<path d="M251.27,-37.01C259.06,-37.75 266.97,-38.5 274.9,-39.25" fill="none" stroke="var(--diagram-edge,#547b86)"></path>
+<polygon fill="var(--diagram-edge,#547b86)" points="274.66,-41.51 281.34,-39.86 275.09,-36.98 274.66,-41.51" stroke="var(--diagram-edge,#547b86)"></polygon>
 </g>
 <!-- improve -->
-<g id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-node3" class="node">
+<g class="node" id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-node3">
 <title>improve</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M840.55,-50.4C840.55,-50.4 649.45,-50.4 649.45,-50.4 643.45,-50.4 637.45,-44.4 637.45,-38.4 637.45,-38.4 637.45,-12 637.45,-12 637.45,-6 643.45,0 649.45,0 649.45,0 840.55,0 840.55,0 846.55,0 852.55,-6 852.55,-12 852.55,-12 852.55,-38.4 852.55,-38.4 852.55,-44.4 846.55,-50.4 840.55,-50.4"/>
-<text xml:space="preserve" text-anchor="middle" x="745" y="-28.95" font-family="Georgia" font-size="15.00">3 · Continuous improvement</text>
-<text xml:space="preserve" text-anchor="middle" x="745" y="-10.95" font-family="Georgia" font-size="15.00">Test, learn and adapt</text>
+<path d="M840.55,-50.4C840.55,-50.4 649.45,-50.4 649.45,-50.4 643.45,-50.4 637.45,-44.4 637.45,-38.4 637.45,-38.4 637.45,-12 637.45,-12 637.45,-6 643.45,0 649.45,0 649.45,0 840.55,0 840.55,0 846.55,0 852.55,-6 852.55,-12 852.55,-12 852.55,-38.4 852.55,-38.4 852.55,-44.4 846.55,-50.4 840.55,-50.4" fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="745" xml:space="preserve" y="-28.95">3 · Continuous improvement</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="745" xml:space="preserve" y="-10.95">Test, learn and adapt</text>
 </g>
 <!-- measure&#45;&gt;improve -->
-<g id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-edge2" class="edge">
-<title>measure&#45;&gt;improve</title>
-<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M605.57,-39.1C613.56,-38.3 621.51,-37.5 629.33,-36.72"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="629.35,-39 635.59,-36.09 628.9,-34.47 629.35,-39"/>
+<g class="edge" id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-edge2">
+<title>measure-&gt;improve</title>
+<path d="M605.57,-39.1C613.56,-38.3 621.51,-37.5 629.33,-36.72" fill="none" stroke="var(--diagram-edge,#547b86)"></path>
+<polygon fill="var(--diagram-edge,#547b86)" points="629.35,-39 635.59,-36.09 628.9,-34.47 629.35,-39" stroke="var(--diagram-edge,#547b86)"></polygon>
 </g>
 <!-- improve&#45;&gt;system -->
-<g id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-edge3" class="edge">
-<title>improve&#45;&gt;system</title>
-<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M636.98,-20.1C626.33,-19.73 615.68,-19.42 605.45,-19.2 462.22,-16.1 426.34,-16.46 283.1,-19.2 275.27,-19.35 267.22,-19.54 259.1,-19.77"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="259.24,-17.49 252.81,-19.94 259.37,-22.03 259.24,-17.49"/>
+<g class="edge" id="lecture-8-work-teams-and-effectiveness-figure-2-lecture-8-work-teams-and-effectiveness-practitioner-improvement-loop-edge3">
+<title>improve-&gt;system</title>
+<path d="M636.98,-20.1C626.33,-19.73 615.68,-19.42 605.45,-19.2 462.22,-16.1 426.34,-16.46 283.1,-19.2 275.27,-19.35 267.22,-19.54 259.1,-19.77" fill="none" stroke="var(--diagram-edge,#547b86)"></path>
+<polygon fill="var(--diagram-edge,#547b86)" points="259.24,-17.49 252.81,-19.94 259.37,-22.03 259.24,-17.49" stroke="var(--diagram-edge,#547b86)"></polygon>
 </g>
 </g>
 </svg>
 </div><figcaption>Article authors’ proposed operating logic: routines make work visible, measures inform learning, and adaptations update routines; this is a practitioner framework, not a causal model from the lecture.</figcaption></figure>
-
 <h3>1. Develop an operating system</h3>
-<p>The article uses “operating system” for the building blocks that define how team members collaborate, make changes and support each other. It includes what value the team creates, what it should achieve, each member’s contribution, how work is managed, and the constructive norms that guide behaviour. The authors recommend a system that provides consistent structure while remaining flexible enough to adapt to changing conditions. They discuss the Toyota Production System and Agile as examples of approaches that connect routines and learning.</p>
-<p>In the authors’ Way We Work (WWW) approach, routines include structured kickoffs to set cadence, norms and expectations; regular one-to-one feedback; twice-monthly team retrospectives; coaching when needed; and complete handovers. Their Latin American bank case began with unclear responsibilities, long hours and little progress. The team restarted with outside consultants included in the kickoff, recorded retrospectives, regular feedback and agile coaching. The authors report that the bank launched its planned digital products and received a handover after nine months. This is the article’s case, not proof that the same routine will produce the same result elsewhere.</p>
+<p>The article uses “operating system” for the building blocks that define how team members collaborate, make changes and support each other. It includes what value the team creates, what it should achieve, each member’s contribution, how work is managed, and the constructive norms that guide behaviour.</p><p>The authors recommend a system that provides consistent structure while remaining flexible enough to adapt to changing conditions. They discuss the Toyota Production System and Agile as examples of approaches that connect routines and learning.</p>
+<p>The Way We Work approach uses kickoffs, feedback, retrospectives, coaching and complete handovers. The routines make responsibilities and learning visible.</p><details><summary>The article’s bank example</summary><p>A Latin American bank team began with unclear responsibilities, long hours and little progress. A restart included consultants in the kickoff, recorded retrospectives, feedback and coaching. The authors report product launches and a handover after nine months. This case illustrates their approach; it does not prove the same result elsewhere.</p></details>
 <details class="worked"><summary>Teaching example: connect a routine to a coordination problem</summary><p>A project has duplicated work and missing approvals. A kickoff can make responsibilities and cadence explicit; one-to-ones can surface individual blockers; retrospectives can identify repeated handoff failures; and a handover can preserve decisions for the next team. These routines create opportunities to notice and address coordination problems. They do not guarantee success without suitable resources, trust and follow-through.</p></details>
-
 <h3>2. Invest in active, real-time measurement</h3>
-<p>The authors describe three measures: a weekly anonymous but segmented employee survey asking one question about how people feel, answered on a five-emoji scale; an Engagement Team Survey (ETS) every two weeks about which WWW routines teams use and how consistently, members’ project experience and progress toward personal and professional goals; and confidential client feedback. An automated ETS report is used to identify when scores dip and leaders may need to intervene. Their article reports that teams using all WWW elements scored 10 percentage points higher on client collaboration and 23 points higher on building client capabilities and skills. It also reports findings from a study of 40 teams (217 consultants): when teams were in person about half the time, they were 10 times as likely to say collaboration was effective compared with teams above or below that level; members were 25% more likely to be satisfied with support; and 77% versus 59% of team leaders said they had built meaningful client relationships when problem-solving sessions were in person rather than remote.</p>
-<p>The article also describes tradeoffs: teams co-locating more than half the time faced greater work-life and focus challenges, while teams working remotely about half the time were twice as likely to report enough recovery and more likely to see their jobs as sustainable. These figures are the authors’ reported results from their context; they do not establish a universal ideal schedule or prove that location alone caused the differences.</p>
+<p>Measure both how the team works and what it achieves. The article combines employee feedback, routine-use and project-experience surveys, and confidential client feedback. Leaders use changes in the results to decide what to adjust.</p><details><summary>Measures and statistics reported by the article</summary><ul><li>A weekly anonymous, segmented survey asks how people feel using a five-emoji scale.</li><li>The fortnightly Engagement Team Survey covers routines, project experience and progress toward personal and professional goals.</li><li>Teams using all WWW elements scored 10 percentage points higher on client collaboration and 23 points higher on client capability-building.</li><li>In 40 teams with 217 consultants, those in person about half the time were 10 times as likely to report effective collaboration, and members were 25% more likely to report satisfaction with support.</li><li>For in-person rather than remote problem-solving sessions, 77% versus 59% of leaders reported meaningful client relationships.</li></ul><p>These are the authors’ reported comparisons in their setting. They do not establish an ideal schedule for every team or isolate location as the cause.</p></details>
+<p>The article also describes tradeoffs: teams co-locating more than half the time faced greater work-life and focus challenges, while teams working remotely about half the time were twice as likely to report enough recovery and more likely to see their jobs as sustainable.</p><p>These figures are the authors’ reported results from their context; they do not establish a universal ideal schedule or prove that location alone caused the differences.</p>
 <p>Other examples in the article include trauma centers tracking patient stabilization time and trying timers, and aviation organizations sharing incident reports around a common safety goal. They illustrate choosing measures connected to desired outcomes and learning across teams; they are not part of the lecture model.</p>
-<details class="worked"><summary>Teaching example: choose a measure before choosing a practice</summary><p>If a cross-functional group’s problem is slow shift handover, first define the desired outcome, such as a shorter handover while required information remains complete. Then track the outcome and test a specific change, such as assigning workstations in advance. Check both speed and information quality so improving one measure does not hide a worse result elsewhere. This follows the article’s measurement logic; it does not assume that its example will work in every workplace.</p></details>
-
+<details class="worked"><summary>Teaching example: choose a measure before choosing a practice</summary><p>If a cross-functional group’s problem is slow shift handover, first define the desired outcome, such as a shorter handover while required information remains complete. Then track the outcome and test a specific change, such as assigning workstations in advance. Check both speed and information quality so improving one measure does not hide a worse result elsewhere.</p><p>This follows the article’s measurement logic; it does not assume that its example will work in every workplace.</p></details>
 <h3>3. Create a system for continuous improvement and innovation</h3>
-<p>The article recommends giving team leaders access to feedback and authority to test adjustments while work is underway. Its Way We Work center of excellence has 14 full-time employees who examine patterns, support teams and share practices. The article also describes Bosch China using rapid prototypes and tests of digital tools, Hindustan Unilever’s Dapada factory using an app to track worker productivity, and McKinsey’s Lilli platform to search and synthesize organizational knowledge.</p>
+<p>The article recommends giving team leaders access to feedback and authority to test adjustments while work is underway. Its Way We Work center of excellence has 14 full-time employees who examine patterns, support teams and share practices.</p><p>The article also describes Bosch China using rapid prototypes and tests of digital tools, Hindustan Unilever’s Dapada factory using an app to track worker productivity, and McKinsey’s Lilli platform to search and synthesize organizational knowledge.</p>
 <p>The authors say improvement requires transparency and trust, an adaptable operating system, consideration of different perspectives, access to a shared knowledge repository, time, resources and senior accountability. They report that executives in high-performing teams are five times as productive as those in average teams. Treat this as the article’s reported comparison, not a guaranteed causal return from adopting its recommendations.</p>
-<details class="worked"><summary>Teaching example: run a small improvement cycle</summary><p>A team sees repeated delays at one approval step. It reviews the relevant measures, asks members from each affected function what happens at the handoff, tests a revised approval routine, and checks the next results. If the change does not help, the team revises it and shares what it learned. A manager needs both permission and time to make these adjustments; collecting feedback without acting on it is not continuous improvement.</p></details>
-
+<details class="worked"><summary>Teaching example: run a small improvement cycle</summary><p>A team sees repeated delays at one approval step. It reviews the relevant measures, asks members from each affected function what happens at the handoff, tests a revised approval routine, and checks the next results. If the change does not help, the team revises it and shares what it learned.</p><p>A manager needs both permission and time to make these adjustments; collecting feedback without acting on it is not continuous improvement.</p></details>
 <h2 id="section-7">Common mistakes</h2>
 <ul>
 <li>Calling any set of coworkers a team. Look for a shared purpose, interdependence and collective performance.</li>
@@ -296,55 +283,39 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 <li>Assuming a reward change alone will build trust, stop loafing or guarantee information sharing.</li>
 <li>Treating the practitioner article’s statistics or 50% co-location finding as universal or causal advice.</li>
 </ul>
-<h2 id="section-8">Exam focus</h2>
-<ul>
-<li>Define a work team through interdependence and shared purpose; explain positive synergy as coordinated collective performance.</li>
-<li>Compare groups and teams across goal, synergy, accountability and skills, then qualify the broader lecture comparison as typical rather than absolute.</li>
-<li>Classify problem-solving, self-managed, cross-functional, virtual and multiteam arrangements; identify boundary spanners in multiteam systems.</li>
-<li>Reproduce the three effectiveness categories and their exact factors. State what effectiveness includes and why the model is a guide.</li>
-<li>Explain how context, composition and process considerations shape team design without claiming deterministic outcomes.</li>
-<li>Distinguish task from relationship conflict; efficacy from mental models; reflexivity from both.</li>
-<li>Apply all three “should this work be done in a team?” tests.</li>
-<li>Keep the article’s operating-system, measurement and continuous-improvement recommendations separate from the lecture model, and attribute its case examples and figures.</li>
-</ul>
-<h2 id="section-9">Practice questions</h2>
+<span class="section-anchor" id="section-8"></span><h2 id="section-9">Practice questions</h2>
 <ol>
 <li>What distinguishes a work team from a work group in the lecture’s four-dimension comparison?</li>
 </ol>
 <details><summary>Answer</summary><p>Teams orient toward collective performance, positive synergy, individual and mutual accountability, and complementary skills. Work groups are described as sharing information, having neutral or sometimes negative synergy, individual accountability and random or varied skills. This is a source comparison, not a claim that every group lacks cooperation.</p></details>
-
 <ol>
 <li>A hospital’s emergency, intensive-care and recovery units remain separate teams but coordinate linked stages of treatment toward patient recovery. What structure is this, and who might act as a boundary spanner?</li>
 </ol>
 <details><summary>Answer</summary><p>This is a multiteam system because multiple interdependent teams share a higher goal. A boundary spanner coordinates with the other subteams and can reduce the number of direct cross-team communication demands.</p></details>
-
 <ol>
 <li>Put these factors in the lecture model: accurate staffing data, ability coverage, a measurable shared target, and reviewing the plan after conditions change.</li>
 </ol>
 <details><summary>Answer</summary><p>Staffing data is Context (resources); ability coverage is Composition (abilities and role allocation); a measurable shared target is Process (specific goals and common purpose); reviewing and adapting the plan is Process (reflexivity).</p></details>
-
 <ol>
 <li>A team debates two possible procedures, compares evidence, then begins criticizing one member’s personality. Distinguish the two kinds of conflict and explain what the team can do.</li>
 </ol>
 <details><summary>Answer</summary><p>Comparing procedures is task conflict and may help non-routine work if it stays moderate and focused on ideas. Personal criticism is relationship conflict and is almost always dysfunctional. The team can return to its shared purpose, make assumptions explicit and evaluate evidence rather than motives.</p></details>
-
 <ol>
 <li>Apply the three team-use tests to routine filing that each employee can complete independently and combine at the end.</li>
 </ol>
 <details><summary>Answer</summary><p>Several people may not do the task better; it may not create a common purpose beyond separate goals; and members are not strongly interdependent if each can finish independently. The lecture suggests simple work like this may be better left to individuals.</p></details>
-
 <ol>
 <li>How can virtual teams share unique information better while sharing less information overall?</li>
 </ol>
 <details><summary>Answer</summary><p>Unique information is held by individual members, while overall information sharing concerns the total exchange. A group can surface a member’s distinctive knowledge yet still exchange less information overall. The lecture reports this as a review finding, not a contradiction or universal rule.</p></details>
-
 <ol>
 <li>Identify the three principles in the article’s practitioner framework and state one evidence limit.</li>
 </ol>
-<details><summary>Answer</summary><p>Develop an operating system, invest in active real-time measurement, and create a system for continuous improvement and innovation. The article’s company examples and reported statistics are context-specific author claims; they should not be presented as guaranteed causal results or part of the lecture’s effectiveness model.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="lecture-7-group-decision-making.html"><small>Previous</small>Group Decision-Making <span aria-hidden="true">↗</span></a></nav><footer>Organizational Behavior and Management · Study guide <span>Understand work. Connect people, teams, and organizations.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+<details><summary>Answer</summary><p>Develop an operating system, invest in active real-time measurement, and create a system for continuous improvement and innovation. The article’s company examples and reported statistics are context-specific author claims; they should not be presented as guaranteed causal results or part of the lecture’s effectiveness model.</p></details><div class="section-finish"><h2>Keep the essentials</h2><p><a href="groups-revision.html">Short note: groups and teams</a>. A compact recap and three recall questions for this part of the course.</p></div></article><nav aria-label="Study sequence" class="pager"><a href="lecture-7-group-decision-making.html"><small>Previous</small>Group Decision-Making <span aria-hidden="true">↗</span></a><a href="groups-revision.html"><small>Next</small>Short note: groups and teams <span aria-hidden="true">↗</span></a></nav><footer>Organizational Behavior and Management · Study guide <span>Understand work. Connect people, teams, and organizations.</span></footer></main></div><script src="pages-data.js"></script><script src="activities.js"></script><script>(() => {
   'use strict';
   let cleanups = [];
   const initializeMain = root => {
+  initializeActivities(root);
   const mathHints = new WeakMap();
   const repairMath = () => {
     root.querySelectorAll('math,.walk code').forEach(expression => {

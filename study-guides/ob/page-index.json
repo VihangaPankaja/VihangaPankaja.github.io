@@ -4,76 +4,90 @@
     "title": "Organizational Behavior and Management",
     "group": "Start here",
     "lecture": "MN4063 · Study route",
-    "lead": "A guided route through people, teams, and organizations at work."
+    "lead": "Clear explanations, workplace cases and short notes for MN4063. Read a topic, try its questions, then revisit the essentials."
   },
   {
     "slug": "lecture-1-organizational-behaviour-foundations",
     "title": "Organizational Behaviour Foundations",
     "group": "Foundations",
     "lecture": "Lecture 1",
-    "lead": "How the meaning of work, human behaviour, organizational context, and management fit together."
+    "lead": "Understand behaviour at three levels, then ask which conditions make an explanation fit."
   },
   {
     "slug": "lecture-2-work-attitudes-and-job-satisfaction",
     "title": "Work Attitudes and Job Satisfaction",
     "group": "Individual behaviour",
     "lecture": "Lecture 2",
-    "lead": "Understand how workplace attitudes form, how satisfaction is evaluated, how people may respond to dissatisfaction, and how related job attitudes differ."
+    "lead": "Distinguish beliefs, feelings and intentions, then use EVLN to classify responses to dissatisfaction."
   },
   {
     "slug": "lecture-3-personality-at-work",
     "title": "Personality at Work",
     "group": "Individual behaviour",
     "lecture": "Lecture 3",
-    "lead": "Understand personality as a relatively stable pattern whose expression depends on both the person and the work situation."
+    "lead": "Compare personality frameworks and see why workplace rules and cues change what traits predict."
   },
   {
     "slug": "lecture-3-values-culture-and-person-environment-fit",
     "title": "Values, Culture, and Person-Environment Fit",
     "group": "Individual behaviour",
     "lecture": "Lecture 3",
-    "lead": "Explain how values guide workplace choices, how people may fit jobs and organizational cultures, and how to read national-culture comparisons carefully."
+    "lead": "Separate values, job fit and organizational fit without turning national culture into an individual label."
   },
   {
     "slug": "lecture-4-emotions-and-moods",
     "title": "Emotions and Moods",
     "group": "Individual behaviour",
     "lecture": "Lecture 4",
-    "lead": "Explain how emotions and moods shape workplace judgment, emotional labour, and responses to daily work events."
+    "lead": "Distinguish emotions from moods, then connect emotional labour and daily events to work outcomes."
   },
   {
     "slug": "lecture-5-managing-emotions-at-work",
     "title": "Managing Emotions at Work",
     "group": "Individual behaviour",
     "lecture": "Lecture 5",
-    "lead": "Use emotional awareness and context-sensitive response to support people and work without suppressing feelings or assuming what others feel."
+    "lead": "Recognize emotions, ask what support is wanted, and choose a response that fits the person and the task."
   },
   {
     "slug": "lecture-6-perception-and-individual-decision-making",
     "title": "Perception and Individual Decision Making",
     "group": "Individual behaviour",
     "lecture": "Lecture 6",
-    "lead": "Trace how people notice and interpret their environment, explain others’ behaviour, and decide what counts as a problem or a reasonable course of action."
+    "lead": "See how attention, attribution and decision shortcuts shape the conclusions people reach."
+  },
+  {
+    "slug": "individual-revision",
+    "title": "Short note: individuals at work",
+    "group": "Individual behaviour",
+    "lecture": "Lectures 1–6",
+    "lead": "Read the core distinctions, then test your recall. Follow a topic link for the full explanation and sources."
   },
   {
     "slug": "lecture-7-group-structure-and-behaviour",
     "title": "Group Structure and Behaviour",
     "group": "Group behaviour",
     "lecture": "Lecture 7A",
-    "lead": "How group development, roles, norms, status, effort, cohesion, and diversity shape workplace behaviour and performance."
+    "lead": "Connect roles, norms, status and cohesion to effort and performance."
   },
   {
     "slug": "lecture-7-group-decision-making",
     "title": "Group Decision-Making",
     "group": "Group behaviour",
     "lecture": "Lecture 7B",
-    "lead": "How groups gain from pooled knowledge, where decision processes can fail, and how three techniques trade off participation and outcomes."
+    "lead": "Compare groupthink, groupshift and three ways to organize a group decision."
   },
   {
     "slug": "lecture-8-work-teams-and-effectiveness",
     "title": "Work Teams and Effectiveness",
     "group": "Group behaviour",
     "lecture": "Lecture 8",
-    "lead": "Understand when teamwork fits, how teams are designed, and what the lecture model considers when discussing effectiveness."
+    "lead": "Decide when a team helps, then examine its context, composition and process."
+  },
+  {
+    "slug": "groups-revision",
+    "title": "Short note: groups and teams",
+    "group": "Group behaviour",
+    "lecture": "Lectures 7–8",
+    "lead": "Read the core distinctions, then test your recall. Follow a topic link for the full explanation and sources."
   }
 ]
