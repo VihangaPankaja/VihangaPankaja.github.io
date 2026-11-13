@@ -1,4 +1,5 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Understand how workplace attitudes form, how satisfaction is evaluated, how people may respond to dissatisfaction, and how related job attitudes differ."><title>Work Attitudes and Job Satisfaction · OB and Management</title><script>(() => {
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="Distinguish beliefs, feelings and intentions, then use EVLN to classify responses to dissatisfaction." name="description"/><title>Work Attitudes and Job Satisfaction · OB and Management</title><script>(() => {
   let choice = 'system';
   try { const saved = localStorage.getItem('ob-theme'); if (['system','light','dark'].includes(saved)) choice = saved; } catch {}
   document.documentElement.dataset.themeChoice = choice;
@@ -36,27 +37,26 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 .menu:focus{outline:3px solid var(--focus);outline-offset:3px}
 
 .nav-pending{display:block;font-size:14px;line-height:1.4;padding:6px 9px;margin:2px -9px;color:var(--muted)}.nav-pending small{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-</style></head><body>
-<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">OB</span> OB <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
-  <button id="theme" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-options" aria-label="Color theme: System"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg><span id="theme-current">System</span><svg class="theme-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>
-  <div id="theme-options" role="menu" aria-label="Color theme" hidden>
-    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="system" aria-checked="true"><span>System<small>Follow your device</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
-    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="light" aria-checked="false"><span>Light<small>Light pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
-    <button type="button" role="menuitemradio" tabindex="-1" data-theme-value="dark" aria-checked="false"><span>Dark<small>Dark pages and diagrams</small></span><span class="theme-check" aria-hidden="true">✓</span></button>
-  </div>
+</style><link href="reading.css" rel="stylesheet"/></head><body>
+<a class="skip" href="#main">Skip to notes</a><header class="topbar"><a class="brand" href="index.html"><span aria-hidden="true" class="mark">OB</span> OB <span class="subbrand">study guide</span></a><div class="tools"><button id="examples" type="button">Expand examples</button><div class="theme-picker">
+<button aria-controls="theme-options" aria-expanded="false" aria-haspopup="menu" aria-label="Color theme: System" id="theme" type="button"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"></path><circle cx="12" cy="12" r="4"></circle></svg><span id="theme-current">System</span><svg aria-hidden="true" class="theme-chevron" viewbox="0 0 16 16"><path d="m4 6 4 4 4-4"></path></svg></button>
+<div aria-label="Color theme" hidden="" id="theme-options" role="menu">
+<button aria-checked="true" data-theme-value="system" role="menuitemradio" tabindex="-1" type="button"><span>System<small>Follow your device</small></span><span aria-hidden="true" class="theme-check">✓</span></button>
+<button aria-checked="false" data-theme-value="light" role="menuitemradio" tabindex="-1" type="button"><span>Light<small>Light pages and diagrams</small></span><span aria-hidden="true" class="theme-check">✓</span></button>
+<button aria-checked="false" data-theme-value="dark" role="menuitemradio" tabindex="-1" type="button"><span>Dark<small>Dark pages and diagrams</small></span><span aria-hidden="true" class="theme-check">✓</span></button>
 </div>
-<button class="menu" aria-expanded="false" aria-controls="sidebar" type="button">Topics</button></div></header>
-<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input id="topic-filter" type="search" placeholder="People, teams, leadership…" autocomplete="off"><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" href="index.html">Organizational Behavior and Management</a></div><div class="nav-group"><p>Foundations</p><a class="nav-entry" data-search="" href="lecture-1-organizational-behaviour-foundations.html">Organizational Behaviour Foundations</a></div><div class="nav-group"><p>Individual behaviour</p><a class="nav-entry" data-search="" href="lecture-2-work-attitudes-and-job-satisfaction.html" aria-current="page">Work Attitudes and Job Satisfaction</a><a class="nav-entry" data-search="" href="lecture-3-personality-at-work.html">Personality at Work</a><a class="nav-entry" data-search="" href="lecture-3-values-culture-and-person-environment-fit.html">Values, Culture, and Person-Environment Fit</a><a class="nav-entry" data-search="" href="lecture-4-emotions-and-moods.html">Emotions and Moods</a><a class="nav-entry" data-search="" href="lecture-5-managing-emotions-at-work.html">Managing Emotions at Work</a><a class="nav-entry" data-search="" href="lecture-6-perception-and-individual-decision-making.html">Perception and Individual Decision Making</a></div><div class="nav-group"><p>Group behaviour</p><a class="nav-entry" data-search="" href="lecture-7-group-structure-and-behaviour.html">Group Structure and Behaviour</a><a class="nav-entry" data-search="" href="lecture-7-group-decision-making.html">Group Decision-Making</a><a class="nav-entry" data-search="" href="lecture-8-work-teams-and-effectiveness.html">Work Teams and Effectiveness</a></div></nav><p id="no-topics" hidden>No matching topics.</p><div class="rail-foot">MN4063<br>Organizational Behavior and Management</div></aside>
-<main id="main"><div class="eyebrow">Individual behaviour <span>/</span> Lecture 2</div><h1>Work Attitudes and Job Satisfaction</h1><p class="lead">Understand how workplace attitudes form, how satisfaction is evaluated, how people may respond to dissatisfaction, and how related job attitudes differ.</p><nav class="on-page" aria-label="On this page"><a href="#section-0">Big picture</a><a href="#section-1">What is an attitude?</a><a href="#section-2">How workplace attitudes form</a><a href="#section-3">Attitude components: belief, feeling, intended action</a><a href="#section-4">Visible behaviour and less visible attitudes</a><a href="#section-5">Cognitive consistency and dissonance</a><a href="#section-6">Job satisfaction: an overall evaluation with several facets</a><a href="#section-7">Measuring satisfaction: what a rating scale can and cannot show</a><a href="#section-8">Responses to dissatisfaction: the EVLN framework</a><a href="#section-9">Related job attitudes and behaviour</a><a href="#section-10">Common mistakes</a><a href="#section-11">Exam focus</a><a href="#section-12">Practice questions</a><a href="#section-13">Further practice</a></nav><article><h2 id="section-0">Big picture</h2>
-<p>Work attitudes are evaluations of things that matter at work. They reflect what people believe, feel, and may intend to do, while also being shaped by personal predispositions, workplace conditions, and the meaning people make with others. Job satisfaction is one important attitude: it summarizes how a person evaluates several parts of a job. When dissatisfaction occurs, the exit–voice–loyalty–neglect model helps classify possible responses. Other job attitudes describe different aspects of a person’s relationship with their tasks and organization. These ideas connect, but they are not interchangeable.</p>
-<p>Individual differences matter throughout this lecture. The kinds named include ethnic origin, physique, gender, early family experiences, social and cultural factors, national culture, motivation, attitudes, personality traits and types, intelligence and abilities, and perception. Differences can support creativity and satisfaction, yet can also become sources of misunderstanding, conflict, or strain. These are dimensions to be aware of, not grounds for predicting a person’s attitude from ethnicity, gender, physique, culture, or any other single characteristic. During externally imposed change, managers need sensitivity to employees’ strain and should also recognize their own stress and influence on others.</p>
-<p>Recognizing individuality has practical implications for managers. They need skill in selecting and developing people whose contributions support the organization. They also need self-knowledge: their own personality and conduct affect workplace relationships. When change feels externally imposed, sensitive management can help employees develop new mindsets, attitudes, and perceptions so they can cope with and adapt to changed conditions.</p>
+</div>
+<button aria-controls="sidebar" aria-expanded="false" class="menu" type="button">Topics</button></div></header>
+<div class="layout"><aside id="sidebar"><label class="search-label" for="topic-filter">Find a topic</label><input autocomplete="off" id="topic-filter" placeholder="People, teams, leadership…" type="search"/><nav aria-label="All topics"><div class="nav-group"><p>Start here</p><a class="nav-entry" data-search="Clear explanations, workplace cases and short notes for MN4063. Read a topic, try its questions, then revisit the essentials." href="index.html">Organizational Behavior and Management</a></div><div class="nav-group"><p>Foundations</p><a class="nav-entry" data-search="Understand behaviour at three levels, then ask which conditions make an explanation fit." href="lecture-1-organizational-behaviour-foundations.html">Organizational Behaviour Foundations</a></div><div class="nav-group"><p>Individual behaviour</p><a aria-current="page" class="nav-entry" data-search="Distinguish beliefs, feelings and intentions, then use EVLN to classify responses to dissatisfaction." href="lecture-2-work-attitudes-and-job-satisfaction.html">Work Attitudes and Job Satisfaction</a><a class="nav-entry" data-search="Compare personality frameworks and see why workplace rules and cues change what traits predict." href="lecture-3-personality-at-work.html">Personality at Work</a><a class="nav-entry" data-search="Separate values, job fit and organizational fit without turning national culture into an individual label." href="lecture-3-values-culture-and-person-environment-fit.html">Values, Culture, and Person-Environment Fit</a><a class="nav-entry" data-search="Distinguish emotions from moods, then connect emotional labour and daily events to work outcomes." href="lecture-4-emotions-and-moods.html">Emotions and Moods</a><a class="nav-entry" data-search="Recognize emotions, ask what support is wanted, and choose a response that fits the person and the task." href="lecture-5-managing-emotions-at-work.html">Managing Emotions at Work</a><a class="nav-entry" data-search="See how attention, attribution and decision shortcuts shape the conclusions people reach." href="lecture-6-perception-and-individual-decision-making.html">Perception and Individual Decision Making</a><a class="nav-entry revision-link" data-search="revision recap summary short note" href="individual-revision.html">Short note: individuals at work</a></div><div class="nav-group"><p>Group behaviour</p><a class="nav-entry" data-search="Connect roles, norms, status and cohesion to effort and performance." href="lecture-7-group-structure-and-behaviour.html">Group Structure and Behaviour</a><a class="nav-entry" data-search="Compare groupthink, groupshift and three ways to organize a group decision." href="lecture-7-group-decision-making.html">Group Decision-Making</a><a class="nav-entry" data-search="Decide when a team helps, then examine its context, composition and process." href="lecture-8-work-teams-and-effectiveness.html">Work Teams and Effectiveness</a><a class="nav-entry revision-link" data-search="revision recap summary short note" href="groups-revision.html">Short note: groups and teams</a></div></nav><p hidden="" id="no-topics">No matching topics.</p><div class="rail-foot">MN4063<br/>Organizational Behavior and Management</div></aside>
+<main id="main"><div class="eyebrow">Individual behaviour <span>/</span> Lecture 2</div><h1>Work Attitudes and Job Satisfaction</h1><p class="lead">Distinguish beliefs, feelings and intentions, then use EVLN to classify responses to dissatisfaction.</p><details class="contents"><summary>On this page · 13 sections</summary><nav aria-label="On this page" class="on-page"><a href="#section-0">Separate the evaluation from the response</a><a href="#section-1">What is an attitude?</a><a href="#section-2">How workplace attitudes form</a><a href="#section-3">Attitude components: belief, feeling, intended action</a><a href="#section-4">Visible behaviour and less visible attitudes</a><a href="#section-5">Cognitive consistency and dissonance</a><a href="#section-6">Job satisfaction: an overall evaluation with several facets</a><a href="#section-7">Measuring satisfaction: what a rating scale can and cannot show</a><a href="#section-8">Responses to dissatisfaction: the EVLN framework</a><a href="#section-9">Related job attitudes and behaviour</a><a href="#section-10">Common mistakes</a><a href="#section-12">Practice questions</a><a href="#section-13">Further practice</a></nav></details><article><h2 id="section-0">Separate the evaluation from the response</h2>
+<ul class="takeaways"><li>An attitude evaluates a target. A belief says what is true; a value says what ought to matter.</li><li>Job satisfaction is an evaluation of the job. Involvement, commitment and engagement describe different relationships.</li><li>An intention to act and an observed action are different evidence.</li></ul>
+<p>People differ in background, experience, ability, motivation, personality and perception. Those differences can contribute ideas or create misunderstanding. They do not justify predicting an attitude from one demographic characteristic.</p>
+<p>Managers need to understand their own influence as well as employees’ needs. During imposed change, recognize strain, explain what is changing and support adaptation.</p>
 <h2 id="section-1">What is an attitude?</h2>
-<p>An <strong>attitude</strong> is how a person views and evaluates an idea, object, person, or situation, together with a tendency to respond positively or negatively toward it. “I like my job” expresses an attitude about work. The evaluation is broader than a factual belief: a person may believe a condition exists, value a different standard, and hold an attitude toward the target.</p>
+<p>An <strong>attitude</strong> evaluates a target, such as a job, policy or supervisor. “I like my job” is an attitude. Its beliefs, feelings and response tendencies are related parts of that evaluation.</p>
 <h3>Beliefs and values are related but distinct</h3>
-<p>A <strong>belief</strong> concerns what a person understands to be true about the world—what “is.” A <strong>value</strong> concerns what a person considers desirable—what “should be.” An <strong>attitude</strong> evaluates a target, often drawing on beliefs and values. For example, “the schedule changes every week” is a belief about work; “employees should have predictable hours” expresses a value; “I resent this scheduling policy” is an attitude toward it.</p>
-<details class="worked"><summary>Teaching example: separate a belief, a value, and an attitude</summary><p>A technician says, “My rota changed three times this month” (<strong>belief</strong> about what happened). She says, “People should have enough notice to plan childcare” (<strong>value</strong> about what ought to happen). She adds, “I feel the rota policy treats staff unfairly” (<strong>attitude</strong> toward the policy). The statements concern one situation, but they answer different questions: what is, what should be, and how the person evaluates it.</p></details>
-
+<p>A <strong>belief</strong> concerns what is true: “The schedule changes every week.” A <strong>value</strong> concerns what is desirable: “Employees should have predictable hours.” An <strong>attitude</strong> evaluates the target: “I resent this scheduling policy.”</p>
+<details class="worked"><summary>Teaching example: separate a belief, a value, and an attitude</summary><p>A technician says, “My rota changed three times this month” (<strong>belief</strong> about what happened). She says, “People should have enough notice to plan childcare” (<strong>value</strong> about what ought to happen). She adds, “I feel the rota policy treats staff unfairly” (<strong>attitude</strong> toward the policy).</p><p>The statements concern one situation, but they answer different questions: what is, what should be, and how the person evaluates it.</p></details>
 <h2 id="section-2">How workplace attitudes form</h2>
 <p>The lecture presents three explanations because no single one fully accounts for workplace attitudes.</p>
 <table>
@@ -89,51 +89,49 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 <figure><div class="diagram-frame" style="--diagram-width:474.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
 <!-- Generated by graphviz version 16.1.0 (20260904.0139)
  -->
 <!-- Title: G Pages: 1 -->
-<svg role="img" aria-label="Social context shapes information about an event, which contributes to attitude formation." width="474pt" height="72pt"
- viewBox="0.00 0.00 474.00 72.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
-<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-1-lecture-2-work-attitudes-and-job-satisfaction-social-information-processing-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 61.2)">
+<svg aria-label="Social context shapes information about an event, which contributes to attitude formation." height="72pt" role="img" viewbox="0.00 0.00 474.00 72.00" width="474pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
+<g class="graph" id="lecture-2-work-attitudes-and-job-satisfaction-figure-1-lecture-2-work-attitudes-and-job-satisfaction-social-information-processing-graph0" transform="scale(1 1) rotate(0) translate(10.8 61.2)">
 <title>G</title>
 <!-- context -->
-<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-1-lecture-2-work-attitudes-and-job-satisfaction-social-information-processing-node1" class="node">
+<g class="node" id="lecture-2-work-attitudes-and-job-satisfaction-figure-1-lecture-2-work-attitudes-and-job-satisfaction-social-information-processing-node1">
 <title>context</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M102.6,-43.2C102.6,-43.2 12,-43.2 12,-43.2 6,-43.2 0,-37.2 0,-31.2 0,-31.2 0,-19.2 0,-19.2 0,-13.2 6,-7.2 12,-7.2 12,-7.2 102.6,-7.2 102.6,-7.2 108.6,-7.2 114.6,-13.2 114.6,-19.2 114.6,-19.2 114.6,-31.2 114.6,-31.2 114.6,-37.2 108.6,-43.2 102.6,-43.2"/>
-<text xml:space="preserve" text-anchor="middle" x="57.3" y="-19.95" font-family="Georgia" font-size="15.00">Social context</text>
+<path d="M102.6,-43.2C102.6,-43.2 12,-43.2 12,-43.2 6,-43.2 0,-37.2 0,-31.2 0,-31.2 0,-19.2 0,-19.2 0,-13.2 6,-7.2 12,-7.2 12,-7.2 102.6,-7.2 102.6,-7.2 108.6,-7.2 114.6,-13.2 114.6,-19.2 114.6,-19.2 114.6,-31.2 114.6,-31.2 114.6,-37.2 108.6,-43.2 102.6,-43.2" fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="57.3" xml:space="preserve" y="-19.95">Social context</text>
 </g>
 <!-- information -->
-<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-1-lecture-2-work-attitudes-and-job-satisfaction-social-information-processing-node2" class="node">
+<g class="node" id="lecture-2-work-attitudes-and-job-satisfaction-figure-1-lecture-2-work-attitudes-and-job-satisfaction-social-information-processing-node2">
 <title>information</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M260.45,-50.4C260.45,-50.4 158.6,-50.4 158.6,-50.4 152.6,-50.4 146.6,-44.4 146.6,-38.4 146.6,-38.4 146.6,-12 146.6,-12 146.6,-6 152.6,0 158.6,0 158.6,0 260.45,0 260.45,0 266.45,0 272.45,-6 272.45,-12 272.45,-12 272.45,-38.4 272.45,-38.4 272.45,-44.4 266.45,-50.4 260.45,-50.4"/>
-<text xml:space="preserve" text-anchor="middle" x="209.53" y="-28.95" font-family="Georgia" font-size="15.00">Information</text>
-<text xml:space="preserve" text-anchor="middle" x="209.53" y="-10.95" font-family="Georgia" font-size="15.00">about the event</text>
+<path d="M260.45,-50.4C260.45,-50.4 158.6,-50.4 158.6,-50.4 152.6,-50.4 146.6,-44.4 146.6,-38.4 146.6,-38.4 146.6,-12 146.6,-12 146.6,-6 152.6,0 158.6,0 158.6,0 260.45,0 260.45,0 266.45,0 272.45,-6 272.45,-12 272.45,-12 272.45,-38.4 272.45,-38.4 272.45,-44.4 266.45,-50.4 260.45,-50.4" fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="209.53" xml:space="preserve" y="-28.95">Information</text>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="209.53" xml:space="preserve" y="-10.95">about the event</text>
 </g>
 <!-- context&#45;&gt;information -->
-<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-1-lecture-2-work-attitudes-and-job-satisfaction-social-information-processing-edge1" class="edge">
-<title>context&#45;&gt;information</title>
-<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M115.09,-25.2C122.7,-25.2 130.57,-25.2 138.36,-25.2"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="138.11,-27.48 144.61,-25.2 138.11,-22.93 138.11,-27.48"/>
+<g class="edge" id="lecture-2-work-attitudes-and-job-satisfaction-figure-1-lecture-2-work-attitudes-and-job-satisfaction-social-information-processing-edge1">
+<title>context-&gt;information</title>
+<path d="M115.09,-25.2C122.7,-25.2 130.57,-25.2 138.36,-25.2" fill="none" stroke="var(--diagram-edge,#547b86)"></path>
+<polygon fill="var(--diagram-edge,#547b86)" points="138.11,-27.48 144.61,-25.2 138.11,-22.93 138.11,-27.48" stroke="var(--diagram-edge,#547b86)"></polygon>
 </g>
 <!-- attitude -->
-<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-1-lecture-2-work-attitudes-and-job-satisfaction-social-information-processing-node3" class="node">
+<g class="node" id="lecture-2-work-attitudes-and-job-satisfaction-figure-1-lecture-2-work-attitudes-and-job-satisfaction-social-information-processing-node3">
 <title>attitude</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M440.05,-43.2C440.05,-43.2 316.45,-43.2 316.45,-43.2 310.45,-43.2 304.45,-37.2 304.45,-31.2 304.45,-31.2 304.45,-19.2 304.45,-19.2 304.45,-13.2 310.45,-7.2 316.45,-7.2 316.45,-7.2 440.05,-7.2 440.05,-7.2 446.05,-7.2 452.05,-13.2 452.05,-19.2 452.05,-19.2 452.05,-31.2 452.05,-31.2 452.05,-37.2 446.05,-43.2 440.05,-43.2"/>
-<text xml:space="preserve" text-anchor="middle" x="378.25" y="-19.95" font-family="Georgia" font-size="15.00">Attitude formation</text>
+<path d="M440.05,-43.2C440.05,-43.2 316.45,-43.2 316.45,-43.2 310.45,-43.2 304.45,-37.2 304.45,-31.2 304.45,-31.2 304.45,-19.2 304.45,-19.2 304.45,-13.2 310.45,-7.2 316.45,-7.2 316.45,-7.2 440.05,-7.2 440.05,-7.2 446.05,-7.2 452.05,-13.2 452.05,-19.2 452.05,-19.2 452.05,-31.2 452.05,-31.2 452.05,-37.2 446.05,-43.2 440.05,-43.2" fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)"></path>
+<text font-family="Georgia" font-size="15.00" text-anchor="middle" x="378.25" xml:space="preserve" y="-19.95">Attitude formation</text>
 </g>
 <!-- information&#45;&gt;attitude -->
-<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-1-lecture-2-work-attitudes-and-job-satisfaction-social-information-processing-edge2" class="edge">
-<title>information&#45;&gt;attitude</title>
-<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M272.61,-25.2C280.31,-25.2 288.28,-25.2 296.22,-25.2"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="296.13,-27.48 302.63,-25.2 296.13,-22.93 296.13,-27.48"/>
+<g class="edge" id="lecture-2-work-attitudes-and-job-satisfaction-figure-1-lecture-2-work-attitudes-and-job-satisfaction-social-information-processing-edge2">
+<title>information-&gt;attitude</title>
+<path d="M272.61,-25.2C280.31,-25.2 288.28,-25.2 296.22,-25.2" fill="none" stroke="var(--diagram-edge,#547b86)"></path>
+<polygon fill="var(--diagram-edge,#547b86)" points="296.13,-27.48 302.63,-25.2 296.13,-22.93 296.13,-27.48" stroke="var(--diagram-edge,#547b86)"></polygon>
 </g>
 </g>
 </svg>
 </div><figcaption>Social context shapes information about an event, which contributes to attitude formation.</figcaption></figure>
-
 <p>For example, a new employee joins a work group. Coworkers describe the supervisor, pay and benefits, and acceptable output; the newcomer then forms attitudes consistent with that information. This illustrates how social context contributes to attitude formation. It does not mean every newcomer adopts the group’s view or that the information is necessarily accurate.</p>
-<details class="worked"><summary>Teaching example: explain two employees’ different reactions to the same workload</summary><p>Two analysts receive a demanding assignment. One has usually found challenging tasks energizing, while the other has often experienced them as frustrating (<strong>dispositional lens</strong>). The assignment also comes with unclear priorities and little time (<strong>situational lens</strong>). Coworkers describe the workload as evidence that management does not value the team (<strong>social-information-processing lens</strong>). These are possible influences to investigate, not diagnoses: ask what each analyst believes, feels, and has experienced before concluding why their attitudes differ.</p></details>
-
+<details class="worked"><summary>Teaching example: explain two employees’ different reactions to the same workload</summary><p>Two analysts receive a demanding assignment. One has usually found challenging tasks energizing, while the other has often experienced them as frustrating (<strong>dispositional lens</strong>). The assignment also comes with unclear priorities and little time (<strong>situational lens</strong>). Coworkers describe the workload as evidence that management does not value the team (<strong>social-information-processing lens</strong>).</p><p>These are possible influences to investigate, not diagnoses: ask what each analyst believes, feels, and has experienced before concluding why their attitudes differ.</p></details>
 <h2 id="section-3">Attitude components: belief, feeling, intended action</h2>
 <p>The lecture describes three closely related components:</p>
 <ul>
@@ -147,89 +145,16 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 <figure><div class="diagram-frame" style="--diagram-width:869.0px"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
 <!-- Generated by graphviz version 16.1.0 (20260904.0139)
  -->
 <!-- Title: G Pages: 1 -->
-<svg role="img" aria-label="Promotion case: the three attitude components are connected, and each is linked with the employee’s overall negative attitude. Component links are two-way to avoid implying a fixed sequence." width="869pt" height="131pt"
- viewBox="0.00 0.00 869.00 131.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style>svg text{fill:var(--foreground,#34304a)}</style>
-<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-graph0" class="graph" transform="scale(1 1) rotate(0) translate(10.8 120.2)">
-<title>G</title>
-<!-- cognition -->
-<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-node1" class="node">
-<title>cognition</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M231.6,-50.4C231.6,-50.4 12,-50.4 12,-50.4 6,-50.4 0,-44.4 0,-38.4 0,-38.4 0,-12 0,-12 0,-6 6,0 12,0 12,0 231.6,0 231.6,0 237.6,0 243.6,-6 243.6,-12 243.6,-12 243.6,-38.4 243.6,-38.4 243.6,-44.4 237.6,-50.4 231.6,-50.4"/>
-<text xml:space="preserve" text-anchor="middle" x="121.8" y="-28.95" font-family="Georgia" font-size="15.00">Cognition</text>
-<text xml:space="preserve" text-anchor="middle" x="121.8" y="-10.95" font-family="Georgia" font-size="15.00">Promotion decision seems unfair</text>
-</g>
-<!-- affect -->
-<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-node2" class="node">
-<title>affect</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M413.45,-109.4C413.45,-109.4 287.6,-109.4 287.6,-109.4 281.6,-109.4 275.6,-103.4 275.6,-97.4 275.6,-97.4 275.6,-71 275.6,-71 275.6,-65 281.6,-59 287.6,-59 287.6,-59 413.45,-59 413.45,-59 419.45,-59 425.45,-65 425.45,-71 425.45,-71 425.45,-97.4 425.45,-97.4 425.45,-103.4 419.45,-109.4 413.45,-109.4"/>
-<text xml:space="preserve" text-anchor="middle" x="350.52" y="-87.95" font-family="Georgia" font-size="15.00">Affect</text>
-<text xml:space="preserve" text-anchor="middle" x="350.52" y="-69.95" font-family="Georgia" font-size="15.00">Dislikes supervisor</text>
-</g>
-<!-- cognition&#45;&gt;affect -->
-<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-edge1" class="edge">
-<title>cognition&#45;&gt;affect</title>
-<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M228.94,-52.82C241.95,-56.21 255.08,-59.62 267.65,-62.89"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="229.58,-50.64 222.72,-51.2 228.44,-55.04 229.58,-50.64"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="267.07,-65.09 273.93,-64.53 268.22,-60.69 267.07,-65.09"/>
-</g>
-<!-- overall -->
-<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-node4" class="node">
-<title>overall</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M835.65,-50.4C835.65,-50.4 717.3,-50.4 717.3,-50.4 711.3,-50.4 705.3,-44.4 705.3,-38.4 705.3,-38.4 705.3,-12 705.3,-12 705.3,-6 711.3,0 717.3,0 717.3,0 835.65,0 835.65,0 841.65,0 847.65,-6 847.65,-12 847.65,-12 847.65,-38.4 847.65,-38.4 847.65,-44.4 841.65,-50.4 835.65,-50.4"/>
-<text xml:space="preserve" text-anchor="middle" x="776.48" y="-28.95" font-family="Georgia" font-size="15.00">Negative attitude</text>
-<text xml:space="preserve" text-anchor="middle" x="776.48" y="-10.95" font-family="Georgia" font-size="15.00">toward supervisor</text>
-</g>
-<!-- cognition&#45;&gt;overall -->
-<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-edge4" class="edge">
-<title>cognition&#45;&gt;overall</title>
-<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M243.9,-22.45C355.45,-20.37 525.54,-18.31 673.3,-21.2 680.95,-21.35 688.93,-21.56 696.9,-21.81"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="696.77,-24.08 703.34,-22.03 696.92,-19.54 696.77,-24.08"/>
-</g>
-<!-- intention -->
-<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-node3" class="node">
-<title>intention</title>
-<path fill="var(--diagram-fill,#e8f1f3)" stroke="var(--diagram-border,#7f9da5)" d="M661.3,-109.4C661.3,-109.4 469.45,-109.4 469.45,-109.4 463.45,-109.4 457.45,-103.4 457.45,-97.4 457.45,-97.4 457.45,-71 457.45,-71 457.45,-65 463.45,-59 469.45,-59 469.45,-59 661.3,-59 661.3,-59 667.3,-59 673.3,-65 673.3,-71 673.3,-71 673.3,-97.4 673.3,-97.4 673.3,-103.4 667.3,-109.4 661.3,-109.4"/>
-<text xml:space="preserve" text-anchor="middle" x="565.38" y="-87.95" font-family="Georgia" font-size="15.00">Behavioural intention</text>
-<text xml:space="preserve" text-anchor="middle" x="565.38" y="-69.95" font-family="Georgia" font-size="15.00">Complains; seeks other work</text>
-</g>
-<!-- affect&#45;&gt;intention -->
-<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-edge2" class="edge">
-<title>affect&#45;&gt;intention</title>
-<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M433.39,-84.2C438.63,-84.2 443.95,-84.2 449.3,-84.2"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="433.68,-81.93 427.18,-84.2 433.68,-86.48 433.68,-81.93"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="449.14,-86.48 455.64,-84.2 449.14,-81.93 449.14,-86.48"/>
-</g>
-<!-- affect&#45;&gt;overall -->
-<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-edge5" class="edge">
-<title>affect&#45;&gt;overall</title>
-<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M418.63,-58.53C431.36,-54.48 444.7,-50.78 457.45,-48.2 538.13,-31.85 632.39,-26.74 697.23,-25.32"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="697.02,-27.6 703.47,-25.19 696.93,-23.05 697.02,-27.6"/>
-</g>
-<!-- intention&#45;&gt;cognition -->
-<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-edge3" class="edge">
-<title>intention&#45;&gt;cognition</title>
-<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M467.13,-56.67C453.23,-53.42 439.03,-50.46 425.45,-48.2 368.84,-38.79 305.63,-33.23 251.68,-29.94"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="466.5,-58.86 473.35,-58.16 467.56,-54.44 466.5,-58.86"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="251.92,-27.67 245.3,-29.56 251.65,-32.21 251.92,-27.67"/>
-</g>
-<!-- intention&#45;&gt;overall -->
-<g id="lecture-2-work-attitudes-and-job-satisfaction-figure-2-lecture-2-work-attitudes-and-job-satisfaction-interrelated-attitude-components-edge6" class="edge">
-<title>intention&#45;&gt;overall</title>
-<path fill="none" stroke="var(--diagram-edge,#547b86)" d="M657.18,-58.58C670.54,-54.81 684.2,-50.95 697.28,-47.26"/>
-<polygon fill="var(--diagram-edge,#547b86)" stroke="var(--diagram-edge,#547b86)" points="697.81,-49.48 703.44,-45.52 696.57,-45.1 697.81,-49.48"/>
-</g>
-</g>
-</svg>
-</div><figcaption>Promotion case: the three attitude components are connected, and each is linked with the employee’s overall negative attitude. Component links are two-way to avoid implying a fixed sequence.</figcaption></figure>
-
-<p>Do not turn this into a fixed chain of “thought causes feeling, then feeling causes action.” The lecture explicitly cautions that the parts are hard to separate, people may not fully understand their own attitudes or actions, and explanations given afterward may be inaccurate. A person may complain without looking for another job, feel disappointed without disliking the supervisor, or interpret the same decision differently. The case illustrates relationships, not an inevitable response.</p>
-<details class="worked"><summary>Source case: identify the components without assuming the next step</summary><p><strong>Situation:</strong> An employee expected a promotion, but it went to a coworker. <strong>Cognition:</strong> the employee thinks they deserved the role and judges the supervisor’s decision as unfair. <strong>Affect:</strong> the employee dislikes the supervisor. <strong>Behavioural response:</strong> the employee complains and looks for other work. The components are linked in the example, but neither the belief nor the feeling proves that every employee would take the same action.</p></details>
-
-<h2 id="section-4">Visible behaviour and less visible attitudes</h2>
-<p>An iceberg illustration separates observable behaviour above sea level—labelled “known to others”—from underlying factors below the waterline, labelled “unknown to others.” The submerged labels include impact, values, standards, judgments, attitude, motives, ethics, and beliefs. Its upward “impact” arrow links this underlying context with behaviour. The image is a reminder that what an observer sees may be only part of a person’s evaluative context; it does not let an observer reliably infer that context from behaviour alone.</p>
+<svg aria-label="Three attitude components reciprocally linked to one another and to an overall negative attitude" data-figure="promotion" role="img" viewbox="0 0 840 430" xmlns="http://www.w3.org/2000/svg"><defs><marker id="promotion-arrow" markerheight="6" markerwidth="6" orient="auto-start-reverse" refx="9" refy="5" viewbox="0 0 10 10"><path d="M0 0L10 5L0 10Z" fill="var(--diagram-edge,#628a80)"></path></marker></defs><g fill="none" stroke="var(--diagram-edge,#628a80)" stroke-width="2.3"><path d="M250 104V176" marker-end="url(#promotion-arrow)" marker-start="url(#promotion-arrow)"></path><path d="M250 254V326" marker-end="url(#promotion-arrow)" marker-start="url(#promotion-arrow)"></path><path d="M96 65C12 65 12 365 96 365" marker-end="url(#promotion-arrow)" marker-start="url(#promotion-arrow)"></path><path d="M404 65C475 65 480 185 546 198" marker-end="url(#promotion-arrow)" marker-start="url(#promotion-arrow)"></path><path d="M404 215H546" marker-end="url(#promotion-arrow)" marker-start="url(#promotion-arrow)"></path><path d="M404 365C475 365 480 245 546 232" marker-end="url(#promotion-arrow)" marker-start="url(#promotion-arrow)"></path></g><g fill="var(--diagram-fill,#eef5f2)" stroke="var(--diagram-border,#8ca9a1)"><rect height="70" rx="8" width="300" x="100" y="30"></rect><rect height="70" rx="8" width="300" x="100" y="180"></rect><rect height="70" rx="8" width="300" x="100" y="330"></rect><rect height="70" rx="8" width="260" x="550" y="180"></rect></g><g fill="var(--foreground,#25313c)" font-family="Source Sans 3,Segoe UI,sans-serif" font-size="17" text-anchor="middle"><text font-weight="600" x="250" y="57">Cognition</text><text font-size="15" x="250" y="81">Promotion decision seems unfair</text><text font-weight="600" x="250" y="207">Affect</text><text font-size="15" x="250" y="231">Dislikes supervisor</text><text font-weight="600" x="250" y="357">Behavioural response/action</text><text font-size="15" x="250" y="381">Complains; seeks other work</text><text font-weight="600" x="680" y="207">Negative attitude</text><text font-size="15" x="680" y="231">toward supervisor</text></g></svg>
+</div><figcaption>Lecture 2, slide 27. Reciprocal links connect the three components and the overall attitude. The general definition includes intention; this case describes actions. The links do not make those actions inevitable.</figcaption></figure>
+<p>The components are interrelated, especially cognition and affect. The promotion example does not establish a fixed thought → feeling → action sequence. People may respond differently and may explain their own conduct inaccurately afterward.</p>
+<details class="worked"><summary>Source case: identify the components without assuming the next step</summary><p><strong>Situation:</strong> An employee expected a promotion, but it went to a coworker. <strong>Cognition:</strong> the employee thinks they deserved the role and judges the supervisor’s decision as unfair. <strong>Affect:</strong> the employee dislikes the supervisor. <strong>Behavioural response:</strong> the employee complains and looks for other work.</p><p>The components are linked in the example, but neither the belief nor the feeling proves that every employee would take the same action.</p></details>
+<section aria-label="Belief, feeling, plan or action?" class="activity" data-activity="components"><h3>Belief, feeling, plan or action?</h3><label>Choose a case<select aria-label="Choose a case" data-case=""></select></label><p data-scenario=""></p><div aria-label="Choose an answer" class="activity-choices" data-choices="" role="group"></div><output aria-live="polite" data-feedback=""></output><p class="activity-note">Teaching cases. Choose an answer, read why it fits, then try another case.</p><noscript><p>Enable JavaScript for this activity. The definitions and worked examples above remain available.</p></noscript></section><h2 id="section-4">Visible behaviour and less visible attitudes</h2>
+<p>An iceberg illustration separates observable behaviour above sea level—labelled “known to others”—from underlying factors below the waterline, labelled “unknown to others.” The submerged labels include impact, values, standards, judgments, attitude, motives, ethics, and beliefs. Its upward “impact” arrow links this underlying context with behaviour.</p><p>The image is a reminder that what an observer sees may be only part of a person’s evaluative context; it does not let an observer reliably infer that context from behaviour alone.</p>
 <table>
 <thead>
 <tr>
@@ -249,12 +174,10 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 </tbody>
 </table>
 <details class="worked"><summary>Teaching example: the same visible behaviour can have different context</summary><p>Two employees stay quiet during a meeting. One may be considering a concern but not yet feel ready to raise it; the other may have no concern about the decision. Silence is the visible behaviour. Their beliefs, standards, motives, or feelings are not established by that behaviour alone, so a manager should ask and listen rather than assume they know the reason.</p></details>
-
 <h2 id="section-5">Cognitive consistency and dissonance</h2>
-<p>People often want their behaviour to be consistent with their attitudes; the lecture calls this <strong>cognitive consistency</strong>. <strong>Cognitive dissonance</strong> is a perceived incompatibility between two or more attitudes, or between an attitude and behaviour. When someone notices such an inconsistency, the resulting tension can motivate an attempt to restore consistency. The key condition in the lecture is that the incompatibility is perceived; a mismatch that a person does not notice is not described here as experienced dissonance.</p>
+<p>People often want their behaviour to be consistent with their attitudes; the lecture calls this <strong>cognitive consistency</strong>. <strong>Cognitive dissonance</strong> is a perceived incompatibility between two or more attitudes, or between an attitude and behaviour. When someone notices such an inconsistency, the resulting tension can motivate an attempt to restore consistency.</p><p>The key condition in the lecture is that the incompatibility is perceived; a mismatch that a person does not notice is not described here as experienced dissonance.</p>
 <p>The slides do not prescribe one universal way of resolving the tension. The following are <strong>supplemental teaching illustrations</strong> of possible responses, not a fixed sequence or guaranteed result.</p>
-<details class="worked"><summary>Teaching example: an employee’s stated value and weekend work</summary><p>An employee believes staff should be able to disconnect outside scheduled hours, but agrees to work an additional weekend shift. If the employee perceives this as inconsistent, it may create tension. They might seek to change future behaviour by declining extra shifts, revise how they evaluate this particular choice (“this was a one-off emergency”), or reconsider the belief’s application in this situation. These are possible explanations and responses; the lecture does not say which one must occur. If the employee sees no inconsistency, the situation alone does not establish dissonance.</p></details>
-
+<details class="worked"><summary>Teaching example: an employee’s stated value and weekend work</summary><p>An employee believes staff should be able to disconnect outside scheduled hours, but agrees to work an additional weekend shift. If the employee perceives this as inconsistent, it may create tension.</p><p>They might seek to change future behaviour by declining extra shifts, revise how they evaluate this particular choice (“this was a one-off emergency”), or reconsider the belief’s application in this situation. These are possible explanations and responses; the lecture does not say which one must occur. If the employee sees no inconsistency, the situation alone does not establish dissonance.</p></details>
 <h2 id="section-6">Job satisfaction: an overall evaluation with several facets</h2>
 <p><strong>Job satisfaction</strong> is a positive feeling about a job that results from evaluating its characteristics. A person with high satisfaction holds positive feelings about the job; a person with low satisfaction holds negative feelings. Satisfaction is an emotional response to the job situation and a complex summation: tasks, coworkers, supervisors, organizational rules, performance standards, and working conditions can all contribute.</p>
 <p>The lecture also explains satisfaction through the discrepancy between <strong>job expectations</strong> and <strong>job outcomes</strong>. When outcomes meet or exceed expectations, satisfaction and a wish to remain are more likely. When outcomes fall short, dissatisfaction is a reasonable interpretation, though a single discrepancy does not tell us which job feature matters most to that employee.</p>
@@ -290,82 +213,77 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 </tbody>
 </table>
 <p>A separate illustrative “job satisfaction components” wheel names pay and benefits, career development, respect, engagement, recognition, and job security. This list complements the five defined dimensions; it is not evidence that the wheel is a validated measurement scale.</p>
-<details class="worked"><summary>Teaching example: one employee, several satisfaction facets</summary><p>Consider an employee who enjoys solving customer problems and has supportive coworkers, but believes their pay is inequitable and sees no realistic route to advancement. The interesting work relates to <strong>work itself</strong>; pay equity relates to <strong>pay</strong>; and the blocked route relates to <strong>promotional opportunities</strong>. Supportive colleagues relate to <strong>coworkers</strong>. A single overall satisfaction rating may combine these positive and negative evaluations, so it cannot show which facet needs attention. This is a hypothetical teaching scenario.</p></details>
-
+<details class="worked"><summary>Teaching example: one employee, several satisfaction facets</summary><p>Consider an employee who enjoys solving customer problems and has supportive coworkers, but believes their pay is inequitable and sees no realistic route to advancement. The interesting work relates to <strong>work itself</strong>; pay equity relates to <strong>pay</strong>; and the blocked route relates to <strong>promotional opportunities</strong>. Supportive colleagues relate to <strong>coworkers</strong>.</p><p>A single overall satisfaction rating may combine these positive and negative evaluations, so it cannot show which facet needs attention. This is a hypothetical teaching scenario.</p></details>
 <h2 id="section-7">Measuring satisfaction: what a rating scale can and cannot show</h2>
-<p>The lecture says rating scales are by far the most common way to assess job satisfaction. A questionnaire example uses five response points, from <strong>1 (strongly disagree)</strong> to <strong>5 (strongly agree)</strong>, across 16 statements. Examples include “I enjoy my job,” “I am encouraged to seek out new training opportunities,” “Good and bad news about what is happening at OrgCo is communicated regularly,” and “Taking everything into account, I have a high level of job satisfaction with my team.” The full questionnaire mixes topics such as organizational goals, communication, training, managerial support, interruptions, team climate, and satisfaction; not every item measures the same facet.</p>
+<p>The lecture’s questionnaire example has 16 statements rated from 1, strongly disagree, to 5, strongly agree. It mixes satisfaction with communication, training, support and team-climate questions. Not every item measures the same facet.</p>
 <p>No instrument provenance or psychometric evidence is provided, so the example should not be treated as a validated standardized scale. Two measurement caveats are explicit:</p>
 <ol>
 <li>Like any self-report inventory, a rating scale assumes respondents are both willing and able to describe their feelings accurately.</li>
 <li>It assumes questionnaire items mean the same thing to all respondents, though people may interpret a phrase differently.</li>
 </ol>
 <p>The example also shifts between the organization, the job, the team, and particular conditions. An item about team communication is not identical to an overall job-satisfaction item. Ratings are useful indicators to interpret carefully, not a complete explanation of an employee’s experience.</p>
-<details class="worked"><summary>Teaching example: why one survey item may need a follow-up</summary><p>Suppose an employee selects “2” for agreement with “My manager discusses ways I can improve my work performance.” The score indicates low agreement with that statement, but does not explain why. The employee may understand “discusses” as formal review meetings while a coworker counts informal coaching. A follow-up conversation can clarify the meaning, and other items or job facets may point to different issues. One rating alone does not identify a cause or establish the employee’s total job satisfaction.</p></details>
-
+<details class="worked"><summary>Teaching example: why one survey item may need a follow-up</summary><p>Suppose an employee selects “2” for agreement with “My manager discusses ways I can improve my work performance.” The score indicates low agreement with that statement, but does not explain why. The employee may understand “discusses” as formal review meetings while a coworker counts informal coaching.</p><p>A follow-up conversation can clarify the meaning, and other items or job facets may point to different issues. One rating alone does not identify a cause or establish the employee’s total job satisfaction.</p></details>
 <h2 id="section-8">Responses to dissatisfaction: the EVLN framework</h2>
 <p>The exit–voice–loyalty–neglect framework classifies responses on two separate axes: <strong>active versus passive</strong> and <strong>constructive versus destructive</strong>. The cell placements below reproduce the slide’s matrix exactly.</p>
 <table><caption>Exit–voice–loyalty–neglect responses by activity and direction</caption>
 <thead><tr><th scope="col">Response style</th><th scope="col">Constructive</th><th scope="col">Destructive</th></tr></thead>
 <tbody>
-<tr><th scope="row">Active</th><td><strong>Voice</strong><br>Raises a concern or proposes improvement. This is a standard explanatory gloss.</td><td><strong>Exit</strong><br>Leaves or prepares to leave. This is a standard explanatory gloss.</td></tr>
-<tr><th scope="row">Passive</th><td><strong>Loyalty</strong><br>Waits supportively for improvement. This is a standard explanatory gloss.</td><td><strong>Neglect</strong><br>Allows conditions or effort to deteriorate. This is a standard explanatory gloss.</td></tr>
+<tr><th scope="row">Active</th><td><strong>Voice</strong><br/>Raises a concern or proposes improvement. </td><td><strong>Exit</strong><br/>Leaves or prepares to leave. </td></tr>
+<tr><th scope="row">Passive</th><td><strong>Loyalty</strong><br/>Waits supportively for improvement. </td><td><strong>Neglect</strong><br/>Allows conditions or effort to deteriorate. </td></tr>
 </tbody></table>
-
 <p>The matrix describes a way to sort responses to dissatisfaction, not four personality types. The same person could respond differently as circumstances change. Classify each response on both axes: active/passive first and constructive/destructive second. In particular, do not swap the two active cells or the two passive cells.</p>
 <details class="worked"><summary>Teaching example: classify four responses to an unfair workload</summary><p><strong>Voice:</strong> an employee raises the unfair distribution with the manager and suggests a rotation—active and constructive. <strong>Exit:</strong> the employee seeks another job and resigns—active and destructive. <strong>Loyalty:</strong> the employee stays, continues supporting colleagues, and waits for a promised review—passive and constructive. <strong>Neglect:</strong> the employee remains but starts missing deadlines and withholding effort—passive and destructive. These are concise explanatory examples for the matrix cells.</p></details>
-
-<h2 id="section-9">Related job attitudes and behaviour</h2>
-<p>Job satisfaction is among the most widely studied job attitudes, alongside job involvement and organizational commitment. Perceived organizational support and employee engagement are also important. Organizational citizenship behaviour is a related discretionary behaviour, rather than simply another name for an attitude. These constructs have some distinctiveness but overlap considerably, including because of personality. A person may, for example, feel attached to an organization and be dissatisfied with one task; one construct does not determine all the others.</p>
-<table>
+<section aria-label="Explore the EVLN axes" class="activity" data-activity="evln"><h3>Explore the EVLN axes</h3><label>How is the response expressed?<select data-input="action"><option value="active">Active</option><option value="passive">Passive</option></select></label><label>What direction does it take?<select data-input="direction"><option value="constructive">Constructive</option><option value="destructive">Destructive</option></select></label><table class="matrix"><caption>Response × Direction</caption><thead><tr><th scope="col">Response</th><th scope="col">Constructive</th><th scope="col">Destructive</th></tr></thead><tbody><tr><th scope="row">Active</th><td data-cell="active-constructive">Voice</td><td data-cell="active-destructive">Exit</td></tr><tr><th scope="row">Passive</th><td data-cell="passive-constructive">Loyalty</td><td data-cell="passive-destructive">Neglect</td></tr></tbody></table><output aria-live="polite" data-result=""></output><p class="activity-note">The model classifies responses to dissatisfaction. It is not a personality test or moral rating.</p><noscript><p>Enable JavaScript to change the inputs. The course model is explained above.</p></noscript></section><h2 id="section-9">Related job attitudes and behaviour</h2>
+<p>Job satisfaction is among the most widely studied job attitudes, alongside job involvement and organizational commitment. Perceived organizational support and employee engagement are also important. Organizational citizenship behaviour is a related discretionary behaviour, rather than simply another name for an attitude. These constructs have some distinctiveness but overlap considerably, including because of personality.</p><p>A person may, for example, feel attached to an organization and be dissatisfied with one task; one construct does not determine all the others.</p>
+<table class="comparison" data-stack="">
 <thead>
 <tr>
-<th>Concept</th>
-<th>What it captures</th>
-<th>Useful distinction</th>
+<th scope="col">Concept</th>
+<th scope="col">What it captures</th>
+<th scope="col">Useful distinction</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Job satisfaction</td>
-<td>Overall positive or negative feeling from evaluating job characteristics.</td>
-<td>A broad evaluation that can summarize several facets.</td>
+<th scope="row">Job satisfaction</th>
+<td data-label="What it captures">Overall positive or negative feeling from evaluating job characteristics.</td>
+<td data-label="Useful distinction">A broad evaluation that can summarize several facets.</td>
 </tr>
 <tr>
-<td>Job involvement</td>
-<td>Interest in and commitment to assigned tasks; strong identification with and care about one’s work.</td>
-<td>Focuses on the work or tasks, rather than membership in the organization as a whole.</td>
+<th scope="row">Job involvement</th>
+<td data-label="What it captures">Interest in and commitment to assigned tasks; strong identification with and care about one’s work.</td>
+<td data-label="Useful distinction">Focuses on the work or tasks, rather than membership in the organization as a whole.</td>
 </tr>
 <tr>
-<td>Psychological empowerment</td>
-<td>Beliefs about influence over the work environment, competence, meaningfulness of the job, and perceived autonomy.</td>
-<td>Describes perceived agency and meaning in doing the work.</td>
+<th scope="row">Psychological empowerment</th>
+<td data-label="What it captures">Beliefs about influence over the work environment, competence, meaningfulness of the job, and perceived autonomy.</td>
+<td data-label="Useful distinction">Describes perceived agency and meaning in doing the work.</td>
 </tr>
 <tr>
-<td>Organizational commitment</td>
-<td>Strength of identification with and involvement in the organization: accepting its goals and values, willingness to exert effort, and desire to remain a member.</td>
-<td>Goes beyond passive loyalty; focuses on the organization.</td>
+<th scope="row">Organizational commitment</th>
+<td data-label="What it captures">Strength of identification with and involvement in the organization: accepting its goals and values, willingness to exert effort, and desire to remain a member.</td>
+<td data-label="Useful distinction">Goes beyond passive loyalty; focuses on the organization.</td>
 </tr>
 <tr>
-<td>Perceived organizational support (POS)</td>
-<td>Belief that the organization values one’s contributions and cares about one’s well-being.</td>
-<td>Fair rewards, employee voice, and supportive supervisors are cues the lecture names.</td>
+<th scope="row">Perceived organizational support (POS)</th>
+<td data-label="What it captures">Belief that the organization values one’s contributions and cares about one’s well-being.</td>
+<td data-label="Useful distinction">Fair rewards, employee voice, and supportive supervisors are cues the lecture names.</td>
 </tr>
 <tr>
-<td>Employee engagement</td>
-<td>Involvement with, satisfaction with, and enthusiasm for one’s work; passion and connection versus putting in time without energy or attention.</td>
-<td>Emphasizes energy and connection in the work.</td>
+<th scope="row">Employee engagement</th>
+<td data-label="What it captures">Involvement with, satisfaction with, and enthusiasm for one’s work; passion and connection versus putting in time without energy or attention.</td>
+<td data-label="Useful distinction">Emphasizes energy and connection in the work.</td>
 </tr>
 <tr>
-<td>Organizational citizenship behaviour (OCB)</td>
-<td>Discretionary individual actions outside the formal job description.</td>
-<td>An extra-role behaviour, not a synonym for satisfaction, commitment, or engagement.</td>
+<th scope="row">Organizational citizenship behaviour (OCB)</th>
+<td data-label="What it captures">Discretionary individual actions outside the formal job description.</td>
+<td data-label="Useful distinction">An extra-role behaviour, not a synonym for satisfaction, commitment, or engagement.</td>
 </tr>
 </tbody>
 </table>
-<p>Strong POS has been associated with higher citizenship behaviour, lower tardiness, and better customer service. These are associations, not proof that POS alone caused those outcomes. It also describes potential OCB benefits: less need for supervision, better morale, cost-saving suggestions, and freed managerial time. Managers should be mindful of the risk of burnout when extra-role contributions become excessive. OCB refers to discretionary actions, not a feeling.</p>
+<p>Strong POS has been associated with higher citizenship behaviour, lower tardiness, and better customer service. These are associations, not proof that POS alone caused those outcomes. It also describes potential OCB benefits: less need for supervision, better morale, cost-saving suggestions, and freed managerial time. Managers should be mindful of the risk of burnout when extra-role contributions become excessive.</p><p>OCB refers to discretionary actions, not a feeling.</p>
 <p>A claim that 17–29% of employees are highly engaged appears without a named survey source or date, so it is not used here as a general current estimate.</p>
-<details class="worked"><summary>Teaching example: distinguish commitment, involvement, empowerment, POS, engagement, and OCB</summary><p>A software analyst cares deeply about the testing tasks (<strong>job involvement</strong>) and believes the work has meaning, that she is capable, and that she can influence how it is done (<strong>psychological empowerment</strong>). She identifies with the company’s goals and wants to remain (<strong>organizational commitment</strong>). She believes her contributions are noticed and her well-being matters to the company (<strong>POS</strong>). She brings energy and enthusiasm to the work (<strong>engagement</strong>). On one occasion she voluntarily helps a colleague outside her formal duties (<strong>OCB</strong>). She may show some of these without showing all of them; none is a substitute label for the others or for her overall job satisfaction.</p></details>
-
+<details class="worked"><summary>Teaching example: distinguish commitment, involvement, empowerment, POS, engagement, and OCB</summary><p>A software analyst cares deeply about the testing tasks (<strong>job involvement</strong>) and believes the work has meaning, that she is capable, and that she can influence how it is done (<strong>psychological empowerment</strong>). She identifies with the company’s goals and wants to remain (<strong>organizational commitment</strong>). She believes her contributions are noticed and her well-being matters to the company (<strong>POS</strong>).</p><p>She brings energy and enthusiasm to the work (<strong>engagement</strong>). On one occasion she voluntarily helps a colleague outside her formal duties (<strong>OCB</strong>). She may show some of these without showing all of them; none is a substitute label for the others or for her overall job satisfaction.</p></details>
 <h2 id="section-10">Common mistakes</h2>
 <ul>
 <li>Treating <strong>belief</strong>, <strong>value</strong>, and <strong>attitude</strong> as synonyms: ask “what is?”, “what should be?”, and “how is the target evaluated?”</li>
@@ -379,67 +297,42 @@ select{font:inherit;color:var(--foreground);background:var(--card);border:1px so
 <li>Treating correlations or the unsourced 17–29% engagement statement as proof of causation or a current population estimate.</li>
 <li>Turning demographic or cultural categories into predictions about an individual employee.</li>
 </ul>
-<h2 id="section-11">Exam focus</h2>
-<ul>
-<li>Compare the dispositional, situational, and social-information-processing approaches; explain why the lecture treats them as interacting lenses.</li>
-<li>Define belief (“what is”), value (“what should be”), and attitude (evaluation and response tendency).</li>
-<li>Identify cognition, affect, and intended behaviour in a case, then explain why their relation is not a guaranteed linear sequence.</li>
-<li>Define cognitive consistency and cognitive dissonance, including the role of perceived incompatibility and tension.</li>
-<li>Define job satisfaction and explain expectation–outcome discrepancy and the five dimensions: work itself, pay, promotional opportunities, supervision, and coworkers.</li>
-<li>Name both rating-scale caveats: accurate self-report and shared interpretation of items.</li>
-<li>Reconstruct EVLN with both axes and all four cells.</li>
-<li>Distinguish task-focused involvement, perceived empowerment, organizational commitment, POS, work engagement, and discretionary citizenship behaviour.</li>
-<li>Explain overlap without treating constructs as identical; keep association separate from causation.</li>
-</ul>
-<h2 id="section-12">Practice questions</h2>
+<span class="section-anchor" id="section-11"></span><h2 id="section-12">Practice questions</h2>
 <p class="question">1. A new employee believes her supervisor ignores good work, values transparent recognition, and feels resentful about the recognition system. Identify belief, value, and attitude.</p>
 <details class="worked"><summary>Check your answer</summary><p>The belief is that the supervisor ignores good work; the value is that recognition should be transparent; the attitude is resentment toward the recognition system. The first describes what she thinks is true, the second what should be desirable, and the third evaluates a target.</p></details>
-
 <p class="question">2. A worker carries a tendency to stay optimistic into a new job, encounters a poorly organized schedule, and hears coworkers describe management as unfair. Which attitude-formation lenses might apply?</p>
 <details class="worked"><summary>Check your answer</summary><p>All three may apply: the cross-job tendency suggests a dispositional influence; the disorganized schedule is situational; coworkers’ account is social information processing. The case does not establish which influence matters most.</p></details>
-
 <p class="question">3. An employee believes a promotion decision was unfair, feels angry, and plans to complain. Identify each component and name one conclusion you cannot draw.</p>
 <details class="worked"><summary>Check your answer</summary><p>The belief/evaluation is cognition, anger is affect, and the plan to complain is behavioural intention. You cannot infer that the complaint will occur or that every employee would react this way.</p></details>
-
 <p class="question">4. An employee says she supports a policy requiring rest breaks but skips one to finish a task. What would need to be true for this to illustrate cognitive dissonance?</p>
 <details class="worked"><summary>Check your answer</summary><p>She would need to perceive an incompatibility between her attitude toward the policy and her behaviour. The lecture links perceived inconsistency to tension and an attempt to restore consistency; it does not prescribe one resolution.</p></details>
-
 <p class="question">5. A worker enjoys the tasks and coworkers but feels pay is inequitable and sees no realistic promotion path. Which satisfaction dimensions are involved?</p>
 <details class="worked"><summary>Check your answer</summary><p>Four dimensions are implicated: work itself and coworkers are positive facets, while pay and promotional opportunities are negative facets. There is no information about supervision.</p></details>
-
 <p class="question">6. A team survey asks whether “communication is positive and effective,” but staff disagree about what “effective” means. Which rating-scale caveat is illustrated?</p>
 <details class="worked"><summary>Check your answer</summary><p>Respondents may not interpret the same questionnaire item in the same way. The answer choices can be identical while the meaning assigned to the statement differs.</p></details>
-
 <p class="question">7. Classify each dissatisfaction response: (a) raise a workload concern and propose rotation; (b) resign; (c) stay and wait supportively; (d) stay while withholding effort.</p>
 <details class="worked"><summary>Check your answer</summary><p>(a) Voice: active/constructive. (b) Exit: active/destructive. (c) Loyalty: passive/constructive. (d) Neglect: passive/destructive.</p></details>
-
 <p class="question">8. An employee cares deeply about assigned work and believes she can influence how it is done, but says little about whether she wants to remain with the organization. Which constructs are supported, and which is not established?</p>
 <details class="worked"><summary>Check your answer</summary><p>Job involvement and psychological empowerment are supported by caring about the tasks and perceived influence. Organizational commitment is not established because the case gives no evidence about identification with organizational goals, effort for the organization, or desire to remain.</p></details>
-
 <p class="question">9. A company gives fair rewards, invites employees’ views, and has supportive supervisors. Which construct do these cues relate to, and what outcome claim should be made carefully?</p>
 <details class="worked"><summary>Check your answer</summary><p>They are cues associated with perceived organizational support. Research has linked POS with higher citizenship behaviour, lower tardiness, and better customer service; describe those as associations, not proven effects caused by POS alone.</p></details>
-
 <p class="question">10. A highly committed employee voluntarily mentors a colleague outside formal duties but reports low enthusiasm for daily tasks. Which concepts fit, and why is this not contradictory?</p>
 <details class="worked"><summary>Check your answer</summary><p>Commitment may fit identification with and desire to remain in the organization; mentoring outside formal duties may be OCB. Low enthusiasm suggests lower engagement. These constructs overlap but differ, so one person can show this combination.</p></details>
-
 <p class="question">11. Why should the 17–29% engagement figure not be repeated as a current general estimate?</p>
 <details class="worked"><summary>Check your answer</summary><p>The figure is not accompanied by a named survey source or date. Without that context, the range cannot be checked or generalized as a current estimate.</p></details>
-
 <p class="question">12. A manager says that a colleague’s national culture explains why she dislikes a new policy. What is the problem with this conclusion?</p>
 <details class="worked"><summary>Check your answer</summary><p>It turns a broad background category into a prediction about one individual. The lecture asks managers to recognize individual differences, but a person’s attitude should be understood from evidence about that person’s beliefs, values, conditions, and social context.</p></details>
-
 <h2 id="section-13">Further practice</h2>
 <p class="question">13. Give one plausible workplace explanation for two employees evaluating the same supervisor differently without assuming either employee is irrational.</p>
 <details class="worked"><summary>Check your answer</summary><p>Their dispositions may differ, their experiences with the supervisor may differ, or the social information and group context they encounter may differ. Several influences can interact; the case should be investigated rather than reduced to a label.</p></details>
-
 <p class="question">14. An employee rates job satisfaction highly but gives a low rating to team communication. Is this necessarily inconsistent?</p>
 <details class="worked"><summary>Check your answer</summary><p>No. The overall rating can summarize several job facets, while team communication is one particular condition. Different items can reflect different parts of a complex evaluation, and their meanings should be checked.</p></details>
-
 <p class="question">15. Explain why extra-role citizenship behaviour can benefit an organization and still require attention to employee well-being.</p>
-<details class="worked"><summary>Check your answer</summary><p>OCB can reduce supervision, improve morale, produce cost-saving suggestions, and free managerial time. If extra-role contributions become excessive, managers should consider burnout and help employees contribute sustainably.</p></details></article><nav class="pager" aria-label="Study sequence"><a href="lecture-1-organizational-behaviour-foundations.html"><small>Previous</small>Organizational Behaviour Foundations <span aria-hidden="true">↗</span></a><a href="lecture-3-personality-at-work.html"><small>Next</small>Personality at Work <span aria-hidden="true">↗</span></a></nav><footer>Organizational Behavior and Management · Study guide <span>Understand work. Connect people, teams, and organizations.</span></footer></main></div><script src="pages-data.js"></script><script>(() => {
+<details class="worked"><summary>Check your answer</summary><p>OCB can reduce supervision, improve morale, produce cost-saving suggestions, and free managerial time. If extra-role contributions become excessive, managers should consider burnout and help employees contribute sustainably.</p></details></article><nav aria-label="Study sequence" class="pager"><a href="lecture-1-organizational-behaviour-foundations.html"><small>Previous</small>Organizational Behaviour Foundations <span aria-hidden="true">↗</span></a><a href="lecture-3-personality-at-work.html"><small>Next</small>Personality at Work <span aria-hidden="true">↗</span></a></nav><footer>Organizational Behavior and Management · Study guide <span>Understand work. Connect people, teams, and organizations.</span></footer></main></div><script src="pages-data.js"></script><script src="activities.js"></script><script>(() => {
   'use strict';
   let cleanups = [];
   const initializeMain = root => {
+  initializeActivities(root);
   const mathHints = new WeakMap();
   const repairMath = () => {
     root.querySelectorAll('math,.walk code').forEach(expression => {
