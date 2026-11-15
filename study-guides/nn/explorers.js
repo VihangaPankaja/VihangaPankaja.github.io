@@ -28,6 +28,26 @@ function initializeExplorers(root) {
         output.textContent = input(output.dataset.value);
       });
       switch (explorer.dataset.explorer) {
+        case 'branches': {
+          const sigmoid = value => 1 / (1 + Math.exp(-value));
+          const w2 = Number(input('weight')), target2 = Number(input('target'));
+          const z = sigmoid(0.2), y1 = sigmoid(0.4 * z), y2 = sigmoid(w2 * z);
+          const delta1 = (1 - y1) * y1 * (1 - y1);
+          const delta2 = (target2 - y2) * y2 * (1 - y2);
+          const first = 0.4 * delta1, second = w2 * delta2;
+          const hidden = z * (1 - z) * (first + second);
+          metric('branches-first', first);
+          metric('branches-second', second);
+          metric('branches-hidden', hidden);
+          result('weight', number(w2));
+          result('weight-label', 'w₂ = ' + number(w2));
+          result('target-label', 'target ' + target2);
+          result('hidden-node', z.toFixed(3));
+          result('first-node', y1.toFixed(3));
+          result('second-node', y2.toFixed(3));
+          result('branches', 'δₕ = ' + number(z * (1 - z)) + ' × (' + number(first) + (second < 0 ? ' − ' + number(-second) : ' + ' + number(second)) + ') = ' + number(hidden) + '. With η = 0.5, v′ = ' + number(0.2 + 0.5 * hidden) + '.');
+          break;
+        }
         case 'implication': {
           const a = Number(input('a')), b = Number(input('b'));
           metric('implication-dienes', Math.max(1 - a, b));
