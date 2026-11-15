@@ -7,6 +7,13 @@
     "lead": "Choose a question, understand the model, then work the calculation."
   },
   {
+    "slug": "workbook",
+    "title": "Calculation workbook",
+    "group": "Start here",
+    "lecture": "Supplemental worked problems",
+    "lead": "Twelve worked calculations with explained steps, diagrams and practice questions."
+  },
+  {
     "slug": "foundations",
     "title": "Neurons, activations and network foundations",
     "group": "Neural networks",
