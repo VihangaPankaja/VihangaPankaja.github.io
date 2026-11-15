@@ -1,0 +1,6 @@
+# Local course copies are retained but not published on GitHub Pages.
+/study-guides/ads/
+/study-guides/aml/
+/study-guides/cns/
+/study-guides/ob/
+__pycache__/
